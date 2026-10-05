@@ -51,6 +51,15 @@ before any solver code is written, because the key is the one part nothing can f
 | BD-T8 | Strategy tables ship as bundled JSON read through one module, `app/src/gto/key.ts`. No other file imports a table. Their size is measured in phase 4 and recorded | Fetch from a server (needs the backend that does not exist) |
 | BD-T9 | The free allowance is a function, `handsLeftToday(state, now)`, called from the one start button. Phase 9 builds it with a dial and no paywall; the store phase later replaces what it returns. Nothing else knows about a tier | Build the paywall in phase 9 (option D2) |
 | BD-T10 | Higgsfield output goes to a new folder, `assets/higgsfield-table/`, kept as received. `assets/higgsfield/` stays frozen. How a character becomes a drawable asset is decided in phase 8, with Zach | Put the files in `assets/higgsfield/` (a violation of `CLAUDE.md`) |
+| BD-T11 | Phase 1, 2026-10-05. The solved game is one six-player game with a heads-up-only rule: the first seat that calls or 3-bets becomes the defender and every later seat is removed with no decision (`KEY-SPEC.md` 2.2). It is not fifteen separate two-player solves, which would open `UTG` as wide as the button because it would face one opponent. BD-T4 stands and is now a rule of the game | Solve the pairs separately (wrong opener ranges), or a multiway abstraction later |
+| BD-T12 | Phase 1, 2026-10-05, Zach's answer (a). A called pot is valued by all-in equity bent by one number per pot type: the out-of-position share is `e − c × e × (1 − e)`, the in-position share the rest; `c` is 0 all-in (`KEY-SPEC.md` 3.2, option RF-2). Phase 3a tunes the `c` values to the bands and freezes them; phase 3b may not touch them. Superseded in part by BD-T18 the same day: `c` also depends on who holds the edge, the curve is `(1 − e)^2`, and a flat is taxed (BD-T17) | RF-3 (a per-class adjustment from hand features) if the phase 4 Deep review finds the composition wrong while the bands hold; RF-4 (a rolled-out postflop model) is a later effort |
+| BD-T13 | Phase 1, 2026-10-05, Zach's answer (b). One size at every level: open 2.5 (`SB` 3), 3-bet 7.5 in position and 10 from a blind, 4-bet 20, 22 or 25 by row, 5-bet all-in, no limp (`KEY-SPEC.md` 2.3, option M1). This replaces the dial `gtoOpenSizeBb` of section 3 with the spec's table. Superseded in part by BD-T19 the same day: `sb_vs_bb` is 9 and 23, not 10 and 25 | A limp (M2) or a second size (M3) is a new tree and a new solve |
+| BD-T14 | Phase 1, 2026-10-05, Zach's answer (c). "GTO trainer" may be the mode's name; "GTO" never qualifies an answer; a verdict says "the solver"; the game statement is one tap from every verdict (`KEY-SPEC.md` 6, option C1). Phase 10 writes the copy under this rule | Drop the word (C2) |
+| BD-T15 | Phase 1, 2026-10-05. The key schema is `felto-gto-key/1` (`KEY-SPEC.md` 7): node ids are the action history as `SEAT:action` tokens joined by `/`, hands follow `allHandClasses()` of `app/src/cards/hand-class.ts`, and `spec_hash` is the SHA-256 of the canonical JSON of the embedded `game` object, pinned as a constant in `app/src/gto/key.ts` and recomputed only by `solver/validate_key.py` | Hash the whole spec file (every prose edit would then invalidate the key) |
+| BD-T17 | Phase 1, 2026-10-05, after the cold review (`KEY-SPEC.md` 10) and Zach's answers Q1 (no) and Q4 (yes). The flat call stays a legal, graded action at every seat, and a flat by `HJ`, `CO`, `BTN` or `SB` is taxed: both pot shares at that leaf are multiplied by `(1 − t)`, `t_ip` for the three in-position seats and `t_sb` for the small blind, tuned in phase 3a to the flat bands (`KEY-SPEC.md` 3.2). Without it a correct solve flatted about 70 percent of hands from the button | Remove the flat for every seat but the big blind (the review's first choice, which Zach declined), or a squeeze subtree with a third live player |
+| BD-T18 | Phase 1, 2026-10-05, Zach's answer Q2. The realization bonus goes to the player with the edge: the in-position player when it raised last, otherwise the out-of-position raiser; `c` is one value per pot type for each case (six dials), and the curve is `s = e − c × e × (1 − e)^k` with `k = 2` (`KEY-SPEC.md` 3.2). Phase 3a tunes on four spots (button against big blind, cutoff against button, small blind against big blind, button against small blind), not one; this is the forced change to phase 3a | `k = 1` and one `c` per pot type (the first draft), or RF-3 |
+| BD-T19 | Phase 1, 2026-10-05, Zach's answer Q3. The `sb_vs_bb` row is open 3, 3-bet 9, 4-bet 23, 5-bet all-in; the sources say 2.63 to 3.0 times the open and the big blind is in position (`KEY-SPEC.md` 2.3, 8.3) | 10 and 25, as the first draft had |
+| BD-T16 | Phase 1, 2026-10-05. The solver is Python with numpy. One iteration over the 65-node tree costs about 10 ms on this Mac, so the hour of BD-T3 is reached only past 350,000 iterations (`KEY-SPEC.md` 9). No Rust standard is written | Rust, if phase 3b measures a run above the hour; `docs/conventions-rust.md` first, to the shape of Part 8.1 |
 
 ## 2. Phases
 
@@ -74,7 +83,25 @@ key's schema. Lane A runs beside both.
 
 ### Phase 1: Game spec, schema and feasibility
 
-Status: `PLANNED`.
+**BUILT 2026-10-05** (board item 35, lane H, on `main`, `HANDOFF.md` step 41; the commit is Zach's and
+pending). Built: `KEY-SPEC.md` (the game, the tree, the payoffs, the leaf model, the simplifications
+with the hands they move, the schema, the bands, the feasibility estimate, the cold review),
+`solver/validate_key.py` (the stub), BD-T11 to BD-T19, and a scope amendment to
+`docs/conventions-python.md` (1.2.2). The estimate chose numpy (BD-T16), so no Rust standard was
+written. Zach answered two batches in chat the same day (`KEY-SPEC.md` 11). What this phase forces
+on later phases: (1) phase 2 also writes the deal-weight table `W` beside the equity table `E`
+(`KEY-SPEC.md` 3.3), and brings the dated amendment to rule M4 of the Python standard before the first
+numpy import; (2) phase 3a tunes nine leaf-model dials on four spots, not one (`KEY-SPEC.md` 3.2,
+BD-T18), and its done-when gains the bands of `KEY-SPEC.md` 8.2 for those spots, including the
+button's flat rate against the cutoff and the small blind's against the button; (3) phase 4's loader
+pins the hash of `KEY-SPEC.md` 12 as frozen by phase 3a, and its Deep review is the next cold read,
+because the review of this phase saw the first draft, not the game as it now stands (`KEY-SPEC.md`
+10); (4) the bands are thin where `KEY-SPEC.md` 8.4 says, and none is rakeless. Deviation from the
+plan's text: the `done when` asked for three named sources per band; the open rates, the big blind
+against the button and the button against the cutoff have three or more, the opener facing a 3-bet
+has two solver sources and one heuristic, and two spots have none (8.4). Gate: the app gate ran
+green and unchanged on 2026-10-05, 86 test files and 629 tests (the live count; the plan's 63 and
+490 were the count when it was written).
 
 1. Write `docs/incomplete/gto-trainer/KEY-SPEC.md`: the exact game (BD-T2), the action tree
    (open, 3-bet, 4-bet, all-in, by position), the sizes, how the leaf value is computed
@@ -292,7 +319,11 @@ solver dials, which live in `solver/config.py`.
 | `gtoHandsPerSession` | 10 | |
 | `gtoFreeHandsPerDay` | 10 | free allowance |
 | `gtoRequiresUnit` | none | |
-| `gtoOpenSizeBb` | 2.5 (SB 3) | in the spec; the key carries it |
+| `gtoOpenSizeBb` | 2.5 (SB 3) | in the spec; the key carries it. Since phase 1 (BD-T13) this row is the `open` column of the sizes table in `KEY-SPEC.md` 2.3, which also fixes the 3-bet, 4-bet and 5-bet sizes |
+| `c_srp`, `c_3bp`, `c_4bp`; `c_srp_oop`, `c_3bp_oop`, `c_4bp_oop` | 0.7, 0.4, 0.2; 0.3, 0.2, 0.1 to start | phase 1 (BD-T12, BD-T18), `solver/config.py`; phase 3a tunes them inside the ranges of `KEY-SPEC.md` 3.2 on four spots and freezes them in the game object |
+| `k` | 2 (1 allowed) | phase 1 (BD-T18), `solver/config.py`; the curve exponent of `KEY-SPEC.md` 3.2 |
+| `t_ip`, `t_sb` | 0.1, 0.25 to start | phase 1 (BD-T17), `solver/config.py`; the flat tax of `KEY-SPEC.md` 3.2, tuned in phase 3a to the flat bands |
+| `reachFloor` | 0.0001 | phase 1, `solver/config.py`; a node reached less often than this is one the grader treats as never reached (`KEY-SPEC.md` 7.1) |
 
 ## 4. Seams reserved, deliberately not built
 

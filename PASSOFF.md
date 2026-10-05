@@ -47,13 +47,13 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 | 27 | Game feel phase 2: haptics, the Haptics switch and stored version 3 | `DONE: HANDOFF 30` | Opus 5.5 | F | item 26 | `app/src/feedback/`, `app/src/storage/migrations.ts`, `app/src/storage/check-state.ts`, `app/src/storage/player-actions.ts`, `app/src/game/player-state.ts`, `app/src/game/settings.ts`, `app/src/components/profile/`, `app/src/screens/profile-screen.tsx`, `app/src/components/lesson/lesson-run-view.tsx` and `feedback-sheet.tsx` (the press haptic only) |
 | 28 | Game feel phase 3: six new sound effects | `DONE: HANDOFF 32` | Opus 5.5 | F | item 27 | `tools/build_sounds.py`, `assets/sounds/`, `app/src/art/sounds.ts`, `app/src/feedback/effects.ts`, `app/src/config/dials.ts` (block `// game-feel`), `app/src/components/lesson/lesson-run-view.tsx` and `feedback-sheet.tsx` (the press sound only) |
 | 29 | Game feel phase 4: the answer loop | `DONE: HANDOFF 37` | Opus 5.5 | F | item 28 | `app/src/components/lesson/`, `app/src/components/exercise/`, `app/src/feedback/` |
-| 30 | Game feel phase 5: finish, chest and boss screens | `HELD` until item 29 is `DONE` | Opus 5.5 | F | item 29 | `app/src/components/lesson/lesson-finish.tsx`, `app/src/components/chest/`, `app/src/components/boss/boss-finish.tsx`, `app/src/screens/chest-screen.tsx` |
-| 31 | Game feel phase 6: the path | `HELD` until item 30 is `DONE` | Opus 5.5 | F | item 30 | `app/src/components/path/`, `app/src/art/path-node-art.tsx`, `app/src/art/colour-swap.json`, `tools/build_icons.py` only if the node decision needs it |
-| 32 | Game feel phase 7: Learn, Profile, empty states and mascot life | `HELD` until item 31 is `DONE` | Opus 5.5 | F | item 31 | `app/src/screens/learn-screen.tsx`, `app/src/screens/profile-screen.tsx`, `app/src/components/profile/`, `app/src/components/onboarding/`, `app/src/art/mascot.tsx` |
-| 33 | Game feel phase 8: close out | `HELD` until items 26 to 32 are `DONE` | Sonnet 5 | F | items 26 to 32 | `docs/README.md`, `docs/incomplete/game-feel/`, `docs/incomplete/app/DESIGN.md`, `HANDOFF.md` |
+| 30 | Game feel phase 5: finish, chest and boss screens, with the chest tap reveal and the mascot's warm line (widened 2026-10-05) | `HELD` until items 46, 48 and 50 are `DONE` | Opus 5.5 | F | items 46, 48 and 50 | `app/src/components/lesson/lesson-finish.tsx`, `app/src/components/chest/`, `app/src/components/boss/boss-finish.tsx`, `app/src/screens/chest-screen.tsx`, `app/src/config/dials.ts` (its own lines in the block `// game-feel second pass`) |
+| 31 | Game feel phase 6: the path, with node popovers, placed mascots and rolling counters (widened 2026-10-05) | `HELD` until item 30 is `DONE` | Opus 5.5 | F | item 30 | `app/src/components/path/`, `app/src/components/stat-bar.tsx`, `app/src/art/path-node-art.tsx`, `app/src/art/colour-swap.json`, `app/src/config/dials.ts` (its own lines in the block `// game-feel second pass`), `tools/build_icons.py` only if the node decision needs it |
+| 32 | Game feel phase 7: Learn, Profile, empty states, mascot life, and every native control left replaced by the kit (widened 2026-10-05) | `HELD` until item 31 is `DONE` | Opus 5.5 | F | item 31 | `app/src/screens/learn-screen.tsx`, `app/src/screens/profile-screen.tsx`, `app/src/components/profile/`, `app/src/components/onboarding/`, `app/src/art/mascot.tsx`, the other `LessonButton` call sites (`app/src/screens/`, `app/src/components/story/story-missing.tsx`), `app/src/components/lesson/lesson-button.tsx` and `wide-label.tsx` (deleted when unused), `app/src/components/lesson/lesson-run-view.tsx` (the leave dialog only), `app/src/components/lives/`, `app/src/components/story/story-button.tsx`, `app/src/components/route-error.tsx`, `docs/conventions-typescript.md` |
+| 33 | Game feel phase 8: close out both passes, items 26 to 32 and 46 to 57 (widened 2026-10-05) | `HELD` until items 26 to 32 and 46 to 57 are `DONE` | Sonnet 5 | F | items 26 to 32 and 46 to 57 | `docs/README.md`, `docs/incomplete/game-feel/`, `docs/incomplete/app/DESIGN.md`, `HANDOFF.md`, `CLAUDE.md` (the test counts left to this item, `HANDOFF.md` step 35) |
 | 34 | Flop in Rive: tune the spike rig, then play it on a perfect finish | `IN FLIGHT` (Phase A done, `HANDOFF 34`; Phase B built on branch `lane-g-flop-rive`, `HANDOFF 36`; the `lesson-finish.tsx` wiring waits on item 29) | Sonnet 5 | G | Zach's yes to Phase B; item 29 for `lesson-finish.tsx` | the Rive file in Zach's account; `app/package.json`, `app/bun.lock`, `app/assets/rive/` (new), `app/src/art/` (a new Rive file only), `app/src/config/dials.ts` (block `// game-feel`), `app/src/components/lesson/lesson-finish.tsx` |
-| 35 | GTO trainer phase 1: game spec, schema and feasibility | `OPEN` | Fable 5.1 | H | nothing | `docs/incomplete/gto-trainer/KEY-SPEC.md`, `solver/` (schema validator stub), `docs/conventions-rust.md` only if the estimate calls for Rust |
-| 36 | GTO trainer phase 2: preflop equity table | `HELD` until item 35 is `DONE` | Opus 5.5 | H | item 35 | `solver/equity.py`, `solver/data/` |
+| 35 | GTO trainer phase 1: game spec, schema and feasibility | `DONE: HANDOFF 41` | Fable 5.1 | H | nothing | `docs/incomplete/gto-trainer/KEY-SPEC.md`, `solver/` (schema validator stub), `docs/conventions-rust.md` only if the estimate calls for Rust |
+| 36 | GTO trainer phase 2: preflop equity table | `OPEN` | Opus 5.5 | H | item 35 (`DONE`) | `solver/equity.py`, `solver/equity_test.py`, `solver/data/`, `docs/conventions-python.md` (the M4 amendment for numpy) |
 | 37 | GTO trainer phase 3a: solver core, one spot | `HELD` until item 36 is `DONE` | Fable 5.1 | H | item 36 | `solver/cfr.py`, `solver/best_response.py` |
 | 38 | GTO trainer phase 3b: the full tree and convergence | `HELD` until item 37 is `DONE` | Fable 5.1 | H | item 37 | `solver/`, the raw strategy output |
 | 39 | GTO trainer phase 4: key export, validation and containment | `HELD` until item 38 is `DONE` | Opus 5.5, then a Fable 5.1 review | H | item 38 | `app/src/gto/key.ts`, `app/src/gto/data/` |
@@ -63,12 +63,34 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 | 43 | GTO trainer phase 8: three new characters | `HELD` until Zach has run the Higgsfield round | Opus 5.5, with Zach | J | Zach's round | `assets/higgsfield-table/`, `assets/gallery.html`, the art module |
 | 44 | GTO trainer phase 9: session flow, stored version 5 and the free allowance | `HELD` until items 41 and 42 are `DONE` | Opus 5.5 | I | items 41 and 42 | `app/src/storage/migrations.ts`, `app/src/config/dials.ts`, the Practice screen, the session and summary routes |
 | 45 | GTO trainer phase 10: copy, runtime pass and close-out | `HELD` until items 35 to 44 are `DONE` | Sonnet 5 | I | items 35 to 44 | `docs/README.md`, `docs/incomplete/gto-trainer/`, `HANDOFF.md` |
+| 46 | Game kit: 3D text, rolling numbers, bubbles, popovers, tags, sparkles, switch, sheet and dialog | `IN FLIGHT` | Opus 5.5 | K | nothing | `app/src/components/kit/` (new), new hook files in `app/src/motion/`, `app/src/theme/tokens.ts`, `app/src/config/dials.ts` (block `// game-feel second pass`), `app/src/app/dev/kit.tsx`, `app/src/screens/dev-kit-screen.tsx`, `docs/conventions-typescript.md` |
+| 47 | Re-voice all twelve sounds as one family of chimes | `DONE: HANDOFF 41` | Opus 5.5 | L | nothing | `tools/build_sounds.py`, `assets/sounds/` |
+| 48 | Redraw the chest in four tiers, closed and open, in a three-quarter view | `IN FLIGHT` | Opus 5.5 | M | nothing | `tools/build_icons.py`, `assets/icons/ui/chest*.svg`, `app/src/art/registry.ts`, `app/src/art/sizes.ts`, `CLAUDE.md` (the icon count) |
+| 49 | Lottie effects from a generator: bursts, confetti, sparkles, fly-ups and a flame | `IN FLIGHT` | Opus 5.5 | N | nothing | `app/package.json`, `app/bun.lock`, `tools/build_lottie.py` (new), `assets/lottie/` (new), the Lottie player and its tests in `app/src/art/`, the `/dev/art` route (`app/src/app/dev/art.tsx`, `app/src/screens/dev-art-screen.tsx`). It edits none of `app/src/config/dials.ts`, `app/src/theme/tokens.ts`, `CLAUDE.md`, `.personal-config.json` or `docs/conventions-typescript.md`: it reports their text |
+| 50 | Chest tier rule: a seeded tier fixed when the chest is ready, a reveal plan and dials | `IN FLIGHT` (part A started 2026-10-05; part B waits on item 46) | Opus 5.5 | Q | item 46, for part B only (both write `app/src/config/dials.ts`) | Part A: `app/src/game/chest.ts` and new chest test files beside it; `app/src/storage/migrations.ts`, `app/src/game/player-state.ts` and a new old-save test only if the stored version must rise. Part B adds `app/src/config/dials.ts` (a chest block) |
+| 51 | The lesson host speaks: the prompt in a speech bubble, and a NEW CONCEPT tag | `IN FLIGHT` (part A started 2026-10-05; part B waits on item 46) | Opus 5.5 | O | item 46, for part B only | `app/src/components/exercise/*` and new test files beside them |
+| 52 | A custom tab bar with generated tab icons and a raised selected tab | `IN FLIGHT` (part A started 2026-10-05; part B waits on items 46 and 48) | Opus 5.5 | P | items 46 and 48, for part B only (`tools/build_icons.py`, `app/src/art/registry.ts`, `tokens.ts`, `dials.ts`) | Part A: `app/src/components/app-tabs.tsx`, the `(tabs)` layout under `app/src/app/`, a new tab bar view in `app/src/components/`. Part B adds `tools/build_icons.py` (tab icons), `assets/icons/ui/tab_*.svg` (new), `app/src/art/registry.ts`, `app/src/art/sizes.ts`, `app/src/theme/tokens.ts`, `app/src/config/dials.ts`, `CLAUDE.md` (the icon count), `docs/conventions-typescript.md` (the registry line) |
+| 53 | Rive: Flop talks, cheers and is sad | `HELD` until item 34 is `DONE` | Sonnet 5 (Zach's choice for the Rive work) | G | item 34 | the Rive file 2632317 in Zach's account; `app/assets/rive/flop.riv` (re-exported from that file only) |
+| 54 | Rive: rig Kicker the squid with the mascot contract | `HELD` until item 53 is `DONE` | Sonnet 5 (Zach's choice) | G | item 53 | a new Rive file in Zach's account; `app/assets/rive/kicker.riv` (new, exported from that file only) |
+| 55 | Rive: rig Ace the shark, the boss, with the contract and a smug mood | `HELD` until item 53 is `DONE` | Sonnet 5 (Zach's choice) | G | item 53 | a new Rive file in Zach's account; `app/assets/rive/ace.riv` (new, exported from that file only) |
+| 56 | Rive: rig the chest in four tiers: a wiggle, a tap shake, an upgrade flash and the opening | `HELD` until item 48 is `DONE` | Sonnet 5 (Zach's choice) | G | item 48 | a new Rive file in Zach's account; `app/assets/rive/chest.riv` (new, exported from that file only) |
+| 57 | Play the rigs in the app: one mascot player, a chest player, static fallbacks | `HELD` until items 30 to 32, 51 and 53 to 56 are `DONE` | Opus 5.5 | F | items 30 to 32 (31 owns `path-greeting.tsx`, 32 owns `mascot.tsx`), 51 and 53 to 56 | `app/src/art/` (the Rive players, their pure modes and tests, `flop-rive.tsx`, `rive-boundary.test.ts`), `app/src/components/exercise/exercise-view.tsx`, `app/src/components/lesson/lesson-finish.tsx`, `app/src/components/boss/boss-finish.tsx`, `app/src/components/chest/`, `app/src/screens/chest-screen.tsx`, `app/src/components/path/path-greeting.tsx`, `app/src/screens/dev-art-screen.tsx`, `app/src/config/dials.ts` (its own lines in the block `// game-feel second pass`), `docs/conventions-typescript.md` (rule U6), `CLAUDE.md` (the `.riv` rule) |
+| 58 | Web app: an Expo web build of the app at felto.app, and the marketing site moved to download.felto.app | `HELD` until Zach answers the five questions in the prompt (the domain first) and items 34 and 49 are `DONE` | Opus 5.5 | R | Zach's answers; items 34 and 49 (they own `app/package.json` and `app/bun.lock`) | `app/package.json`, `app/bun.lock`, `app/app.json`, `app/metro.config.js`, `app/wrangler.jsonc` (new), new `*.web.ts` and `*.web.tsx` files beside the native ones in `app/src/storage/`, `app/src/feedback/`, `app/src/art/` (the Rive file only), `app/src/components/profile/` and `app/src/reminder/`, `app/src/components/app-tabs.tsx` if the web tabs need a branch, `site/src/config.ts`, `site/wrangler.jsonc`, `docs/incomplete/app/DESIGN.md` (one new decision), `docs/README.md`, `HANDOFF.md`, `CLAUDE.md` (the web build command) |
 
 **Do not paste a prompt marked DONE**: a fresh session would build it again.
 
 A `DONE` item's prompt is folded out to the archive at close-out; its row stays here forever,
 with its pointer at the ledger step. `SUPERSEDED` and `SETTLED AS NO` keep their sections:
 the replacement and the reason are written nowhere else. `personal-config fold board` does it.
+
+*Items 46 to 57 were opened 2026-10-05 out of Zach's second game-feel pass
+(`docs/incomplete/game-feel/DESIGN.md` section 9, decisions `GF-10` to `GF-19`; `HANDOFF.md` step
+39; the order of work is `docs/incomplete/game-feel/PLAN.md` section 8). The same day items 30 to
+32 were widened to carry the parts of that pass that land on their screens, and item 33 to close
+out both passes. Lanes K to Q are builders the session of step 39 started, each in its own
+worktree; lane G is the Rive work, on Sonnet 5 by Zach's choice. Item 46 opens the dials block
+`// game-feel second pass`; items 30, 31, 50 and 57 add their own lines to it only after item
+46 is `DONE`, so no two of them write `app/src/config/dials.ts` at once.*
 
 ### 1. Write the Python code standard for the asset generators
 
@@ -1230,9 +1252,324 @@ and the Android emulator, light and dark; the lines "not felt" and "not heard"; 
 copyable blocks, `git add` with the exact files and `git commit` with the same files and a short
 lowercase message.
 
-Items 30 to 33: their prompts are written by the session that closes the item before
-them, from the matching phase in `docs/incomplete/unit-stories/PLAN.md` or
-`docs/incomplete/game-feel/PLAN.md`.
+### 30. Celebrate the finish, chest and boss screens, with the chest's tap reveal and a warm word from the mascot
+
+*Written 2026-10-05 by the board writer of `HANDOFF.md` step 39, from phase 5 of
+`docs/incomplete/game-feel/PLAN.md` and `GF-10` to `GF-17` of its design, section 9. Item 29's
+builder wrote a narrower prompt for this item into its report (step 37); this one replaces it.*
+
+**Model: Opus 5.5. Lane F. Waits on items 46, 48 and 50 (all `DONE`).** Work in a worktree of your
+own, made from `main` after those three are merged (`docs/AGENT-PRACTICES.md` Part 6, the
+fresh-checkout recipe). Use item 47 (chimes, built 2026-10-05) and item 49 (Lottie) if they are
+merged when you start; do not wait for either.
+
+You are picking up felto, a poker-learning game: an asset pipeline in `tools/` (Python, standard
+library only) and an Expo app in `app/` (SDK 57, React Native 0.86.3, TypeScript strict, bun 1.2.9).
+Read `HANDOFF.md` first (environment, code map, the Metro and simulator quirks under "Known facts",
+and the ledger steps of items 46, 48 and 50), then `docs/AGENT-PRACTICES.md`, then
+`docs/conventions-typescript.md` in full, then `docs/incomplete/game-feel/DESIGN.md` sections 8 and
+9 (`GF-1` to `GF-19`) and `PLAN.md` sections 1 to 3, phase 5 and section 8. Session rules,
+restated: never run `git commit`, `git push`, `git add -A` or `git add .`; absolute dates only; no
+em dashes, no contractions and no banned AI words in any document; no drive-by fixes, note them and
+raise them; write `bun run --cwd app <script>`, never `bun --cwd app run <script>`; never hand-edit
+an SVG under `assets/icons/` or `assets/mascots/`; never touch `assets/higgsfield/` or
+`assets/higgsfield-chest/` (reference art, kept as received); never download a file without Zach's
+yes.
+
+**Why this exists.** The end of a lesson, a boss and a chest is the reward, and today it is plain
+text on a white page. Zach wants it to feel like Duolingo Chess: the screen fills with colour,
+numbers roll up, a burst plays, and a character says something warm to you. A friend who saw the
+app asked that it "tell you its proud of you" when you finish a stage (`DESIGN.md` 9.1, photo
+2872). Zach also chose four chest tiers, decided before the chest opens and revealed over at least
+three taps (`GF-13`). Phase 5 of the plan is the base; the second pass adds the kit, the tier art,
+the tier rule and the reveal.
+
+**What is fixed.** Read these before changing anything; do not relitigate them.
+- The lesson finish is `LessonFinish` (`app/src/components/lesson/lesson-finish.tsx:24-41`): the
+  rigged Flop (`FlopRive`, `:29`, which darts on a perfect score, board item 34), a title, a line
+  that already says the fish "is proud of you" (`:32`), `LoganLine` (`:44-48`, the loving line of
+  Logan Mode, `app/src/components/lesson/logan-line.ts:4`, off by default,
+  `app/src/game/player-state.ts:33-35`) and two `Reward` chips (`:51-60`). `Reward` is also drawn
+  by `app/src/components/review/review-finish.tsx:4` and
+  `app/src/components/practice/practice-finish.tsx:4`; a change to it reaches those two screens,
+  which this item does not own, so check them in the screenshots.
+- The boss finish is `BossFinish` (`app/src/components/boss/boss-finish.tsx:23-40`): the shark sad
+  on a pass and smug on a loss (`:29`), copy in `bossFinishCopy` (`:42-52`).
+- The chest today: `ChestScreen` (`app/src/screens/chest-screen.tsx:15-39`) has one native
+  `LessonButton`, "Open the chest" (`:30`), whose press calls `actions.openChest` and
+  `feedback.chestOpen` (`:23-27`); `ChestView` (`app/src/components/chest/chest-view.tsx:21-38`)
+  swaps the chest for a gem; its copy is `chestCopy` (`:40-51`); `chestMoment`
+  (`app/src/components/chest/chest-moment.ts:10-15`) gives `missing`, `closed`, `ready`,
+  `just-opened` and `opened`.
+- The moment colours are tokens with a light and a dark value: `momentFinish`, `momentChest`,
+  `momentBossPass`, `momentBossFail` (`app/src/theme/tokens.ts:33-36`, `:71-74`, `:107-110`). The
+  four moments buzz and play through `useAnswerFeedback`
+  (`app/src/feedback/use-answer-feedback.ts:20-28`); a boss fail gives the rigid tap (BD-G25), an
+  open call for Zach below.
+- `particleCount` (24) and `particleMs` (900) are dials read by no code yet
+  (`app/src/config/dials.ts:56-57`); `reducedMotionSkips` (`:60`) lists `particles`. A new value
+  goes in the block `// game-feel second pass` that item 46 opened (BD-G1).
+- The kit of item 46 lives in `app/src/components/kit/`: `GameText`, `RollingNumber`, `Bubble`
+  (with its `talking` callback), `Sparkles` (ambient and a one-shot burst), `Tag`, `Popover`,
+  `GameSheet`, `GameDialog`. Read its ledger step for the exact names and props, and never build a
+  second one of any piece.
+- Item 48 drew eight chests, drawn by name through `Art`: `chest`, `chest_open`, `chest_rare`,
+  `chest_rare_open`, `chest_mythic`, `chest_mythic_open`, `chest_legendary`,
+  `chest_legendary_open`. Item 50 wrote the rule: a chest's tier and its reveal plan (which taps
+  upgrade, which tap opens), pure and seeded, fixed before the chest opens, with gems by tier as
+  dials. This screen draws what the plan says and decides nothing.
+- Item 49, if merged, plays Lottie bursts, confetti and gem fly-ups through one player in
+  `app/src/art/`; otherwise the kit's burst stands in. Item 47 kept the twelve sound names, so no
+  code changes for the chimes.
+- Reduced motion (`GF-8`): no burst, sparkle, bounce or shake; colour, fades and the final numbers
+  stay. Item 57 will later drive a Rive mouth from the `Bubble`'s `talking` callback, so wire that
+  callback to the mascot's bob now and keep it reachable.
+- `GF-13` carries a condition: nothing in felto sells gems or chests. Nothing here may lead to a
+  purchase.
+
+Do these, in order:
+1. **Full-bleed colour by moment** (phase 5, step 1): finish green, chest gold, boss pass purple,
+   boss fail quiet, from the moment tokens, with text that keeps its contrast in light and dark.
+   If a full-bleed background needs a change outside the files this item owns (`LessonFrame`, the
+   route), stop and ask.
+2. **The finishes**: titles in `GameText`; XP and the streak as `RollingNumber`s that roll from the
+   old value to the new one (the state is written before the roll starts, so a screen closed early
+   still keeps the right number, phase 5 "Watch for"); one burst, once, that never loops.
+3. **The warm line**: on each finish the mascot says one line in a `Bubble`, in the warm register
+   of `D10`, chosen by a pure function in a new file beside `lesson-finish.tsx`, with its test
+   (rule Q1): a perfect lesson, a lesson with mistakes, a boss won, a boss lost. At least one line
+   says the mascot is proud of you (`GF-11`, the friend's ask). Logan Mode's line stays as it is.
+4. **The chest tap reveal** (`GF-13`): the ready chest starts as the common closed chest. Each tap
+   shakes it (an inner view moves, so the tap target stays still, as item 29 did for the rows,
+   `HANDOFF.md` step 37). On the taps the plan names it flashes and becomes the next tier's closed
+   chest, with a `Tag` naming the tier (Rare, Mythic, Legendary). The tap the plan names last
+   opens it: the open chest of the final tier, the tier's gems rolling up, `reward_claim`, and a
+   gem fly-up if item 49 is merged. `openChest` runs once, on the opening tap, never before. A
+   screen reader hears each upgrade and the result. Under reduced motion the tier still changes on
+   the same taps, with no shake and no flash.
+5. **The boss**: a pass has confetti; a loss does not celebrate (phase 5, step 4).
+6. **The chest screen's two buttons** become `PrimaryButton`s (`chest-screen.tsx:28-33`); every
+   other `LessonButton` belongs to item 32.
+7. **Record it**: the next free ledger step (read the number from `HANDOFF.md`; other lanes take
+   numbers too), code map lines, phase 5's `BUILT` header in `PLAN.md` with your build calls as the
+   next free `BD-G` numbers, `As built` notes under `GF-11`, `GF-13`, `GF-16` and `GF-17`, the
+   runtime entries of `PLAN.md` section 8 marked seen or `open`, row 30 `DONE: HANDOFF n`, and item
+   31's prompt checked against what you learned.
+
+Ask before building, in one batch: (a) BD-G25 gives a boss loss the rigid tap; keep it, or a
+softer touch? (b) the warm lines: show Zach every line before it is final (R7). Both are his calls,
+and the answer to either may be no.
+
+Not in scope, whoever asks: the tier rule, the odds and the gems (item 50); the chest art (item
+48); any Rive rig (items 53 to 57); the review and practice finishes beyond the shared `Reward`;
+the path (item 31); every `LessonButton` outside `chest-screen.tsx` (item 32); Logan Mode's line
+or switch; any rule for hearts, XP or the streak; anything that sells.
+
+Hand back: the whole-repo gate from `CLAUDE.md`, green, with the run lines and the test count;
+`git diff --stat -- assets/icons assets/mascots assets/sounds` empty; screenshots on the iOS
+simulator and the Android emulator, light and dark, of the lesson finish (perfect and not), the
+boss won and lost, and the chest at each step of one reveal, each marked "seen running" or "gates
+green" (R10); the reduced-motion chest; the list of copy lines added; the lines "not felt" and "not
+heard"; then the two copyable blocks, `git add -N` first for new files, `git add` with the exact
+files and `git commit` with the same files and a short lowercase message.
+
+### 31. Bring the path to life: node popovers, mascots beside the path, unit colours and rolling counters
+
+*Written 2026-10-05 by the board writer of `HANDOFF.md` step 39, from phase 6 of
+`docs/incomplete/game-feel/PLAN.md` and `GF-10` to `GF-17`.*
+
+**Model: Opus 5.5. Lane F. Waits on item 30 (`DONE`).** Work in a worktree of your own, made from
+`main` after item 30 is merged.
+
+You are picking up felto, a poker-learning game: an asset pipeline in `tools/` (Python, standard
+library only) and an Expo app in `app/` (SDK 57, React Native 0.86.3, TypeScript strict, bun 1.2.9).
+Read `HANDOFF.md` first (environment, code map, the Metro and simulator quirks under "Known facts",
+and the ledger steps of items 30, 46, 48 and 50), then `docs/AGENT-PRACTICES.md`, then
+`docs/conventions-typescript.md` in full (and `docs/conventions-python.md` if the node decision
+touches the generator), then `docs/incomplete/game-feel/DESIGN.md` sections 8 and 9 and `PLAN.md`
+sections 1 to 3, phase 6 and section 8. Session rules, restated: never run `git commit`,
+`git push`, `git add -A` or `git add .`; absolute dates only; no em dashes, no contractions and no
+banned AI words in any document; no drive-by fixes, note them and raise them; write
+`bun run --cwd app <script>`, never `bun --cwd app run <script>`; never hand-edit an SVG under
+`assets/icons/` or `assets/mascots/`, and never trust a preview page as a picture of them; never
+touch `assets/higgsfield/` or `assets/higgsfield-chest/`; never download a file without Zach's yes.
+
+**Why this exists.** The path is the first screen Zach sees each day. The Duolingo Chess photos he
+chose show what he wants it to be (`~/Downloads/IMG_2859.HEIC`, `IMG_2860.HEIC`, `IMG_2864.HEIC`;
+convert a copy with `sips`): nodes in the unit's colour, big characters standing beside the path,
+a popover on a tapped node with the lesson's name and a raised START button, chests along the way,
+and counters that tick. Phase 6 of the plan is the base; `GF-11`, `GF-12`, `GF-16` and `GF-17`
+add the rest.
+
+**What is fixed.** Read these before changing anything; do not relitigate them.
+- `LearnPath` (`app/src/components/path/learn-path.tsx:12-25`) draws, per unit, a `UnitHeader` and
+  then its stops. `PathStopView` (`app/src/components/path/path-stop-view.tsx:22-49`) is a
+  `Pressable` that swings by `sin(index × 0.9)` (`:20`, `:25`) and, on a tap, pushes the stop's
+  route at once (`:33-36`); `stopRoute` reads the time at the tap (BD-12), so a heart that came back
+  counts. `PathNodeArt` draws the node (`app/src/art/path-node-art.tsx`). The view model is
+  `PathStop` and `PathUnit` (`app/src/components/path/path-view-model.ts:13`, `:20`).
+- `UnitHeader` (`app/src/components/path/unit-header.tsx:21-49`) draws "Unit n", the title, the
+  placed line, the story button and the chest (`Art` named `chest`, `:45`), faded until the boss
+  is passed, and opens the chest screen when it is ready (`:27-28`).
+- `PathGreeting` (`app/src/components/path/path-greeting.tsx:16-32`): the fish sleeps or is happy,
+  with three lines in the warm register (`:16-20`).
+- `StatBar` (`app/src/components/stat-bar.tsx:16-33`) shows streak, freezes, XP, lives and gems;
+  the Learn screen draws it (`app/src/screens/learn-screen.tsx:19`), and that screen is item 32's.
+- Phase 6, step 1 is a decision before any art: colour the nodes through the import swap table
+  (`app/src/art/colour-swap.json`) or through a generator change; prefer the swap (`PLAN.md`
+  phase 6). Write it as a `BD` first.
+- The kit of item 46 (`Popover`, `GameText`, `Bubble`, `Sparkles`, `RollingNumber`, `Tag`), the
+  chest art of item 48 and the tier rule of item 50 are built; read their ledger steps. The
+  press haptic and sound go through `useHaptics` and `useSound` with the dials `pressHaptic` and
+  `pressSound` (BD-G18, BD-G20).
+- `GF-12`: mascots stand beside the path between nodes, alternating sides, in a muted version of
+  the unit colour, using the 18 existing poses until the rigs land. No muted art exists. Muting
+  through the app (an opacity over the unit's soft colour, or a tint) needs no new file; a muted
+  variant from `tools/build_mascots.py` is outside this item's files, so stop and ask before it.
+
+Do these, in order:
+1. **The node colour decision** (phase 6, step 1), recorded as a `BD` with its reversal.
+2. **Unit banners and nodes**: the unit title in `GameText` on a band of the unit colour; nodes in
+   the unit colour; a node press that sinks, with the press haptic and sound; the current node
+   pulses and twinkles with ambient `Sparkles` (reduced motion: neither).
+3. **The node popover**: a tap on an open node opens a `Popover` anchored to it, in the unit
+   colour, with the lesson's title, "Lesson n of m" (a pure function with its test if the view
+   model lacks the numbers), and a raised START button showing the XP the lesson can give (from
+   the dials) that does what the tap does today (`stopRoute`, read at the press). A locked node's
+   popover says what opens it and has no button; a boss node names the boss. A tap outside closes
+   it, and a screen reader treats it as modal while it is open.
+4. **Mascots beside the path** (`GF-12`): at least one per unit, between nodes, on the side the
+   path swings away from, muted to the unit colour, decorative for screen readers, never over a
+   node's tap target.
+5. **The greeting**: the fish says the greeting in a `Bubble` (`GF-11`), with a greeting bounce,
+   and points the player at the next lesson. Keep the three lines or offer warmer ones; list every
+   line.
+6. **The counters**: each `StatBar` number rolls with `RollingNumber` when it changes and gives a
+   small tick (phase 6, step 3; reduced motion: the number changes, nothing moves).
+7. **The chest stop**: a closed or ready chest draws as the common closed chest, so the path never
+   gives away a tier before the taps reveal it; an opened chest draws the open chest of the tier it
+   gave (item 50's rule computes it from the seed); a ready chest wiggles and sparkles.
+8. **Record it**: as for item 30, with phase 6's `BUILT` header, `As built` notes under `GF-4` and
+   `GF-12`, row 31 `DONE: HANDOFF n`, and item 32's prompt checked against what you learned.
+
+Ask before building, in one batch: (a) if the swap table cannot carry a node's shading, the
+generator change (outside this item's files unless Zach says yes); (b) whether a ready chest on the
+path may show its tier, which this prompt says no to so the reveal stays a surprise; (c) the
+greeting and popover lines (R7). All three are his calls, and any answer may be no.
+
+Not in scope, whoever asks: `learn-screen.tsx`, the story button and Profile (item 32); the chest
+screen (item 30); the tier rule (item 50); the tab bar (item 52); any Rive rig (item 57); content.
+
+Hand back: the whole-repo gate, green, with the run lines and the test count;
+`git diff --stat -- assets/icons assets/mascots assets/sounds` showing only what the node decision
+meant; screenshots of each unit in its colour, an open popover, a locked popover and the chest
+stops, on both platforms, light and dark, with any changed node SVG rendered itself, not through a
+preview page; the copy lines; then the two copyable blocks, as for item 30.
+
+### 32. Give Learn and Profile colour and life, and replace every native control left with the kit
+
+*Written 2026-10-05 by the board writer of `HANDOFF.md` step 39, from phase 7 of
+`docs/incomplete/game-feel/PLAN.md`, `GF-10` and step 37's list of native controls left.*
+
+**Model: Opus 5.5. Lane F. Waits on item 31 (`DONE`).** Work in a worktree of your own, made from
+`main` after item 31 is merged.
+
+You are picking up felto, a poker-learning game: an asset pipeline in `tools/` (Python, standard
+library only) and an Expo app in `app/` (SDK 57, React Native 0.86.3, TypeScript strict, bun 1.2.9).
+Read `HANDOFF.md` first (environment, code map, "Known facts", step 37, and the ledger steps of
+items 30, 31, 46 and 52), then `docs/AGENT-PRACTICES.md`, then `docs/conventions-typescript.md` in
+full, then `docs/incomplete/game-feel/DESIGN.md` sections 8 and 9 and `PLAN.md` sections 1 to 3,
+phase 7 and section 8. Session rules, restated: never run `git commit`, `git push`, `git add -A` or
+`git add .`; absolute dates only; no em dashes, no contractions and no banned AI words in any
+document; no drive-by fixes, note them and raise them; write `bun run --cwd app <script>`, never
+`bun --cwd app run <script>`; never hand-edit an SVG under `assets/icons/` or `assets/mascots/`;
+never touch `assets/higgsfield/` or `assets/higgsfield-chest/`; never download a file without
+Zach's yes.
+
+**Why this exists.** Zach chose every native control custom ("All, with a custom tab bar too",
+2026-10-05, `GF-10`), because he wants every button and toggle to carry the app's tokens and the
+native `@expo/ui` controls do not (`HANDOFF.md` step 37). Phase 7 of the plan adds life to the
+screens that are left: mascots that idle and greet, colour and the raised button on Learn,
+Profile and onboarding.
+
+**What is fixed.** Read these before changing anything; do not relitigate them.
+- The native controls left, counted 2026-10-05 (step 37, "Native controls left"; recount with
+  `grep -rn "@expo/ui" app/src` and `grep -rn "Alert.alert" app/src` before you start):
+  - `LessonButton` (`app/src/components/lesson/lesson-button.tsx:13-22`, a native `Button` in a
+    `Host` around `WideLabel`) at 14 call sites in 12 files: 11 under `app/src/screens/` and
+    `app/src/components/story/story-missing.tsx`. Item 30 replaced the two in `chest-screen.tsx`.
+    `WideLabel` (`app/src/components/lesson/wide-label.tsx:8`) is also used by
+    `app/src/components/lives/out-of-lives-sheet.tsx:7`, `:49`, `:53`.
+  - The out-of-lives sheet: a native `BottomSheet` with two native `Button`s
+    (`out-of-lives-sheet.tsx:1`, `:28-56`).
+  - Two `Alert.alert` dialogs: `confirmReset`
+    (`app/src/components/profile/use-profile-controls.ts:36-45`) and `confirmLeave`
+    (`app/src/components/lesson/lesson-run-view.tsx:130-141`).
+  - Four Profile switches: Sound effects, Haptics, Logan Mode and Daily reminder
+    (`app/src/components/profile/settings-section.tsx:36-39`).
+  - The reminder time pickers: `DatePicker` on iOS (`reminder-time.ios.tsx:1`) and
+    `DateTimePicker` on Android (`reminder-time.android.tsx:2`, `:28`), opened through
+    `use-time-dialog.ts`, all in `app/src/components/profile/`.
+  - The Profile form: `FieldGroup` (`app/src/screens/profile-screen.tsx:1`, `:39-59`) and its
+    sections with `ListItem` (`freeze-shop-section.tsx:1`, which also has a native `Button`,
+    `reset-section.tsx:1`, `profile-stats-section.tsx:1`, `recovered-section.tsx:1`,
+    `settings-section.tsx:1`); `profile-frame.tsx` and `form-modifiers.*.ts` exist for the native
+    form (`profile-frame.tsx:17`).
+  - `app/src/components/story/story-button.tsx:1`, `:20-22` (an outlined `Button` in a `Host`) and
+    `app/src/components/route-error.tsx:2`, `:19-21` (the retry `Button`).
+  - Not this item's: `NativeTabs` (item 52) and `app/src/screens/dev-art-screen.tsx:3`, a
+    development route (items 49 and 57).
+- The kit of item 46 provides `GameSwitch`, `GameSheet` and `GameDialog`; `PrimaryButton`
+  (`app/src/components/button/primary-button.tsx`, registry Z5) is the raised button. Read item
+  46's ledger step for a secondary or outlined variant before you make one.
+- The leave dialog is the only change in `lesson-run-view.tsx`: the guards there and in
+  `session-steps.ts` stay, and `lesson-run.test.ts`, `session-steps.test.ts` and
+  `session-order.test.ts` pass untouched. Android's back reaches `useHardwareBack`
+  (`app/src/components/lesson/use-hardware-back.ts`) and asks to leave; it must still do so.
+- Accessibility was free with the native pieces and is now written by hand (`GF-10`, "Against"):
+  the switch role and state, a sheet or dialog that is modal with focus moved in and back, and
+  Android's back closing a sheet or dialog. The custom feedback sheet is the precedent
+  (`use-sheet-focus.ts`, `LessonFrame`'s `overlay`, BD-G30).
+- Mascot life: the dials `idleBobDistance` (3) and `idleBobMs` (2400) exist and no code reads them
+  (`app/src/config/dials.ts:54-55`); `bob` is in `reducedMotionSkips` (`:60`). `Mascot` is the one
+  mascot component (`app/src/art/mascot.tsx:12-14`, `D4`); item 57 later moves it to the rigs, so
+  keep its props.
+
+Do these, in order:
+1. **Recount** the list above with the two `grep`s and note any change.
+2. **Buttons**: replace `LessonButton` at its 12 remaining call sites, `StoryButton`'s button and
+   the retry button with `PrimaryButton` or the kit's variant; then delete `lesson-button.tsx` and
+   `wide-label.tsx` once nothing imports them.
+3. **The out-of-lives sheet** becomes a `GameSheet` with the two buttons; the offer rule
+   (`out-of-lives-offer.ts`) does not change.
+4. **The two dialogs** become `GameDialog`s with the same copy, the safe choice first, and the
+   destructive choice in the wrong colour.
+5. **Profile**: a token form (sections, rows, the stats and the freeze shop), `GameSwitch` for the
+   four switches, and a token time picker for the reminder, its shape your build call with a
+   reversal. The Settings help line keeps its place under the switches (BD-G16).
+6. **Mascot life** (phase 7, step 1): an idle bob through `Mascot` from the two dials, and mascots
+   on the empty and recovered states, with the existing poses.
+7. **Learn, Profile and onboarding** take the colours, `GameText` titles and the raised button.
+8. **The standard**: in `docs/conventions-typescript.md`, update registry entries Z5 to Z7 and
+   what U2 and U3 now bind, and raise the version.
+9. **Record it**: the next free ledger step, code map lines (deleted files out), phase 7's `BUILT`
+   header, an `As built` note under `GF-10`, row 32 `DONE: HANDOFF n`, and item 33's prompt.
+
+Ask before building: the reminder picker's shape (a wheel, or steppers for the hour and the
+minute), shown to Zach as a screenshot from `/dev/kit` or a sketch before it is built into Profile.
+It is his call, and the answer may be to keep that one native.
+
+Not in scope, whoever asks: the tab bar (item 52); the chest screen (item 30); the path and the
+stat bar (item 31); any Rive rig (item 57); the development routes; any game rule; the stored
+shape.
+
+Hand back: the whole-repo gate, green, with the run lines and the test count; the two `grep`s
+showing only the development route (and `app-tabs.tsx` if item 52 is not yet merged); screenshots
+of every replaced control on both platforms, light and dark; the screen-reader checks written as
+seen or `open`; then the two copyable blocks, as for item 30.
+
+Item 33's prompt is written by the session that closes the last of items 30 to 32 and 46 to 57,
+from phase 8 of `docs/incomplete/game-feel/PLAN.md` and its section 8.
 
 ## Item 34: Flop in Rive
 
@@ -1468,4 +1805,965 @@ Hand back: `bun run --cwd app typecheck && bun run --cwd app lint && bun run --c
 green and unchanged (63 test files, 490 tests, or the live count if another item moved it);
 `KEY-SPEC.md` complete and the cold review's answer recorded in it; every acceptance band
 carries a source and a date; then the two copyable blocks, with `git add -N` first for new
+files.
+
+### 36. Build the preflop equity table and the deal weights the solver reads
+
+**Model: Opus 5.5. Lane H. Waits on nothing (item 35 is `DONE: HANDOFF 41`).** Run it in its own
+worktree if another lane is open; it writes only under `solver/` and one paragraph of
+`docs/conventions-python.md`.
+
+You are picking up felto, a poker-training app. Read, in order: `HANDOFF.md` (Environment, Code
+map, then steps 38 to 41), `docs/incomplete/gto-trainer/KEY-SPEC.md` in full (the game and the
+schema; section 3.3 is this item's contract), `docs/incomplete/gto-trainer/PLAN.md` section 1
+(BD-T1 to BD-T19) and phase 2, `docs/AGENT-PRACTICES.md`, then `docs/conventions-python.md` in
+full. Session rules: never run `git commit`, `git push`, `git add -A` or `git add .`; print the
+two copyable blocks at the end (`git add -N` then `git add` the exact files you touched, then
+`git commit` the same files with a short lowercase message, with no `Co-Authored-By` line and no
+"Generated with" line). Talk to Zach in ASD-STE100 Simplified Technical English. Documents you
+write have no em dashes and no contractions. Ask Zach in chat, in one batch, before any decision
+that is his.
+
+**Why this exists.** The solver (items 37 and 38) values every leaf of its tree from two 169 by
+169 tables: the equity of one hand class against another when both see five cards with no more
+betting, and the number of ways the two classes can be dealt without sharing a card. Both are
+pure arithmetic with one right answer, and every later number in the trainer rests on them. A
+wrong cell here is a wrong strategy later that no gate can see.
+
+**What is fixed.** Read these; do not relitigate them.
+- The 169 classes and their order are `allHandClasses()` in `app/src/cards/hand-class.ts:16-22`
+  (`AA`, `AKs`, `AKo`, `AQs`, `AQo`, down to `22`); `solver/validate_key.py` builds the same list
+  as `HANDS` and is the Python source of that order. Every table this item writes uses it for
+  rows and columns.
+- `E[h][g]` is the share of the pot class `h` wins against class `g`, a tie counting a half,
+  averaged over every pair of combinations of `h` and `g` that share no card and every five-card
+  board from the other 48 cards (`KEY-SPEC.md` 3.3). `W[h][g]` is the count of ordered pairs of
+  combinations of `h` and `g` with no shared card; the sum of all of `W` is 1,326 × 1,225
+  (`KEY-SPEC.md` 3.3).
+- The solver is Python with numpy (BD-T3, BD-T16). This is the first file in the repo to import
+  numpy, and `docs/conventions-python.md` rule M4 says standard library only: the scope paragraph
+  of that standard (version 1.2.2) says this item brings a dated amendment to M4 naming `solver/`
+  as the one place a third-party import is allowed, and bumps the version. Do that before the
+  first numpy line. numpy is 2.4.3 at `/opt/homebrew/bin/python3` (Python 3.14.6).
+- Output is a committed file with a header naming the date, the method and the error bound
+  (`PLAN.md` phase 2). Determinism holds as it does for the generators (rules G1 and G4): the
+  same source writes the same bytes; a sampling method fixes its seed in the source.
+- The Python side has no test runner. This item introduces one for `solver/` only: the standard
+  library's `unittest`, run as `python3 -m unittest discover -s solver -p '*_test.py'`. Record
+  the command in `HANDOFF.md` Environment and in the ledger step; do not add it to the whole-repo
+  gate without asking Zach (that is his call, listed below).
+- Hand evaluation exists in TypeScript (`app/src/cards/evaluate.ts`) and not in Python. Write
+  the Python evaluator fresh; the TypeScript one is a cross-check, not an import.
+
+Do these, in order:
+1. **Amend M4.** One dated paragraph under rule M4 in `docs/conventions-python.md`: `solver/`
+   may import numpy, by BD-T3; nowhere else may; version 1.3.0 (a rule changed). Keep the rule's
+   correct and incorrect examples as they are and add the `solver/` import as a second correct
+   example once it exists.
+2. **Write `solver/equity.py`.** Module-level constants and tables, the work in `main()`, no
+   type hints, helpers at most 15 lines, a docstring that states what it computes, the method,
+   and the run command `python3 solver/equity.py` (rules M1 to M4, H2, H3). Choose exact
+   enumeration with suit symmetry, or sampling with a stated bound; state which in the header and
+   in the ledger. If sampling, the bound must keep the equity error under 0.002, because a 5.5 bb
+   pot turns an equity error of 0.001 into 0.0055 bb, the size of the solver's stop dial
+   (`gtoExploitabilityBb`, 0.005). Write `E` and `W` to `solver/data/` as JSON: a `meta` object
+   (date, method, bound, the hand order's source) and two 169 by 169 nested arrays, equities to
+   six decimals, counts as integers. Print the run line with what it wrote.
+3. **Write `solver/equity_test.py`.** Tests that do not read the answer from the file under test:
+   `E[h][g] + E[g][h]` is 1 for every pair, within the bound; `E[h][h]` is 0.5; `W` is symmetric,
+   its total is 1,326 × 1,225, and a row of `W` for a pair sums to 6 × 1,225 and so on for suited
+   (4) and offsuit (12) classes; ten matchups each agree with an independent Monte Carlo estimate
+   computed inside the test (a second, plain evaluator over random boards, 200,000 samples, bound
+   0.01), including `AA` against `KK`, `AKs` against `QQ`, `AKo` against `22`, `72o` against `AA`,
+   `JTs` against `AKo`, `55` against `AKs`; and the three class-size identities hold. The
+   independent evaluator is the point: a test that compares the table to itself proves nothing.
+4. **Run and record.** `python3 solver/equity.py` twice; the two outputs are byte-identical
+   (`cmp`). The unittest command above passes. The app gate (`bun run --cwd app typecheck && bun
+   run --cwd app lint && bun run --cwd app test`) is green and unchanged, because nothing under
+   `app/` changes. Record the run time and the file sizes.
+5. **Get the five-matchup check.** `PLAN.md` phase 2's proof: a Default (Opus 5.5) subagent in
+   its own worktree, read-only, picks five matchups the builder did not, computes each with its
+   own method and compares to the table within the bound. Check its diffstat when it returns.
+   Record the five and the result.
+6. **Record it.** Append the next free `HANDOFF.md` step (read the file for the number), add
+   `solver/equity.py`, `equity_test.py` and `solver/data/` to the code map, set the plan's phase 2
+   header to `BUILT` with the date, mark this row `DONE: HANDOFF n`, write item 37's prompt (phase
+   3a: the solver core on one spot, Fable 5.1) below this one, and flip item 37 to `OPEN`.
+
+Ask before building: (a) whether the unittest command joins the whole-repo gate in `CLAUDE.md`
+and `gateCommand` now or when the solver lands; (b) exact enumeration against sampling, if your
+first timing of exact enumeration is over about thirty minutes (the plan allows either; the
+bound is what matters). Both are his calls, and either answer may be no.
+
+Not in scope, whoever asks: any solver code (CFR, best response, the tree); any file under
+`app/`; the realization model; the acceptance bands; any change to `KEY-SPEC.md` other than the
+`equity_table_sha256` note in section 7.1 if it needs one.
+
+Hand back: the app gate green and unchanged; `python3 -m unittest discover -s solver -p
+'*_test.py'` green; two runs byte-identical; the five-matchup check recorded; then the two
+copyable blocks, with `git add -N` first for the new files.
+
+## Items 46 to 57: the second game-feel pass
+
+*Opened 2026-10-05, out of four messages from Zach and 13 photos (`docs/incomplete/game-feel/DESIGN.md`
+section 9 quotes them; decisions `GF-10` to `GF-19`). The order of work is
+`docs/incomplete/game-feel/PLAN.md` section 8. The prompts of items 46 to 52 are the briefs the
+session of `HANDOFF.md` step 39 wrote and started builders on, copied here as written except for
+the heading level; the board writer of that session wrote items 53 to 57. Items 30 to 33, above,
+carry the rest of the pass on their screens.*
+
+### 46. Build the game kit: 3D text, rolling numbers, bubbles, popovers, sparkles, switch, sheet and dialog
+
+**Model: Default (Opus 5.5). Lane K. Waits on nothing.** Work in a worktree of your own; the fresh-checkout recipe of `docs/AGENT-PRACTICES.md` Part 6 runs first.
+
+You are picking up felto, a poker-learning game: an asset pipeline in `tools/` (Python, standard
+library only) and an Expo app in `app/` (SDK 57, React Native 0.86.3, TypeScript strict, bun 1.2.9).
+Read `HANDOFF.md` first (environment, code map, the Metro and simulator quirks under "Known facts"),
+then `docs/AGENT-PRACTICES.md`, then `docs/conventions-typescript.md` in full, then `docs/incomplete/game-feel/DESIGN.md`
+sections 8 and 9 (`GF-1` to `GF-19`) and `PLAN.md` sections 1 to 3. If your checkout was made
+before section 9 and this prompt were committed, read both in the main checkout at
+`/Users/zachshort/Projects/felto` (the design file and `PASSOFF.md`). Session rules, restated: never
+run `git commit`, `git push`, `git add -A` or `git add .`; absolute dates only; no em dashes, no
+contractions and no banned AI words in any document; no drive-by fixes, note them and raise them;
+write `bun run --cwd app <script>`, never `bun --cwd app run <script>`; never hand-edit an SVG under
+`assets/icons/` or `assets/mascots/`; never touch `assets/higgsfield/` or `assets/higgsfield-chest/`
+(reference art, kept as received); never download a file without Zach's yes.
+
+**Why this exists.** Zach wants the app to look and feel like Duolingo: custom, colourful pieces
+that carry the app's tokens, characters that speak in bubbles, numbers that roll, big 3D game text
+and sparkles (`GF-10`, `GF-11`, `GF-16`, `GF-17`). Every later item (30, 31, 32, 51, 52) builds its
+screens from this kit, so this item builds the pieces and a page that shows them, and wires them
+into no existing screen.
+
+**What is fixed.** Read these before changing anything; do not relitigate them.
+- `app/src/motion/` is the only importer of Reanimated (`motion-boundary.test.ts`, BD-G13). Its
+  hooks are declarative: they play when a flag turns true (BD-G21). `useReducedMotion` is the one
+  reader of Reduce Motion (BD-G4); `motionAllowed(kind, reduced)` and the dial `reducedMotionSkips`
+  decide what is skipped (BD-G10). Copy these patterns; add new hooks as new files.
+- `PrimaryButton` (`app/src/components/button/primary-button.tsx`) is the raised button: face on a
+  darker edge, a press that sinks it, the press haptic and sound through dials (BD-G18, BD-G20).
+  New pressable pieces use it or its pattern.
+- The feedback sheet (`app/src/components/lesson/feedback-sheet.tsx`, `use-sheet-focus.ts`,
+  `LessonFrame`'s `overlay`) is the house pattern for a custom sheet with screen-reader focus.
+- Every colour and size is a token with a light and a dark value (`app/src/theme/tokens.ts`, rule
+  U5); every motion value is a dial (`app/src/config/dials.ts`, BD-G1). Add one new dials block
+  under a comment `// game-feel second pass`, after the `// game-feel` block.
+- `app/assets/fonts/FeltoRank.ttf` is Nunito ExtraBold with the full Latin set (checked
+  2026-10-05 with `fc-query`: every ASCII letter and digit). Use it as the display face of
+  `GameText`; do not download another font.
+- The unit colours exist as tokens (`GF-4`, `session-colour.ts`).
+
+Do these, in order:
+1. **`GameText`**: text in `FeltoRank` with a thick outline and a darker extrusion below it, in
+   the style of the "2000" of `~/Downloads/IMG_2862.HEIC` (convert with `sips` to look at it). Sizes
+   and colours from tokens; one tone per use (gold, green, unit colour). Screen readers read the
+   text once, not once per layer.
+2. **`RollingNumber`**: an odometer that rolls each digit to a new value, up or down, over a dial
+   time, in `GameText` or plain text. Reduced motion shows the new value at once. The final value
+   is right even if the view unmounts mid-roll.
+3. **`Bubble`**: a speech bubble with a tail on any side, the surface and border from tokens, a key
+   word highlighted in a colour (photo 2865), and text that types out at a dial speed. It reports
+   `talking` (true while typing) through a callback, so a mascot can bob now and move a Rive mouth
+   later (`GF-11`, `GF-19`). A tap finishes the typing at once. Reduced motion shows the text whole.
+4. **`Popover`**: a card anchored to a point with an arrow, springing in from it, in a given
+   colour, holding a title, a line and a raised white button (photo 2864, "START +20 XP").
+   A tap outside closes it; it is a modal for screen readers while open.
+5. **`Tag`**: a small pill for "NEW", "+20 XP" and the like.
+6. **`Sparkles`**: an ambient layer of four-point stars that twinkle in a box (count, size and
+   period as dials), and a one-shot burst. SVG shapes moved by Reanimated (`BD-G5`); item 49 may
+   later move the burst to Lottie. Reduced motion draws nothing (`GF-8`, `GF-17`). Nothing loops
+   while the view is off screen or unmounted.
+7. **`GameSwitch`**, **`GameSheet`** and **`GameDialog`**: a token switch with the switch role and
+   its state for screen readers; a bottom sheet base drawn the way the feedback sheet is; a dialog
+   with a title, a line and one or two buttons, to replace `Alert.alert` later.
+8. **A page that shows the kit**: a thin route `app/src/app/dev/kit.tsx` rendering
+   `app/src/screens/dev-kit-screen.tsx` (rule U1), with every piece in each state, and buttons that
+   replay each animation.
+9. **Registry.** Add entry Z7 to the sanctioned divergence registry of
+   `docs/conventions-typescript.md` for the kit (`GF-10`), and raise its version.
+10. **Record it.** As a subagent of a lead session: do not edit `HANDOFF.md`, `PASSOFF.md` or
+   `PLAN.md`; your final report is the record. As a session of your own: append the next free
+   ledger step (read the number from the file), add the files to the code map, set row 46 to
+   `DONE: HANDOFF n`, and write your build calls into `PLAN.md` section 1 as the next free `BD-G`
+   numbers.
+
+Ask before building: nothing; every call this item needs is in `GF-10` to `GF-17`. Make each
+build-level call yourself and report it with a one-line reversal.
+
+Not in scope, whoever asks: wiring any piece into an existing screen; the tab bar (item 52); the
+reminder time pickers (item 32); Lottie (item 49); any change to `assets/`; any game rule.
+
+Hand back: the whole-repo gate of `CLAUDE.md`, green, with its run lines and test counts; tests
+for every pure part (the digit steps of the roll, the typing steps, the anchor and arrow maths) in
+new files named for each feature (rule Q1); screenshots of `/dev/kit` on the iPhone simulator in
+light and dark (Android is `open` unless an emulator is free); the list of files touched; every
+build call with its reversal; and the two commit blocks of Part 11, which Zach runs.
+
+### 47. Re-voice all twelve sounds as one family of pleasant chimes
+
+**Model: Default (Opus 5.5). Lane L. Waits on nothing.** Work in a worktree of your own.
+
+You are picking up felto, a poker-learning game: an asset pipeline in `tools/` (Python, standard
+library only) and an Expo app in `app/` (SDK 57, React Native 0.86.3, TypeScript strict, bun 1.2.9).
+Read `HANDOFF.md` first (environment, code map, the Metro and simulator quirks under "Known facts"),
+then `docs/AGENT-PRACTICES.md`, then `docs/conventions-python.md` in full, then `docs/incomplete/game-feel/DESIGN.md`
+sections 8 and 9 (`GF-1` to `GF-19`) and `PLAN.md` sections 1 to 3. If your checkout was made
+before section 9 and this prompt were committed, read both in the main checkout at
+`/Users/zachshort/Projects/felto` (the design file and `PASSOFF.md`). Session rules, restated: never
+run `git commit`, `git push`, `git add -A` or `git add .`; absolute dates only; no em dashes, no
+contractions and no banned AI words in any document; no drive-by fixes, note them and raise them;
+write `bun run --cwd app <script>`, never `bun --cwd app run <script>`; never hand-edit an SVG under
+`assets/icons/` or `assets/mascots/`; never touch `assets/higgsfield/` or `assets/higgsfield-chest/`
+(reference art, kept as received); never download a file without Zach's yes.
+
+**Why this exists.** Zach played the sounds in the app and wants "more pleasent chimes instead of
+just high pitched blips" (2026-10-05). He chose all twelve, as one family (`GF-14`).
+
+**What is fixed.** Read these before changing anything; do not relitigate them.
+- `tools/build_sounds.py` writes the twelve WAV files of `assets/sounds/` (16-bit mono, 44,100 Hz),
+  standard library only (`math`, `os`, `struct`, `wave`), deterministic. `CEILING` (one second,
+  `D15`) and `SHORT_CEILING` (0.6 s, `GF-5`) bound each effect, and `checked()` stops the run when
+  one is too long (`PLAN.md` BD-G19). Keep the twelve names, the file format and both ceilings: the
+  app loads the files by name (`app/src/art/sounds.ts`) and no app file changes in this item.
+- The docstring gives each effect's pitches, timing and peak. Rewrite it for the new sounds.
+- The feel lines Zach chose for the six short sounds on 2026-10-05 are in `DESIGN.md` under
+  `GF-5`. `GF-14` replaces how they sound, not what each one is for.
+- No agent can hear a sound. A sound is proven only when Zach plays it
+  (`afplay assets/sounds/<name>.wav`) and says yes (`CLAUDE.md`).
+
+Do these, in order:
+1. **Measure the sounds as they are.** For each file, with the standard library: length, peak,
+   and the dominant frequency (a short DFT over the loudest 50 ms is enough). This table is the
+   "before" of the hand-back.
+2. **One chime voice.** A bell or glass tone from a few partials with slightly inharmonic ratios, a
+   soft attack (5 to 15 ms), an exponential decay, and a gentle fade to silence (no click at the
+   end). Fundamentals in a warm register: nothing above about 1,600 Hz as a fundamental, most notes
+   between about 260 and 1,050 Hz. Every note of every effect is from one major key, so any two
+   sounds can play together.
+3. **The happy sounds as chimes**: `answer_right` (two notes rising), `lesson_finish` and
+   `boss_pass` (a short arpeggio that resolves, the boss one fuller), `chest_open` (a rising run with
+   a shimmer), `reward_claim` (two notes up a fifth, then a shimmer), `sparkle` (three or four airy
+   notes falling, quiet), `option_select` (one soft note), `xp_tick` (a tiny bell, made to repeat
+   fast without fatigue).
+4. **The others**: `tap` a soft wooden knock (a short filtered noise burst on a low tone, under
+   60 ms); `answer_wrong`, `heart_lost` and `boss_fail` soft low tones that fall, never a buzz or a
+   square wave, quieter than the happy ones.
+5. **Measure again** and check: every file under its ceiling, the run deterministic (two runs, the
+   same `shasum` for all twelve), peaks between 0.3 and 0.6.
+6. **Record it.** As a subagent of a lead session: do not edit `HANDOFF.md`, `PASSOFF.md` or
+   `PLAN.md`; your final report is the record. As a session of your own: append the next free
+   ledger step, set row 47 to `DONE: HANDOFF n`, and add an `As built` note under `GF-14`.
+
+Ask before building: nothing; `GF-14` is Zach's answer. Report the voice you chose so he can
+change it in one line.
+
+Not in scope, whoever asks: new effect names, longer ceilings, any file under `app/`, recorded or
+downloaded audio.
+
+Hand back: the whole-repo gate of `CLAUDE.md`, green; the before and after table (length, peak,
+dominant frequency, per file); the two `shasum` runs; `git diff --stat -- assets/icons
+assets/mascots assets/sounds` showing only the twelve WAV files; the line "not heard: Zach plays
+each with afplay"; and the two commit blocks of Part 11.
+
+### 48. Redraw the chest in four tiers, closed and open, in a three-quarter view
+
+**Model: Default (Opus 5.5). Lane M. Waits on nothing.** Work in a worktree of your own.
+
+You are picking up felto, a poker-learning game: an asset pipeline in `tools/` (Python, standard
+library only) and an Expo app in `app/` (SDK 57, React Native 0.86.3, TypeScript strict, bun 1.2.9).
+Read `HANDOFF.md` first (environment, code map, the Metro and simulator quirks under "Known facts"),
+then `docs/AGENT-PRACTICES.md`, then `docs/conventions-python.md` and `docs/conventions-typescript.md` in full, then `docs/incomplete/game-feel/DESIGN.md`
+sections 8 and 9 (`GF-1` to `GF-19`) and `PLAN.md` sections 1 to 3. If your checkout was made
+before section 9 and this prompt were committed, read both in the main checkout at
+`/Users/zachshort/Projects/felto` (the design file and `PASSOFF.md`). Session rules, restated: never
+run `git commit`, `git push`, `git add -A` or `git add .`; absolute dates only; no em dashes, no
+contractions and no banned AI words in any document; no drive-by fixes, note them and raise them;
+write `bun run --cwd app <script>`, never `bun --cwd app run <script>`; never hand-edit an SVG under
+`assets/icons/` or `assets/mascots/`; never touch `assets/higgsfield/` or `assets/higgsfield-chest/`
+(reference art, kept as received); never download a file without Zach's yes.
+
+**Why this exists.** Zach wants the chest "better looking and more three d" and in four tiers:
+wood (common), blue (rare), red (mythic), gold (legendary) (`GF-13`). He approved reference art
+generated with Higgsfield on 2026-10-05.
+
+**What is fixed.** Read these before changing anything; do not relitigate them.
+- The references, kept as received in the main checkout:
+  `/Users/zachshort/Projects/felto/assets/higgsfield-chest/chest-5-tiers-closed.png` and
+  `chest-6-tiers-open.png` (the four tiers), with `chest-1-closed.png` and `chest-2-open.png`
+  for detail. Convert a copy with `sips` into a scratch folder to look at it; never write into that
+  folder.
+- `ui_chest` in `tools/build_icons.py` (about `:343-357`) draws today's flat front-view chest
+  through `solid()`, the shared extrusion. The house style: no outlines, solid fills, a darker
+  extrusion down and to the right, a hard pale shadow, one gloss highlight
+  (`tools/build_icons.py:4-6`). `ui_gem` and the chip drawing in the same file are the gems and
+  chips to put inside an open chest.
+- The pale shadow colour is swapped for dark mode at import (`app/src/art/colour-swap.json`,
+  BD-25): use the shared `SHADOW` constant so the swap still finds it.
+- Generated SVGs only: change the generator and run it, never edit an SVG (`CLAUDE.md`). The
+  Python standard `docs/conventions-python.md` applies to every line you write.
+- The app draws `chest` by name (`app/src/art/registry.ts`; `sizes.ts` holds each viewBox and
+  `sizes.test.ts` checks them against the files). Screens that show a chest belong to items 30
+  and 31; do not touch them.
+
+Do these, in order:
+1. **One chest drawing with a palette.** A three-quarter view as in the references: the front, the
+   right side (darker) and the top of a rounded barrel lid (lighter) visible, wooden planks or
+   panels, thick bands that wrap over the lid and down the front, rounded corners, a lock plate.
+   A palette per tier: wood with gold bands; blue with gold bands; red with gold bands and a white
+   gem on the lock; gold with amber bands, white diamond studs, a red gem on the lock and two small
+   sparkles.
+2. **Open variants**: the lid flipped back showing its dark inside, a soft glow, and contents that
+   grow with the tier (a few gems; more gems; gems and chips; an overflowing heap with sparkles).
+3. **Names.** `chest.svg` stays the name of the common closed chest, so no screen changes; add
+   `chest_open`, `chest_rare`, `chest_rare_open`, `chest_mythic`, `chest_mythic_open`,
+   `chest_legendary` and `chest_legendary_open`. Register all eight in `registry.ts` and their
+   viewBoxes in `sizes.ts`.
+4. **Look at every one.** Render each new SVG file itself (`qlmanage -t -s 400 -o <scratch>
+   <file>`, or the browser pane), never a preview page, and compare it with the references in a
+   light and a dark render (swap the shadow colour as BD-25 does). Iterate until each reads as a
+   chunky 3D chest at 48 points as well as at 200.
+5. **Counts.** The icon generator's run line rises from 78; update the count in `CLAUDE.md` (the
+   directory map and the gate note) to the new number.
+6. **Record it.** As a subagent of a lead session: do not edit `HANDOFF.md`, `PASSOFF.md` or
+   `PLAN.md`; your final report is the record. As a session of your own: append the next free
+   ledger step, set row 48 to `DONE: HANDOFF n`, and add an `As built` note under `GF-13`.
+
+Ask before building: nothing. Report every drawing call (the angle, the palette hex values, the
+names) so Zach can change one in a line.
+
+Not in scope, whoever asks: the chest rule and the tap reveal (item 50 and item 30); any screen;
+Rive (item 56); any mascot.
+
+Hand back: the whole-repo gate of `CLAUDE.md`, green, with the new run line; `git diff --stat --
+assets/icons assets/mascots assets/sounds` showing only the chest files; one rendered PNG of all
+eight chests side by side, light and dark, saved outside the repo and its path given; and the two
+commit blocks of Part 11.
+
+### 49. Add Lottie effects from a generator: bursts, confetti, sparkles, fly-ups and a flame
+
+**Model: Default (Opus 5.5). Lane N. Waits on nothing.** Work in a worktree of your own. Use a
+simulator other than the one item 46 uses (item 46 uses the iPhone 17 Pro).
+
+You are picking up felto, a poker-learning game: an asset pipeline in `tools/` (Python, standard
+library only) and an Expo app in `app/` (SDK 57, React Native 0.86.3, TypeScript strict, bun 1.2.9).
+Read `HANDOFF.md` first (environment, code map, the Metro and simulator quirks under "Known facts"),
+then `docs/AGENT-PRACTICES.md`, then `docs/conventions-python.md` and `docs/conventions-typescript.md` in full, then `docs/incomplete/game-feel/DESIGN.md`
+sections 8 and 9 (`GF-1` to `GF-19`) and `PLAN.md` sections 1 to 3. If your checkout was made
+before section 9 and this prompt were committed, read both in the main checkout at
+`/Users/zachshort/Projects/felto` (the design file and `PASSOFF.md`). Session rules, restated: never
+run `git commit`, `git push`, `git add -A` or `git add .`; absolute dates only; no em dashes, no
+contractions and no banned AI words in any document; no drive-by fixes, note them and raise them;
+write `bun run --cwd app <script>`, never `bun --cwd app run <script>`; never hand-edit an SVG under
+`assets/icons/` or `assets/mascots/`; never touch `assets/higgsfield/` or `assets/higgsfield-chest/`
+(reference art, kept as received); never download a file without Zach's yes.
+
+**Why this exists.** Zach asked to "use lottie more for animations if possible", fun and game
+styled (2026-10-05). `GF-15` settles it: effects are Lottie files written by a deterministic
+generator in this repo, played through the art module; numbers roll with Reanimated (item 46), not
+Lottie.
+
+**What is fixed.** Read these before changing anything; do not relitigate them.
+- Art is made by code in this repo: generators in `tools/`, standard library only, deterministic,
+  and checked in the whole-repo gate (`CLAUDE.md`). `docs/conventions-python.md` applies to the new
+  generator. `tools/common.py` and `tools/build_icons.py` hold the palette; take colours from them
+  and cite the lines.
+- Only `app/src/art/` imports art and art runtimes (rule U6; `rive-boundary.test.ts` is the
+  precedent for a boundary test). The app reaches `assets/` through `@art/*` (BD-6, BD-7).
+- Reduced motion is read only by `useReducedMotion` in `app/src/motion/`, and `motionAllowed`
+  decides (BD-G4, BD-G10). A burst is skipped under reduced motion (`GF-8`).
+- A new native dependency needs a rebuild of the development build (`HANDOFF.md`, Environment:
+  CocoaPods needs `LANG=en_US.UTF-8`). Follow "Known facts" on the shared Metro cache: your own
+  `TMPDIR`, `--clear`, and a free port (8084 or the next free one).
+- Other items run at the same time and own these files, so do not edit them: `app/src/config/dials.ts`,
+  `app/src/theme/tokens.ts`, `docs/conventions-typescript.md`, `CLAUDE.md`, `.personal-config.json`,
+  `app/src/app/dev/kit.tsx`. Report the exact text each one needs; the lead applies it.
+- Use Context7 for the `lottie-react-native` docs before you write the player.
+
+Do these, in order:
+1. **Install** with `bunx expo install lottie-react-native`, so the version fits SDK 57. Rebuild
+   the development build on your simulator and check it launches.
+2. **The generator** `tools/build_lottie.py`: standard library only (`json`, `math`, `os`), its own
+   seeded random so the output is byte-identical on every run, writing `assets/lottie/` with one
+   file each for a burst (stars and circles flying out from a centre), confetti (falling rotating
+   pieces), a sparkle shower (four-point stars twinkling), a gem fly-up, a chip fly-up and a flame
+   flicker (a loop). Extruded-flat palette, no outlines, short (under 1.5 s, the flame a loop). It
+   prints a count from its writes, as the other generators do (rule W2).
+3. **The player**: one component in `app/src/art/` that plays an effect by name (a string-literal
+   union, rule V2), once or looped, with an end callback, sized by width, drawing nothing under
+   reduced motion for the one-shot effects. A boundary test fails when a file outside
+   `app/src/art/` imports `lottie-react-native` or a file under `assets/lottie/`. A vitest test reads
+   every generated file and checks the fields a Lottie file needs and that each name is registered.
+4. **Show them** on the existing `/dev/art` route (not `/dev/kit`, which item 46 owns), each with a
+   replay button, and take screenshots mid-animation in light and dark.
+5. **Record it.** As a subagent of a lead session: do not edit `HANDOFF.md`, `PASSOFF.md` or
+   `PLAN.md`; your final report is the record, with the text for each file you were told not to
+   edit (the gate line with the new generator, `gateCommand`, U6 widened to Lottie, any dial). As a
+   session of your own: append the next free ledger step and set row 49 to `DONE: HANDOFF n`.
+
+Ask before building: nothing; `GF-15` is settled. Report every call with a one-line reversal.
+
+Not in scope, whoever asks: using an effect on any screen (items 30 and 31 do that); downloaded
+Lottie files; Rive; rolling numbers.
+
+Hand back: the whole-repo gate with `python3 tools/build_lottie.py` added before `xmllint`, green;
+two generator runs with the same `shasum`; screenshots; the installed version; and the two commit
+blocks of Part 11.
+
+### 50. Decide each chest's tier before it opens, and plan the taps that reveal it
+
+**Model: Default (Opus 5.5). Lane Q. Part A waits on nothing; part B waits on item 46.** Work in a
+worktree of your own.
+
+You are picking up felto, a poker-learning game: an asset pipeline in `tools/` (Python, standard
+library only) and an Expo app in `app/` (SDK 57, React Native 0.86.3, TypeScript strict, bun 1.2.9).
+Read `HANDOFF.md` first (environment, code map, the Metro and simulator quirks under "Known facts"),
+then `docs/AGENT-PRACTICES.md`, then `docs/conventions-typescript.md` in full, then `docs/incomplete/game-feel/DESIGN.md`
+sections 8 and 9 (`GF-1` to `GF-19`) and `PLAN.md` sections 1 to 3. If your checkout was made
+before section 9 and this prompt were committed, read both in the main checkout at
+`/Users/zachshort/Projects/felto` (the design file and `PASSOFF.md`). Session rules, restated: never
+run `git commit`, `git push`, `git add -A` or `git add .`; absolute dates only; no em dashes, no
+contractions and no banned AI words in any document; no drive-by fixes, note them and raise them;
+write `bun run --cwd app <script>`, never `bun --cwd app run <script>`; never hand-edit an SVG under
+`assets/icons/` or `assets/mascots/`; never touch `assets/higgsfield/` or `assets/higgsfield-chest/`
+(reference art, kept as received); never download a file without Zach's yes.
+
+**Why this exists.** Zach chose four chest tiers, common (wood), rare (blue), mythic (red) and
+legendary (gold), in his words: "Randomize they click at least 3 times. in those three times it has
+the chance to turn into Rare->Mythic->Legendary. But the rarity is predetermined before they open,
+its just the animation changes" (2026-10-05, `GF-13`). This item is the rule; item 30 draws the
+taps and item 48 draws the art.
+
+**What is fixed.** Read these before changing anything; do not relitigate them.
+- The chest rule today: `chestState` and `openChest` in `app/src/game/chest.ts:7-17`; a boss passed
+  by playing it readies 20 gems (`DIALS.chestGems`, `app/src/config/dials.ts:22`), once per unit;
+  `openedChests` and `passedBosses` live in `PlayerState` (`app/src/game/player-state.ts`).
+- Every random draw takes a seed (`app/src/game/seeded-random.ts:1-15`; `drawBoss` in
+  `app/src/game/boss.ts:5` is the precedent). A rule never reads the clock (rule B3) and imports no
+  React Native module (rule B2).
+- The tier must not change when the player closes and reopens the app, or opens the chest screen
+  twice. Find a stable seed. If `PlayerState` holds no value that is stable per player and set
+  before the chest is ready, the stored shape changes: read `STATE_VERSION` in
+  `app/src/storage/migrations.ts` first, raise it by one, add the migration and a test that loads a
+  save of the old shape (`docs/AGENT-PRACTICES.md` Part 6, rule Q2). The GTO trainer plans its own
+  version later (board item 44); do not take more than one number.
+- `GF-13` carries a condition: the day anything that leads to gems or chests can be bought, this
+  rule is reopened with Zach, because a random chest that can be bought rates 9+ (app
+  `DESIGN.md:204-205`). Write that condition into the comment above the odds dial in part B.
+- `app/src/config/dials.ts` belongs to item 46 while it runs. In part A, do not edit it.
+
+Part A, now:
+1. **The tier rule**, pure and seeded: the tier of a unit's chest from the seed, the unit id and a
+   table of odds passed in as an argument (a string-literal union for the tier, rule V2).
+2. **The reveal plan**, pure: for a chest's final tier, which of at least three taps upgrade it
+   (common never upgrades; legendary upgrades on each of three taps), and which tap opens it. The
+   upgrades must look like chances: spread them over the taps by the seed, not always on the
+   first ones. Record your reading of "at least 3 times" (three taps then an open tap, or the third
+   tap opens) as a build call with a reversal.
+3. **The seed**: choose it and, only if needed, the stored version with its migration and old-save
+   test.
+4. **Tests** in new files named for the feature (rule Q1): the same seed gives the same tier and the
+   same plan; over many seeds the share of each tier is within a few points of the odds; every plan
+   has at least three taps and upgrades exactly as many times as the tier is above common.
+5. **Stop** and report part A, with the proposed odds and gems for Zach: common 55, rare 30,
+   mythic 12, legendary 3 per cent; 20, 35, 60 and 100 gems.
+
+Part B, when the lead sends word that item 46 is done:
+6. **The dials**: the odds and the gems per tier in `dials.ts`, in a chest block, with the `GF-13`
+   condition as the comment; `openChest` adds the gems of the chest's tier; its existing tests
+   updated where the fixed 20 changes, the old cases kept.
+7. **Record it.** As a subagent: your report is the record; do not edit `HANDOFF.md`, `PASSOFF.md`
+   or `PLAN.md`. As a session of your own: the next free ledger step, row 50 `DONE: HANDOFF n`, and
+   an `As built` note under `GF-13`.
+
+Ask before building: nothing; report each call with a reversal. The odds and gems are proposals
+Zach confirms later; they are dials, so a change is one line.
+
+Not in scope, whoever asks: the chest screen and its taps (item 30); the chest art (item 48); any
+purchase; any other game rule.
+
+Hand back: the whole-repo gate, green, with the test counts; the build calls; the proposed odds and
+gems; and the two commit blocks of Part 11.
+
+### 51. Let the lesson host speak: the prompt in a speech bubble, and a NEW CONCEPT tag
+
+**Model: Default (Opus 5.5). Lane O. Waits on item 46 for part B only.** Work in a worktree of your own.
+
+You are picking up felto, a poker-learning game: an asset pipeline in `tools/` (Python, standard
+library only) and an Expo app in `app/` (SDK 57, React Native 0.86.3, TypeScript strict, bun 1.2.9).
+Read `HANDOFF.md` first (environment, code map, the Metro and simulator quirks under "Known facts"),
+then `docs/AGENT-PRACTICES.md`, then `docs/conventions-typescript.md` in full, then `docs/incomplete/game-feel/DESIGN.md`
+sections 8 and 9 (`GF-1` to `GF-19`) and `PLAN.md` sections 1 to 3. If your checkout was made
+before section 9 and this prompt were committed, read both in the main checkout at
+`/Users/zachshort/Projects/felto` (the design file and `PASSOFF.md`). Session rules, restated: never
+run `git commit`, `git push`, `git add -A` or `git add .`; absolute dates only; no em dashes, no
+contractions and no banned AI words in any document; no drive-by fixes, note them and raise them;
+write `bun run --cwd app <script>`, never `bun --cwd app run <script>`; never hand-edit an SVG under
+`assets/icons/` or `assets/mascots/`; never touch `assets/higgsfield/` or `assets/higgsfield-chest/`
+(reference art, kept as received); never download a file without Zach's yes.
+
+**Why this exists.** Zach chose mascots that talk in lessons (`GF-11`, 2026-10-05), as in photo
+2865 (`~/Downloads/IMG_2865.HEIC`): a host beside the prompt, a speech bubble that says the
+instruction with the key word in colour, and a "NEW CONCEPT" tag over the title.
+
+**What is fixed.** Read these before changing anything; do not relitigate them.
+- The exercise views are in `app/src/components/exercise/`; the lesson loop in
+  `app/src/components/lesson/` is item 29's work (built, `HANDOFF.md` step 37) and stays as it is.
+  The thinking host beside the prompt does not move today (BD-G23).
+- The kit of item 46 provides `Bubble` (tail on any side, a highlighted word, typed text, a
+  `talking` callback, a tap that finishes typing) and `Tag`. Never build a second bubble.
+- Copy is in the warm register of `D10`; list every line you add.
+- Tokens and dials only (rules U5, BD-G1); reduced motion shows the text whole and skips the bob.
+
+Part A, now, without the kit:
+1. **Read** the exercise components, the content schema (`app/src/content/schema.ts`) and the four
+   units, and write down which text the host should say for each exercise kind, and where a key
+   word can come from without changing content (none is also an answer).
+2. **Pure parts with tests** (new files, rule Q1): the host's line for an exercise, the word to
+   highlight if any, whether a NEW CONCEPT tag shows, and the layout rule that keeps the answer rows
+   on screen on the smallest supported phone and in landscape (`D17`).
+3. **Stop** and report part A. Do not edit any view yet.
+
+Part B, when the lead sends the kit:
+4. **Wire it**: the host mascot and a `Bubble` replace the plain prompt in each exercise view; the
+   mascot bobs while `talking` is true; the `Tag` sits over the title of a concept exercise.
+5. **See it** on the iPhone simulator in light and dark, on a small phone and in a lesson in
+   landscape if a device allows, with screenshots.
+6. **Record it.** As a subagent: your report is the record; do not edit `HANDOFF.md`, `PASSOFF.md`
+   or `PLAN.md`. As a session of your own: the next free ledger step, row 51 `DONE: HANDOFF n`.
+
+Ask before building: nothing; report each call with a reversal.
+
+Not in scope, whoever asks: content edits, the finish screens (item 30), the feedback sheet, Rive
+mouths (item 57), any file outside `app/src/components/exercise/` except new test files beside it.
+
+Hand back: the whole-repo gate, green; screenshots; the copy lines added; the two commit blocks of
+Part 11.
+
+### 52. Replace the native tabs with a custom game tab bar
+
+**Model: Default (Opus 5.5). Lane P. Part A waits on nothing; part B waits on items 46 and 48.**
+Work in a worktree of your own. Use an iOS simulator that no other item is using.
+
+You are picking up felto, a poker-learning game: an asset pipeline in `tools/` (Python, standard
+library only) and an Expo app in `app/` (SDK 57, React Native 0.86.3, TypeScript strict, bun 1.2.9).
+Read `HANDOFF.md` first (environment, code map, the Metro and simulator quirks under "Known facts"),
+then `docs/AGENT-PRACTICES.md`, then `docs/conventions-typescript.md` (and `docs/conventions-python.md` for part B) in full, then `docs/incomplete/game-feel/DESIGN.md`
+sections 8 and 9 (`GF-1` to `GF-19`) and `PLAN.md` sections 1 to 3. If your checkout was made
+before section 9 and this prompt were committed, read both in the main checkout at
+`/Users/zachshort/Projects/felto` (the design file and `PASSOFF.md`). Session rules, restated: never
+run `git commit`, `git push`, `git add -A` or `git add .`; absolute dates only; no em dashes, no
+contractions and no banned AI words in any document; no drive-by fixes, note them and raise them;
+write `bun run --cwd app <script>`, never `bun --cwd app run <script>`; never hand-edit an SVG under
+`assets/icons/` or `assets/mascots/`; never touch `assets/higgsfield/` or `assets/higgsfield-chest/`
+(reference art, kept as received); never download a file without Zach's yes.
+
+**Why this exists.** Zach chose every native control custom, "with a custom tab bar too"
+(2026-10-05, `GF-10`, `GF-18`): a tab bar like the photos (`~/Downloads/IMG_2859.HEIC`, bottom row),
+with coloured icons and a raised selected state, drawn from the tokens.
+
+**What is fixed.** Read these before changing anything; do not relitigate them.
+- The tabs today are `NativeTabs` in `app/src/components/app-tabs.tsx`, under the `(tabs)` group of
+  `app/src/app/` (Learn is `index.tsx`, which is `/`; then Practice and Profile). The root stack
+  (`app/src/components/root-stack.tsx`) and the onboarding guard (`D20`) stay as they are.
+- Route files stay thin (rule U1); a `_layout.tsx` holds the navigator and nothing else, and the
+  view lives in `app/src/components/` (registry Z2 is the precedent).
+- `PrimaryButton` (`app/src/components/button/primary-button.tsx`) is the raised-press pattern; the
+  press haptic and sound go through `useHaptics` and `useSound` with the dials `pressHaptic` and
+  `pressSound` (BD-G18, BD-G20). Reuse them; do not add a second press pattern.
+- Other items running now own these files, so in part A do not edit them: `tools/build_icons.py`,
+  `app/src/art/registry.ts`, `app/src/art/sizes.ts`, `CLAUDE.md` (item 48),
+  `app/src/theme/tokens.ts`, `app/src/config/dials.ts`, `docs/conventions-typescript.md`,
+  `app/src/components/kit/` (item 46). Report the tokens and dials you need instead.
+- Use Context7 for the current expo-router tabs API (a JavaScript `Tabs` navigator with a custom
+  `tabBar`, or the headless `expo-router/ui` tabs) before choosing.
+
+Part A, now:
+1. **Choose the navigator** from the docs and record the choice with a reversal. Deep links, the
+   `/` route and the onboarding guard must keep working.
+2. **The tab bar view** in `app/src/components/`: three tabs with an icon and a label, a raised
+   selected state (a coloured face on a darker edge, as `PrimaryButton` draws it), a press that
+   sinks, the press haptic and sound, the safe-area inset at the bottom, the tab role and selected
+   state for screen readers, and Android's back behaviour as before. For icons in part A, use art
+   the registry already has (name each choice), so part B only swaps names.
+3. **See it** on the iPhone simulator in light and dark with each tab selected, and on Android if
+   an emulator is free. Screenshots.
+4. **Stop** and report part A.
+
+Part B, when the lead sends word that items 46 and 48 are done:
+5. **Tab icons** drawn by `tools/build_icons.py` in the house style (Learn, Practice, Profile, each
+   with a selected and a resting colour if the design needs it), registered in the art module; the
+   tokens and dials you reported, added to the blocks item 46 made; the kit's pieces where they fit.
+6. **Record it.** As a subagent: your report is the record; do not edit `HANDOFF.md`, `PASSOFF.md`
+   or `PLAN.md`. As a session of your own: the next free ledger step, row 52 `DONE: HANDOFF n`, and
+   registry entry for the tab bar under `GF-10` in `docs/conventions-typescript.md`.
+
+Ask before building: nothing; report each call with a reversal.
+
+Not in scope, whoever asks: new tabs or routes; any screen inside a tab; the kit pieces themselves
+(item 46); any other native control (item 32).
+
+Hand back: the whole-repo gate, green; screenshots of each tab selected in light and dark; the
+tokens and dials needed; and the two commit blocks of Part 11.
+
+### 53. Make Flop talk, cheer and be sad in the Rive rig
+
+**Model: Sonnet 5 (Zach's choice for the Rive work, 2026-10-05). Lane G. Waits on item 34
+(`DONE`).** Zach runs this item himself: a session with the Rive editor open on his Mac, where an
+agent drives the editor through the Rive MCP and Zach watches and judges the motion. The only repo
+file it writes is `app/assets/rive/flop.riv`, so the main checkout will do unless another item has
+that file open.
+
+You are picking up felto, a poker-learning game whose app (Expo SDK 57, React Native 0.86.3,
+TypeScript strict, bun 1.2.9) plays a Rive rig of Flop, the fish. Read `HANDOFF.md` first (steps 34
+and 36 are the record of the rig and its runtime), then `docs/incomplete/game-feel/DESIGN.md`
+section 9 (`GF-11` and `GF-19`), then board item 34's prompt below in this file, whose Rive facts
+this prompt repeats only in part. Session rules, restated: never run `git commit`, `git push`,
+`git add -A` or `git add .`; absolute dates only; no em dashes, no contractions and no banned AI
+words in any document; no drive-by fixes, note them and raise them; never hand-edit
+`app/assets/rive/flop.riv`, only re-export it from the Rive file (`CLAUDE.md:24`); never touch
+`assets/higgsfield/` or `assets/higgsfield-chest/`; ask Zach before buying a Rive plan, running
+`rive login` or downloading any file.
+
+**Why this exists.** Zach chose mascots that talk in a speech bubble in lessons, on the finish
+screens and on the path (`GF-11`), and asked for "characters talking with their mouths animated"
+and for Rive items he will complete (`DESIGN.md` 9.1, messages 2 and 3). Flop hosts every lesson,
+so his rig comes first, and the view-model contract it sets is the one Kicker (item 54) and Ace
+(item 55) copy and item 57 reads.
+
+**What is fixed.** Read these before changing anything; do not relitigate them.
+- **Tools.** The CLI is `~/.rive/bin/rive` 1.3.0, not on PATH; RML cannot import SVG
+  (`~/.rive/versions/1.3.0/docs/assets.md:236-246`), so the rig is built in the editor through the
+  MCP. State-machine inputs are deprecated; drive everything with view-model properties
+  (`docs/state-machines.md:11-20` of the same folder). `.riv` export works on Zach's plan; `.rev`
+  export is refused, so do not retry it.
+- **The sandbox.** `upload_asset` with a local path and `export_file` to a local folder fail with
+  "Operation not permitted". Call the same MCP over HTTP at `http://127.0.0.1:9791/mcp`
+  (initialize, take `mcp-session-id`, then `tools/call`), with a data URI for uploads and
+  `inline_base64: true` for exports, piped to disk. Never print base64 into the conversation.
+- **The file and the rig.** Rive file 2632317 in Zach's account is the only editable source.
+  Artboard `Flop` (`0-2`, 600 by 520, transparent); `flop` `0-698` holds `fish` `0-15`, which
+  holds `mouth` `0-17`, the eyes and pupils, `body` `0-52`, `fin_r` `0-144`, `fin_l` `0-199` and
+  `tail` `0-254`; the cast shadow `flop_shadow` `0-699` sits outside `flop` and follows it. Item
+  34's prompt lists every id, pivot and key; read it there.
+- **Property keys.** x 13, y 14, rotation 15 (degrees), scale x 16, scale y 17 (percent), opacity
+  18; timeline fps 56, duration 57 (frames), loop 59 (0 one shot, 1 loop, 2 ping-pong); transition
+  duration 158 (ms), interpolation 349.
+- **What the app already reads, which must not change.** `FlopRive`
+  (`app/src/art/flop-rive.tsx:20-22`) loads artboard `Flop`, state machine `flop` and the
+  view-model boolean `perfect`, with `AutoBind(true)` (`:52`). The animations `idle` (`0-6`) and
+  `frantic` (`0-700`), view model `Flop` (`0-1391`), property `perfect` (`0-1393`) and instance
+  `default` (`0-1395`) keep their names. The runtime, `rive-react-native` 9.8.5, can set booleans,
+  numbers, enums and triggers on a bound instance
+  (`app/node_modules/rive-react-native/lib/typescript/index.d.ts:3`); booleans are the kind proven
+  on both platforms (`HANDOFF.md` step 36).
+- **How to see a frame.** Moving a playhead does not change what `capture_artboard` draws. Set the
+  keyed values of one frame on the rest pose, capture, and restore the rest pose from a saved
+  snapshot, then check every value against it (item 34).
+
+**The contract, which item 57 reads by these exact names.** On the existing view model `Flop`:
+`talking` (boolean): while true the mouth opens and shuts in a loop, on its own layer of the state
+machine `flop`, so it combines with any mood; `cheer` (boolean): the cheer mood, looped while true;
+`sad` (boolean): the sad mood, looped while true; `perfect` (boolean): unchanged. With no mood true,
+`idle` plays. The app sets at most one of `cheer`, `sad` and `perfect` at a time (item 57 tests
+that), so the rig needs no priority between them.
+
+Do these, in order:
+1. **The talk loop**: a new animation `talk` on a second layer that opens and shuts `mouth`
+   about four to five times a second (start from scale y, key 17), with a rest state when
+   `talking` is false. If stills at the open and shut keyframes do not read as speech, ask Zach
+   before importing another pose's mouth from `assets/mascots/fish/` (read, never changed).
+2. **The cheer mood**: an animation `cheer`, looped: small hops, fins up, a fast tail.
+3. **The sad mood**: an animation `sad`, looped: the fish droops and sinks a little, the tail slows,
+   the fins hang, and the mouth turns down (scale y of the mouth below zero flips the smile).
+4. **The transitions**: `idle` to `cheer` and to `sad` when each boolean is true, and back when it
+   is false, 250 ms cubic like the two that exist; `perfect` keeps its own. Keep fish and shadow
+   keyed from one source, as item 34 did, so the shadow never drifts.
+5. **Check in the editor's simulation** that each boolean turns its state on and off, and that
+   `talking` plays over `idle`, `cheer` and `sad`.
+6. **Zach watches**: ask him to play the state machine and toggle each property; change what he
+   names.
+7. **Re-export** `flop.riv` into `app/assets/rive/` through the HTTP recipe, then run the
+   whole-repo gate and open `/dev/art` on a simulator (`app/src/screens/dev-art-screen.tsx:37-39`
+   draws the rig and its swim button) to check the app still loads it.
+8. **Record it**: the next free ledger step with the new object ids (layers, animations,
+   transitions, properties) and the contract above as built, and row 53 `DONE: HANDOFF n`.
+
+Ask before building: (a) whether talking needs a second mouth shape, if the scale alone does not
+read as speech; (b) the timing of each mood, which only Zach's eye can judge. Both are his calls,
+and the answer to either may be no.
+
+Not in scope, whoever asks: any app code (item 57); Kicker, Ace and the chest (items 54 to 56); any
+generator or file under `assets/`; renaming an existing object, animation or property; a Rive plan
+or `rive login`.
+
+Hand back: what Zach should see in the editor with the state machine `flop` playing: `talking` on
+makes the mouth open and shut steadily while the fish idles, cheers or droops; `cheer` on makes it
+hop and flap; `sad` on makes it droop with a frown; `perfect` still sends it darting; each turns
+off cleanly. Then the stills at each new keyframe; Zach's words on the motion; the size of the new
+`flop.riv`; the gate, green, and a `/dev/art` screenshot; and the two copyable blocks for
+`app/assets/rive/flop.riv`.
+
+### 54. Rig Kicker the squid with Flop's contract
+
+**Model: Sonnet 5 (Zach's choice). Lane G. Waits on item 53 (`DONE`).** Zach runs it, with an
+agent driving the Rive editor through the MCP, as for item 53. Zach opens a new file in the Rive
+editor first and gives the session its id, because only he can make a file in his account. Besides the ledger and the board, the
+only file it writes is `app/assets/rive/kicker.riv` (new).
+
+You are picking up felto, a poker-learning game whose app plays a Rive rig of Flop the fish.
+Read `HANDOFF.md` first (steps 34 and 36, and item 53's step: the contract as built), then board
+items 34 and 53 in this file for every Rive fact this prompt does not repeat, then
+`docs/incomplete/game-feel/DESIGN.md` section 9 (`GF-19`). Session rules, restated: never run
+`git commit`, `git push`, `git add -A` or `git add .`; absolute dates only; no em dashes, no
+contractions and no banned AI words in any document; no drive-by fixes; never hand-edit an SVG
+under `assets/` or a `.riv` under `app/assets/rive/`, only export it from the Rive file; never
+touch `assets/higgsfield/` or `assets/higgsfield-chest/`; ask Zach before buying a Rive plan,
+running `rive login` or downloading any file.
+
+**Why this exists.** Kicker hosts the review and opens the chest (`D9`;
+`app/src/content/cast.ts:1-3`; `app/src/components/chest/chest-view.tsx:18-19`). For him to talk
+in a bubble the way Flop does (`GF-11`), he needs a rig with the same contract, so the app's one
+mascot player (item 57) drives all three alike.
+
+**What is fixed.** Read these before changing anything; do not relitigate them.
+- The tools, the sandbox and HTTP recipe, the property keys and the way to see a frame are item
+  53's, unchanged.
+- The art: `assets/mascots/squid/squid_happy.svg`, viewBox `0 0 430 545`, with the ids `shadow`,
+  `tentacles`, `body`, `sqClip`, `face`, `eye_l`, `pupil_l`, `eye_r`, `pupil_r` and `mouth`. Every
+  pose of a character uses the same ids (`tools/build_mascots.py:7-9`), so a part from another pose
+  drops into the same place.
+- The shadow is a cast shadow on the page, as Flop's is: outside the character's group, following
+  it down and to the right, never shrinking as the character lifts (item 34).
+- **The contract, which item 57 reads by these exact names**: artboard `Kicker`, state machine
+  `kicker`, view model `Kicker` with instance `default` bound to the artboard, and the booleans
+  `talking`, `cheer` and `sad` with the same meaning and the same 250 ms cubic transitions as
+  Flop's (item 53). With no mood true, `idle` plays. If item 53's step records a change to the
+  contract, follow the step.
+
+Do these, in order:
+1. **Import** `squid_happy.svg` through the MCP (`upload_asset`, then `assets_tool
+   addSvgInstance`), name the artboard, and move the shadow out of the squid into its own group.
+2. **Pivots** at the tentacle roots, the body centre and the eyes, so a blink closes eye and pupil
+   together.
+3. **`idle`**: a slow float and a tentacle wave, looped, with one blink.
+4. **`talk`** on its own layer, **`cheer`** (a bounce with the tentacles up) and **`sad`** (a
+   droop, slow tentacles, the mouth turned down), with transitions on the three booleans.
+5. **Simulate**, then **Zach watches** and names changes.
+6. **Export** `kicker.riv` into `app/assets/rive/` through the HTTP recipe; check its size.
+7. **Record it**: the next free ledger step with the file id, the object ids and the contract as
+   built, and row 54 `DONE: HANDOFF n`.
+
+Ask before building: the motion of each state, which is Zach's to judge, and the answer may be to
+keep it simpler.
+
+Not in scope, whoever asks: any app code (item 57); Flop, Ace and the chest; any generator or
+file under `assets/`; a Rive plan or `rive login`.
+
+Hand back: what Zach should see in the editor with the state machine `kicker` playing: the squid
+floats and waves; `talking` moves the mouth over any mood; `cheer` bounces; `sad` droops; each
+turns off cleanly. Then stills, Zach's words, the export's size, and the two copyable blocks with
+`git add -N` first for `app/assets/rive/kicker.riv`.
+
+### 55. Rig Ace the shark, the boss, with Flop's contract and a smug mood
+
+**Model: Sonnet 5 (Zach's choice). Lane G. Waits on item 53 (`DONE`).** Zach runs it, with an
+agent driving the Rive editor through the MCP, as for items 53 and 54; he opens a new file and
+gives the session its id. It can run beside item 54, since each writes only its own `.riv`. Besides the ledger and the board, the
+only file it writes is `app/assets/rive/ace.riv` (new).
+
+You are picking up felto, a poker-learning game whose app plays a Rive rig of Flop the fish.
+Read `HANDOFF.md` first (steps 34 and 36, and item 53's step), then board items 34 and 53 in this
+file, then `docs/incomplete/game-feel/DESIGN.md` section 9 (`GF-19`). Session rules, restated:
+never run `git commit`, `git push`, `git add -A` or `git add .`; absolute dates only; no em dashes,
+no contractions and no banned AI words in any document; no drive-by fixes; never hand-edit an SVG
+under `assets/` or a `.riv`, only export it from the Rive file; never touch `assets/higgsfield/` or
+`assets/higgsfield-chest/`; ask Zach before buying a Rive plan, running `rive login` or downloading
+any file.
+
+**Why this exists.** Ace is the boss: he hosts every boss session, is sad when the player beats him
+and smug when he wins (`app/src/components/boss/boss-finish.tsx:21`, `:29`). A rig lets him talk
+in his bubble and gloat or sulk with motion instead of a still pose (`GF-11`, `GF-19`).
+
+**What is fixed.** Read these before changing anything; do not relitigate them.
+- The tools, the sandbox and HTTP recipe, the property keys and the way to see a frame are item
+  53's, unchanged.
+- The art: `assets/mascots/shark/shark_happy.svg`, viewBox `0 -30 430 500` (it starts above zero),
+  with the ids `shadow`, `dorsal`, `fin_l`, `fin_r`, `body`, `belly`, `glasses` and `mouth`; every
+  pose shares them (`tools/build_mascots.py:7-9`). `shark_smug.svg` is the still the smug mood
+  must read like.
+- The shadow is a cast shadow on the page, outside the shark's group (item 34).
+- **The contract, which item 57 reads by these exact names**: artboard `Ace`, state machine `ace`,
+  view model `Ace` with instance `default` bound, the booleans `talking`, `cheer` and `sad` as for
+  Flop (item 53), and one more boolean, `smug`, looped while true. With no mood true, `idle` plays;
+  the app sets at most one mood at a time.
+
+Do these, in order:
+1. **Import** `shark_happy.svg`, name the artboard, move the shadow out.
+2. **Pivots** at the fin roots, the dorsal fin, the body centre and the glasses.
+3. **`idle`**: a slow cruise in place with a fin sway, looped.
+4. **`talk`** on its own layer; **`cheer`**; **`sad`** (sinks, fins drop, mouth down); **`smug`**
+   (leans back, the glasses glint or tilt, a slow fin flick), each looped, with transitions on the
+   four booleans.
+5. **Simulate**, then **Zach watches** and names changes.
+6. **Export** `ace.riv` into `app/assets/rive/`; check its size.
+7. **Record it**: the next free ledger step with the file id, the object ids and the contract as
+   built, and row 55 `DONE: HANDOFF n`.
+
+Ask before building: the smug mood's look, which Zach judges against `shark_smug.svg`; the answer
+may be a different gesture.
+
+Not in scope, whoever asks: any app code (item 57); Flop, Kicker and the chest; any generator or
+file under `assets/`; a Rive plan or `rive login`.
+
+Hand back: what Zach should see in the editor with the state machine `ace` playing: the shark
+cruises; `talking` moves the mouth over any mood; `smug` leans back and gloats; `sad` sinks;
+`cheer` lifts; each turns off cleanly. Then stills, Zach's words, the export's size, and the two
+copyable blocks with `git add -N` first for `app/assets/rive/ace.riv`.
+
+### 56. Rig the chest in four tiers: a wiggle, a tap shake, an upgrade flash and the opening
+
+**Model: Sonnet 5 (Zach's choice). Lane G. Waits on item 48 (`DONE`).** Zach runs it, with an
+agent driving the Rive editor through the MCP, as for item 53; he opens a new file and gives the
+session its id. Besides the ledger and the board, the only file it writes is `app/assets/rive/chest.riv` (new).
+
+You are picking up felto, a poker-learning game whose app plays a Rive rig of Flop the fish.
+Read `HANDOFF.md` first (steps 34 and 36, and item 48's step: the eight chest drawings), then board
+items 34 and 53 in this file for the Rive facts, then `docs/incomplete/game-feel/DESIGN.md`
+section 9 (`GF-13`, `GF-17`, `GF-19`). Session rules, restated: never run `git commit`,
+`git push`, `git add -A` or `git add .`; absolute dates only; no em dashes, no contractions and no
+banned AI words in any document; no drive-by fixes; never hand-edit an SVG under `assets/` or a
+`.riv`, only export it from the Rive file; never touch `assets/higgsfield/` or
+`assets/higgsfield-chest/` (the chest references are kept as received); ask Zach before buying a
+Rive plan, running `rive login` or downloading any file.
+
+**Why this exists.** A chest is opened by at least three taps; each tap shakes it, on the taps the
+seeded plan chose it flashes and upgrades a tier, and the last tap opens it (`GF-13`). Item 30 draws
+that with the kit and the SVGs; a rig makes the lid flip, the glow and the sparkles feel like a
+game (`GF-17`, `GF-19`).
+
+**What is fixed.** Read these before changing anything; do not relitigate them.
+- The tools, the sandbox and HTTP recipe, the property keys and the way to see a frame are items
+  34 and 53's, unchanged.
+- The art is item 48's, eight SVGs in `assets/icons/ui/`: `chest`, `chest_rare`, `chest_mythic`,
+  `chest_legendary` and the `_open` of each, all in the same three-quarter view. Read item 48's
+  step for the viewBoxes and the palettes.
+- The rule decides; the rig only shows. The tier and the taps come from item 50's seeded plan
+  through item 30's screen; the rig never chooses a tier.
+- **The contract, which item 57 reads by these exact names**: artboard `Chest`, state machine
+  `chest`, view model `Chest` with instance `default` bound, and three properties: `tier` (number,
+  0 common, 1 rare, 2 mythic, 3 legendary): a rise plays the upgrade flash and shows that tier's
+  closed chest; `tap` (trigger): one shake; `open` (boolean): the lid flips back to the open chest
+  of the current tier, with a glow and sparkles, and stays open while true. While closed and
+  untouched, the chest wiggles now and then.
+- Only booleans are proven end to end in this toolchain (`HANDOFF.md` step 36). `rive-react-native`
+  9.8.5 exports `useRiveNumber` and `useRiveTrigger`
+  (`app/node_modules/rive-react-native/lib/typescript/Rive.d.ts:20`, `:23`). Check in the editor's
+  simulation that a view-model number and trigger drive the transitions; if the MCP cannot make one,
+  use a boolean (`shaking`, which the app pulses) or four booleans for the tiers, and record the
+  change in the ledger step, because item 57 follows the step.
+
+Do these, in order:
+1. **Import** the eight SVGs and stack each tier's closed and open drawing on one artboard,
+   shown or hidden by opacity on `tier` and `open`.
+2. **`idle`**: an occasional wiggle, looped. **`shake`**: one short shake on `tap`.
+3. **`upgrade`**: a white flash and a ring of sparkles each time `tier` rises, then the new tier's
+   chest.
+4. **`opening`**: the lid flips back, a glow rises, sparkles burst; the contents show more as the
+   tier rises (item 48 drew them).
+5. **Simulate** every path (tier 0 to 3 in steps, a tap at each tier, open at each tier), then
+   **Zach watches** and names changes.
+6. **Export** `chest.riv` into `app/assets/rive/`; check its size.
+7. **Record it**: the next free ledger step with the file id, the object ids and the contract as
+   built, and row 56 `DONE: HANDOFF n`.
+
+Ask before building: the feel of the flash and the opening, which Zach judges; and, if a number or
+trigger property fails, the boolean shape before it is built. Both are his calls.
+
+Not in scope, whoever asks: the tier rule and odds (item 50); the chest screen (item 30); any app
+code (item 57); any generator or SVG; a Rive plan or `rive login`.
+
+Hand back: what Zach should see in the editor with the state machine `chest` playing: the wooden
+chest wiggles; firing `tap` shakes it; setting `tier` to 1, 2 and 3 flashes it into the blue, red
+and gold chest; `open` flips the lid with a glow and sparkles over that tier's contents. Then
+stills, Zach's words, the export's size, and the two copyable blocks with `git add -N` first for
+`app/assets/rive/chest.riv`.
+
+### 57. Play the rigs in the app: one mascot player, a chest player and static fallbacks
+
+**Model: Opus 5.5. Lane F. Waits on items 30 to 32, 51 and 53 to 56 (all `DONE`).** Work in a
+worktree of your own, made from `main` after they are merged.
+
+You are picking up felto, a poker-learning game: an asset pipeline in `tools/` (Python, standard
+library only) and an Expo app in `app/` (SDK 57, React Native 0.86.3, TypeScript strict, bun 1.2.9).
+Read `HANDOFF.md` first (environment, code map, "Known facts", step 36, and the ledger steps of
+items 30, 31, 51 and 53 to 56, whose contracts as built win over this prompt), then
+`docs/AGENT-PRACTICES.md`, then `docs/conventions-typescript.md` in full, then
+`docs/incomplete/game-feel/DESIGN.md` sections 8 and 9 and `PLAN.md` section 8. Session rules,
+restated: never run `git commit`, `git push`, `git add -A` or `git add .`; absolute dates only; no
+em dashes, no contractions and no banned AI words in any document; no drive-by fixes, note them and
+raise them; write `bun run --cwd app <script>`, never `bun --cwd app run <script>`; never hand-edit
+an SVG under `assets/` or a `.riv` under `app/assets/rive/`; never touch `assets/higgsfield/` or
+`assets/higgsfield-chest/`; never download a file without Zach's yes.
+
+**Why this exists.** Zach asked for characters whose mouths move as they talk and for Rive work he
+would have completed (`DESIGN.md` 9.1). Items 53 to 56 built the rigs in his Rive account; this
+item plays them where the static poses stand today, so Flop, Kicker and Ace talk while their
+bubbles type and the chest opens with its own motion (`GF-19`).
+
+**What is fixed.** Read these before changing anything; do not relitigate them.
+- `FlopRive` is the pattern (`app/src/art/flop-rive.tsx:27-59`): a pure `flopMode`
+  (`app/src/art/flop-mode.ts:9-11`) picks the rig or the static pose from
+  `motionAllowed("swim", reduced)` and a load failure; the static pose comes through `Mascot`; the
+  view-model boolean is set with `useRiveBoolean` on a ref bound by `AutoBind(true)`; a dial delays
+  the dart (`flopPerfectDelayMs`, `app/src/config/dials.ts:63`).
+- `Mascot` is the one mascot component (`app/src/art/mascot.tsx:11-14`, `D4`: a move to Rive
+  changes this file and nothing that calls it). Its poses are `cheer`, `happy`, `sad`, `sleep`,
+  `smug` and `think` (`app/src/art/names.ts:7`).
+- The boundary test matches `rive-react-native` and `@rive/` (`app/src/art/rive-boundary.test.ts:6`)
+  and checks that `art/flop-rive.tsx` imports the runtime (`:17-19`); a rename moves that check.
+  The alias `@rive/*` (`app/tsconfig.json:9`), `riv` in Metro's asset extensions
+  (`app/metro.config.js:16-17`) and `app/src/types/rive.d.ts` already exist, so the new `.riv`
+  files need no config, and no native library is added, so no rebuild should be needed.
+- The contracts (items 53 to 56): artboards `Flop`, `Kicker`, `Ace`, `Chest`; state machines
+  `flop`, `kicker`, `ace`, `chest`; mascot booleans `talking`, `cheer`, `sad` (and `perfect` for
+  Flop, `smug` for Ace); chest `tier` (number), `tap` (trigger), `open` (boolean).
+- Where the poses stand: the lesson host (`app/src/components/exercise/exercise-view.tsx:32`,
+  with item 51's `Bubble` and its `talking` callback), the lesson finish (`FlopRive` in
+  `lesson-finish.tsx`, with item 30's bubble), the boss finish (`boss-finish.tsx`, sad or smug),
+  the chest (`chest-view.tsx` and `chest-screen.tsx`, item 30's reveal driven by item 50's plan),
+  and the path greeting (`path-greeting.tsx`, item 31's bubble).
+- Reduced motion (`GF-8`): every rig draws its static pose, and the chest its SVG for the tier and
+  state.
+
+Do these, in order:
+1. **One mascot player** in `app/src/art/` for the fish, the squid and the shark: props for the
+   character, a mood, `talking` and a width; a pure function, with its test, from the mood to the
+   booleans it sets, which never sets two moods at once; a pure mode (rig or static) as
+   `flopMode` does; a static fallback through `Mascot` with the pose that matches the mood.
+   `FlopRive` becomes its fish case and keeps `perfect`.
+2. **A chest player** in `app/src/art/`: `tier`, a tap and `open` from item 30's screen state; its
+   static fallback is item 48's SVG for the tier and state.
+3. **Wire them**: the lesson, review and boss hosts talk while their bubbles type; the finishes
+   show the mood (a perfect lesson, a boss won or lost); the chest screen plays the reveal on the
+   rig; the path greeting talks.
+4. **The boundary and the rules**: the boundary test covers every `.riv`; rule U6 names the four
+   files; the `CLAUDE.md` rule for `flop.riv` (`CLAUDE.md:24`) widens to all four; any new timing
+   is a dial in the block `// game-feel second pass`.
+5. **See it** on the iOS simulator and the Android emulator, light and dark, and with Reduce
+   Motion on.
+6. **Record it**: the next free ledger step, code map lines, an `As built` note under `GF-19`, the
+   runtime entries of `PLAN.md` section 8 marked seen or `open`, and row 57 `DONE: HANDOFF n`.
+
+Ask before building: nothing new; the contracts and the screens are settled. Report each build
+call with a one-line reversal.
+
+Not in scope, whoever asks: any change to a rig (items 53 to 56, re-exported from Zach's files
+only); the bubbles, the reveal or the greeting themselves (items 30, 31, 51); the tier rule (item
+50); new moods or poses.
+
+Hand back: the whole-repo gate, green, with the run lines and the test count;
+`git diff --stat -- assets/icons assets/mascots assets/sounds` empty; frame comparisons on both
+platforms showing each rig moving (as step 36 did, "seen running, by frame comparison, not
+watched"), the reduced-motion static screens, and a file that fails to load falling back; the line
+"motion not judged: Zach on his phone"; then the two copyable blocks, `git add -N` first for new
 files.

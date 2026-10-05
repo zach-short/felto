@@ -12,9 +12,18 @@ its plain name (`grep -nE '^(import|from)' tools/*.py`, rule M4). Later on 2026-
 `math`, `os`, `struct` and `wave`; it does not import
 `tools/common.py`, because nothing there draws sound. Where a rule below names "the two
 generators" or "both files", it means the two SVG generators; each rule that also binds the sound
-generator says so. Read this file in full before you write or edit Python here.
+generator says so. Later on 2026-10-05 board item 35 added the first `.py` file outside `tools/`:
+`solver/validate_key.py`, the schema validator of the GTO trainer's strategy key
+(`docs/incomplete/gto-trainer/KEY-SPEC.md`, section 7.6). This standard governs `solver/` as it
+governs `tools/` (`docs/incomplete/gto-trainer/PLAN.md`, BD-T3). The validator imports only
+`hashlib`, `json` and `sys`, so it complies with M4 as written. BD-T3 lets the solver proper
+import numpy; the first file that does so (phase 2 of that plan) must bring a dated amendment to
+M4 that names `solver/` as the one place a third-party import is allowed, and bump this version.
+Rules that speak of "a generator" (M1, M2, G1, W1, W2) do not bind a validator, which generates
+nothing; M3, M4, H2, H3, H4, K1 and Y1 to Y3 bind every `.py` file. Read this file in full before
+you write or edit Python here.
 
-Version 1.2.1. Written 2026-10-04 on Opus 5.5 for board item 1 (ledger step 2 in `HANDOFF.md`);
+Version 1.2.2. Written 2026-10-04 on Opus 5.5 for board item 1 (ledger step 2 in `HANDOFF.md`);
 revised 2026-10-05 on Sonnet 5.5 for board item 2 (ledger step 3), which moved the shared code
 into `tools/common.py`, for board item 3 (ledger step 4), which reconciled the line citations,
 for board item 4 (ledger step 8), which named `tools/common.py` in the scope sentence, and
@@ -23,7 +32,9 @@ and for board item 5 (ledger step 11), which moved the citations that the icon g
 shifted, and for board item 17 on Opus 5.5, which brought the sound generator under rules M1,
 G1, G3, G4, W1, W2, H2 and Y4 and named it in the scope sentence, and for board item 28 on
 Opus 5.5, which moved the sound generator citations that its six new effects shifted and set the
-count in W2 and the scope sentence to twelve; no rule changed.
+count in W2 and the scope sentence to twelve; no rule changed. Version 1.2.2 on 2026-10-05 on
+Fable 5.1 for board item 35 (ledger step 41), which named `solver/validate_key.py` in the scope
+paragraph and said which rules bind a file that is not a generator; no rule changed.
 Zach answered the open questions on 2026-10-04 and took every recommendation. Those answers are
 cited below as "owner, 2026-10-04".
 
