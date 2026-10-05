@@ -13,6 +13,9 @@ config.resolver.sourceExts = [...config.resolver.sourceExts, "svg"];
 
 // BD-7: the art lives in ../assets, outside the project. The watch entry reloads a
 // regenerated SVG; the module path lets those files resolve react-native-svg from app/.
+// Board item 34: the rigged Flop is a binary `.riv`, bundled as an asset.
+config.resolver.assetExts = [...config.resolver.assetExts, "riv"];
+
 config.watchFolders = [...config.watchFolders, artRoot];
 config.resolver.nodeModulesPaths = [path.resolve(__dirname, "node_modules")];
 

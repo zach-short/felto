@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Button, Host } from "@expo/ui";
 
 import { Art } from "@/art/art";
+import { FlopRive } from "@/art/flop-rive";
 import { Screen } from "@/components/screen";
 import { StatBar } from "@/components/stat-bar";
 import { ART_SCALE, SPACE, TYPE } from "@/theme/tokens";
@@ -14,6 +16,7 @@ import { useTheme } from "@/theme/use-theme";
 export function DevArtScreen() {
   const { colours } = useTheme();
   const column = useColumnWidth();
+  const [perfect, setPerfect] = useState(false);
   return (
     <Screen>
       <Text style={[styles.title, { color: colours.text }]}>Art check</Text>
@@ -30,6 +33,11 @@ export function DevArtScreen() {
       <View style={styles.row}>
         <Art name="fish_happy" width={column * ART_SCALE.mascot} />
       </View>
+      {/* Board item 34: the rigged Flop, so the Rive file can be watched before the finish screen uses it */}
+      <FlopRive perfect={perfect} width={column * ART_SCALE.finishMascot} />
+      <Host matchContents style={styles.button}>
+        <Button label={perfect ? "Flop: rest" : "Flop: swim"} onPress={() => setPerfect(!perfect)} />
+      </Host>
       <Host matchContents style={styles.button}>
         {/* The button does nothing: the check is that a native control draws. */}
         <Button label="Native button" onPress={() => undefined} />

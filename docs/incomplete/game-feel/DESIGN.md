@@ -286,6 +286,19 @@ compiled and ran the press on the iPhone 17 simulator and the `Pixel_9` emulator
 was not needed. No `babel.config.js` was added; Expo's preset adds the worklets plugin (BD-G9).
 Not yet run on Zach's phone, which needs the same rebuild.
 
+*Amended 2026-10-05 (Zach, board item 34; supersedes the second sentence of GF-1, "The mascots stay
+static poses moved with transforms until Zach rigs them in Rive", for Flop only):* Zach changed who
+rigs. An agent builds the Rive rig through the Rive editor's MCP, and Flop, the fish, is the first
+character to have one (`HANDOFF.md` step 34 holds the rig; the file lives in Zach's Rive account,
+file 2632317, and the repo holds only the exported `app/assets/rive/flop.riv`). The squid, the
+shark and Flop's other five poses stay static poses moved with transforms, and `Mascot` stays the
+one component (`D4`): `FlopRive` in `app/src/art/flop-rive.tsx` is a second body that draws the
+rig when motion is allowed and falls back to the static `happy` pose through `Mascot`. The runtime
+is `rive-react-native` 9.8.5, chosen with Context7 on 2026-10-05 over the new Nitro runtime
+`@rive-app/react-native` 0.5.2 because the Nitro package is 0.x and pins `react-native-nitro-modules`
+to `>=0.35.10 <0.37`; the legacy package sets a view-model boolean on a bound instance
+(`useRiveBoolean`, `AutoBind(true)`). Interface motion still uses Reanimated.
+
 ### GF-2. A custom pressable for the main buttons
 
 Decided 2026-10-05 (Zach: "Yes, custom main buttons"). Check, Continue and the primary action

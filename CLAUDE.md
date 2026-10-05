@@ -19,6 +19,10 @@
 - **Never trust a preview page as a picture of the current SVGs.** `assets/icons/preview.html`
   and `assets/mascots/preview.html` hold inline copies, and no script rebuilds them
   (`grep -n preview tools/*.py` finds nothing, 2026-10-04).
+- **Never regenerate, rename or move `app/assets/rive/flop.riv`, and never hand-edit it.** It is
+  exported from the Rive file in Zach's account (file 2632317), the only editable source of the
+  rig. The repo cannot rebuild it, so a lost or damaged copy is re-exported from that file
+  (`HANDOFF.md` step 34), never recreated here. Only `app/src/art/` imports it (rule U6).
 - **Never run `git commit`, `git push`, `git add -A` or `git add .`.** Print the two blocks
   that Part 11 of the standard describes.
 
@@ -34,7 +38,8 @@
   `eslint-config-expo/flat` and no formatter. SVG files are components through
   `app/svg-transformer.js` (SVGr, SVGO off). Versions: `app/bun.lock`.
 - No CI. The Python side has no tests and no linter.
-- Rive is the intended animation tool for these assets (`tools/build_icons.py:12`).
+- Rive is the intended animation tool for these assets (`tools/build_icons.py:12`). Flop has a rig,
+  played by `rive-react-native` 9.8.5 (`app/package.json`, board item 34).
 
 ## Architecture
 

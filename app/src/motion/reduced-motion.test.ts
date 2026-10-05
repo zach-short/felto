@@ -22,6 +22,6 @@ describe("motionAllowed", () => {
   });
 
   it("skips what the plan's dial table names: bounce, shake, tilt, pulse, bob and particles", () => {
-    expect([...DIALS.reducedMotionSkips].sort()).toEqual(["bob", "bounce", "particles", "pulse", "shake", "tilt"]);
+    expect([...DIALS.reducedMotionSkips].sort()).toEqual(["bob", "bounce", "particles", "pulse", "shake", "swim", "tilt"]);
   });
 });

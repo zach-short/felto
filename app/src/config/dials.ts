@@ -53,7 +53,10 @@ export const DIALS = {
   particleMs: 900,
   // GF-8: what the phone's Reduce Motion setting skips. The press and fades stay, because no
   // screen needs motion to be understood and a press with no answer feels broken
-  reducedMotionSkips: ["bounce", "shake", "tilt", "pulse", "bob", "particles"],
+  reducedMotionSkips: ["bounce", "shake", "tilt", "pulse", "bob", "particles", "swim"],
+  // Board item 34: how long the rigged Flop idles before it darts, so the screen's own entrance
+  // finishes first
+  flopPerfectDelayMs: 300,
   // GF-3: the touch each kind of press gives, named from the vocabulary of feedback/haptics.ts
   selectHaptic: "selection",
   pressHaptic: "lightImpact",
