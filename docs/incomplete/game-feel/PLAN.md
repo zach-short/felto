@@ -3,7 +3,9 @@
 Status: `IN FLIGHT` since 2026-10-05, phases 1 to 4 built (board items 26 to 29). The line read "`PLANNED`
 2026-10-05, awaiting GATE 2" until Zach approved the plan in chat the same day (`PASSOFF.md`, the
 note above item 22). Decisions `GF-1` to `GF-9` are in `DESIGN.md`,
-section 8, and are frozen. This plan is what is built, in what order, by whom, and done when. Read
+section 8, and are frozen. A second pass, decisions `GF-10` to `GF-19` of `DESIGN.md` section 9,
+was ratified from Zach's answers on 2026-10-05 and is planned in section 8 below: board items 46
+to 57, and phases 5 to 7 widened (items 30 to 32). This plan is what is built, in what order, by whom, and done when. Read
 `docs/AGENT-PRACTICES.md` and `docs/conventions-typescript.md` first; the whole-repo gate and the
 hazards are in `CLAUDE.md` and `HANDOFF.md`.
 
@@ -318,6 +320,8 @@ phone, not in the plan.
 Rive for the mascots, through the one `Mascot` component (`D4`). Badges and achievements, daily
 quests, a mascot that speaks inside lessons (`GF-9`). A story for the other units (unit-stories
 `US-8`). A real music track. A daily puzzle, friend streaks and an avatar, which were not chosen.
+On 2026-10-05 the second pass took up two of these seams: the Rive mascots (`GF-19`, items 53 to
+57) and the mascot that speaks inside lessons (`GF-11`, item 51); see section 8.
 
 ## 5. Repo hazards, with live numbers
 
@@ -359,3 +363,97 @@ unit-stories effort.
 | Reduced motion in the loop (phase 4) | Reduce Motion on, a lesson, one right and one wrong answer | No bounce, shake, tilt or heart drop; the colours, the flash, the lift, the rise of the sheet and the fill of the bar remain |
 | A screen reader hears the sheet (phase 4) | VoiceOver or TalkBack on, answer once | Focus moves to "Nice read!" or "So close."; the lesson behind is not read until Continue |
 | The chest and the finish feel rewarding | Finish a lesson, open a chest | Colour fills the screen, XP counts up, a burst plays once and stops |
+
+## 8. Second pass, 2026-10-05
+
+Zach asked for more on 2026-10-05, in four messages with 13 photos: custom, colourful pieces in
+the app's tokens, characters placed and talking, a better chest in four tiers, more sparkles,
+chimes in place of blips, Lottie, rolling numbers and 3D text (`DESIGN.md` 9.1). His answers are
+decisions `GF-10` to `GF-19` (`DESIGN.md` 9.4). This section adds twelve board items, 46 to 57,
+and widens phases 5 to 7 (items 30 to 32): their steps above still hold, and their prompts in
+`PASSOFF.md` add the second pass's parts. Each item writes its build calls into section 1 as the
+next free `BD-G` numbers, and its `As built` notes under the `GF` decisions it touches.
+
+### 8.1 Items
+
+| Item | Phase | Driver | Lane | Waits on |
+|---|---|---|---|---|
+| 46 | The game kit: `GameText`, `RollingNumber`, `Bubble`, `Popover`, `Tag`, `Sparkles`, `GameSwitch`, `GameSheet`, `GameDialog`, and the `/dev/kit` page | Default (Opus 5.5) | K | nothing; `IN FLIGHT` |
+| 47 | All twelve sounds as one family of chimes | Default | L | nothing; built (`HANDOFF.md` step 40), not merged |
+| 48 | The chest in four tiers, closed and open, in a three-quarter view | Default | M | nothing; `IN FLIGHT` |
+| 49 | Lottie effects from a generator, `tools/build_lottie.py`, and their player in `app/src/art/` | Default | N | nothing; `IN FLIGHT` |
+| 50 | The chest tier rule: a seeded tier and a reveal plan | Default | Q | part A nothing (`IN FLIGHT`); part B, the dials, item 46 |
+| 51 | The lesson host speaks: the prompt in a `Bubble`, a NEW CONCEPT `Tag` | Default | O | part A nothing (`IN FLIGHT`); part B, the wiring, item 46 |
+| 52 | A custom tab bar with generated tab icons | Default | P | part A nothing (`IN FLIGHT`); part B, the icons and tokens, items 46 and 48 |
+| 30 | Phase 5, widened: finish, chest and boss screens, the chest tap reveal, the mascot's warm line | Default | F | items 46, 48 and 50 |
+| 31 | Phase 6, widened: the path, node popovers, mascots beside the path, rolling counters | Default | F | item 30 |
+| 32 | Phase 7, widened: Learn, Profile, mascot life, every native control left replaced | Default | F | item 31 |
+| 53 | Rive: Flop talks, cheers and is sad | Mechanical (Sonnet 5, Zach's choice) | G | item 34 |
+| 54 | Rive: Kicker the squid, with Flop's contract | Mechanical (Sonnet 5, Zach's choice) | G | item 53 |
+| 55 | Rive: Ace the shark, with Flop's contract and a smug mood | Mechanical (Sonnet 5, Zach's choice) | G | item 53 |
+| 56 | Rive: the chest in four tiers | Mechanical (Sonnet 5, Zach's choice) | G | item 48 |
+| 57 | The rigs in the app: one mascot player, a chest player, static fallbacks | Default | F | items 30 to 32, 51 and 53 to 56 |
+| 33 | Phase 8, widened: close out both passes | Mechanical (Sonnet 5) | F | items 26 to 32 and 46 to 57 |
+
+The Rive items run on Sonnet 5 because Zach chose it for all Rive work (board item 34), and their
+failure is loud: Zach watches every rig in the editor. Item 50 is the one place a mistake could
+pass every gate, a tier that changes when the app reopens or odds that are off; its tests replay
+seeds and count tiers over many seeds, which makes that failure loud, so it stays on Default.
+
+Shared files, in the order the items touch them. `app/src/config/dials.ts`: item 46 opens the
+block `// game-feel second pass`; items 50 (part B), 30, 31 and 57 add lines only after item 46 is
+`DONE`. `app/src/theme/tokens.ts`: item 46, then item 52 part B. `tools/build_icons.py`,
+`app/src/art/registry.ts`, `app/src/art/sizes.ts` and the icon count in `CLAUDE.md`: item 48, then
+item 52 part B. `app/src/components/exercise/exercise-view.tsx`: item 51, then item 57.
+`app/src/art/mascot.tsx` and `path-greeting.tsx`: items 32 and 31, then item 57. The stored
+version: `STATE_VERSION` is 4 today (`app/src/storage/migrations.ts:6`); item 50 raises it only if
+no stable seed exists, and GTO item 44 plans version 5 (`docs/incomplete/gto-trainer/PLAN.md`,
+phase 9), so whichever lands first takes 5 and the other reads the number and takes the next.
+
+### 8.2 Dials the second pass adds
+
+Every value here is a proposal for Zach to set on the phone; none is decided by this table. Each
+goes in the block `// game-feel second pass` of `app/src/config/dials.ts` (BD-G1), added by the
+item named.
+
+| Dial | Proposed value | Item | Decision |
+|---|---|---|---|
+| Bubble typing speed | 28 ms a character (about 35 a second); a tap shows the whole line | 46 | `GF-11` |
+| Rolling number time | 700 ms for any change, each digit rolling to its new value | 46 | `GF-15` |
+| Ambient sparkles | 5 stars in a box, 8 to 14 points across, each twinkling over 1.6 s, out of step | 46 | `GF-17` |
+| Sparkle burst | 24 shapes over 900 ms: the existing `particleCount` and `particleMs` (`dials.ts:56-57`) | 46 | `GF-17` |
+| Popover spring | 260 ms, out from the anchor | 46 | `GF-10` |
+| Talking bob | 3 points, every 300 ms, while a bubble types | 46 or 51 | `GF-11` |
+| Chest odds | common 55, rare 30, mythic 12, legendary 3 per cent | 50, part B | `GF-13` |
+| Gems by tier | 20, 35, 60 and 100 | 50, part B | `GF-13` |
+| Chest taps | at least 3; item 50 records whether the opening tap is the third or a fourth | 50 | `GF-13` |
+| Chest tap shake | 6 points, 240 ms: the existing `shakeDistance` and `shakeMs` (`dials.ts:47-49`) | 30 | `GF-13` |
+| Upgrade flash | 400 ms | 30 | `GF-13` |
+| Mascot idle bob | 3 points over 2.4 s: the existing `idleBobDistance` and `idleBobMs` (`dials.ts:54-55`) | 32 | `GF-12` |
+| Mouth loop of a rig | 4 to 5 cycles a second, set in the Rive file, not a dial | 53 to 55 | `GF-19` |
+
+With the proposed odds and gems, a chest gives 31.7 gems on average (0.55 × 20 + 0.30 × 35 +
+0.12 × 60 + 0.03 × 100), against a fixed 20 today (`chestGems`, `dials.ts:22`). A heart refill
+costs 20 gems and a streak freeze 10 (`lifeRefillGems`, `dials.ts:11`; `freezePriceGems`,
+`dials.ts:97`), so the proposal raises what a boss is worth by about half. That is Zach's call when
+he sets the dials.
+
+### 8.3 Runtime entries for the second pass
+
+| Goal | Where | Right answer |
+|---|---|---|
+| The kit looks like the app (item 46) | `/dev/kit`, light and dark | Every piece takes the tokens; 3D text has its outline and extrusion; numbers roll both ways; a bubble types and a tap shows the whole line |
+| The chimes are pleasant (item 47) | `afplay assets/sounds/<name>.wav` for all twelve, then a lesson | Zach approves each or names a change; nothing is shrill; a wrong answer sounds soft, never a buzz |
+| The chests read as 3D (item 48) | The eight chest SVGs rendered themselves, at 48 and 200 points, light and dark | Each looks like a chunky chest of its tier; the open ones show more as the tier rises |
+| Effects play once and stop (item 49) | `/dev/art`, replay each effect | Each one-shot effect plays once and clears; the flame loops; under Reduce Motion no one-shot effect draws |
+| A chest's tier holds (item 50) | Pass a boss, open the chest screen, close the app before tapping, open it again, tap through | The same taps upgrade it to the same tier as before the app closed |
+| The host speaks (item 51) | A lesson, on the smallest phone and in landscape if a device allows | The prompt types out in a bubble with its key word in colour, the host bobs while it types, a concept exercise shows NEW CONCEPT, and the answer rows stay on screen |
+| The tab bar is the game's (item 52) | Each tab, light and dark, VoiceOver or TalkBack on | The selected tab is raised in colour; a press sinks with a tick and a tap sound; the reader says the tab and that it is selected |
+| The chest reveal feels like a game (item 30) | Pass a boss and open its chest | At least three taps, each a shake; on the chosen taps a flash and a new colour with its tier named; the last tap opens it and the gems roll up |
+| The finish says something warm (item 30) | Finish a lesson, perfect and not; win and lose a boss | The screen fills with its colour, XP rolls up in 3D text, one burst plays, and the mascot says a warm line; a finished stage hears that it is proud of you |
+| The path is alive (item 31) | Learn tab, all four units | Nodes and banners in each unit's colour, mascots beside the path, the current node sparkling, a ready chest wiggling, and no ready chest showing its tier |
+| A node opens a popover (item 31) | Tap an open node, then a locked one, then outside | A popover with the lesson's title, its place in the unit and a raised START button; the locked one says what opens it; a tap outside closes it |
+| Counters roll (item 31) | Finish a lesson, go back to Learn | XP, gems and the streak roll to their new values with a small tick |
+| No native control is left (item 32) | Profile (every switch, the reminder time, reset), leave a lesson, run out of hearts | Every control is drawn in the tokens; switches read their state to a screen reader; Android's back closes a sheet or dialog |
+| The rigs talk and fall back (items 53 to 57) | A lesson, a review and a boss; then Reduce Motion on | Each host's mouth moves while its bubble types and stops when it ends; with Reduce Motion on, every mascot and the chest are still poses |
+| The chest condition holds (`GF-13`) | Before anything that leads to gems or chests can be bought | Zach has reopened `GF-13`; a random chest that can be bought is not shipped without his answer |

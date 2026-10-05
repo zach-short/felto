@@ -61,14 +61,14 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 | 41 | GTO trainer phase 6: grading and the review model | `HELD` until items 39 and 40 are `DONE` | Opus 5.5, then a Fable 5.1 review of `grade.ts` | I | items 39 and 40 | `app/src/gto/grade.ts`, the review model |
 | 42 | GTO trainer phase 7: the table screen and seats | `HELD` until item 40 is `DONE` | Opus 5.5 | I | item 40 | the table component and screen, `app/src/art/` seat wiring |
 | 43 | GTO trainer phase 8: three new characters | `HELD` until Zach has run the Higgsfield round | Opus 5.5, with Zach | J | Zach's round | `assets/higgsfield-table/`, `assets/gallery.html`, the art module |
-| 44 | GTO trainer phase 9: session flow, stored version 5 and the free allowance | `HELD` until items 41 and 42 are `DONE` | Opus 5.5 | I | items 41 and 42 | `app/src/storage/migrations.ts`, `app/src/config/dials.ts`, the Practice screen, the session and summary routes |
+| 44 | GTO trainer phase 9: session flow, stored version 5 and the free allowance (version 6 if item 50 lands first, `HANDOFF 44`) | `HELD` until items 41 and 42 are `DONE` | Opus 5.5 | I | items 41 and 42 | `app/src/storage/migrations.ts`, `app/src/config/dials.ts`, the Practice screen, the session and summary routes |
 | 45 | GTO trainer phase 10: copy, runtime pass and close-out | `HELD` until items 35 to 44 are `DONE` | Sonnet 5 | I | items 35 to 44 | `docs/README.md`, `docs/incomplete/gto-trainer/`, `HANDOFF.md` |
-| 46 | Game kit: 3D text, rolling numbers, bubbles, popovers, tags, sparkles, switch, sheet and dialog | `IN FLIGHT` | Opus 5.5 | K | nothing | `app/src/components/kit/` (new), new hook files in `app/src/motion/`, `app/src/theme/tokens.ts`, `app/src/config/dials.ts` (block `// game-feel second pass`), `app/src/app/dev/kit.tsx`, `app/src/screens/dev-kit-screen.tsx`, `docs/conventions-typescript.md` |
+| 46 | Game kit: 3D text, rolling numbers, bubbles, popovers, tags, sparkles, switch, sheet and dialog | `DONE: HANDOFF 43` | Opus 5.5 | K | nothing | `app/src/components/kit/` (new), new hook files in `app/src/motion/`, `app/src/theme/tokens.ts`, `app/src/config/dials.ts` (block `// game-feel second pass`), `app/src/app/dev/kit.tsx`, `app/src/screens/dev-kit-screen.tsx`, `docs/conventions-typescript.md` |
 | 47 | Re-voice all twelve sounds as one family of chimes | `DONE: HANDOFF 40` | Opus 5.5 | L | nothing | `tools/build_sounds.py`, `assets/sounds/` |
-| 48 | Redraw the chest in four tiers, closed and open, in a three-quarter view | `DONE: HANDOFF 42` | Opus 5.5 | M | nothing | `tools/build_icons.py`, `assets/icons/ui/chest*.svg`, `app/src/art/registry.ts`, `app/src/art/sizes.ts`, `CLAUDE.md` (the icon count) |
-| 49 | Lottie effects from a generator: bursts, confetti, sparkles, fly-ups and a flame | `IN FLIGHT` | Opus 5.5 | N | nothing | `app/package.json`, `app/bun.lock`, `tools/build_lottie.py` (new), `assets/lottie/` (new), the Lottie player and its tests in `app/src/art/`, the `/dev/art` route (`app/src/app/dev/art.tsx`, `app/src/screens/dev-art-screen.tsx`). It edits none of `app/src/config/dials.ts`, `app/src/theme/tokens.ts`, `CLAUDE.md`, `.personal-config.json` or `docs/conventions-typescript.md`: it reports their text |
-| 50 | Chest tier rule: a seeded tier fixed when the chest is ready, a reveal plan and dials | `IN FLIGHT` (part A started 2026-10-05; part B waits on item 46) | Opus 5.5 | Q | item 46, for part B only (both write `app/src/config/dials.ts`) | Part A: `app/src/game/chest.ts` and new chest test files beside it; `app/src/storage/migrations.ts`, `app/src/game/player-state.ts` and a new old-save test only if the stored version must rise. Part B adds `app/src/config/dials.ts` (a chest block) |
-| 51 | The lesson host speaks: the prompt in a speech bubble, and a NEW CONCEPT tag | `IN FLIGHT` (part A started 2026-10-05; part B waits on item 46) | Opus 5.5 | O | item 46, for part B only | `app/src/components/exercise/*` and new test files beside them |
+| 48 | Redraw the chest in four tiers, closed and open, in a three-quarter view | `OPEN` (first drawing, `HANDOFF 42`, not approved; redraw after Zach picks a direction) | Opus 5.5 | M | nothing | `tools/build_icons.py`, `assets/icons/ui/chest*.svg`, `app/src/art/registry.ts`, `app/src/art/sizes.ts`, `CLAUDE.md` (the icon count) |
+| 49 | Lottie effects from a generator: bursts, confetti, sparkles, fly-ups and a flame | `DONE: HANDOFF 46` | Opus 5.5 | N | nothing | `app/package.json`, `app/bun.lock`, `tools/build_lottie.py` (new), `assets/lottie/` (new), the Lottie player and its tests in `app/src/art/`, the `/dev/art` route (`app/src/app/dev/art.tsx`, `app/src/screens/dev-art-screen.tsx`). It edits none of `app/src/config/dials.ts`, `app/src/theme/tokens.ts`, `CLAUDE.md`, `.personal-config.json` or `docs/conventions-typescript.md`: it reports their text |
+| 50 | Chest tier rule: a seeded tier fixed when the chest is ready, a reveal plan and dials | `DONE: HANDOFF 48` (part A `HANDOFF 44`) | Opus 5.5 | Q | item 46, for part B only (both write `app/src/config/dials.ts`) | Part A: `app/src/game/chest.ts` and new chest test files beside it; `app/src/storage/migrations.ts`, `app/src/game/player-state.ts` and a new old-save test only if the stored version must rise. Part B adds `app/src/config/dials.ts` (a chest block) |
+| 51 | The lesson host speaks: the prompt in a speech bubble, and a NEW CONCEPT tag | `DONE: HANDOFF 49` (part A `HANDOFF 45`) | Opus 5.5 | O | item 46, for part B only | `app/src/components/exercise/*` and new test files beside them |
 | 52 | A custom tab bar with generated tab icons and a raised selected tab | `IN FLIGHT` (part A started 2026-10-05; part B waits on items 46 and 48) | Opus 5.5 | P | items 46 and 48, for part B only (`tools/build_icons.py`, `app/src/art/registry.ts`, `tokens.ts`, `dials.ts`) | Part A: `app/src/components/app-tabs.tsx`, the `(tabs)` layout under `app/src/app/`, a new tab bar view in `app/src/components/`. Part B adds `tools/build_icons.py` (tab icons), `assets/icons/ui/tab_*.svg` (new), `app/src/art/registry.ts`, `app/src/art/sizes.ts`, `app/src/theme/tokens.ts`, `app/src/config/dials.ts`, `CLAUDE.md` (the icon count), `docs/conventions-typescript.md` (the registry line) |
 | 53 | Rive: Flop talks, cheers and is sad | `HELD` until item 34 is `DONE` | Sonnet 5 (Zach's choice for the Rive work) | G | item 34 | the Rive file 2632317 in Zach's account; `app/assets/rive/flop.riv` (re-exported from that file only) |
 | 54 | Rive: rig Kicker the squid with the mascot contract | `HELD` until item 53 is `DONE` | Sonnet 5 (Zach's choice) | G | item 53 | a new Rive file in Zach's account; `app/assets/rive/kicker.riv` (new, exported from that file only) |
@@ -76,6 +76,7 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 | 56 | Rive: rig the chest in four tiers: a wiggle, a tap shake, an upgrade flash and the opening | `HELD` until item 48 is `DONE` | Sonnet 5 (Zach's choice) | G | item 48 | a new Rive file in Zach's account; `app/assets/rive/chest.riv` (new, exported from that file only) |
 | 57 | Play the rigs in the app: one mascot player, a chest player, static fallbacks | `HELD` until items 30 to 32, 51 and 53 to 56 are `DONE` | Opus 5.5 | F | items 30 to 32 (31 owns `path-greeting.tsx`, 32 owns `mascot.tsx`), 51 and 53 to 56 | `app/src/art/` (the Rive players, their pure modes and tests, `flop-rive.tsx`, `rive-boundary.test.ts`), `app/src/components/exercise/exercise-view.tsx`, `app/src/components/lesson/lesson-finish.tsx`, `app/src/components/boss/boss-finish.tsx`, `app/src/components/chest/`, `app/src/screens/chest-screen.tsx`, `app/src/components/path/path-greeting.tsx`, `app/src/screens/dev-art-screen.tsx`, `app/src/config/dials.ts` (its own lines in the block `// game-feel second pass`), `docs/conventions-typescript.md` (rule U6), `CLAUDE.md` (the `.riv` rule) |
 | 58 | Web app: an Expo web build of the app at felto.app, and the marketing site moved to download.felto.app | `HELD` until Zach answers the five questions in the prompt (the domain first) and items 34 and 49 are `DONE` | Opus 5.5 | R | Zach's answers; items 34 and 49 (they own `app/package.json` and `app/bun.lock`) | `app/package.json`, `app/bun.lock`, `app/app.json`, `app/metro.config.js`, `app/wrangler.jsonc` (new), new `*.web.ts` and `*.web.tsx` files beside the native ones in `app/src/storage/`, `app/src/feedback/`, `app/src/art/` (the Rive file only), `app/src/components/profile/` and `app/src/reminder/`, `app/src/components/app-tabs.tsx` if the web tabs need a branch, `site/src/config.ts`, `site/wrangler.jsonc`, `docs/incomplete/app/DESIGN.md` (one new decision), `docs/README.md`, `HANDOFF.md`, `CLAUDE.md` (the web build command) |
+| 59 | Merge the second game-feel pass branches into `main` and reconcile the docs | `OPEN` | Opus 5.5 | F | Zach's commits of items 50, 51 and 52 part A on their branches | `CLAUDE.md`, `.personal-config.json`, `docs/conventions-typescript.md`, `docs/conventions-python.md`, `docs/README.md`, `HANDOFF.md` (code map and one step), `app/src/components/screen.tsx` (one stale comment) |
 
 **Do not paste a prompt marked DONE**: a fresh session would build it again.
 
@@ -2814,3 +2815,57 @@ You are picking up felto, a poker-training app. Read, in order: `HANDOFF.md` (En
 **Not in scope, whoever asks.** Rive on web (`@rive-app/react-canvas`); web reminders or push notifications; accounts, sync between browser and phone, or any server for progress; a store release or the App Store link; Android or iOS native changes; any change to game rules, content, art, sound or the generators; a PWA install prompt or offline cache; analytics; redesigning any screen to suit a wide browser window beyond a centred, width-limited column.
 
 **Hand back.** The whole-repo gate from `CLAUDE.md` green and its test counts unchanged except the new tests; `bunx expo export -p web` exits 0 and `app/dist` is gitignored; `git diff --stat -- assets/icons assets/mascots assets/sounds` empty; the "seen" and "not seen" list from step 5; the printed Cloudflare and DNS steps; then the two copyable blocks, with `git add -N` first for new files. Zach plays the web build on his own browser and phone before `felto.app` flips; an agent cannot judge feel.
+
+### 59. Merge the second game-feel pass branches into `main` and reconcile the docs
+
+**Model: Opus 5.5. Lane F. Waits on Zach's commits of items 50, 51 and 52 part A on their branches.**
+Work in the main checkout; this item merges branches and edits documents only.
+
+You are picking up felto, a poker-learning game: Python generators in `tools/` and an Expo app in
+`app/`. Read `HANDOFF.md` first (steps 39 to 49 are this pass), then `docs/AGENT-PRACTICES.md`,
+`docs/conventions-typescript.md` and `docs/conventions-python.md` in full, and
+`docs/incomplete/game-feel/DESIGN.md` section 9. Session rules: never run `git commit`, `git push`,
+`git add -A` or `git add .`; a merge is a commit, so Zach runs every `git merge` you propose and the
+commit that ends it; you resolve conflicts by editing files. Absolute dates, no em dashes, no
+contractions, no banned AI words in docs. Write `bun run --cwd app <script>`.
+
+**Why this exists.** Six items of the second pass were built in separate worktrees from `052de2f`
+on 2026-10-05, and each touches some of the same documents. They reach `main` only by merges in a
+set order, with the gate line, the standards' versions and the counts made true once.
+
+**What is fixed.** Do not relitigate.
+- Branches, all from `052de2f`: item 46 kit `worktree-agent-a113bef444d717832` (`bbf90f0`, step 43);
+  item 50 chest rule `worktree-agent-a7d0eee158bfab62d` (fast-forwarded to `bbf90f0`, then Zach's
+  commit; steps 44 and 48); item 51 lesson host `worktree-agent-a9b65efcaaac22bd3` (on `bbf90f0`,
+  then Zach's commit; steps 45 and 49); item 47 sounds `worktree-agent-a43d507c710a61f30`
+  (`e1d98cd`, step 40); item 49 Lottie `worktree-agent-a4b7cbb935881e166` (`afe9997`, step 46);
+  item 52 part A tab bar `worktree-agent-aafed130ed08384c8` (Zach's commit, step 47).
+- Item 48's branch `worktree-agent-a803079eced2bf02e` (`b565143`) is **not** merged: Zach did not
+  approve the look (step 42), and the redraw continues on that branch.
+- Known clashes: `docs/conventions-python.md` is 1.2.2 in `main` (step 41) and a different 1.2.2 on
+  the item 47 branch, so the merge takes 1.2.3 with both changes; `docs/conventions-typescript.md`
+  is 1.1.4 on the kit branch (Z7), and item 49's U6 text takes 1.1.5. Step 46 lists the doc text
+  item 49 owes (the gate line and `gateCommand` gain `python3 tools/build_lottie.py && ` after the
+  sound generator; `CLAUDE.md` names the Lottie generator and `assets/lottie/`; U6 covers Lottie;
+  the Python standard's scope, H2, W1, W2, G1, G3 and G4). Step 42 lists what item 48 owes the
+  Python standard; leave that for item 48's redraw. Stored version is 5 after item 50 (step 44).
+- Heavy tests (`evaluate-cross-check`, drills `outs`, `dealt-slots`) time out under a high load
+  average; rerun them when the load is low before believing a red (steps 44 and 49).
+
+Do these, in order:
+1. **Check** `git status --short` and `git worktree list`; confirm each branch's head above.
+2. **Propose the merges to Zach one at a time**, in this order: 46, 50, 51, 47, 49, 52. After
+   each, resolve any conflict by editing, run the whole-repo gate, and have Zach end the merge.
+   After 49, apply its owed doc text, including the gate line, so the gate runs the new generator.
+3. **Reconcile:** the counts in `CLAUDE.md` (icons stay 78 until item 48; test files and tests from
+   the last gate run), the code map in `HANDOFF.md` (the kit, the Lottie player and generator, the
+   tab bar, the chest tier files, stored version 5), and `app/src/components/screen.tsx:26-27`
+   (the comment about the native tab bar, step 47).
+4. **Rebuild** the development build on one iOS simulator and one Android emulator (Lottie is
+   native code, step 46) and take one screenshot each of Learn, a lesson step and `/dev/kit`.
+5. **Record it:** one ledger step at the next free number; set row 59 `DONE: HANDOFF n`.
+
+Ask before building: nothing beyond each merge, which Zach runs.
+Not in scope, whoever asks: item 48's redraw, items 30 to 32, 52 part B, any new feature.
+Hand back: the gate green after the last merge, with its counts; the screenshots; the ledger step;
+the two commit blocks of Part 11 for any doc edits left after the merges.

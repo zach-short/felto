@@ -501,6 +501,23 @@ as received: `chest-1-closed.png` and `chest-2-open.png` (one wood chest, three-
 `chest-3-states.png` (closed, ajar, open), `chest-4-tiers.png` (wood, blue, purple; not chosen),
 `chest-5-tiers-closed.png` and `chest-6-tiers-open.png` (the four chosen tiers, closed and open).
 
+*Amended 2026-10-05:* Zach judged the first chest drawing (board item 48, `HANDOFF.md` step 42)
+"gamey but" with "little character" and asked for more directions. Eight more references, same
+model and quality, with the style image and the Higgsfield fish
+(`assets/higgsfield/20261005_024056_cc5c271b-78eb-4989-9b8a-80eedee1dc17.png`) as references, kept
+as received: `direction-1-face.png`, `direction-2-peek.png`, `direction-3-poker.png`,
+`direction-4-squishy.png`, `direction-5-rope.png`, `direction-6-vault.png`,
+`direction-7-moods.png` (one chest with a face, sleepy, curious and excited) and
+`direction-8-grin.png`, all common tier and closed.
+
+*Amended 2026-10-05:* Zach: "none of these are what im after. i want it look more artistic. the
+actual texture is the issue. i want to try different textures (glossy matte etc) but still fit the
+design tokens of the app". Eight material studies of one shape (`chest-1-closed.png` as the
+reference), each prompt holding the palette (wood `#C97A32`, `#E69A4A`, `#7A4318`; gold `#FFC83A` to
+`#C98F00`; shadow `#C9CDE2`, `tools/common.py:8`; page `#F4F5FA`, `app/src/theme/tokens.ts:42`):
+`texture-1-glossy.png`, `texture-2-matte.png`, `texture-3-clay.png`, `texture-4-gouache.png`,
+`texture-5-grain.png`, `texture-6-premium.png`, `texture-7-paper.png`, `texture-8-soft3d.png`.
+
 ### 9.3 Answers
 
 Asked in chat through the question tool on 2026-10-05, with a recommendation on each.
@@ -569,6 +586,11 @@ while the condition holds.
 Art: `tools/build_icons.py` draws the four tiers, closed and open, in a three-quarter view from
 `assets/higgsfield-chest/chest-5-tiers-closed.png` and `chest-6-tiers-open.png`. Generated SVGs only;
 no hand edit (`CLAUDE.md`).
+
+*As built, part A, 2026-10-05 (board item 50, `HANDOFF.md` step 44):* three chance taps, then a fourth
+tap that opens, so a legendary chest shows gold before the lid lifts. The tier is a pure function of
+a per-player `chestSeed` (stored version 5) and the unit, fixed from the player's start, so a change
+of the odds dial also changes a ready chest that is not yet opened. Not merged.
 
 #### GF-14. All twelve sounds are re-voiced as one family of pleasant chimes
 
