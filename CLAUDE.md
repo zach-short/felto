@@ -56,8 +56,8 @@
   `/dev/art`, `/dev/fixture/<name>` and `/dev/reminders` also exist. It runs as a development
   build only. `HANDOFF.md` has the code map.
 - The assets point at a game about poker: playing cards, chips, a lesson path with locked,
-  current and boss nodes, a streak flame, XP, lives, gems and a chest
-  (`tools/build_icons.py:372-385`, `main()`), and three mascots, fish, squid and shark, each in six poses
+  current and boss nodes, a streak flame, XP, lives, gems and a chest in four tiers (common,
+  rare, mythic, legendary), each closed and open (`tools/build_icons.py:659-672`, `main()`), and three mascots, fish, squid and shark, each in six poses
   (`tools/build_mascots.py:336-337`).
 - The generated SVGs are deterministic. A rebuild in a scratch copy on 2026-10-04 was
   byte-identical to the files on disk (`diff -rq`).
@@ -69,7 +69,7 @@
 | Path | Belongs here | Does not |
 |---|---|---|
 | `tools/` | The SVG generators, the sound generator and their shared module | Generated output |
-| `assets/icons/{cards,chips,path,ui}/` | Output of `build_icons.py` (78 SVGs) | Hand edits |
+| `assets/icons/{cards,chips,path,ui}/` | Output of `build_icons.py` (85 SVGs) | Hand edits |
 | `assets/mascots/{fish,squid,shark}/` | Output of `build_mascots.py` (18 SVGs) | Hand edits |
 | `assets/sounds/` | Output of `build_sounds.py` (12 WAV files, 16-bit mono, 44,100 Hz) | Hand edits, recorded audio |
 | `assets/higgsfield/` | Reference art from Higgsfield (19 PNG, 13 SVG), kept as received | Renamed or regenerated files |
@@ -105,7 +105,7 @@ open assets/gallery.html
 
 - A generator that exits 0 and prints its `wrote ...` line proves only that files were written.
   Nothing checks how they look. Each generator prints a count taken from its writes
-  (`tools/build_icons.py:386`, `tools/build_mascots.py:345`, `tools/build_sounds.py:249`), so a
+  (`tools/build_icons.py:673`, `tools/build_mascots.py:345`, `tools/build_sounds.py:249`), so a
   skipped write shows as a short count.
 - The sound generator's run line (12) proves only that twelve WAV files were written, none longer
   than its ceiling: one second for the six of `D15`, 0.6 s for the six of `GF-5`
