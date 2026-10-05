@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "Felto",
+    "slug": "felto",
+    "version": "1.0.0",
+    "scheme": "felto",
+    "orientation": "default",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "bundleIdentifier": "com.zachshort.felto",
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.zachshort.felto",
+      "predictiveBackGestureEnabled": false
+    },
+    "plugins": [
+      "expo-router",
+      "expo-sqlite",
+      "expo-audio",
+      "expo-notifications",
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/FeltoRank.ttf"
+          ]
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}
