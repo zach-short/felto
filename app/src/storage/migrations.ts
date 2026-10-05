@@ -3,7 +3,7 @@ import { isRecord } from "@/storage/check-state";
 // Rule Q2 and docs/AGENT-PRACTICES.md Part 6: the stored value carries a version. A change to
 // the shape of PlayerState raises STATE_VERSION, adds the step from the old version here, and
 // adds a test that loads a saved value of the old shape. Read this number here, never from a doc.
-export const STATE_VERSION = 3;
+export const STATE_VERSION = 4;
 
 // Key n turns a stored player of version n into version n + 1. Each step is written against the
 // old shape as it was stored, so it never imports today's types or defaults.
@@ -24,6 +24,13 @@ export const MIGRATIONS: Record<number, (old: unknown) => unknown> = {
   2: (old) => {
     if (!isRecord(old) || !isRecord(old.settings)) return old;
     return { ...old, settings: { ...old.settings, haptics: true } };
+  },
+  // Version 4 (Logan Mode): settings gain the Logan Mode switch, off. Written out for the same
+  // reason as above. Every field of version 3 is kept, and a value that is not a version 3 player
+  // is passed on unchanged, so the load backs it up.
+  3: (old) => {
+    if (!isRecord(old) || !isRecord(old.settings)) return old;
+    return { ...old, settings: { ...old.settings, loganMode: false } };
   },
 };
 

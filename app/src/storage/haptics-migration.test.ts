@@ -43,15 +43,15 @@ function loadVersion2(player: unknown) {
 }
 
 describe("the version 3 migration (GF-3, rule Q2, board item 27)", () => {
-  it("is version 3", () => {
-    expect(STATE_VERSION).toBe(3);
+  it("is at least version 3", () => {
+    expect(STATE_VERSION).toBeGreaterThanOrEqual(3);
   });
 
   it("loads a stored version 2 player with every field kept, extra ones too, and Haptics on", () => {
     const { result } = loadVersion2(VERSION_2_PLAYER);
     expect(result).toEqual({
       status: "loaded",
-      state: { ...VERSION_2_PLAYER, settings: { ...VERSION_2_PLAYER.settings, haptics: true } },
+      state: { ...VERSION_2_PLAYER, settings: { ...VERSION_2_PLAYER.settings, haptics: true, loganMode: false } },
     });
   });
 

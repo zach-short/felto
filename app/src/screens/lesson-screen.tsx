@@ -35,7 +35,7 @@ function LessonOpening({ id, at, pick, check, play }: LessonOpeningProps) {
   const start = devIndex(at);
   const { state } = usePlayer();
   const finish = (right: number, size: number): FinishView => ({
-    body: <LessonFinish right={right} size={size} xp={right * DIALS.xpPerRightAnswer} streak={currentStreak(state, new Date())} />,
+    body: <LessonFinish right={right} size={size} xp={right * DIALS.xpPerRightAnswer} streak={currentStreak(state, new Date())} loganMode={state.settings.loganMode} />,
     label: "Continue",
     onPress: () => router.back(),
   });

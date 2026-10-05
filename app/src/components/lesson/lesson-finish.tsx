@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { Art } from "@/art/art";
 import type { ArtName } from "@/art/sizes";
 import { Mascot } from "@/art/mascot";
+import { loganLine } from "@/components/lesson/logan-line";
 import { CAST } from "@/content/cast";
 import { ART_SCALE, RADIUS, SPACE, TYPE } from "@/theme/tokens";
 import { useColumnWidth } from "@/theme/use-column-width";
@@ -13,11 +14,12 @@ type LessonFinishProps = {
   size: number;
   xp: number;
   streak: number;
+  loganMode: boolean;
 };
 
 // DESIGN.md 10.3: the finish is drawn inside the lesson modal, with the fish happy (10.5), the
 // XP the lesson gave and the streak it kept (D8).
-export function LessonFinish({ right, size, xp, streak }: LessonFinishProps) {
+export function LessonFinish({ right, size, xp, streak, loganMode }: LessonFinishProps) {
   const { colours } = useTheme();
   const column = useColumnWidth();
   return (
@@ -27,12 +29,20 @@ export function LessonFinish({ right, size, xp, streak }: LessonFinishProps) {
       <Text style={[styles.line, { color: colours.textMuted }]}>
         {`${right} of ${size} right. ${CAST.fish} is proud of you.`}
       </Text>
+      <LoganLine loganMode={loganMode} />
       <View style={styles.stats}>
         <Reward art="xp_bolt" text={`+${xp} XP`} />
         <Reward art="streak_flame" text={streak === 1 ? "1-day streak" : `${streak}-day streak`} />
       </View>
     </View>
   );
+}
+
+// Logan Mode: the loving line under the score, drawn only when the switch is on
+export function LoganLine({ loganMode }: { loganMode: boolean }) {
+  const { colours } = useTheme();
+  const line = loganLine(loganMode);
+  return line === null ? null : <Text style={[styles.logan, { color: colours.text }]}>{line}</Text>;
 }
 
 // Shared with the boss and review finishes (phase 10)
@@ -51,6 +61,7 @@ const styles = StyleSheet.create({
   finish: { alignItems: "center", gap: SPACE.md, paddingTop: SPACE.xl },
   title: { fontSize: TYPE.title, fontWeight: "800" },
   line: { fontSize: TYPE.body, fontWeight: "600", textAlign: "center" },
+  logan: { fontSize: TYPE.heading, fontWeight: "800", textAlign: "center" },
   stats: { flexDirection: "row", gap: SPACE.md },
   reward: { flexDirection: "row", alignItems: "center", gap: SPACE.sm, padding: SPACE.md, borderRadius: RADIUS.md },
   rewardText: { fontSize: TYPE.heading, fontWeight: "800" },
