@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { Art } from "@/art/art";
 import type { PathUnit } from "@/components/path/path-view-model";
+import { StoryButton } from "@/components/story/story-button";
 import { CAST } from "@/content/cast";
 import { ART_SCALE, OPACITY, SPACE, TYPE } from "@/theme/tokens";
 import { useColumnWidth } from "@/theme/use-column-width";
@@ -15,6 +16,8 @@ type UnitHeaderProps = {
 // DESIGN.md 10.1: the unit's title and its chest, faded until the boss is passed. D20: a unit the
 // placement check skipped shows its boss complete, but its chest is won only by beating that boss
 // in play, so the chest stays faded and a line under the title says why (audit of item 12).
+// US-5: a unit with a story shows the button that opens it under the title, in the words column,
+// so the button wraps with the words and never pushes the chest off a small phone.
 export function UnitHeader({ unit }: UnitHeaderProps) {
   const { colours } = useTheme();
   const column = useColumnWidth();
@@ -29,6 +32,7 @@ export function UnitHeader({ unit }: UnitHeaderProps) {
         <Text style={[styles.kicker, { color: colours.textMuted }]}>Unit {unit.number}</Text>
         <Text style={[styles.title, { color: colours.text }]}>{unit.title}</Text>
         {unit.placed ? <Text style={[styles.placed, { color: colours.textMuted }]}>{PLACED_LINE}</Text> : null}
+        {unit.hasStory ? <StoryButton unit={unit} /> : null}
       </View>
       <Pressable
         onPress={ready ? openChest : undefined}

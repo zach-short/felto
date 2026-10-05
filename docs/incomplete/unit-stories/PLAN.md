@@ -32,6 +32,13 @@ Each phase re-runs the checks it depends on before building (Part 2.4, "A resume
 | BD-S4 | The tap zone is a pure function `storyTapAction(x, width)` returning `back` or `forward`, tested in node; the screen only renders two `Pressable` areas that call it | Replace the function |
 | BD-S5 | The story's slide index is a pure reducer (`storyStep`), in the style of `runStep` (`app/src/components/lesson/lesson-run.ts:62-`) | Replace the reducer |
 | BD-S6 | New dials go in `app/src/config/dials.ts` as one block, `// unit-stories`, so a merge with another effort's block keeps both | Delete the block |
+| BD-S7 | Taken 2026-10-05 by board item 23 (phase 2), amending the second half of BD-S4. The screen has one tap layer, a `Pressable` filling the whole screen behind the slide (`app/src/components/story/story-frame.tsx`). The marks, the slide and their containers pass touches through (`pointerEvents` `none` or `box-none`), and the cross and the last button take their own. The layer has no children, so `locationX` is the tap's x on the screen, and `storyTapAction` decides it against the window width. Two `Pressable` areas sized from the dial would have put the 30/70 split in layout code that no test reads | Two `Pressable` areas, each with a fixed action, sized from `storyBackZone` |
+| BD-S8 | A screen reader cannot tap one side of the screen, so the slide is one `adjustable` element: swipe up or down for the next or the previous slide, double tap to go forward (`story-slide.tsx`). The tap layer is hidden from screen readers | Drop the accessibility actions and show two labelled buttons |
+| BD-S9 | Every way out (the cross, "Back to the path", a forward tap on the last slide, Android's back button) only asks the reducer to close; one effect calls `router.back()` when `closing` first turns true, and a closing story takes no more events (`use-story-run.ts`, `story-step.ts`). Two taps in one frame cannot pop two screens | Call `router.back()` in each handler, behind a ref guard |
+| BD-S10 | A window wider than it is tall puts the fish beside the words; a taller one stacks them, so a phone on its side still fits one slide (`story-slide.tsx`). No token is added, because `app/src/theme/tokens.ts` belongs to board item 26, open in parallel on 2026-10-05: the slide reuses `ART_SCALE.finishMascot` (stacked), `ART_SCALE.castMascot` (beside), `TYPE`, `SPACE` and `LINE_HEIGHT` | Add story tokens to `tokens.ts` after item 26 merges, and point the slide at them |
+| BD-S11 | The header button is the native `@expo/ui` `Button` with `variant="outlined"`, under the unit title in the words column, so it wraps with the words and never pushes the chest off a small phone (`story-button.tsx`, `unit-header.tsx`). It shows for every unit with a story, whatever the player's progress, locked units included, because the story gates nothing (US-5) | Show it only on an open unit, or use the filled variant |
+| BD-S12 | The stories are listed in `app/src/content/stories/catalog.ts` (`STORIES`, `storyFor`), and `validate-story.ts` checks them: 6 to 8 slides, a body of at most `storyWordsPerSlide` words (the dial is read as a maximum), a title and a body, cards that parse, no card twice, no empty card row, no `key` without cards, one story per unit. The key test of US-7 is built here, ahead of phase 3, in `story-catalog.test.ts` over every listed story, because the placeholder already has a keyed slide | Move the key test into phase 3's `hands-story.test.ts` and read the dial as a target, not a maximum |
+| BD-S13 | A unit with no story draws its own not-found view, `StoryMissing` ("Story not found." and "This unit has no story yet."), laid out as `LessonClosed` is. `LessonClosed` says "This unit is not on the path" for a non-lesson session, which is false for a unit without a story, and `app/src/components/lesson/` belongs to the game-feel effort | Add a story case to `LessonClosed` once item 29 has merged |
 
 ## 2. Phases
 
@@ -81,6 +88,12 @@ Watch for: the review. A dealt id must never reach `missedExercises`, or the rev
 it (design US-2). Also `D8` still says "unit's fifty": do not change the pool, only what is played.
 
 ### Phase 2: Story engine, route and header button
+
+**BUILT 2026-10-05, not committed** (board item 23, `HANDOFF.md` step 31). Built on Opus 5.5 in
+the worktree `.claude/worktrees/lane-e-story-engine`, branch `lane-e-story-engine`, from `main` at
+`b986f61`. The build calls are BD-S7 to BD-S13. Seen running on the iOS simulator (iPhone 17e) in
+light and dark and on an Android emulator in light and dark; not seen in landscape or on a tablet
+(step 31 says why). The placeholder story of step 7 is `app/src/content/stories/hands.ts`.
 
 Lane B. Waits on nothing. Files it owns: `app/src/app/story/[unit].tsx` (new),
 `app/src/screens/story-screen.tsx` (new), `app/src/components/story/*` (new),
@@ -195,3 +208,7 @@ phase starts by running `git status --short` and checking the files it owns agai
 | The kickers lesson is unchanged | Unit 1, lesson 4 | The same six showdowns as before |
 | The story opens and closes | Learn tab, unit 1 header, "Learn about hands" | Right tap forward, left tap back, first-slide back does nothing, last slide shows only "Back to the path", Android back closes it |
 | The story costs nothing | Open and finish the story | Hearts, XP and streak are unchanged |
+| Only a unit with a story shows the button (added by phase 2) | Learn tab, the headers of units 1 and 2, iOS and Android, light and dark | Unit 1 shows "Learn about hands" under its title, beside the chest; unit 2 "The table" shows no button |
+| A unit without a story has a not-found page (added by phase 2) | Open `felto://story/table` on a development build | The sad fish, "Story not found.", "This unit has no story yet." and "Back to the path", which closes it |
+| A slide fits a phone on its side and a tablet (added by phase 2) | Rotate a phone to landscape inside the story, then a tablet in landscape (Android: `adb shell wm size 2560x1600` and `wm density 320`) | Landscape puts the fish beside the words; nothing is cut off on the card slide or the last slide, and "Back to the path" shows on the last |
+| A screen reader can move through the story (added by phase 2) | VoiceOver or TalkBack on, inside the story | The slide reads its title, body and position ("Slide 1 of 6"); swipe up goes to the next slide, swipe down to the one before |

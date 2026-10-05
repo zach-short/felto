@@ -297,6 +297,14 @@ Defense: it reuses the session route style, keeps the router thin (rule U1), and
 stored state. Against: a player cannot tell which stories they have seen (the "seen" flag was
 option 2B and was not chosen).
 
+*As built, 2026-10-05 (board item 23, `HANDOFF.md` step 31, not committed):* the route is
+`app/src/app/story/[unit].tsx`, a thin render of `StoryScreen` (`app/src/screens/story-screen.tsx`),
+registered with the `SESSION` options in `app/src/components/root-stack.tsx`. The schema is
+`app/src/content/stories/schema.ts`; the stories are listed in `content/stories/catalog.ts` and
+checked by `content/stories/validate-story.ts` (`PLAN.md` BD-S12). A unit with no story draws
+`StoryMissing` ("Story not found.", "This unit has no story yet."), its own view, because
+`LessonClosed` would say the unit is not on the path (BD-S13). The screen reads no player state.
+
 ### US-5. The entry is a button on the unit header, and the story is free
 
 Decided 2026-10-05 (Zach: "learn about hands"). The unit header shows a button labelled
@@ -306,6 +314,15 @@ XP, spends no heart, counts for no streak, and gates no lesson. It stores nothin
 Defense: Zach's words, and the path model, the seven stops and their tests stay as they are
 (section 1, row 12). Against: a header button is easier to miss than a stop on the path (option
 2C), which was weighed and not chosen.
+
+*As built, 2026-10-05 (board item 23, step 31):* the button is the native `@expo/ui` `Button`,
+outlined, under the unit title (`app/src/components/story/story-button.tsx`), and the label comes
+from `storyButtonLabel` ("Learn about hands", "Learn about the table", "Learn about preflop",
+"Learn about outs and odds"). `PathUnit` gained `hasStory` (`path-view-model.ts`); the button
+shows on a unit with a story whatever the player's progress, a locked unit included, because the
+story gates nothing (BD-S11). The seven stops are unchanged (`unit-story.test.ts`). Seen on the
+iPhone 17e simulator and an Android emulator: the button fits beside the chest on the smallest
+current iPhone (390 points wide).
 
 ### US-6. Taps, progress and exit
 
@@ -317,6 +334,18 @@ Android's back button closes the story through the existing hook
 (`app/src/components/lesson/use-hardware-back.ts:5-12`). There is no auto-advance, no hold to
 pause and no swipe.
 
+*As built, 2026-10-05 (board item 23, step 31):* the split is `storyTapAction` in
+`app/src/components/story/story-tap.ts`, read against the window width; a tap on the 30 percent
+line goes forward. One tap layer fills the screen behind the slide, not two areas (BD-S7). The
+slide index is the reducer `storyStep` (`story-step.ts`): forward on the last slide closes, as
+"Back to the path" does, and every exit closes the screen once (BD-S9). The progress marks sit
+in one row after the cross, as the lesson header lays out its bar. A screen reader gets the slide
+as one adjustable element, swipe up or down to move (BD-S8). On the iPhone 17e simulator a tap at
+x = 60 points on the first slide did nothing, and a tap at x = 40 on the last slide went back one
+slide; a debug log showed each tap's x arriving as tapped (`locationX` 60 for a tap at 60); the cross,
+"Back to the path" and a forward tap on the last slide each closed the story; on Android the back
+button closed it and the app stayed open.
+
 ### US-7. Slide content: the fish, short, and every example computed
 
 Decided 2026-10-05. The host is the fish (`D9`). A slide is a pose, a title, about 30 words
@@ -326,6 +355,13 @@ a hand carries a key, and a test computes that hand with the evaluator and fails
 disagreement (rule Q3, extended to stories). The slide copy goes to Zach before it is final, in
 two or three registers (R7); the three sample slides of section 6, question 4 are the registers
 already offered.
+
+*As built, 2026-10-05 (board item 23, step 31):* the validator reads `storyWordsPerSlide` as a
+maximum for the body (30 words pass, 31 fail) and counts only the body, not the title. The key
+test is built in phase 2, in `app/src/content/stories/story-catalog.test.ts`, over every listed
+story, and it fails if no slide is keyed (BD-S12). The placeholder hands story
+(`content/stories/hands.ts`, six slides, one keyed flush) is not the real copy; phase 3 replaces
+it after Zach reads the registers.
 
 ### US-8. Only the hands story is built in this effort
 

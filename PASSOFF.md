@@ -40,8 +40,8 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 | 20 | App phase 16: onboarding and the placement check | `DONE: HANDOFF 25` | Opus 5.5 | B | item 19 | the onboarding routes and components |
 | 21 | Fix two stale lines that board item 4 found | `DONE: HANDOFF 9` | Sonnet 5 | A | nothing | `docs/conventions-python.md`, `docs/incomplete/app/DESIGN.md` |
 | 22 | Unit stories phase 1: dealt hands in lessons 3 and 5 and in every boss | `OPEN` | Opus 5.5 | D | nothing | `app/src/game/dealt-slots.ts` (new), `app/src/game/session.ts`, `app/src/screens/lesson-screen.tsx`, `app/src/components/boss/boss-session.ts`, `app/src/config/dials.ts` (block `// unit-stories`) |
-| 23 | Unit stories phase 2: the story engine, the route and the header button | `OPEN` | Opus 5.5 | E | nothing | `app/src/app/story/`, `app/src/screens/story-screen.tsx`, `app/src/components/story/`, `app/src/content/stories/schema.ts`, `app/src/components/root-stack.tsx`, `app/src/components/path/unit-header.tsx`, `app/src/components/path/path-view-model.ts`, `app/src/config/dials.ts` (block `// unit-stories`) |
-| 24 | Unit stories phase 3: the hands story content | `HELD` until item 23 is `DONE` | Opus 5.5 | E | item 23 | `app/src/content/stories/hands.ts`, `app/src/content/stories/hands-story.test.ts` |
+| 23 | Unit stories phase 2: the story engine, the route and the header button | `DONE: HANDOFF 31` | Opus 5.5 | E | nothing | `app/src/app/story/`, `app/src/screens/story-screen.tsx`, `app/src/components/story/`, `app/src/content/stories/schema.ts`, `app/src/components/root-stack.tsx`, `app/src/components/path/unit-header.tsx`, `app/src/components/path/path-view-model.ts`, `app/src/config/dials.ts` (block `// unit-stories`) |
+| 24 | Unit stories phase 3: the hands story content | `OPEN` | Opus 5.5 | E | item 23 committed in the lane E worktree | `app/src/content/stories/hands.ts`, `app/src/content/stories/hands-story.test.ts` |
 | 25 | Unit stories phase 4: close out | `HELD` until items 22 to 24 are `DONE` | Sonnet 5 | E | items 22 to 24 | `docs/README.md`, `docs/incomplete/unit-stories/`, `docs/incomplete/app/DESIGN.md`, `HANDOFF.md` |
 | 26 | Game feel phase 1: Reanimated, the motion module, tokens and the primary button | `DONE: HANDOFF 29` | Opus 5.5 | F | nothing | `app/package.json`, `app/bun.lock`, `app/src/motion/`, `app/src/components/button/`, `app/src/theme/tokens.ts`, `app/src/config/dials.ts` (block `// game-feel`), `docs/conventions-typescript.md` |
 | 27 | Game feel phase 2: haptics, the Haptics switch and stored version 3 | `DONE: HANDOFF 30` | Opus 5.5 | F | item 26 | `app/src/feedback/`, `app/src/storage/migrations.ts`, `app/src/storage/check-state.ts`, `app/src/storage/player-actions.ts`, `app/src/game/player-state.ts`, `app/src/game/settings.ts`, `app/src/components/profile/`, `app/src/screens/profile-screen.tsx`, `app/src/components/lesson/lesson-run-view.tsx` and `feedback-sheet.tsx` (the press haptic only) |
@@ -703,6 +703,93 @@ assets/sounds` showing nothing; screenshots on the iOS simulator and the Android
 dark, and on a tablet in landscape, of the header with and without a story button and of the first and
 last slide, saying "gates green" or "seen running" per item (R10); then the two copyable blocks.
 
+### 24. Write the hands story: six to eight slides that walk a new player through unit 1
+
+**Model: Opus 5.5. Lane E. Waits on item 23 committed in the lane E worktree.** Work in that same
+worktree, `.claude/worktrees/lane-e-story-engine` (branch `lane-e-story-engine`): item 23's code is
+there and not yet in `main`. Lanes D and F run beside it in their own worktrees.
+
+You are picking up felto, a poker-learning app in `app/` (Expo SDK 57, TypeScript strict, bun, Expo
+Router). Read `HANDOFF.md` first (step 31 is item 23, the code map has the story files), then
+`docs/incomplete/unit-stories/DESIGN.md` (US-7 and US-8 with their `As built` notes, and section 6,
+question 4) and `docs/incomplete/unit-stories/PLAN.md` (phase 3, and BD-S7 to BD-S13), then
+`docs/AGENT-PRACTICES.md` and `docs/conventions-typescript.md` in full. Session rules, restated:
+never run `git commit`, `git push`, `git add -A` or `git add .`; absolute dates; no em dashes and no
+contractions in documents; no drive-by fixes; `bun run --cwd app <script>`, never
+`bun --cwd app run <script>`.
+
+**Why this exists.** Zach wants an optional rundown before a unit, image-and-text slides tapped
+through like a phone story, that "talks them through everything with examples and very simply".
+Item 23 built the engine and a placeholder. This item writes the real hands story, the first one a
+player sees, so it decides whether the feature feels worth tapping.
+
+**What is fixed.** Read these before changing anything; do not relitigate them.
+- The placeholder is `app/src/content/stories/hands.ts` (`storyHands`, six slides, `satisfies
+  Story`), already listed in `STORIES` in `app/src/content/stories/catalog.ts`. Replace its slides;
+  keep the export name and the unit `hands`.
+- A slide is `{ pose, title, body, cards?, key? }` (`app/src/content/stories/schema.ts`). `pose` is
+  one of the fish's six: `cheer`, `happy`, `sad`, `sleep`, `smug`, `think`. `cards` is one row of
+  card codes such as `"As"` or `"Td"`, drawn by `CardRow` with no label; seven cards still fit, but
+  2 to 5 read best on a phone. `key` is a `HandCategory` and needs 5 to 7 cards, because
+  `evaluate` refuses fewer (`app/src/cards/evaluate.ts`).
+- The validator (`content/stories/validate-story.ts`) wants 6 to 8 slides and at most 30 words in a
+  body (the title is not counted), and refuses a key without cards, an empty card row and a card
+  shown twice. `content/stories/story-catalog.test.ts` already computes every keyed slide with the
+  evaluator and fails on a disagreement, and fails if no slide is keyed (BD-S12). Your
+  `hands-story.test.ts` pins what is true of this story only, for example that the keyed hands
+  climb in strength in the order the slides show them, or that every slide whose title names a
+  hand has a key.
+- The host is the fish (`D9`), the voice is warm (`D10`), and the copy goes to Zach before it is
+  final, in two or three registers (R7, US-7). The three registers already offered for a "Ranks"
+  slide are in `DESIGN.md` section 6, question 4.
+- Use only terms unit 1 teaches, in the order it teaches them: read the lesson titles in
+  `app/src/content/outline.ts` (ranks and suits, the ten hands, naming a hand, kickers, who wins)
+  and the prompts in `app/src/content/units/hands.ts`. The last slide shows "Back to the path"
+  from the engine; it never starts a lesson (US-6), so its words should not promise one.
+- Simulators are shared with other lanes. On 2026-10-05 taps and a lesson link from an unknown
+  source landed on lane E's iPhone 17e (step 31). Name every device by its id, never `booted`. Lane
+  E's devices: the iPhone 17e simulator `B84A7615-AE2C-48A9-B662-63AEFE9D429F` (install `main`'s
+  development build from
+  `~/Library/Developer/Xcode/DerivedData/Felto-eebboxkxvbnzxuarrnijdtxzfiyp/Build/Products/Debug-iphonesimulator/Felto.app`),
+  the `Medium_Phone_API_36` emulator (install `app/android/app/build/outputs/apk/debug/app-debug.apk`
+  from the main checkout), and Metro on port 8084 from the worktree's `app/`. Start the emulator and
+  Metro as background commands with the two-hour limit; the 30-minute default kills them.
+- Do not touch `app/src/theme/tokens.ts` or `app/src/components/lesson/` (the game-feel lane owns
+  them while items 26 to 33 are open, 2026-10-05), and do not change the schema, the validator or the engine.
+
+Do these, in order:
+1. **Draft the slides**, 6 to 8, about 30 words each, in the plan's order: the deck and ranks, hole
+   cards and the board, best five of seven, the ten hands from high card up with an example row
+   for each group, kickers, who wins. Count the words with `wordCount`.
+2. **Show Zach the copy before it is final** (R7), in one message: two or three registers (plain,
+   warm, terse) for the first slide, one card slide and the last slide, with your recommendation
+   marked. Then write the rest in the register he picks.
+3. **Key every example** that names a hand, and write `app/src/content/stories/hands-story.test.ts`.
+4. **A read-only check** by a Sonnet 5 subagent in its own worktree, with the model passed
+   explicitly: every card code in `hands.ts` parses and each keyed category is what the evaluator
+   gives. Its output is a list; check its diffstat when it returns (Part 4).
+5. **See it running** on the iPhone 17e and the Android emulator, light and dark: the first slide,
+   one card slide and the last slide. Also walk the checks step 31 left `open` if the machine
+   allows: a phone in landscape, a tablet in landscape (Android `adb shell wm size 2560x1600` and
+   `wm density 320`; reset both after), and `felto://story/table` (the not-found view).
+6. **Record it.** Next free ledger step (read every worktree's `HANDOFF.md`, as lanes D and F
+   take numbers too); a dated `As built` note under US-7; the phase 3 header in `PLAN.md`; this
+   row to `DONE`; and the prompt for item 25 from `PLAN.md` phase 4.
+
+Ask before building: which register, in step 2. Also ask before you change anything outside the two
+files this item owns, for example if a card row needs a label (that is a schema change, item 23's
+file). Both are Zach's calls, and the answer to either may be no.
+
+Not in scope, whoever asks: stories for the table, preflop and odds units (US-8); a "seen" flag or a
+changing button label (option 2B); auto-advance; new art or poses; any change to hearts, XP, the
+streak or the path; the dealt hands of item 22.
+
+Hand back: the whole-repo gate from `CLAUDE.md`, green, with the test count; `git diff --stat --
+assets/icons assets/mascots assets/sounds` showing nothing; screenshots of the first, one card and
+the last slide on iOS and Android, saying "gates green" or "seen running" (R10); every new string;
+then the two copyable blocks, `git add` with the exact files and `git commit` with the same files
+and a short lowercase message, both run from the lane E worktree.
+
 ### 26. Install Reanimated and build the motion module, tokens and the primary button
 
 *`DONE: HANDOFF 29`, 2026-10-05, on branch `game-feel-1` in `.claude/worktrees/game-feel-1`, not
@@ -964,6 +1051,6 @@ of a lesson on the iOS simulator and the Android emulator and the line "not hear
 copyable blocks, `git add` with the exact files and `git commit` with the same files and a short
 lowercase message.
 
-Items 24, 25 and 29 to 33: their prompts are written by the session that closes the item before
+Items 25 and 29 to 33: their prompts are written by the session that closes the item before
 them, from the matching phase in `docs/incomplete/unit-stories/PLAN.md` or
 `docs/incomplete/game-feel/PLAN.md`.

@@ -72,4 +72,11 @@ export const DIALS = {
   // D20
   placementSize: 10,
   placementPassRight: 8,
+
+  // unit-stories: the unit story (docs/incomplete/unit-stories/DESIGN.md US-6 and US-7). A tap
+  // left of this share of the screen width goes back a slide, and a tap right of it goes forward.
+  storyBackZone: 0.3,
+  // The most words in a slide's body: "about 30", read at a glance
+  storyWordsPerSlide: 30,
+  storySlidesPerUnit: { min: 6, max: 8 },
 } as const;
