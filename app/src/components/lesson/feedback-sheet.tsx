@@ -1,9 +1,9 @@
-import { BottomSheet, Button, Column, RNHostView } from "@expo/ui";
+import { BottomSheet, Column, RNHostView } from "@expo/ui";
 import { StyleSheet, Text, View } from "react-native";
 
 import { Mascot } from "@/art/mascot";
 import type { Pose } from "@/art/names";
-import { WideLabel } from "@/components/lesson/wide-label";
+import { PrimaryButton } from "@/components/button/primary-button";
 import type { CastRole } from "@/content/cast";
 import { ART_SCALE, LINE_HEIGHT, SPACE, TYPE } from "@/theme/tokens";
 import { useColumnWidth } from "@/theme/use-column-width";
@@ -22,32 +22,33 @@ type FeedbackSheetProps = {
 };
 
 // DESIGN.md 10.3: the answer feedback is a native sheet over the lesson. 10.5: the fish cheers a
-// right answer and is sad at a wrong one. D10: the warm register.
+// right answer and is sad at a wrong one. D10: the warm register. GF-2: its Continue is the
+// primary button, so it is drawn inside the hosted React Native view with the words.
 export function FeedbackSheet({ shown, right, answer, explanation, onContinue, onDismiss, host = "fish" }: FeedbackSheetProps) {
   const { colours } = useTheme();
   const column = useColumnWidth();
   return (
     <BottomSheet isPresented={shown} onDismiss={onDismiss} containerColor={colours.surface}>
-      <Column spacing={SPACE.md}>
+      <Column>
         <RNHostView matchContents>
-          <View style={[styles.body, { width: column }]}>
-            <Mascot character={host} pose={feedbackPose(host, right)} width={column * ART_SCALE.sheetMascot} />
-            <View style={styles.words}>
-              <Text style={[styles.heading, { color: right ? colours.right : colours.wrong }]}>
-                {right ? "Nice read!" : "So close."}
-              </Text>
-              {/* D10's line is "So close. It was {answer}.", but an answer label is a capitalised
-                  phrase ("Player 1 wins"), which reads badly mid-sentence, so it gets its own line */}
-              {right ? null : (
-                <Text style={[styles.answer, { color: colours.text }]}>{`The answer: ${answer}`}</Text>
-              )}
-              <Text style={[styles.explanation, { color: colours.text }]}>{explanation}</Text>
+          <View style={[styles.sheet, { width: column }]}>
+            <View style={styles.body}>
+              <Mascot character={host} pose={feedbackPose(host, right)} width={column * ART_SCALE.sheetMascot} />
+              <View style={styles.words}>
+                <Text style={[styles.heading, { color: right ? colours.right : colours.wrong }]}>
+                  {right ? "Nice read!" : "So close."}
+                </Text>
+                {/* D10's line is "So close. It was {answer}.", but an answer label is a capitalised
+                    phrase ("Player 1 wins"), which reads badly mid-sentence, so it gets its own line */}
+                {right ? null : (
+                  <Text style={[styles.answer, { color: colours.text }]}>{`The answer: ${answer}`}</Text>
+                )}
+                <Text style={[styles.explanation, { color: colours.text }]}>{explanation}</Text>
+              </View>
             </View>
+            <PrimaryButton label="Continue" onPress={onContinue} />
           </View>
         </RNHostView>
-        <Button onPress={onContinue}>
-          <WideLabel label="Continue" />
-        </Button>
       </Column>
     </BottomSheet>
   );
@@ -61,6 +62,7 @@ function feedbackPose(host: CastRole, right: boolean): Pose {
 }
 
 const styles = StyleSheet.create({
+  sheet: { gap: SPACE.md },
   body: { flexDirection: "row", alignItems: "center", gap: SPACE.md, paddingBottom: SPACE.sm },
   words: { flex: 1, gap: SPACE.xs },
   heading: { fontSize: TYPE.heading, fontWeight: "800" },

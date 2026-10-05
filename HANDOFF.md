@@ -149,6 +149,14 @@ answer in place.
   `Session` of kind `placement` (`components/onboarding/placement-session.ts` draws it;
   `components/lesson/session-end.ts` routes its end to `finishPlacement`). The fixture `fresh`
   opens onboarding; `placed` and `all-done` show the path after a pass and every Practice kind.
+- Motion and the primary button (board item 26, `GF-1`, `GF-2`): `app/src/motion/` is the only
+  importer of `react-native-reanimated` and `react-native-worklets` (BD-G3; `motion-boundary.test.ts`
+  fails otherwise). It holds `useReducedMotion` (the one reader of the phone's Reduce Motion
+  setting, BD-G4), `motionAllowed` over the dial `reducedMotionSkips`, the pure `motion-steps.ts`,
+  the hooks `usePressScale`, `useBounce` and `useFadeIn`, and `MotionView`.
+  `app/src/components/button/primary-button.tsx` is the raised Check and Continue button
+  (registry Z5 of the TypeScript standard); the native `LessonButton` still draws the other
+  primary actions.
 - Pure copy helpers (board item 16): `components/lesson/closed-copy.ts` (`OUT_OF_HEARTS`,
   `nextLifeLine`, which formats the time with `formatClockTime`), `components/stat-values.ts`
   (`statLabel`, the singular and plural stat words), `components/path/path-view-model.ts`
@@ -225,6 +233,18 @@ answer in place.
   only show a page; a fixture is refused unless `__DEV__` (`use-load-fixture.ts`).
 - **`PART0-PROMPT.md:4` names the wrong directory**, a scratchpad path under `/private/tmp`. The
   repo is `/Users/zachshort/Projects/felto`. Found 2026-10-04.
+- **Reanimated is native code since board item 26.** A development build made before it stops
+  at launch. After pulling that change, rebuild (`bun run --cwd app ios`, and the Android
+  command in Environment) on every simulator, emulator and phone.
+- **The Metro transform cache is shared by every checkout on this Mac** (`$TMPDIR/metro-cache`).
+  On 2026-10-05 the main checkout's `app/node_modules` held `react-native-worklets` 0.13.0 and
+  `react-native-reanimated`, dated 2026-10-05 01:50 and listed in no `package.json`. A worktree's
+  Metro then served code transformed with that 0.13.0 plugin, and the app stopped on "[Worklets]
+  Mismatch between JavaScript code version and Worklets Babel plugin version (0.10.1 vs.
+  0.13.0)". A Metro started with its own `TMPDIR` and `--clear` fixed it. When another Metro
+  runs, start a second one that way, on its own port: `TMPDIR=<a scratch folder>/ bunx expo start
+  --dev-client --port 8083 --clear` from `app/`, then `bunx expo run:ios --device <udid> --port
+  8083`.
 
 ## Step log
 
@@ -808,6 +828,61 @@ passes the whole-repo gate (63 files, 490 tests). The rundown is
 `docs/incomplete/autopilot-2026-10-05/RUNDOWN.md`; the record of the run is `STATE.md` beside it.
 Weekly usage ended at 49%, under Zach's 65% stop. Nothing is committed; no one has held the app on
 a phone. Zach's answers to `D15` to `D21` are now in `DESIGN.md`.
+
+**29. Reanimated, the motion module, tokens and the primary button (board item 26, game-feel
+phase 1).** Done 2026-10-05, on branch `game-feel-1` in `.claude/worktrees/game-feel-1`, made
+from local `main` at `b986f61`, on Opus 5.5; not committed. Step 28 is lane D's (board item 22,
+in its own worktree, by its message to this session on 2026-10-05), so this worktree's log goes
+from 27 to 29 until the branches merge. `bunx expo install` pinned `react-native-reanimated`
+4.5.1 and `react-native-worklets` 0.10.1; Expo's Babel preset adds the worklets plugin, so there is
+no `babel.config.js` (BD-G9). `app/src/motion/` wraps Reanimated (BD-G3) and holds
+`useReducedMotion` (BD-G4), `motionAllowed` over the new dial `reducedMotionSkips` (`GF-8`; the
+press and fades stay), the pure `motion-steps.ts`, `usePressScale`, `useBounce`, `useFadeIn` and
+`MotionView`; a new test fails if any file outside the folder imports Reanimated or worklets, and
+a planted import made it fail (BD-G13). `app/src/config/dials.ts` has a `// game-feel` block after
+the `D15` block (BD-G14) with the motion values of `PLAN.md` section 3 plus `fadeMs`,
+`pressReleaseMs` and `pressReleaseDamping`. `app/src/theme/tokens.ts` has the button's face, edge
+and label, its disabled three, four unit colours and four moment colours, light and dark, each
+copied from a chip of `tools/build_icons.py:35-40`, `:250` or `:251` (a script checked all 27
+colour citations in the file: none wrong); `BUTTON_HEIGHT` is 52. `PrimaryButton`
+(`app/src/components/button/primary-button.tsx`) draws Check and Continue in the lesson loop and
+the feedback sheet's Continue (BD-G12); its label is `TYPE.heading` so white on blue passes as
+large text (BD-G11); `pressHaptic` and `pressSound` props wait for phases 2 and 3. The other 12
+`LessonButton` uses stay native (BD-G7). The double-press guards of `session-steps.ts` were not
+touched, and their tests pass unchanged. Registry entry Z5 in `docs/conventions-typescript.md`
+(1.1.1); a "built" pointer under `D2` in `docs/incomplete/app/DESIGN.md`; `As built` notes under
+`GF-1` and `GF-2`; BD-G8 to BD-G14 and phase 1's `BUILT` header in the game-feel `PLAN.md`.
+Gate: exit 0, run lines 78, 18 and 6, 66 test files and 506 tests (16 new);
+`git diff --stat -- assets/icons assets/mascots assets/sounds` empty. **Seen running** on the
+iPhone 17 simulator (iOS 26.5) and the `Pixel_9` emulator, light and dark: the disabled, resting
+and held Check, the sheet's Continue at rest and held, one answer counted per press. **Not
+felt**: no one has pressed it on a phone. Found and handled: the shared Metro cache served code
+built by the main checkout's stray worklets 0.13.0 (Known facts); a Metro with its own `TMPDIR`
+fixed it. Findings, each `open`: (a) on the `Pixel_9`, during the first run under a load
+average of 77, Check was once drawn sunk after the lesson moved on and stayed sunk when enabled;
+four more tries with logging did not repeat it (the events came in order each time), so
+`usePressScale` now puts the button back at rest with a zero-length animation on every change of
+`disabled`, and the cause is unknown; (b) on Android the sheet's Continue sits about 14 dp above
+the gesture bar (phase 4 reworks the sheet); (c) `useBounce` and `useFadeIn` have never run,
+because no screen uses them yet; (d) `primary-button.tsx` adds one more raw `fontWeight` (rule
+U5 Known gaps; the dated count of 45 is left as written); (e) the Environment test row here and
+the counts in `CLAUDE.md` still say 63 files and 490 tests, left for the merge because lanes D and
+E change the same lines; (f) the main checkout's `app/node_modules` holds worklets 0.13.0 and
+Reanimated outside any manifest: after merging, run `bun install --cwd app --frozen-lockfile` in
+the main checkout and restart its Metro with `--clear`; (g) free disk was 4.1 GiB at 11:15 with
+three worktrees building native apps. Simulators: lanes now keep to their own devices (this lane:
+the iPhone 17 simulator, `Pixel_9` on `emulator-5556`, Metro on 8083), after an emulator of this
+lane stopped at 11:10 when another lane started one. **Left owed:** Zach rebuilds his phone's
+development build and presses Check and Continue; the commit, which is Zach's.
+
+Runtime entries (game-feel `PLAN.md` section 7, phase 1):
+
+| Goal | Where | Right answer |
+|---|---|---|
+| The new button feels right | Any lesson on the iPhone, after a rebuild from branch `game-feel-1`: Check, then the sheet's Continue | Each sinks while held and springs back on release; one press counts one answer; no buzz or sound of its own yet |
+| The build runs with Reanimated | The iPhone, the first launch after the rebuild | The app opens; no "[Worklets] Mismatch" screen |
+| A disabled Check reads as off | A lesson before an answer is picked, light and dark | A grey face on a darker grey edge, with a readable label |
+| The button never stays sunk | Android, a whole lesson | After each Continue, Check sits at rest with its edge showing (finding (a)) |
 
 ## Style rules
 

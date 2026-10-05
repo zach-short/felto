@@ -5,7 +5,7 @@ import { Alert, Platform, StyleSheet, Text } from "react-native";
 
 import { ExerciseView } from "@/components/exercise/exercise-view";
 import { FeedbackSheet } from "@/components/lesson/feedback-sheet";
-import { LessonButton } from "@/components/lesson/lesson-button";
+import { PrimaryButton } from "@/components/button/primary-button";
 import { LessonClosed } from "@/components/lesson/lesson-closed";
 import { LessonFrame } from "@/components/lesson/lesson-frame";
 import { LessonHeader } from "@/components/lesson/lesson-header";
@@ -62,11 +62,11 @@ export function LessonRunView({ session, finish, start = 0, pick = null, autoChe
       top={<LessonHeader done={run.answered / size} lives={showsHearts(session) ? livesAt(state, now) : null} onLeave={leave} />}
       bottom={
         done ? (
-          <LessonButton label={done.label} onPress={done.onPress} />
+          <PrimaryButton label={done.label} onPress={done.onPress} />
         ) : ended ? (
-          <LessonButton label="Continue" onPress={() => router.back()} />
+          <PrimaryButton label="Continue" onPress={() => router.back()} />
         ) : (
-          <LessonButton label="Check" onPress={check} disabled={run.choice === null || run.phase !== "answering"} />
+          <PrimaryButton label="Check" onPress={check} disabled={run.choice === null || run.phase !== "answering"} />
         )
       }
     >

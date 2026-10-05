@@ -280,6 +280,12 @@ the UI thread, which is most of what the photos show. Against: a new native depe
 rebuild, and a version coupling to React Native 0.86 that only a build on the phone proves. The
 built-in `Animated` was weighed (option A1) and is the fallback if the build fails.
 
+*As built, 2026-10-05 (board item 26, `PLAN.md` phase 1):* `bunx expo install` pinned
+`react-native-reanimated` 4.5.1 and `react-native-worklets` 0.10.1, and both development builds
+compiled and ran the press on the iPhone 17 simulator and the `Pixel_9` emulator, so the fallback
+was not needed. No `babel.config.js` was added; Expo's preset adds the worklets plugin (BD-G9).
+Not yet run on Zach's phone, which needs the same rebuild.
+
 ### GF-2. A custom pressable for the main buttons
 
 Decided 2026-10-05 (Zach: "Yes, custom main buttons"). Check, Continue and the primary action
@@ -292,6 +298,14 @@ the raised coloured button and a native `Button` cannot take it
 (`app/src/components/lesson/lesson-button.tsx:1-20`). Against: on these buttons the two platforms now
 look the same, so the divergence registry (`docs/conventions-typescript.md`, Z-entries) gets a new
 line. Rule U2 (wrap `@expo/ui` in `Host`) keeps applying to the controls that stay native.
+
+*As built, 2026-10-05 (board item 26):* `PrimaryButton` is a blue face on a darker raised edge,
+both taken from the blue chip of the art (`tools/build_icons.py:36`), 52 points high with a
+4-point edge. A press shrinks it to 0.96 and sinks the face onto the edge; the release springs
+back. It draws Check and Continue in the lesson loop, including the feedback sheet's Continue
+(BD-G12); the other primary actions are still native until phases 5 and 7. Registry entry Z5 of
+`docs/conventions-typescript.md` holds the divergence. The haptic and sound are props left for
+phases 2 and 3; the button plays neither yet.
 
 ### GF-3. A haptic vocabulary and a Haptics switch
 

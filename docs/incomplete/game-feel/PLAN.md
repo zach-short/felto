@@ -1,6 +1,8 @@
 # Plan: game feel
 
-Status: `PLANNED` 2026-10-05, awaiting GATE 2. Decisions `GF-1` to `GF-9` are in `DESIGN.md`,
+Status: `IN FLIGHT` since 2026-10-05, phase 1 built (board item 26). The line read "`PLANNED`
+2026-10-05, awaiting GATE 2" until Zach approved the plan in chat the same day (`PASSOFF.md`, the
+note above item 22). Decisions `GF-1` to `GF-9` are in `DESIGN.md`,
 section 8, and are frozen. This plan is what is built, in what order, by whom, and done when. Read
 `docs/AGENT-PRACTICES.md` and `docs/conventions-typescript.md` first; the whole-repo gate and the
 hazards are in `CLAUDE.md` and `HANDOFF.md`.
@@ -37,6 +39,13 @@ a screenshot" and "felt on the phone" are different claims.
 | BD-G5 | Particles (sparkles, confetti) are drawn with `react-native-svg` shapes moved by Reanimated; no canvas library is added | Add a library |
 | BD-G6 | The haptic vocabulary is one module, `app/src/feedback/haptics.ts`, with named moments, and a pure `shouldBuzz(setting)` so the rule is tested in node. Haptics read the stored setting; an off setting makes every call a no-op | Replace the module |
 | BD-G7 | The custom button is `app/src/components/button/primary-button.tsx`, with a platform-free implementation, because it uses no `@expo/ui` (rule U3 does not apply). The native `LessonButton` is removed only when every call site has moved | Keep both |
+| BD-G8 | Phase 1, 2026-10-05: the hook files are `use-press-scale.ts`, `use-bounce.ts` and `use-fade-in.ts`, not `press-scale.ts`, `bounce.ts` and `fade-in.ts` as phase 1 step 2 wrote them, because rule O2 names a hook's file for the hook. The pure parts are `motion-steps.ts` and `reduced-motion.ts`, each with its test, and `MotionView` is in `motion-view.ts` | Rename the three files |
+| BD-G9 | Phase 1: no `app/babel.config.js`. `babel-preset-expo` 57.0.13 adds `react-native-worklets/plugin` itself when the package is installed (`node_modules/babel-preset-expo/build/configs/expo.js:96-101`). It pushes the plugin before `@expo/ui/babel-plugin`, so it is not last in the preset's list; that is Expo's own order, and the press runs worklets on the simulators | Add a `babel.config.js` that passes `worklets: false` to the preset and lists the plugin last |
+| BD-G10 | Phase 1: every animation passes `ReduceMotion.Never` to Reanimated, and `motionAllowed(kind, reduced)` decides instead, from the dial `reducedMotionSkips`. Reanimated's own default (`ReduceMotion.System`) would skip the fades that `GF-8` keeps. The press and fades are not in the dial, so they stay under reduced motion | Drop `Never` and let Reanimated's default decide |
+| BD-G11 | Phase 1: the button label is `TYPE.heading` (20 points), not `TYPE.body`. White on the blue face is 4.0 to 1, which passes WCAG AA only as large text (bold from 18.66 px); dark mode puts a dark label on a lighter face (6.1 to 1) | Use `TYPE.body` and a darker face |
+| BD-G12 | Phase 1: "Check and Continue" is read as every button in the lesson loop: the bottom button of `lesson-run-view.tsx` (Check, the finish's Continue, the closed-session Continue) and the feedback sheet's Continue, which a player presses after every answer. The sheet's button is drawn inside the sheet's `RNHostView`. The other 12 `LessonButton` uses in 10 screen files (`grep -rn "<LessonButton" app/src`, 2026-10-05) stay native until phases 5 and 7, so `LessonButton` stays (BD-G7) | Put the sheet back on the native `Button` |
+| BD-G13 | Phase 1: `app/src/motion/motion-boundary.test.ts` fails when a file outside `src/motion/` imports `react-native-reanimated` or `react-native-worklets`, so BD-G3 is a gate, not only a review rule. A planted import made it fail on 2026-10-05 | Delete the test |
+| BD-G14 | Phase 1: the `// game-feel` block sits after the `// D15` block of `dials.ts`, not at the end, so the unit-stories blocks appended at the end merge without a conflict | Move the block |
 
 ## 2. Phases
 
@@ -58,6 +67,17 @@ not collide (check "Files it owns" first). The unit-stories effort runs as lane 
 separate worktrees.
 
 ### Phase 1: Foundation
+
+**BUILT 2026-10-05, not committed: branch `game-feel-1`, worktree `.claude/worktrees/game-feel-1`
+(board item 26, `HANDOFF.md` step 29).** Reanimated 4.5.1 and worklets 0.10.1, as `bunx expo
+install` pinned them; built and run on the iPhone 17 simulator and the `Pixel_9` emulator. Build
+calls BD-G8 to BD-G14. Three values the plan did not give are new dials: `fadeMs` 200,
+`pressReleaseMs` 220 and `pressReleaseDamping` 0.55 (the plan says only "spring back"). The unit
+and moment colours are the chip faces of `tools/build_icons.py:35-40`, lighter in dark mode, and
+the moment colours take the deep extrusion tone in dark mode. What this changes for later phases:
+the press haptic and sound go in through `PrimaryButton`'s `pressHaptic` and `pressSound` props;
+the motion hooks must stay inside `src/motion/` (the boundary test fails otherwise); `useBounce`
+and `useFadeIn` exist but no screen uses them yet, so phase 4 is the first to run them.
 
 Files it owns: `app/package.json`, `app/bun.lock`, `app/babel.config.js` if one exists or is
 needed, `app/src/motion/*` (new), `app/src/components/button/*` (new),

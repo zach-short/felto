@@ -291,6 +291,8 @@ Supersedes nothing.
 ### D2. Expo SDK 57 on iOS and Android, with native components where they exist
 
 > **Amended 2026-10-05 (not yet built, awaiting GATE 2): the primary buttons are not native.** Check, Continue and the primary action buttons become a custom component with a raised edge; switches, pickers and the time dialog stay native. See `docs/incomplete/game-feel/DESIGN.md`, `GF-2`.
+>
+> **Built 2026-10-05 for Check and Continue only (board item 26, game-feel phase 1).** The lesson loop's bottom button and the feedback sheet's Continue are `PrimaryButton` (`app/src/components/button/primary-button.tsx`). The other primary actions (onboarding, the chest, Practice, the closed-lesson screens) still use the native `LessonButton` until game-feel phases 5 and 7. Registry entry Z5 of `docs/conventions-typescript.md` records the divergence.
 
 Ratified 2026-10-05 (option 2A, with Zach's addition "using native ui components where
 available"). One TypeScript codebase on Expo SDK 57. Where `@expo/ui` has a component for a
