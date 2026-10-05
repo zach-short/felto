@@ -1,0 +1,62 @@
+---
+import { APP_STORE_URL } from "../config";
+
+// The raised button of the app (GF-2): a face and a darker edge, and the face drops by the edge's
+// height when pressed. With no listing yet it is the disabled version, drawn in the app's
+// "off" colours, and it is a plain element, not a link.
+const live = APP_STORE_URL !== "";
+---
+
+{
+  live ? (
+    <a class="button" href={APP_STORE_URL}>
+      Download on the App Store
+    </a>
+  ) : (
+    <span class="button off" role="note">
+      Coming soon to the App Store
+    </span>
+  )
+}
+
+<style>
+  .button {
+    --edge: 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--button-height);
+    padding: 0 var(--space-lg);
+    border-radius: var(--radius-md);
+    background: var(--button);
+    color: var(--button-ink);
+    box-shadow: 0 var(--edge) 0 var(--button-edge);
+    font-size: 1.25rem;
+    font-weight: 800;
+    text-decoration: none;
+    transition: transform 80ms, box-shadow 80ms;
+  }
+  a.button:hover {
+    transform: translateY(1px);
+    box-shadow: 0 4px 0 var(--button-edge);
+  }
+  a.button:active {
+    transform: translateY(var(--edge));
+    box-shadow: 0 0 0 var(--button-edge);
+  }
+  a.button:focus-visible {
+    outline: 3px solid var(--text);
+    outline-offset: 4px;
+  }
+  .off {
+    background: var(--button-off);
+    color: var(--button-off-ink);
+    box-shadow: 0 var(--edge) 0 var(--button-off-edge);
+    cursor: default;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .button {
+      transition: none;
+    }
+  }
+</style>

@@ -140,7 +140,7 @@ answer in place.
   `components/boss/` and `components/review/` build the sessions from `drawBoss` and `reviewSet`;
   `components/chest/` and `components/lives/` are the chest and the sheet;
   `components/path/stop-route.ts` decides where a path tap goes. `app/src/feedback/` plays the
-  effects, every call through `safely.ts`; `app/src/art/sounds.ts` is the only WAV importer.
+  effects, every call through `safely.ts`; `app/src/art/sounds.ts` is the only WAV importer. `app/src/art/flop-rive.tsx` (`FlopRive`) is the only importer of `rive-react-native` and of `app/assets/rive/flop.riv` (board item 34, step 36); `flop-mode.ts` holds its pure choice.
 - Practice (board item 19, `D21`): the tab is `screens/practice-screen.tsx`; a set is the
   full-screen modal `app/src/app/practice-set.tsx`, the same loop with a `Session` of kind
   `practice`. `components/practice/practice-menu.ts` lists the kinds open and locked and deals
@@ -208,6 +208,11 @@ answer in place.
   mounted at the root as `ReminderSync` inside `components/root-providers.tsx`; the clock is
   read in `replan.ts` when a replan runs); `clock-format.ts` is the one time-of-day format; `reminder-device.ts` is the only importer of
   `expo-notifications`; `felto://dev/reminders` lists what the phone holds.
+- `site/`: the marketing site (step 38, 2026-10-05). Astro 7.3.5 static, own `package.json` and
+  `bun.lock`. `src/pages/index.astro` is the one page; `src/lib/theme-css.ts` turns
+  `app/src/theme/tokens.ts` into CSS variables; `src/lib/art.ts` reads `assets/` and swaps the
+  pale shadow for the theme's (as BD-25 does); the page reads the unit titles and the mascot
+  names from `app/src/content/outline.ts` and `cast.ts`. `src/config.ts` holds `APP_STORE_URL`.
 - `docs/README.md`: the docs index of `docs/AGENT-PRACTICES.md` Part 8.2 (board items 6 and 16).
 - `docs/incomplete/app/`: the app effort (Profile P). `DESIGN.md` is what the app is and why
   (`D1` to `D21`); `PLAN.md` is the order of work, 16 phases on board items 5 to 20 (step 7);
@@ -1240,6 +1245,71 @@ flushes", "The big hands", "Kickers break ties", "Who wins the pot?" and their e
 Zach read them in chat. The board row is `DONE` and item 25 has its prompt. **Left owed:** the
 Android, landscape, tablet and screen-reader checks; Zach reads the whole story on a phone; the
 commit, which is Zach's, from the worktree.
+
+**34. A Rive rig of Flop, as a spike (board item 34, Phase A).** Done 2026-10-05, on Opus 5.5, on
+`main` with no repo file changed except this step and board item 34. Zach asked for Flop to swim
+around frantically on a perfect lesson and for a spike to settle whether an agent can rig Rive.
+Settled, with sources: `rive doctor` (CLI 1.3.0 at `~/.rive/bin/rive`, not on PATH) passes except
+the login, which only `--publish`, `--rev` and `push` need; RML has animations and state machines
+(inputs deprecated, `~/.rive/versions/1.3.0/docs/state-machines.md:11-20`) and cannot import SVG
+(`docs/assets.md:236-246`). Zach chose to rig in the Rive editor through the MCP and opened a new
+file (id 2632317). The MCP imported `assets/mascots/fish/fish_happy.svg` with its named groups; a
+render matched the Quick Look render of the SVG. Built: pivots at the tail and fin roots; the shadow
+regrouped by part and moved out of the fish into its own group, keyed as a cast shadow on the page
+at Zach's ask (it follows the fish, moves farther and fades on a lift, flips on a turn, and the
+round body counter-flips so its lighting matches); `idle` (2.4 s) and `frantic` (1.6 s) timelines,
+looped; the state machine `flop` with the view-model boolean `perfect`, whose two transitions the
+editor's simulation confirmed. `.riv` export works on Zach's plan (27,939 bytes, in the session's
+scratch folder); `.rev` export is refused by the plan, so the Rive file in his account is the only
+editable source. The editor is sandboxed: uploads and exports go through the MCP over HTTP at
+`127.0.0.1:9791`. Stills of the rest pose, idle at frame 72 and frantic at frames 12 and 38 were
+looked at; the motion itself has not been seen by anyone. Board item 34 holds every id, pivot and
+key. Findings, each `open`: the fins and tail mirror their small dark edge while Flop faces right;
+the body's shadow is faint at full lift; `GF-1` needs a dated amendment (Zach changed who rigs);
+`tools/__pycache__/` appeared untracked during this session and this session ran nothing in
+`tools/`. **Left owed:** Zach watches the rig in the editor; Phase B (the runtime, the component,
+the finish screen) waits on his yes, on Sonnet 5 by his choice; the commit, which is Zach's.
+
+**35. Close out the unit-stories effort (board item 25, unit stories phase 4).** Done 2026-10-05 by `/delegate`. Builder: Sonnet 5.5, worktree `.claude/worktrees/agent-a08caf636b476a4a7`, branch `worktree-agent-a08caf636b476a4a7`, from `main` at `0658776` (lanes D and E merged). Auditor: Opus 5.5 in its own worktree, which reproduced the change exactly (`diff -rq` of the trees found only the four files) and re-ran the gate. Not yet committed. No relay passes. Records only: `docs/README.md` (the unit-stories PLAN row: BD-S1 to BD-S13, phases 1 to 3 built and merged), `docs/incomplete/app/DESIGN.md` (dated pointers under D8 and D9; the D8 `As built` of step 28 was checked against the code and is accurate), `docs/incomplete/unit-stories/PLAN.md` (status and phase headers with commits 810cc25, aed7054 and 1148b43 and merges 0658776, 06cea5a and 21338ca; phase 4 header; section 5 numbers; section 7 gathered, each entry seen or `open`; steps 31 and 33 findings carried) and `docs/incomplete/unit-stories/DESIGN.md` (an `As built` note under US-8). The whole-repo gate ran twice, once by each model, each step alone: exit 0, run lines 78, 18 and 12, 82 test files and 608 tests (step 33 had 70 and 538 before the game-feel and other merges); `git diff --stat -- assets/icons assets/mascots assets/sounds` empty. `CLAUDE.md` still says 63 files and 490 tests: Zach chose in chat on 2026-10-05 to leave it to game-feel item 33. Nothing was seen running; no simulator was driven. The folder stays in `docs/incomplete/` until Zach has walked PLAN.md section 7. Audit verdict: non-blocking findings, each `open`: (a) PLAN.md:243, the "story opens and closes" row says Android was seen in light and dark, but step 31 lists the Android dark last slide as open: add that to the cell; (b) PLAN.md:180 records the worktree build without saying it departs from the prompt's "no worktree"; (c) PLAN.md:268-269 cites Zach's answer on `CLAUDE.md`, which is now recorded here. Also `open`: `docs/README.md` has a stale "13 files" header and no game-feel rows (item 33); Zach's calls on step 33 (c) (slide 2 says the hole cards are face down, its row draws them face up) and (d) ("fun!" alone on the last line). **Left owed:** the walk of section 7, then archiving; the commit, which is Zach's, from the builder's worktree.
+
+**36. The rigged Flop in the app, built but not wired to the finish screen (board item 34, Phase B).**
+Done 2026-10-05, on Sonnet 5.5, in the worktree `../felto-lane-g` on branch `lane-g-flop-rive`.
+Zach answered the batch of item 34 the same day: the rig is good as it is, Phase B goes ahead in a
+worktree, everything is built except the `lesson-finish.tsx` edit (item 29 owns that file and is
+still `OPEN`), and `CLAUDE.md` gets a rule for `flop.riv`. `flop.riv` was re-exported from file
+2632317 and is byte-identical to step 34's (`cmp`, 27,939 bytes), so the rig did not change.
+Runtime chosen with Context7 on 2026-10-05: `rive-react-native` 9.8.5, not the Nitro
+`@rive-app/react-native` 0.5.2 (0.x, pins `react-native-nitro-modules` to `>=0.35.10 <0.37`). Its
+ref sets a view-model boolean on a bound instance (`setBoolean`, `useRiveBoolean`, `AutoBind(true)`,
+`node_modules/rive-react-native/ios/RiveReactNativeView.swift:727`), so the `StateMachineBool`
+fallback was not needed. Built: `app/assets/rive/flop.riv`; `app/src/art/flop-rive.tsx`
+(`FlopRive`, the only importer of the runtime and the file); `app/src/art/flop-mode.ts` with its
+test (the pure choice between the rig and the static `happy` pose through `Mascot`, and the
+artboard height); `app/src/art/rive-boundary.test.ts` (fails the gate when a file outside
+`src/art/` imports the runtime or `@rive/`); `app/src/types/rive.d.ts`; the alias `@rive/*` in
+`app/tsconfig.json` and `riv` in the asset extensions of `app/metro.config.js`; the dial
+`flopPerfectDelayMs` (300) and the new reduced-motion kind `swim` in `app/src/config/dials.ts`
+(`reduced-motion.test.ts` lists it); a "Flop: swim" button and the rig on `/dev/art`
+(`app/src/screens/dev-art-screen.tsx`). Recorded: the dated amendment under `GF-1` in
+`docs/incomplete/game-feel/DESIGN.md`, the `flop.riv` rule in `CLAUDE.md`, and standard 1.1.2 (rule
+U6 and entry Z4 cover the Rive file). Gate, run 2026-10-05 in the worktree: the generators wrote 78,
+18 and 12 files, `xmllint`, typecheck and lint exit 0, 84 test files and 615 tests passed,
+`git diff --stat -- assets/icons assets/mascots assets/sounds` empty. Both development builds
+compiled with the new native library (iOS on iPhone 17 Pro, Android `BUILD SUCCESSFUL` in 3m 33s)
+and `/dev/art` drew the rig on each. **Seen running, by frame comparison, not watched:** on both
+platforms the idle loop changes between screenshots 0.3 s apart inside the Flop box only, and with
+`perfect` true the fish is at different places, tilted and turned to face left across four frames
+(iOS), and on Android a tap on "Flop: swim" flipped the label to "Flop: rest" and moved the fish
+across the frames. Nobody has judged the motion or the timing; that is Zach's. **Not done, and
+why:** the wiring of `lesson-finish.tsx`, which waits on item 29; the real phone, which needs the
+same rebuild (`felto phone-debug`). A first load of the dev client after a cold start timed out
+once on iOS (the bundle took longer than the client waits) and loaded on the retry; this is Metro
+and not the rig. **Left owed:** wiring on the finish screen for a perfect score only, with the
+static pose otherwise (item 34 step 5); Zach commits the branch.
+
+**37. The answer loop: choice, check, sheet and progress bar (board item 29, game-feel phase 4).** Done 2026-10-05 by `/delegate`. Builder: Opus 5.5, worktree `.claude/worktrees/agent-a7d2fdad825b95d3e`, branch `worktree-agent-a7d2fdad825b95d3e`, from `main` at `0658776`. Auditor: Opus 5.5 in its own worktree, which reproduced the change (`diff -rq` found only the generated, gitignored `expo-env.d.ts`) and re-ran the gate. Not yet committed. No relay passes. Zach answered the item's two questions in chat on 2026-10-05: the feedback sheet and the progress bar become custom views of the tokens (a dated amendment of `D2` under `GF-2`, registry entry Z6, `docs/conventions-typescript.md` 1.1.2), because he wants every button and toggle to carry the app's tokens and finds the native `@expo/ui` controls do not match the native look; a chosen row takes its unit's colour in a one-unit session and the neutral `accent` in a practice set or the placement check. Built: the selection tick and `option_select`; the chosen row lifts and takes its colour (`session-colour.ts`); a right answer bounces and flashes the row and the sheet's mascot bounces; a wrong answer shakes the row (an inner view, so the tap target stays still), tilts the mascot, drops the header heart and plays `heart_lost` where a heart is spent; all six moments go through the haptic vocabulary, so `haptics.ts` is the one importer of `expo-haptics`; a custom sheet (a `LessonFrame` overlay on a spring, safe-area padding, modal and focus handling for screen readers) and one progress-bar file in place of the platform pair; reduced motion skips bounce, shake, tilt and the drop and keeps colour, flash, lift, rise and fill. Build calls: BD-G21 to BD-G30. Gate, run by both models: exit 0, run lines 78, 18 and 12, 84 test files and 621 tests (13 new); assets diff empty; the three guard tests unchanged. **Seen running** on the iPhone 17 simulator, light and dark: chosen, right and wrong with the sheet (the builder's screenshots; the auditor did not see them). **Not seen:** every Android state, the gesture-bar fix, Reduce Motion, the screen reader (the Android emulator drew black). **Not felt. Not heard.** Audit verdict: non-blocking findings, each `open`: (N1) `onFeedback` (`use-lesson-run.ts:62-63`) is read by no code and could be removed, and `sheetDismissAction` is read only by its test; (N2) stale comments in `session-steps.ts:38-39,59-62` about a swipe and the native sheet; (N3) BD-G26: `accent` and `unitHands` are both `#2F7BF0` in light mode, so a practice set looks like unit 1; (N4) stale citations and a missing period in the conventions Z5 and Z6 rows (lines 618 and 619) and U3's example names deleted files; (N5) finding (a), Check drawn sunk, was not reproduced and has no status in the phase 4 record; (N6) turning Reduce Motion off while a row is marked plays its motion once more. Open calls for Zach: BD-G25 (a boss fail now gives the rigid tap, not the error buzz; it is item 30's moment), BD-G24 (the sheet closes only by Continue) and BD-G26 (a separate neutral token?). **Native controls left, for one follow-up item:** `LessonButton` (`lesson-button.tsx:16-17`) and its 14 call sites in `screens/`, `story-button.tsx`, `route-error.tsx`, `freeze-shop-section.tsx`, `out-of-lives-sheet.tsx` (a `BottomSheet` and two buttons), the four Profile switches (`settings-section.tsx:36-39`), the reminder pickers, the `FieldGroup` and `ListItem` form, `NativeTabs` and two `Alert.alert` calls. **Left owed:** the Android checks, Zach on his phone, and the commit; item 30's prompt, which the builder wrote into its report and which is not yet in `PASSOFF.md`.
+
+**38. A one-page site that points at the App Store, deployed to Cloudflare (no board item).** Done 2026-10-05 on Sonnet 5.5, at Zach's request in chat. Not yet committed. Zach chose: the button reads "Coming soon to the App Store" and is disabled until a listing exists (`D13` keeps the store release out, so the site is not the release); the site lives in `site/` in this repo; plain copy ("Learn poker, one short lesson at a time."); deployed on Cloudflare. Built `site/` (Astro 7.3.5, static, `bun`): one page of hero, five features, the four units with their lessons, the cast and a closing button. Colours, spacing, radius and button height come from `app/src/theme/tokens.ts` at build time, light and dark by `prefers-color-scheme`; art is read from `assets/` and nothing is copied (`D5`); the favicon is the generated red chip served by `src/pages/favicon.svg.ts`. `typescript` is pinned to `~6.0.3` because `astro check` refuses TypeScript 7. **Gates, run 2026-10-05:** `bun run typecheck` (0 errors) and `bun run build` in `site/`, exit 0. Not added to `scripts/gate.sh`, `CLAUDE.md` or `gateCommand`: that is an owed call. **Seen running** in the browser pane on the built site: desktop dark (hero, features, cast, closing) and phone width light (hero; `scrollWidth` 375, no sideways scroll). **Not seen:** desktop light, phone dark, the units section in light, Safari, a real phone. **Deployed:** `bunx wrangler deploy` from `site/` to Worker `felto-site` in the Cloudflare account `Zms@ezhomesteading.com's Account` (id `29c95ba6869e6c4cf5e070ff6979b795`), live at `https://felto-site.zms-29c.workers.dev` (HTTP 200, title and button text confirmed with `curl`). **Open, Zach's calls:** (a) the domain: none bought, none attached; `SITE_URL` in `site/src/config.ts` is empty until it is (canonical link). (b) `APP_STORE_URL` in `site/src/config.ts` is empty until the app has a listing. (c) Whether to add the site build to the whole-repo gate and `CLAUDE.md`. (d) The account above is the one the wrangler login holds, and its name suggests another project of Zach's; confirm it is the one he wants. (e) Copy checked only against `D10` (warm voice) and the app's own claims (no account, device-only progress, no real money); the age-rating questionnaire (`DESIGN.md` hazard 2) is not mentioned on the page. **Left owed:** the commit, which is Zach's.
 
 ## Style rules
 

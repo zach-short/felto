@@ -1,0 +1,23 @@
+---
+import { art } from "../lib/art";
+
+interface Props {
+  name: string;
+  // Any CSS width: the art keeps its shape and scales to fit.
+  width: string;
+}
+const { name, width } = Astro.props;
+---
+
+<span class="art" style={`width:${width}`} set:html={art(name)} />
+
+<style>
+  .art {
+    display: block;
+  }
+  .art :global(svg) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+</style>

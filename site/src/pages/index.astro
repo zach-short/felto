@@ -1,0 +1,299 @@
+---
+import Art from "../components/Art.astro";
+import StoreButton from "../components/StoreButton.astro";
+import Base from "../layouts/Base.astro";
+import { CAST } from "../../../app/src/content/cast";
+import { OUTLINE } from "../../../app/src/content/outline";
+
+const unitColour = {
+  hands: "var(--unit-hands)",
+  table: "var(--unit-table)",
+  preflop: "var(--unit-preflop)",
+  odds: "var(--unit-odds)",
+} as const;
+
+const features = [
+  {
+    art: "icons/path/node_current",
+    title: "Short lessons",
+    text: "Each lesson takes a few minutes. Answer a handful of questions, read why, and move on.",
+  },
+  {
+    art: "icons/cards/card_back",
+    title: "Hands dealt fresh",
+    text: "Practice deals new hands every time, so you learn the pattern and not the answer.",
+  },
+  {
+    art: "icons/path/node_boss",
+    title: "Boss rounds",
+    text: "Each unit ends with a boss round. Pass it to open the chest and the next unit.",
+  },
+  {
+    art: "icons/ui/streak_flame",
+    title: "A streak that sticks",
+    text: "One lesson a day keeps your streak alive. An optional reminder tells you when it is at risk.",
+  },
+  {
+    art: "icons/ui/lives_heart",
+    title: "Stays on your phone",
+    text: "No account and no sign-up. Your progress is saved on your device, and there is no real money in the game.",
+  },
+] as const;
+
+const cast = [
+  { key: "fish", art: "mascots/fish/fish_cheer", role: "Guides you through every lesson." },
+  { key: "squid", art: "mascots/squid/squid_happy", role: "Runs your review and keeps the chest." },
+  { key: "shark", art: "mascots/shark/shark_smug", role: "Waits at the end of each unit as the boss." },
+] as const;
+---
+
+<Base>
+  <header class="wrap top">
+    <Art name="icons/chips/chip_red" width="40px" />
+    <span class="brand">Felto</span>
+  </header>
+
+  <main>
+    <section class="wrap hero">
+      <div class="hero-text">
+        <h1>Learn poker, one short lesson at a time.</h1>
+        <p class="lede">
+          Felto teaches no-limit Texas hold'em with short lessons, practice hands and boss rounds,
+          for iPhone and iPad.
+        </p>
+        <div class="cta">
+          <StoreButton />
+          <p class="note">Felto is not in the App Store yet.</p>
+        </div>
+      </div>
+      <div class="hero-art"><Art name="mascots/fish/fish_cheer" width="100%" /></div>
+    </section>
+
+    <section class="wrap block" aria-labelledby="features">
+      <h2 id="features">What you get</h2>
+      <ul class="features">
+        {
+          features.map((f) => (
+            <li>
+              <div class="feature-art"><Art name={f.art} width="100%" /></div>
+              <h3>{f.title}</h3>
+              <p>{f.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="wrap block" aria-labelledby="path">
+      <h2 id="path">The path</h2>
+      <p class="sub">Four units, five lessons each. Start from the first card and work up.</p>
+      <ol class="units">
+        {
+          OUTLINE.map((unit, i) => (
+            <li style={`--unit:${unitColour[unit.id]}`}>
+              <span class="unit-number">{i + 1}</span>
+              <h3>{unit.title}</h3>
+              <ul>
+                {unit.lessons.map((lesson) => (
+                  <li>{lesson.title}</li>
+                ))}
+              </ul>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section class="wrap block" aria-labelledby="cast">
+      <h2 id="cast">Meet the table</h2>
+      <ul class="cast">
+        {
+          cast.map((c) => (
+            <li>
+              <div class="cast-art"><Art name={c.art} width="100%" /></div>
+              <h3>{CAST[c.key]}</h3>
+              <p>{c.role}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="wrap closing">
+      <h2>Get Felto when it reaches the App Store.</h2>
+      <StoreButton />
+    </section>
+  </main>
+
+  <footer class="wrap foot">
+    <p>Felto is a game for learning poker. It does not use real money.</p>
+  </footer>
+</Base>
+
+<style>
+  .top {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding-block: var(--space-md);
+  }
+  .brand {
+    font-size: 1.5rem;
+    font-weight: 800;
+  }
+
+  .hero {
+    display: grid;
+    gap: var(--space-xl);
+    align-items: center;
+    padding-block: var(--space-xl);
+  }
+  h1 {
+    font-size: clamp(2.25rem, 7vw, 3.75rem);
+    line-height: 1.05;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+  .lede {
+    margin-top: var(--space-md);
+    max-width: 34rem;
+    font-size: 1.25rem;
+    color: var(--text-muted);
+  }
+  .cta {
+    margin-top: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
+  .note {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+  }
+  .hero-art {
+    width: min(70%, 22rem);
+    margin-inline: auto;
+  }
+
+  .block {
+    padding-block: var(--space-xl);
+  }
+  h2 {
+    font-size: 1.75rem;
+    font-weight: 800;
+  }
+  .sub {
+    margin-top: var(--space-sm);
+    color: var(--text-muted);
+  }
+  ul,
+  ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .features,
+  .cast {
+    margin-top: var(--space-lg);
+    display: grid;
+    gap: var(--space-md);
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  }
+  .features > li,
+  .cast > li {
+    padding: var(--space-lg);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+  }
+  .feature-art {
+    height: 64px;
+    margin-bottom: var(--space-md);
+  }
+  .feature-art :global(.art) {
+    width: auto !important;
+    height: 100%;
+  }
+  .feature-art :global(svg) {
+    width: auto;
+    height: 100%;
+  }
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 800;
+  }
+  .features p,
+  .cast p {
+    margin-top: var(--space-xs);
+    color: var(--text-muted);
+  }
+  .cast-art {
+    height: 7.5rem;
+    margin-bottom: var(--space-md);
+  }
+  .cast-art :global(.art) {
+    width: auto !important;
+    height: 100%;
+  }
+  .cast-art :global(svg) {
+    width: auto;
+    height: 100%;
+  }
+
+  .units {
+    margin-top: var(--space-lg);
+    display: grid;
+    gap: var(--space-md);
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  }
+  .units > li {
+    position: relative;
+    padding: var(--space-lg);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-top: 6px solid var(--unit);
+    border-radius: var(--radius-md);
+  }
+  .unit-number {
+    display: inline-grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    margin-bottom: var(--space-sm);
+    border-radius: 50%;
+    background: var(--unit);
+    color: var(--button-ink);
+    font-weight: 800;
+    font-size: 0.9375rem;
+  }
+  .units ul {
+    margin-top: var(--space-sm);
+    display: grid;
+    gap: var(--space-xs);
+    color: var(--text-muted);
+    font-size: 0.9375rem;
+  }
+
+  .closing {
+    padding-block: var(--space-xl);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-lg);
+  }
+  .foot {
+    padding-block: var(--space-lg);
+    border-top: 1px solid var(--line);
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+  }
+
+  @media (min-width: 52rem) {
+    .hero {
+      grid-template-columns: 1.2fr 1fr;
+    }
+  }
+</style>
