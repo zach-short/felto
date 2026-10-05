@@ -59,11 +59,25 @@ Zach chose to check the tool before aligning, at GATE 0.
 
 ### 2026-10-05: the app's first version
 
-Ratified at GATE 1 of `docs/incomplete/app/SCOPE.md` (section 7 holds the answers and section 3
-the defenses). A lesson path with drills; Expo for iOS and Android, with native UI components
+Ratified at GATE 1 of the app scope, which is `docs/incomplete/app/DESIGN.md` since step 7
+renamed it from `SCOPE.md` on 2026-10-05 (section 7 holds the answers, section 3 the defenses,
+section 8 the decisions `D1` to `D6`). A lesson path with drills; Expo for iOS and Android, with native UI components
 (`@expo/ui`) where they exist; progress on the device only; static mascot poses, Rive later; the
 app in `app/` in this repo; no money. The non-scope list and dials in that file are ratified too.
 Do not re-ask these; a change is a dated supersession.
+
+### 2026-10-05: the app's design and plan (GATE 2)
+
+Zach's reply in chat, in his words: "all recs except i want sound dark mode ipad and landscape,
+mascot names, streak freeze onboarding, and randomly dealt hands". Settled from it, in
+`docs/incomplete/app/DESIGN.md` section 8: four units of 6-max cash hold'em at 100 big blinds
+(`D7`); the game rules (`D8`); the fish guides lessons, the shark is the boss, the squid runs
+the review and the chest (`D9`); the warm copy register (`D10`); a 19:00 streak reminder asked
+for after the first lesson (`D11`); the name Felto and the identifier `com.zachshort.felto`
+(`D12`); card ranks in a bundled Nunito ExtraBold named `FeltoRank` (`D14`); and the plan in
+`docs/incomplete/app/PLAN.md`. Only the store release stays out of the first version (`D13`).
+How the seven returned items work is `D15` to `D21`, proposed the same day and not settled
+until Zach answers them.
 
 ## Code map
 
@@ -76,6 +90,8 @@ Do not re-ask these; a change is a dated supersession.
 - `assets/icons/preview.html`, `assets/mascots/preview.html`: inline SVG snapshots, written by
   no script.
 - `docs/conventions-python.md`: the Python code standard for `tools/`, version 1.1.1 (steps 2 to 4).
+- `docs/incomplete/app/`: the app effort (Profile P). `DESIGN.md` is what the app is and why
+  (`D1` to `D21`); `PLAN.md` is the order of work, 16 phases on board items 5 to 20 (step 7).
 
 ## Invariants
 
@@ -203,6 +219,33 @@ Zach's question "why not native Kotlin and Swift?" brought out; option 2D was ad
 answers, 2026-10-05: every recommendation, with Expo using native UI components where they exist
 (Settled). No code written. **Left owed:** commit the staged assets; a TypeScript standard; the
 design and plan stages. The commit is Zach's.
+
+**7. Design and plan the app.** Done 2026-10-05, on branch `main`, on Opus 5.5 (Stages 3 and 4
+of Part 2.2). Renamed `docs/incomplete/app/SCOPE.md` to `DESIGN.md` with a plain `mv`, so Zach's
+commit records the rename, and wrote in: `D1` to `D6` from GATE 1 with their defenses; `D7` to
+`D14` proposed (four units, the game rules, the mascot roles, the copy register with variants,
+the streak reminder, the name and identifiers, more non-scope items, the card rank font); the
+rules that survive unchanged; and the product screen by screen. Wrote
+`docs/incomplete/app/PLAN.md`: 28 facts checked, 22 build decisions (BD-1 to BD-22), 12 phases
+in three lanes, dials, seams and hazards. Three read-only sweeps on Sonnet 5, each in its own
+worktree, collected Zach's Expo house precedent (`lore`, `ezhomesteading`) and the SDK 57 facts
+from installed packages and Context7; one stopped at its budget point and was relayed once.
+None changed a file: felto's `git status` showed only the staged art, and no changed file in
+`lore` or `ezhomesteading` was newer than 30 minutes (`find -newermt '-30 minutes'`). Found:
+`react-native-svg` reads only the first font name, so Android would draw the card ranks in its
+default face (`D14`); the current node's ring is fixed at 60% (`tools/build_icons.py:368`,
+BD-9); an agent worktree starts at `origin/main`, one commit behind local `main`; agent
+worktrees leave an untracked `.claude/`; and both simulators run on this Mac, so an agent can
+see the app on iOS and Android. Corrected one claim of this session before hand-back: plan row
+26 first said the limits section above denies seeing a phone, which it does not say. Added
+board items 5 to 16, one per phase, `HELD` on GATE 2. GATE 2 answers, 2026-10-05: every
+recommendation and the plan, except `D13`: Zach wants sound, dark mode, iPad and landscape,
+mascot names, a streak freeze, onboarding and randomly dealt hands in the first version
+(Settled). So the same session wrote `D15` to `D21` to shape those items, amended the plan (rows
+29 to 33, BD-23 to BD-28, phases 13 to 16, and additions to phases 1, 3, 4, 8, 9, 11 and 12),
+and added board items 17 to 20. No code written; the gate exited 0 and
+`git diff --stat -- assets tools` was empty. **Left owed:** Zach's answers to `D15` to `D21`;
+the commit of the 129 staged art files and of this folder, which is Zach's; board item 4.
 
 ## Style rules
 

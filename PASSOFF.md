@@ -22,6 +22,22 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 | 2 | Move the shared generator code into one module | `DONE: HANDOFF 3` | Sonnet 5 | A | nothing | `tools/build_icons.py`, `tools/build_mascots.py`, the new shared module in `tools/`, `docs/conventions-python.md` |
 | 3 | Reconcile the line citations in the Python standard | `DONE: HANDOFF 4` | Sonnet 5 | A | nothing | `docs/conventions-python.md` |
 | 4 | Name `tools/common.py` in the standard's scope sentence | `OPEN` | Sonnet 5 | A | nothing | `docs/conventions-python.md` |
+| 5 | App phase 1: change the icon generator for the app | `HELD` | Sonnet 5 | A | item 4; Zach's answer to `D15` to `D21` | `tools/build_icons.py`, `assets/icons/path/node_current_base.svg`, `assets/icons/ui/streak_freeze.svg`, `assets/icons/cards/*.svg`, `docs/conventions-python.md`, `CLAUDE.md` |
+| 6 | App phase 2: write the TypeScript standard and re-add the app rules | `HELD` | Opus 5.5 | B | item 5 | `docs/conventions-typescript.md`, `docs/AGENT-PRACTICES.md`, `docs/README.md`, `CLAUDE.md`, `.gitignore` |
+| 7 | App phase 3: scaffold `app/` and draw the art on both platforms | `HELD` | Opus 5.5 | B | item 6; the art commit | `app/` config files, `app/src/app/dev/`, `app/src/config/`, `app/src/theme/`, `CLAUDE.md`, `docs/AGENT-PRACTICES.md`, `.personal-config.json`, `.gitignore` |
+| 8 | App phase 4: game state and the data module | `HELD` | Opus 5.5 | B | item 7 | `app/src/game/`, `app/src/storage/` |
+| 9 | App phase 5: cards, the evaluator and the content schema | `HELD` | Opus 5.5 | C | item 7; a push | `app/src/cards/`, `app/src/content/` except `units/` lessons |
+| 10 | App phase 6: content, units 1 and 2 | `HELD` | Opus 5.5 | C | item 9 | `app/src/content/units/` (units 1 and 2) |
+| 11 | App phase 7: content, units 3 and 4, and the preflop chart | `HELD` | Opus 5.5 | C | item 10 | `app/src/content/units/` (units 3 and 4), the chart file |
+| 12 | App phase 8: tabs, the path and the stat bar | `HELD` | Opus 5.5 | B | items 8 and 10; lane C merged | `app/src/app/(tabs)/`, `app/src/art/`, the path, mascot and stat bar components |
+| 13 | App phase 9: the lesson | `HELD` | Opus 5.5 | B | items 12 and 17 | `app/src/app/lesson/`, the exercise and feedback components |
+| 14 | App phase 10: boss, review, chest and lives | `HELD` | Opus 5.5 | B | item 13 | the boss, review, chest and out-of-lives routes and components |
+| 15 | App phase 11: profile, settings and the reminder | `HELD` | Opus 5.5 | B | item 14 | the Profile route and components, the reminder module |
+| 16 | App phase 12: close out | `HELD` | Sonnet 5 | B | items 5 to 15 and 17 to 20 | `docs/conventions-typescript.md`, `docs/incomplete/app/RUNTIME-PASS.md` |
+| 17 | App phase 13: write the sound generator | `HELD` | Opus 5.5 | A | item 7 | `tools/build_sounds.py`, `assets/sounds/`, `docs/conventions-python.md`, `CLAUDE.md`, `.personal-config.json` |
+| 18 | App phase 14: random dealers for practice | `HELD` | Opus 5.5 | C | item 11 | `app/src/drills/` |
+| 19 | App phase 15: the Practice tab | `HELD` | Opus 5.5 | B | items 14 and 18; lane C merged | the Practice route and components |
+| 20 | App phase 16: onboarding and the placement check | `HELD` | Opus 5.5 | B | item 19 | the onboarding routes and components |
 
 **Do not paste a prompt marked DONE**: a fresh session would build it again.
 
@@ -275,3 +291,88 @@ Hand back: the gate `python3 tools/build_icons.py && python3 tools/build_mascots
 tools` empty; the list of other "both files" lines that are wrong, if any; then the two
 copyable blocks from Part 11, `git add` with the exact files, then `git commit` with the same
 files and a short lowercase message.
+
+### 5 to 20. The app, one item per plan phase
+
+*Opened 2026-10-05, out of ledger step 7: `docs/incomplete/app/PLAN.md` section 2 holds one
+phase per item (phase n is item n + 4), with its scope, subagents, done-when and watch-for.
+Items 5 to 16 were opened `HELD` on GATE 2. Zach answered it the same day and approved the plan,
+and his answer to `D13` added items 17 to 20. All stay `HELD` until he answers `D15` to `D21`,
+which shape items 5, 7, 8, 12, 13, 15 and 17 to 20. Each item's prompt is written at the close
+of the item it waits on (Part 7, Block A), so the facts in it are fresh. Item 5's prompt is
+below.*
+
+### 5. App phase 1: change the icon generator for the app
+
+*Opened 2026-10-05, out of ledger step 7 (`docs/incomplete/app/PLAN.md`, phase 1). `HELD` on
+Zach's answer to `DESIGN.md` `D15` to `D21`, because `D19` adds an icon to this item.*
+
+**Model: Sonnet 5 (Mechanical). Lane A. Waits on board item 4 and Zach's answer to `D19`.** Work in the main
+checkout; no worktree needed. Escalate to Opus 5.5 the moment the art diff holds a change you
+cannot explain at once.
+
+You are picking up felto: two Python generators in `tools/` write the SVG art for a poker
+lesson app that is about to be built in `app/`. Read `HANDOFF.md` first (the gate, the
+invariants and the code map are there; do not re-derive them), then `docs/conventions-python.md`
+in full, then `docs/incomplete/app/PLAN.md` sections 0 and 1 and phase 1, then
+`docs/incomplete/app/DESIGN.md` `D14`, `D19` and section 10.6. Session rules: absolute dates only;
+every claim carries a `file:line` or the command that produced it; ask Zach in one batch, in
+chat, before building on a guess; never run `git commit`, `git push`, `git add -A` or
+`git add .`.
+
+**Why this exists.** The app draws the generated SVG files as they are. Two of them do not work
+for it, and one it needs does not exist yet. The current path node has its progress ring fixed at 60%, so it cannot show a player's
+real progress. And the card ranks name a font that Android does not have, so Android would draw
+them in its default face. And the streak freeze (`D19`) needs an icon.
+
+**What is fixed.** Read these before changing anything; do not relitigate them.
+- `node_current.svg` comes from `node(*NODE_STATES["available"], ring=0.6)`
+  (`tools/build_icons.py:368`), and the ring geometry is in `node()` (`:268-276`).
+  `node_current.svg` must stay byte for byte the same (BD-9).
+- The new file is `assets/icons/path/node_current_base.svg`: the same canvas, the ring track
+  (`id="ring_track"`), the disc and the glyph, with no `ring_progress` element. The app draws the
+  arc over it.
+- `FONT` is at `tools/build_icons.py:20`. Zach accepted `D14` on 2026-10-05, so `'FeltoRank'`
+  goes first and the rest of the list stays.
+- If Zach accepted `D19`, the new `assets/icons/ui/streak_freeze.svg` is the flame of
+  `ui_flame()` (`tools/build_icons.py:289`) in the gem's palette: face `#38B6F5`, depth
+  `#0E6FB0` (`:324`), lights `#7FD3FF` and `#A6E3FF` (`:325`, `:328`). One parameterised
+  function draws both flames; the flame path is never copied. If he declined it, skip it.
+- Rule H1 (one copy of shared code), rule G4 (an art change is meant, and the art diff shows
+  exactly it) and rule W2 (the run line prints a count taken from the writes).
+- Board item 4 also edits `docs/conventions-python.md`. It must be `DONE` first; if it is still
+  `OPEN`, do it first, from its own prompt above.
+
+Do these, in order:
+1. **Run the gate, then the art diff.** Both must be clean before you edit, or the diff after
+   your edit cannot be trusted.
+2. **Write the base node through `node()`,** with a parameter rather than a second copy of the
+   ring geometry, and write it from `main()`.
+3. **Make the `D14` font change,** and, with `D19`, write the freeze icon from `main()`.
+4. **Run the gate.** The run lines must read 77 and 18, or 78 and 18 with `D19`.
+   `git diff --stat -- assets/icons assets/mascots` must list the new files and the 52 card
+   faces and nothing else, and
+   `git diff -- assets/icons/cards | grep '^[-+]<' | grep -v font-family` must print nothing.
+5. **Look at the art.** Render `assets/icons/path/node_current_base.svg`,
+   `assets/icons/cards/card_A_spades.svg` and, with `D19`, `assets/icons/ui/streak_freeze.svg`
+   from the files in the browser pane, not from the preview pages. The node shows the grey track
+   and the blue disc with no gold arc. Put the freeze icon in front of Zach for approval.
+6. **Fix what moved.** Every `tools/build_icons.py` line citation that your edit shifted, in
+   `docs/conventions-python.md` and in the standing sections of `HANDOFF.md` and `CLAUDE.md`
+   (`grep -nE 'tools/build_icons\.py:[0-9]'`), and the icon count 76, which becomes 77 or 78
+   where it is stated. Bump the Python standard's patch version.
+7. **Record it.** A new ledger step at the next free number, read from `HANDOFF.md`; the phase 1
+   header in `PLAN.md` set to `BUILT <date>, commit pending (Zach)`; this row set to
+   `DONE: HANDOFF <n>`.
+
+Ask before building: nothing is expected to need Zach. If any existing SVG other than the 52
+card faces changes, stop and ask before you go on.
+
+Not in scope, whoever asks: drawing the ranks as outlines; the preview pages; any app code;
+anything under `assets/higgsfield/`; the raw floats of rule G3.
+
+Hand back: the gate `python3 tools/build_icons.py && python3 tools/build_mascots.py && xmllint
+--noout assets/icons/*/*.svg assets/mascots/*/*.svg`, green, with the run lines reading 77 (or 78)
+and 18; the output of `git diff --stat -- assets/icons assets/mascots`; what the two renders show;
+then the two copyable blocks from Part 11, `git add` with the exact files, then `git commit`
+with the same files and a short lowercase message.
