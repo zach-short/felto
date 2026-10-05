@@ -27,7 +27,7 @@ Read in this order: this file, then `PASSOFF.md` (what is next), then `docs/AGEN
 | Whole-repo gate | build, then the well-formed check, as one command (`gateCommand` in `.personal-config.json`) | Run: exit 0 |
 | Python | 3.14.6, `/opt/homebrew/bin/python3`; generators import only `math` and `os` | `python3 --version`; `grep -nE '^(import\|from)' tools/*.py` |
 | xmllint | libxml 20913, `/usr/bin/xmllint` | `xmllint --version` |
-| Git | Initialized 2026-10-04 on branch `main`, no commits yet. Remote `origin` is `https://github.com/zach-short/felto.git`, private | `git init -b main`; `gh repo create zach-short/felto --private` |
+| Git | Initialized 2026-10-04 on branch `main`. First commit `90fc2e8`, "adapt the working standard to felto", 2026-10-04 23:41 -0400. This row said "no commits yet" until step 2: true when step 1 wrote it, wrong once `90fc2e8` landed (`git log --oneline`, 2026-10-04). Remote `origin` is `https://github.com/zach-short/felto.git`, private | `git init -b main`; `gh repo create zach-short/felto --private`; `git log --oneline` |
 | CI | none | `ls .github/workflows` finds nothing |
 | Ships | Nothing ships. No app, no deploy: merged is not shipped | No app code or deploy config in the tree |
 
@@ -59,12 +59,15 @@ Zach chose to check the tool before aligning, at GATE 0.
 
 ## Code map
 
+- `tools/common.py`: the helpers both generators use (`svg`, `tf`, `ext`, `sector`, `gloss`,
+  `stroke`, `write`) and the constants `SHADOW`, `CREAM`, `INKL`. Imported by plain name (step 3).
 - `tools/build_icons.py`: writes `assets/icons/{chips,cards,path,ui}/` (76 SVGs).
 - `tools/build_mascots.py`: writes `assets/mascots/{fish,squid,shark}/` (18 SVGs, six poses each).
 - `assets/higgsfield/`: the Higgsfield reference art the style was approved from (19 PNG, 13 SVG).
 - `assets/gallery.html`: shows the Higgsfield art; links all 32 files by name.
 - `assets/icons/preview.html`, `assets/mascots/preview.html`: inline SVG snapshots, written by
   no script.
+- `docs/conventions-python.md`: the Python code standard for `tools/`, version 1.1.0 (steps 2 and 3).
 
 ## Invariants
 
@@ -81,8 +84,16 @@ Zach chose to check the tool before aligning, at GATE 0.
   inline icon SVGs to the current file bodies. Look at the SVG files, not the previews.
 - **Card ranks are live `<text>`.** Convert them to outlines before Rive import, or set the font
   in Rive (`tools/build_icons.py:11-12`).
-- **`build_icons.py` computes a file count and never prints it** (`tools/build_icons.py:411`). Its
-  `wrote files to ...` line carries no count, so it cannot show a missing file.
+- **Resolved 2026-10-05 (step 3): the run lines now carry a count.** `build_icons.py` computed a
+  count it never printed, and `os.walk` would have given 77 for 76 SVGs because of
+  `preview.html`. Both generators now count from `write()` and print 76 and 18 (rule W2).
+- **Resolved 2026-10-05 (step 3): the mascot docstring overstated the ids.** It listed `face`,
+  `eye_l`, `eye_r`, `pupil_l` and `pupil_r` for every character. It now points at the id table
+  in rule I3 of `docs/conventions-python.md`, which was measured from the 18 SVGs.
+- **Some numbers reach the art as raw floats**, such as `r="46.800000000000004"` in
+  `assets/icons/chips/chip_stack_red.svg` (from `tools/build_icons.py:159`). The output is still
+  deterministic. Zach chose on 2026-10-04 to leave these sites, because a fix changes the art
+  bytes (rule G3 and its drift register).
 - **A global rule gitignores this ledger, the board and the standard** in every repo
   (`~/.config/git/ignore:4-6`). felto overrides it; see Settled.
 - **The `DONE` board marker had two spellings, 2026-10-04.** Wrong for part of step 1; resolved
@@ -114,9 +125,46 @@ checking `personal-config` (done, colon form), board item 1 is the Python code s
 GitHub repo stays private. Added the `!` lines to `.gitignore`, wrote board item 1, and stamped
 `PASSOFF.md` as adapted. **Left owed:** board item 1, and the first commit, which is Zach's.
 
+**2. Write the Python code standard for `tools/` (board item 1).** Done 2026-10-04, on branch
+`main`, on Opus 5.5. Wrote `docs/conventions-python.md`, version 1.0.0: 31 rules in nine groups
+(M, G, W, L, C, I, H, K, Y), each with an enforcement tag (G1 and G4 are *gate*, the rest
+*review*), a provenance label and a correct/incorrect pair from this repo, plus a sanctioned
+divergence registry (S1 to S4) and a drift register. Pointed `CLAUDE.md` at it (its first
+blockquote and the `docs/` row) and replaced the Style rules section here. Zach's answers,
+2026-10-04, every one as recommended: no formatter or linter for now (`command -v ruff black
+mypy pyright flake8 pylint` found none); the helpers copied into both generators move to one
+shared module in `tools/`, as board item 2, with byte-identical art; helpers at most 15 lines,
+functions that return one whole SVG exempt; no type hints until a type checker runs; comments
+say why, with one exception for a legend over a tuple table; a new colour gets a name, and the
+existing inline values stay; "named exports only" does not apply to scripts; the eight
+differences between the two files are settled as rules or as sanctioned divergences, as the
+registry records. Found and recorded, not fixed, because both are in generator code this item
+does not own: the rig docstring at `tools/build_mascots.py:7-9` overstates the ids, and the
+unused count at `tools/build_icons.py:411` would read 77 for 76 SVGs (Known facts). Corrected
+the Environment Git row, which still said "no commits yet" after `90fc2e8`. Gate run
+2026-10-04: exit 0, and `git diff --stat -- assets` empty, so no art changed. Opened board
+item 2. **Left owed:** board item 2, and the commit, which is Zach's.
+
+**3. Move the shared generator code into one module (board item 2).** Done 2026-10-05, on
+branch `main`, on Sonnet 5.5. Gate and `git diff --stat -- assets/icons assets/mascots` were clean
+before the first edit. Created `tools/common.py` with `svg` (mascots signature), `tf`, `ext`,
+`sector`, `gloss`, `stroke`, `write`, `SHADOW` and `CREAM`, plus `INKL`, which the `stroke`
+default needs and which the brief did not list. `write(out, sub, name, content)` takes the output
+folder and returns 1. `gloss(x, y, rx, ry, rot, op=0.6, ident=True)` writes `id="gloss"` unless
+`ident=False`; the three mascot calls pass `ident=False`, and the chip's gloss, the one call that
+relied on a default `op`, still gets 0.6. Deleted every copy from both generators, drew
+the check glyph with `stroke()`, wrote every file through the shared `write()`, made both `main`
+functions print a count taken from the writes (76 and 18), cut icons `main` to 14 lines with a
+`UI_ICONS` table, renamed `l` to `light`, and corrected the mascots docstring. Updated
+`docs/conventions-python.md` to 1.1.0: H1, M4, W1, W2, L6, H2, Y1 and I3 prose, and the seven
+drift rows marked fixed. Proof: the gate exited 0 after the generator switches, the run lines
+read 76 and 18, and `git diff --stat -- assets/icons assets/mascots` was empty each time.
+**Left owed:** line citations in the other rules of the standard (for example Y3, M2, L1 to L5)
+still point at pre-move line numbers in the two generators; no reconcile pass is done. The
+commit is Zach's.
+
 ## Style rules
 
-No per-language code standard exists yet. Python in `tools/` follows the style already there:
-module docstring stating the style and the run command, small pure functions returning SVG
-strings, one `main()`. No formatter or linter is configured, so nothing settles style
-mechanically.
+Python follows `docs/conventions-python.md` (written in step 2, 2026-10-04). Read it in full
+before editing anything in `tools/`. No formatter or linter is configured (Zach, 2026-10-04), so
+nothing settles style mechanically.

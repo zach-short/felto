@@ -18,9 +18,20 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 
 | # | Task | Status | Model | Lane | Waits on | Files it owns |
 |---|------|--------|-------|------|----------|---------------|
-| 1 | Write the Python code standard for `tools/` | `OPEN` | Opus 5.5 | A | nothing | `docs/conventions-python.md`, `CLAUDE.md` |
+| 1 | Write the Python code standard for `tools/` | `DONE: HANDOFF 2` | Opus 5.5 | A | nothing | `docs/conventions-python.md`, `CLAUDE.md` |
+| 2 | Move the shared generator code into one module | `DONE: HANDOFF 3` | Sonnet 5 | A | nothing | `tools/build_icons.py`, `tools/build_mascots.py`, the new shared module in `tools/`, `docs/conventions-python.md` |
+
+**Do not paste a prompt marked DONE**: a fresh session would build it again.
+
+A `DONE` item's prompt is folded out to the archive at close-out; its row stays here forever,
+with its pointer at the ledger step. `SUPERSEDED` and `SETTLED AS NO` keep their sections:
+the replacement and the reason are written nowhere else. `personal-config fold board` does it.
 
 ### 1. Write the Python code standard for the asset generators
+
+*`DONE: HANDOFF 2`, 2026-10-04. Do not paste this prompt. It is not folded yet:
+`personal-config fold board` refused on 2026-10-04 because `~/Projects/archive/felto` has no
+`INDEX.md`, and seeding that index is `personal-config setup`'s job.*
 
 *Opened 2026-10-04, out of the Part 0 adaptation: `CLAUDE.md` requires a code standard before
 any code is written, and none exists.*
@@ -79,8 +90,80 @@ empty (nothing in the art changed); the new standard's path for Zach to read; th
 copyable blocks from Part 11, `git add` with the exact files, then `git commit` with the same
 files and a short lowercase message.
 
-**Do not paste a prompt marked DONE**: a fresh session would build it again.
+### 2. Move the shared generator code into one module
 
-A `DONE` item's prompt is folded out to the archive at close-out; its row stays here forever,
-with its pointer at the ledger step. `SUPERSEDED` and `SETTLED AS NO` keep their sections:
-the replacement and the reason are written nowhere else. `personal-config fold board` does it.
+*Opened 2026-10-04, out of board item 1 (ledger step 2): Zach decided that code both generators
+use lives in one shared module (rule H1 in `docs/conventions-python.md`), and that a separate
+item makes the move with byte-identical art.*
+
+**Model: Sonnet 5 (Mechanical). Lane A. Waits on nothing.** Work in the main checkout; no
+worktree needed. Escalate to Opus 5.5 the moment the art diff is not empty for a reason you
+cannot see at once.
+
+You are picking up felto, an asset pipeline with no app code: two Python generators in `tools/`
+write the SVG icons and mascots for a poker game. Read `HANDOFF.md` first (the gate, the
+invariants and the code map are there; do not re-derive them), then
+`docs/conventions-python.md` in full (rules H1, L6, W1, W2, H2, Y1, I3, G4 and the drift
+register above all), then `CLAUDE.md`. Session rules: absolute dates only; every claim carries
+a `file:line` or the command that produced it; ask Zach in one batch, in chat, before building
+on a guess; never run `git commit`, `git push`, `git add -A` or `git add .`.
+
+**Why this exists.** Both generators hold their own copies of the same helpers, and two copies
+already differ. Every future change to the house style would have to be made twice. One shared
+module makes the style one code path.
+
+**What is fixed.** Read these before changing anything; do not relitigate them.
+- The copies, verified 2026-10-04: `svg` (icons 23-27, mascots 23-27), `tf` (icons 59-60,
+  mascots 30-31), `ext` (icons 37-39, mascots 41-42), `gloss` (icons 52-56, mascots 49-53),
+  `sector` (icons 74-83, mascots 91-100), `SHADOW` and `CREAM` (icons 18-19, mascots 17-18).
+  `stroke()` (mascots 34-38) moves too (rule L6).
+- `tf`, `ext`, `sector`, `SHADOW` and `CREAM` are identical in both files. The mascots `svg`
+  takes `x0=0, y0=0` and writes the same bytes as the icons `svg` when they are 0; the shark
+  passes `y0=-30` (`tools/build_mascots.py:376`).
+- The two `gloss` copies differ in two ways only. The icons copy writes `id="gloss"`; the
+  mascots copy writes no id. Their defaults differ, but every call passes `rx`, `ry` and `rot`,
+  and only `tools/build_icons.py:98` relies on a default (`op=0.6`)
+  (`grep -nE '\bgloss\(' tools/*.py`, 2026-10-04).
+- `stroke(d, 15, c)` writes the same bytes as the inline path at `tools/build_icons.py:261`.
+- A sibling module is imported by its plain name (rule M4). Running `python3 tools/<name>.py`
+  puts `tools/` first on `sys.path`.
+- The art must not change (rule G4). The proof is the gate followed by an empty
+  `git diff --stat -- assets/icons assets/mascots`. The gate rewrites every SVG, so a green
+  gate alone proves nothing about the art.
+
+Do these, in order:
+1. **Run the gate, then the art diff.** Both must be clean before you edit, or the diff after
+   your edit cannot be trusted.
+2. **Create the shared module in `tools/`.** Choose a plain `snake_case` name. Put in it
+   `svg` (the mascots signature), `tf`, `ext`, `sector`, `gloss`, `stroke`, `write`, `SHADOW`
+   and `CREAM`. `gloss` must reproduce both current outputs; how it switches the id is your
+   choice. Follow every rule in the standard; no type hints (H3).
+3. **Switch `tools/build_icons.py` to the shared module and delete its copies.** Draw the check
+   glyph at line 261 with `stroke()`. Run the gate and the art diff.
+4. **Switch `tools/build_mascots.py` the same way.** Write through the shared `write()` (W1).
+   Run the gate and the art diff.
+5. **Fix the run lines.** Each `main()` prints the number of files it wrote, counted from the
+   writes (W2). Delete the unused count at `tools/build_icons.py:411`. Bring `main` in
+   `tools/build_icons.py` to 15 lines or fewer (H2) and rename the loop name `l` (Y1). The
+   icons run must print 76 and the mascots run 18.
+6. **Correct the docstring at `tools/build_mascots.py:7-9`** so it matches the id table in rule
+   I3. It is a docstring, so the art diff stays empty.
+7. **Update `docs/conventions-python.md`.** Name the module in H1 and give H1 and M4 a real
+   correct example. In the drift register, mark the H1, L6, W1, W2, H2, Y1 and I3 rows fixed,
+   with the date and the ledger step; do not delete them. Bump the version to 1.1.0.
+8. **Record it.** A new ledger step at the next free number, read from `HANDOFF.md`; update the
+   code map for the new module and the Known facts entries this item resolves; set this row to
+   `DONE: HANDOFF <n>`.
+
+Ask before building: nothing is expected to need Zach. If a step cannot keep the art diff empty,
+stop and ask before you change any art.
+
+Not in scope, whoever asks: the raw floats under rule G3, the inline colours under C1 and the
+comments under K1 (Zach decided on 2026-10-04 that these stay); any change to the art; the
+preview pages; anything under `assets/higgsfield/`.
+
+Hand back: the gate `python3 tools/build_icons.py && python3 tools/build_mascots.py && xmllint
+--noout assets/icons/*/*.svg assets/mascots/*/*.svg`, green; `git diff --stat -- assets/icons
+assets/mascots` empty; the two run lines, showing 76 and 18; then the two copyable blocks from
+Part 11, `git add` with the exact files, including the new module, then `git commit` with the
+same files and a short lowercase message.
