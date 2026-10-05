@@ -6,11 +6,14 @@ edited in place when they go stale. Started 2026-10-04.
 
 ## Orientation
 
-felto is, as of 2026-10-04, an asset pipeline with no app code: two Python generators in
-`tools/` write the SVG icons and mascots for a game about poker (cards, chips, a lesson path,
-streak, XP, lives), and three HTML pages show the art. Zach is the owner and decides everything
-here (solo mode). He is interactive: when a decision is his, ask in chat, in one batch, before
-building it.
+felto is a game about poker (cards, chips, a lesson path, streak, XP, lives, gems). It began on
+2026-10-04 as an asset pipeline: three Python generators in `tools/` write the SVG icons and
+mascots and the WAV sound effects, and three HTML pages show the art. Since 2026-10-05 it is
+also an Expo app in `app/` that draws and plays that art, built end to end by the `/autopilot`
+run (board items 5 to 20, MVP of `docs/incomplete/app/PLAN.md` phases 1 to 16). The app runs
+as a development build only; Zach has not yet walked it on a device
+(`docs/incomplete/app/RUNTIME-PASS.md`). Zach is the owner and decides everything here (solo
+mode). He is interactive: when a decision is his, ask in chat, in one batch, before building it.
 
 Read in this order: this file, then `PASSOFF.md` (what is next), then `docs/AGENT-PRACTICES.md`
 (the working standard), then `CLAUDE.md`.
@@ -19,23 +22,34 @@ Read in this order: this file, then `PASSOFF.md` (what is next), then `docs/AGEN
 
 | Fact | Value | Source (verified 2026-10-04) |
 |---|---|---|
-| Build | `python3 tools/build_icons.py && python3 tools/build_mascots.py` | Run: exit 0; output byte-identical to the files on disk (`diff -rq` against a scratch rebuild) |
-| Test | none | No test files or runner (`ls -a`, `find . -type f`) |
-| Lint | none | No linter config or manifest at the root (`ls -a`) |
-| Typecheck | none | Python only, no type checker configured |
+| Build | `python3 tools/build_icons.py && python3 tools/build_mascots.py && python3 tools/build_sounds.py` | Run: exit 0, 78 icons, 18 mascots, 6 sounds; output byte-identical to the files on disk (`diff -rq` against a scratch rebuild; for the WAVs, `shasum` over two runs, 2026-10-05) |
+| Test | `bun run --cwd app test` (vitest 4.1, node environment, `TZ=America/New_York`); none for `tools/` | Run 2026-10-05 (board item 16): 63 files, 490 tests passed |
+| Lint | `bun run --cwd app lint` (`expo lint`, `eslint-config-expo/flat`); none for `tools/` | Run 2026-10-05 (board item 16): exit 0, no findings |
+| Typecheck | `bun run --cwd app typecheck` (`tsc --noEmit`, strict); none for `tools/` | Run 2026-10-05 (board item 16): exit 0 |
+| App install | `bun install --cwd app --frozen-lockfile`; manifest and lockfile in `app/`, none at the root | Run 2026-10-05: no changes |
+| App native build | `bun run --cwd app ios`; `JAVA_HOME=$(/usr/libexec/java_home -v 17) ANDROID_HOME=~/Library/Android/sdk bun run --cwd app android`. CocoaPods needs `LANG=en_US.UTF-8` (without it `pod install` dies in Ruby's Unicode normalizer). The Android emulator reaches Metro only after `adb reverse tcp:8081 tcp:8081` | Built and run 2026-10-05 on the iPhone 17 Pro simulator (iOS 26.5) and the `Pixel_9` emulator |
+| Bun trap | Write `bun run --cwd app <script>`. `bun --cwd app run <script>` prints bun's usage and exits 0 without running anything | bun 1.2.9, seen 2026-10-05 |
 | Well-formed check | `xmllint --noout assets/icons/*/*.svg assets/mascots/*/*.svg` | Run: exit 0 |
-| Whole-repo gate | build, then the well-formed check, as one command (`gateCommand` in `.personal-config.json`) | Run: exit 0 |
-| Python | 3.14.6, `/opt/homebrew/bin/python3`; generators import only `math` and `os` | `python3 --version`; `grep -nE '^(import\|from)' tools/*.py` |
+| Whole-repo gate | the Python gate (build, then the well-formed check), then the app gate (typecheck, lint, test), as one command (`gateCommand` in `.personal-config.json`, `CLAUDE.md` Commands) | Run 2026-10-05 (board item 16), each step alone: exit 0; run lines 78, 18 and 6; 63 test files, 490 tests |
+| Python | 3.14.6, `/opt/homebrew/bin/python3`; the SVG generators import `math`, `os` and `common`; the sound generator imports `math`, `os`, `struct` and `wave` | `python3 --version`; `grep -nE '^(import\|from)' tools/*.py` |
 | xmllint | libxml 20913, `/usr/bin/xmllint` | `xmllint --version` |
 | Git | Initialized 2026-10-04 on branch `main`. First commit `90fc2e8`, "adapt the working standard to felto", 2026-10-04 23:41 -0400. This row said "no commits yet" until step 2: true when step 1 wrote it, wrong once `90fc2e8` landed (`git log --oneline`, 2026-10-04). Remote `origin` is `https://github.com/zach-short/felto.git`, private | `git init -b main`; `gh repo create zach-short/felto --private`; `git log --oneline` |
 | CI | none | `ls .github/workflows` finds nothing |
-| Ships | Nothing ships. No app, no deploy: merged is not shipped | No app code or deploy config in the tree |
+| Ships | Nothing ships. The app runs as a development build on simulators; no store release (`D13`), no deploy: merged is not shipped | No deploy or store config in the tree |
 
 **What an agent cannot verify here.** A generator run proves files were written, not how they
 look. An agent can render a single SVG in the browser pane and look at it; do that for every
 visual change, and do not use the preview pages for it (see Known facts). Rive import cannot be
 checked here at all: end with the exact file to import and what should appear, then wait for
 Zach.
+
+Since 2026-10-05 (board item 7) an agent can build the app and see it on the iPhone 17 Pro
+simulator and the `Pixel_9` emulator, light and dark (`xcrun simctl ui <id> appearance dark`,
+`adb shell cmd uimode night yes`), and a tablet in landscape on Android through
+`adb shell wm size 2560x1600` and `wm density 320`. It cannot see the app on Zach's phone. It
+cannot rotate an iOS simulator: `simctl` has no rotate command, and the Simulator menu needs
+assistive access that this Mac does not grant to `osascript`. The simulator tool also needs
+Zach's grant per device before it can tap one; the iPad simulators had none on 2026-10-05.
 
 ## Settled
 
@@ -76,22 +90,96 @@ the review and the chest (`D9`); the warm copy register (`D10`); a 19:00 streak 
 for after the first lesson (`D11`); the name Felto and the identifier `com.zachshort.felto`
 (`D12`); card ranks in a bundled Nunito ExtraBold named `FeltoRank` (`D14`); and the plan in
 `docs/incomplete/app/PLAN.md`. Only the store release stays out of the first version (`D13`).
-How the seven returned items work is `D15` to `D21`, proposed the same day and not settled
-until Zach answers them.
+How the seven returned items work is `D15` to `D21`, proposed the same day. Zach answered all
+seven in chat on 2026-10-05 (the `/autopilot` opening round): D15 to D17 and D19 to D21 yes, and
+D18 names the three mascots with poker words (Flop, Kicker, Ace). `DESIGN.md` records each
+answer in place.
 
 ## Code map
 
 - `tools/common.py`: the helpers both generators use (`svg`, `tf`, `ext`, `sector`, `gloss`,
   `stroke`, `write`) and the constants `SHADOW`, `CREAM`, `INKL`. Imported by plain name (step 3).
-- `tools/build_icons.py`: writes `assets/icons/{chips,cards,path,ui}/` (76 SVGs).
+- `tools/build_icons.py`: writes `assets/icons/{chips,cards,path,ui}/` (78 SVGs).
 - `tools/build_mascots.py`: writes `assets/mascots/{fish,squid,shark}/` (18 SVGs, six poses each).
+- `tools/build_sounds.py`: writes `assets/sounds/` (6 WAV files: `answer_right`, `answer_wrong`,
+  `lesson_finish`, `boss_pass`, `boss_fail`, `chest_open`; 16-bit mono, 44,100 Hz, each under one
+  second). Standard library only (`math`, `os`, `struct`, `wave`); does not import `common` (board
+  item 17, `D15`, BD-23). The app plays them through `expo-audio` (BD-24).
 - `assets/higgsfield/`: the Higgsfield reference art the style was approved from (19 PNG, 13 SVG).
 - `assets/gallery.html`: shows the Higgsfield art; links all 32 files by name.
 - `assets/icons/preview.html`, `assets/mascots/preview.html`: inline SVG snapshots, written by
   no script.
-- `docs/conventions-python.md`: the Python code standard for `tools/`, version 1.1.2 (steps 2 to 4 and 8).
+- `docs/conventions-python.md`: the Python code standard for `tools/`, version 1.2.0 (steps 2 to 4, 8, 9 and 11, and board item 17).
+- `docs/conventions-typescript.md`: the TypeScript code standard for `app/`, version 1.1.0, 21
+  rules, four sanctioned divergences (Z1 to Z4) and a Known gaps list (board item 6, app phase 2;
+  U6 widened to sound, item 14; real examples and the registry, item 16).
+- `app/`: the Expo app (board item 7). `app/svg-transformer.js` turns each SVG into a
+  component with SVGO off and swaps the two light-page colours for props (BD-25, map in
+  `app/src/art/colour-swap.json`); `app/metro.config.js` reaches `../assets` (BD-7);
+  `app/src/art/` is the only importer of SVGs; `app/src/theme/` holds the tokens, `useTheme`
+  and `useColumnWidth`; `app/src/config/dials.ts` holds every dial; `app/src/components/screen.tsx`
+  is the screen wrapper (BD-27); `app/src/app/dev/art.tsx` is the art check route;
+  `app/assets/fonts/FeltoRank.ttf` is the rank font with its licence beside it.
+- `app/src/app/`: the routes (board item 12). `_layout.tsx` renders `RootProviders` (which mounts
+  `PlayerProvider` and `ReminderSync`) around `RootStack`; `(tabs)/` holds Learn (`index.tsx`,
+  which is `/`), Practice and Profile in native tabs; `dev/fixture/[name].tsx` is the BD-13
+  fixture link; `dev/art.tsx` is the art check; `dev/reminders.tsx` lists the scheduled
+  reminders. Every route renders one screen from `app/src/screens/`. `app/src/art/` names all 84 SVGs the app draws
+  (`sizes.ts` holds the viewBoxes, checked against the files by `sizes.test.ts`; `registry.ts`
+  is the only SVG importer) and gives `Art`, `Mascot`, `CardArt` and `PathNodeArt`, which draws
+  the progress arc over `node_current_base` (BD-9). `app/src/components/path/` is the Learn path
+  (`path-outline.ts` maps the content `OUTLINE` to the game `PathOutline`); `stat-bar.tsx` is
+  the stat bar.
+- Sessions (board items 13 and 14): `app/src/app/lesson/[id].tsx`, `boss/[unit].tsx`,
+  `review/[unit].tsx` and `chest/[unit].tsx` are full-screen modals; `out-of-lives.tsx` is a
+  transparent modal holding the out-of-lives sheet. A lesson, a boss and a review are one loop:
+  `components/lesson/lesson-run.ts` (the `Session` type and the pure reducer), `session-steps.ts`
+  (the order of each step's effects), `use-lesson-run.ts` and `lesson-run-view.tsx`.
+  `components/boss/` and `components/review/` build the sessions from `drawBoss` and `reviewSet`;
+  `components/chest/` and `components/lives/` are the chest and the sheet;
+  `components/path/stop-route.ts` decides where a path tap goes. `app/src/feedback/` plays the
+  effects, every call through `safely.ts`; `app/src/art/sounds.ts` is the only WAV importer.
+- Practice (board item 19, `D21`): the tab is `screens/practice-screen.tsx`; a set is the
+  full-screen modal `app/src/app/practice-set.tsx`, the same loop with a `Session` of kind
+  `practice`. `components/practice/practice-menu.ts` lists the kinds open and locked and deals
+  the set through `dealSet` (`app/src/drills/`).
+- Onboarding (board item 20, `D20`): `components/root-stack.tsx` is the root navigator; it opens
+  only `app/src/app/onboarding/` (welcome, cast, the question, the placement check) while
+  `onboarded` is false and only the tabs and sessions after. The check is the same loop with a
+  `Session` of kind `placement` (`components/onboarding/placement-session.ts` draws it;
+  `components/lesson/session-end.ts` routes its end to `finishPlacement`). The fixture `fresh`
+  opens onboarding; `placed` and `all-done` show the path after a pass and every Practice kind.
+- Pure copy helpers (board item 16): `components/lesson/closed-copy.ts` (`OUT_OF_HEARTS`,
+  `nextLifeLine`, which formats the time with `formatClockTime`), `components/stat-values.ts`
+  (`statLabel`, the singular and plural stat words), `components/path/path-view-model.ts`
+  (`stopLabel`, a stop's spoken label with the current lesson's progress) and
+  `components/route-error-copy.ts` (the warm error line). Each is outside React Native so
+  vitest can read it.
+- `app/src/game/`: the game rules of `D8`, `D19` to `D21` as pure functions of the state, a
+  path outline and the time (board item 8): lives, streak and freeze, sessions and XP, the path
+  node states, the seeded boss draw, the review set, the chest, placement, and the named
+  fixtures of BD-13. `PlayerState` is in `player-state.ts`.
+- `app/src/storage/`: the one data module (`D3`, BD-8, board item 8). `player-store.ts` is the
+  pure core (load, check, migrate, save, back up); `migrations.ts` holds `STATE_VERSION`;
+  `kv-store-adapter.ts` is the only importer of `expo-sqlite`; `player-provider.tsx` and
+  `use-player.ts` give screens the state and its actions. `STATE_VERSION` is 2 since board item
+  15 (settings gained the reminder; migration and tests in `migrations.ts` and `migrations.test.ts`).
+- Profile and the reminder (board item 15): `app/src/components/profile/` is the Profile form
+  (`FieldGroup`, the freeze shop, the settings, reset); `app/src/reminder/` plans the week of
+  reminders (`plan.ts`, pure and tested) and keeps the phone in step (`use-reminder-sync.ts`,
+  mounted at the root as `ReminderSync` inside `components/root-providers.tsx`; the clock is
+  read in `replan.ts` when a replan runs); `clock-format.ts` is the one time-of-day format; `reminder-device.ts` is the only importer of
+  `expo-notifications`; `felto://dev/reminders` lists what the phone holds.
+- `docs/README.md`: the docs index of `docs/AGENT-PRACTICES.md` Part 8.2 (board items 6 and 16).
 - `docs/incomplete/app/`: the app effort (Profile P). `DESIGN.md` is what the app is and why
-  (`D1` to `D21`); `PLAN.md` is the order of work, 16 phases on board items 5 to 20 (step 7).
+  (`D1` to `D21`); `PLAN.md` is the order of work, 16 phases on board items 5 to 20 (step 7);
+  `RUNTIME-PASS.md` is the final, ordered list of what only a person on a device can still check
+  (board item 16).
+- `docs/incomplete/autopilot-2026-10-05/`: `STATE.md` and `RUNDOWN.md`, the record of the
+  `/autopilot` run that built the app. Not kept current.
+- App size, 2026-10-05 (`find app/src`, board item 16): 198 source `.ts` and `.tsx` files (9,869
+  lines) and 63 test files (3,728 lines); 78 icons, 18 mascots and 6 sounds under `assets/`;
+  `app/src/art/registry.ts` imports 84 of the 96 SVGs (66 icons and all 18 mascots).
 
 ## Invariants
 
@@ -122,6 +210,19 @@ until Zach answers them.
   (`~/.config/git/ignore:4-6`). felto overrides it; see Settled.
 - **The `DONE` board marker had two spellings, 2026-10-04.** Wrong for part of step 1; resolved
   the same day. See Settled.
+- **Frozen documents cite moved generator lines (2026-10-05, board item 16).** The design and the
+  plan are not edited in place, so these stay as written: `PLAN.md:40` and `DESIGN.md:823` cite
+  `tools/build_icons.py:368` for `ring=0.6` (now `:382`); `PLAN.md:49` and `DESIGN.md:573` cite
+  `:271` for the ring track colour (now `:272`); `PLAN.md:220` cites `:289`, `:324`, `:325`
+  and `:328` for the freeze flame (now `:295`, `:291` and `:292`); `DESIGN.md:618` cites `:324`
+  for the freeze palette (now `:291`); `PLAN.md:88` cites `:268-276` for the arc geometry (now
+  about `:269-278`). `CLAUDE.md`, this file's standing sections and the Python standard were
+  checked by script on the same date: every first cited line shows what it claims.
+- **`app/src/theme/tokens.ts` cites generator lines in comments** (`tools/common.py:8`, `:9`,
+  `:10`, `tools/build_icons.py:248`, `:272`, `:275`; all correct on 2026-10-05). Nothing checks
+  them, so a generator change can make them stale.
+- **The dev routes exist in a release build.** `/dev/art`, `/dev/reminders` and the fixture link
+  only show a page; a fixture is refused unless `__DEV__` (`use-load-fixture.ts`).
 - **`PART0-PROMPT.md:4` names the wrong directory**, a scratchpad path under `/private/tmp`. The
   repo is `/Users/zachshort/Projects/felto`. Found 2026-10-04.
 
@@ -269,8 +370,452 @@ this step added six lines above it. Gate exit 0 (run lines 76 and 18) and
 `git diff --stat -- assets tools` empty. **Left owed:** those two stale lines, and the commit,
 which is Zach's.
 
+**9. Fix the two stale lines that step 8 found (board item 21).** Done 2026-10-05 under
+`/autopilot`, not yet committed. Built by Sonnet 5.5, audited by Opus in a second worktree
+(verdict: non-blocking findings); no relay passes. The change sits in the builder's worktree
+`.claude/worktrees/agent-a1cb91d6981ab219e`, branch `worktree-agent-a1cb91d6981ab219e`, not in
+`main`. Two files changed: `docs/conventions-python.md:52-54` now says the generators import the
+standard library and `tools/common.py` and nothing else (`grep -nE '^(import|from)' tools/*.py`,
+2026-10-05), with the old fact kept as history; row 5 of `docs/incomplete/app/DESIGN.md:30` cites
+rule I3 by ID and keeps the old lines 519-537 findable with date and reason. The standard is
+1.1.3. All 32 rule headings are unchanged. Gate exit 0, run lines 76 and 18, in both worktrees.
+Findings, each `open`: (1) the builder reported the standard's diff as +5/-2; `git diff
+--numstat` shows +6/-3, so the report was wrong and the content is right; (2)
+`docs/conventions-python.md:50` still says "These facts were verified 2026-10-04" above a bullet
+dated 2026-10-05; (3) the revision sentence at `:12` says "on Sonnet 5.5". The check of the other
+three bullets in that section found none wrong. Step 8's "Found, not fixed" lines are resolved.
+`git diff --stat -- assets` proves little in a worktree, because `assets/` is staged but not
+committed in `main`, so it is untracked there; it proves only that `tools/` is unchanged.
+
+**10. Autopilot run of 2026-10-05.** Ran 01:26 to about 01:40 EDT. Built board item 21 only (step 9);
+every other row was `HELD` on a commit, an unwritten prompt or a push. The rundown is
+`docs/incomplete/autopilot-2026-10-05/RUNDOWN.md`. Zach's answers to `D15` to `D21` are in its
+`STATE.md` and not yet in `DESIGN.md`. Not committed.
+
+**11. Change the icon generator for the app (board item 5, app phase 1).** Done 2026-10-05, on
+branch `main`, in the main checkout because the art is staged but not committed. Built by Sonnet
+5.5, audited by Opus in a scratch copy (verdict: non-blocking findings); no relay passes. Gate and
+`git diff --stat -- assets/icons assets/mascots` were clean before the first edit.
+`tools/build_icons.py` changed in four ways: `node()` takes `arc=True` and `main()` writes
+`path/node_current_base.svg` with `arc=False` (track, disc and glyph, no `ring_progress`; BD-9);
+`FONT` starts with `'FeltoRank'` (`D14`, accepted); `ui_flame()` is parameterised and
+`ui_freeze()` draws `ui/streak_freeze.svg` in the gem palette (`D19`, accepted). Gate exit 0, run
+lines 78 and 18, and a rebuild in a scratch copy is byte-identical. The art diff is the 52 card
+faces (font-family only; the step 4 grep is empty); `node_current.svg` and `streak_flame.svg` are
+byte-identical; the two new files are untracked. The three files were rasterised and looked at:
+the node shows track and disc with no arc, the ace of spades reads in the fallback face, the
+freeze is the flame in ice blue. The standard is 1.1.4 and the moved citations in it and in
+`CLAUDE.md` were fixed. The orchestrator then fixed three audit findings in the standard: the L2
+example now quotes `tools/build_icons.py:326`, the L2 range is `258-262`, and the C1 count notes
+28 lines since this item. Findings, each `open`: `PLAN.md:40,49` and `DESIGN.md:555,600,765` cite
+`tools/build_icons.py:368`, `:271` and `:324`, which moved (`:382`, `:272`, about `:334`); the
+design is frozen, so they stay as written until an amendment. **Left owed:** Zach's approval of
+the freeze icon (look at `assets/icons/ui/streak_freeze.svg`); Rive import is unchecked; the
+commit, which is Zach's.
+
+**12. Write the TypeScript standard and re-add the app rules (board item 6, app phase 2).** Done
+2026-10-05 under `/autopilot`, on branch `main` in the main checkout, not committed. Built by
+Opus 5.5, audited by Opus (verdict: non-blocking findings); no relay passes. Gate exit 0, run
+lines 78 and 18, and this item changed nothing under `assets/` or `tools/`. Wrote
+`docs/conventions-typescript.md`, version 1.0.0: 21 rules in groups N, B, V, O, U and Q, each
+tagged *review* with a provenance label and an example pair, plus registry entry Z1 for BD-16.
+A read-only Sonnet inventory of `ezhomesteading/docs/conventions.md` fed it; no rule id is
+copied. Lint is `eslint-config-expo/flat`. Re-added the migration rule and the parity rule to
+`docs/AGENT-PRACTICES.md` Part 6, pointed `CLAUDE.md` at the standard, wrote `docs/README.md`, and
+added `.claude/worktrees/` to `.gitignore`. Judgment calls, each reversible: B2 also covers
+`src/drills/`; the re-added rules sit in Part 6, not Part 1; Z1 also covers config files that a
+tool loads by default export; V1 and the Python rule H3 do not conflict. Findings, each `open`:
+the citation at `docs/conventions-typescript.md:424-425` shows the platform list, not the
+`.ios.tsx` resolution order; the file's "61 rules" for the `ezhomesteading` standard counts 59
+by the auditor's script; `PLAN.md:275-276` asks for an empty `git diff --stat -- assets tools`,
+which holds only after item 5 is committed; `docs/README.md:7` has a bad line wrap;
+`PLAN.md` hazard 2 still says `.claude/` is untracked. **Left owed:** Zach reads the rule list
+(in the builder's report, STATE.md); phase 12 replaces the `ezhomesteading` examples; the commit.
+
+**13. Scaffold the app and draw the art on both platforms (board item 7, app phase 3).** Done
+2026-10-05 under `/autopilot`, on branch `main` in the main checkout, not committed. Built by Opus
+5.5, audited by Opus in a snapshot copy (verdict: non-blocking findings); no relay passes. Created
+the Expo SDK 57 app in `app/` with bun (`expo` 57.0.26, React Native 0.86.3, React 19.2.3) with
+every dependency BD-15 names plus `expo-audio` and `expo-system-ui`; config: `app.json`, tsconfig
+with `@art/*`, `metro.config.js`, the SVGr transformer `app/svg-transformer.js` (SVGO off, BD-25
+colour swap), `eslint-config-expo/flat`, vitest with `TZ=America/New_York`. Code: `dials.ts`,
+`tokens.ts` (light and dark), the screen wrapper (BD-27), the art module `app/src/art/`, the
+route `/dev/art`. `FeltoRank.ttf` is Nunito ExtraBold renamed with fontTools and embedded by the
+`expo-font` plugin. Gate: the Python gate, then `bun run --cwd app typecheck`, `lint` and `test`,
+exit 0, 78 and 18, 5 tests; the auditor also proved that a failing test and a changed swap hex
+each fail the gate. Seen on the iPhone 17 Pro and `Pixel_9` in light and dark, Android as a tablet
+in landscape and the iPad Pro 13-inch in portrait: ranks rounded and the same shape, no gold arc
+on the node, a native button. Found: `bun --cwd app run <script>` exits 0 and runs nothing (bun
+1.2.9), so the gate uses `bun run --cwd app <script>`; CocoaPods needs a UTF-8 `LANG`; the
+emulator needs `adb reverse tcp:8081 tcp:8081`; `expo-splash-screen` with no image breaks the
+Android build. Judgment calls (reversals in the builder's report, `STATE.md`): svgr config in
+`app/svg-transformer.js`; `nodeModulesPaths`; the font built by a one-off fontTools command;
+`src/screens` and `src/components` added; splash config dropped; `expo-notifications` plugin
+added; the dark token values; TypeScript and eslint pinned to the house versions; `/` redirects
+to `/dev/art`. Findings, each `open`: iPad landscape and dark mode on tablets not seen (owed);
+`app/src/app/index.tsx:4-5` breaks U1 until phase 8; `react-native-svg-transformer` is installed
+and unused; `bossPassRight: 8` in `dials.ts:16` holds only while `bossDraw` is 10; `minIosVersion`
+and `minAndroidApi` are not applied; `app/src/art/registry.ts:11-15` copies viewBox sizes by hand;
+`CLAUDE.md:47` cites a range that holds only `UI_ICONS`; `FeltoRank.ttf` is not kebab-case
+(sanctioned by BD-22, not yet in the registry). **Left owed:** iPad landscape; Zach's look at the
+ranks; the commit.
+
+**14. Write the sound generator (board item 17, app phase 13).** Done 2026-10-05 under
+`/autopilot`, on branch `main` in the main checkout, not committed. Built by Opus 5.5, audited by
+Opus in a snapshot copy (verdict: non-blocking findings); no relay passes. Wrote
+`tools/build_sounds.py`, standard library only (`math`, `os`, `struct`, `wave`), which writes six
+16-bit mono 44,100 Hz WAV files to `assets/sounds/`: `answer_right`, `answer_wrong`,
+`lesson_finish`, `boss_pass`, `boss_fail`, `chest_open`, 0.36 s to 0.90 s, peaks 0.45 to 0.65 of
+full scale, a zero sample at both ends. A rebuild is byte-identical, also under
+`PYTHONHASHSEED=7`, and the auditor's own `wave` and pitch check agreed with the docstring's
+notes. The generator runs in the gate after the two SVG generators (`gateCommand`, `CLAUDE.md`
+Commands); gate exit 0, run lines 78, 18 and 6, SVG bytes unchanged. The Python standard is 1.2.0.
+The orchestrator fixed three audit findings (docstring timings 0.34, 0.55 and 0.45 s; the
+`1-30` citation; `math.exp` named in the G3 caveat); the sound bytes did not change. Judgment
+calls: flat file names; the generator has its own `write()`; a minor version bump. Findings, each
+`open`: `docs/conventions-python.md:173-174` and `:16-23` read badly (cosmetic);
+`tools/build_sounds.py:6` is 101 characters; `PLAN.md:600` says three modules were added and it
+was two; byte identity is proven on this Mac only. **Left owed:** Zach approves each sound by ear
+(`afplay assets/sounds/<name>.wav`); the runtime-pass entry for it is in the builder's report in
+`STATE.md` and joins `RUNTIME-PASS.md` at phase 12; the commit.
+
+**15. Game state and the data module (board item 8, app phase 4).** Done 2026-10-05 under
+`/autopilot`, on branch `main` in the main checkout, not committed. Built by Opus 5.5, audited by
+Opus in a snapshot copy (verdict: non-blocking findings, one fix round); no relay passes.
+`app/src/game/` holds the rules of `D8` and `D19` to `D21` as pure functions of the state, a path
+outline and the time: lives, streak and freeze, sessions and XP, path node states, the seeded
+boss draw, the review set, the chest, placement and the first-launch flag, the Sound setting, and
+the BD-13 fixtures. `app/src/storage/` is the one data module: a pure core over a
+`KeyValueStore`, stored as `{version: 1, player}` under `felto.player`, an unreadable value
+copied to `felto.player.backup.<epoch ms>` before a fresh state is used, a migrations table, a
+`PlayerCell` that holds the latest state, and a provider and hook. Only
+`storage/kv-store-adapter.ts` imports `expo-sqlite`. The auditor wrote 41 spec tests of its own
+against the design text and all passed; six mutants (lives 4 h to 3 h, boss pass 8 to 7, and
+others) each failed the builder's tests; no stored value can be dropped silently. Two findings
+were fixed in a round: refill and freeze purchases overwrote same-tick updates (now computed from
+the latest state through `PlayerCell`), and `finishSession` trusted the caller's session size
+(now checked against the dials). The orchestrator re-ran typecheck, lint and test after the fix:
+exit 0, 26 files, 200 tests. **The fix round was not re-audited by a fresh auditor**; that is
+owed (judgment call: budget). Judgment calls, reversals in the builder's report (`STATE.md`):
+rules take a `PathOutline`, not the content schema; missed days settle lazily and a break loses
+the remaining freezes; placement gives no XP and leaves chests closed; a session left early gives
+nothing; reminder settings wait for phase 11 and `STATE_VERSION` 2. Findings, each `open`:
+function lengths marginal at `path.ts` `unitNodes`; `use-stored-player.ts:7` comment says what,
+not why; the same-millisecond backup key can be overwritten (accepted). **Left owed for item 12:**
+mount `PlayerProvider` in `app/src/app/_layout.tsx`; the BD-13 route
+`app/src/app/dev/fixture/[name].tsx`; build the `PathOutline` from the content outline; the
+provider and hook have never run on a device. The commit.
+
+**16. Cards, the evaluator and the content schema (board item 9, app phase 5).** Done 2026-10-05
+under `/autopilot`, on branch `main` in the main checkout, not committed. Built by Opus 5.5 and
+reviewed by Fable 5.1 as the plan's Deep review (verdict: non-blocking findings, one fix round);
+no relay passes. `app/src/cards/` holds card notation, the deck, the evaluator (every five-card
+subset, base-15 score), showdown with splits, hand descriptions, outs to a target or better, pot
+odds and the rule of 2 and 4, and the 169-hand notation. `app/src/content/` holds the schema, the
+four-unit outline with lesson titles, a structural validator, `computeKey`, and an empty catalog
+for phases 6 and 7. Proof: an enumeration of all 2,598,960 five-card hands gives the known class
+counts and 7,462 distinct strengths; a second evaluator written another way agrees on every
+five-card hand and 200,000 seeded six- and seven-card deals; the Deep reviewer's own bitmask
+evaluator agreed on all 2,598,960 five-card hands, 2,000,000 random seven-card hands, 200,000
+six-card hands and 250,000 showdowns, and on outs against brute force for 20,000 spots, with zero
+disagreements. Six findings were fixed in the round, each with a test that fails on the old
+code: outs to `one-pair` or `two-pair` refused (board pairings count as outs); showdown options
+compared as sets; an `equity` option equal to the exact chance refused; `evaluateFive` no longer
+exported; the `requiredPercent` comment corrected; a catalog guard in `keys.test.ts`. The
+orchestrator re-ran typecheck, lint and test after the round: exit 0, 26 files, 207 tests;
+nothing under `assets/` or `tools/` changed. Judgment calls, reversals in `STATE.md`: outs count
+the target or better from the next card only; royal flush is its own category; the pot is the pot
+before the bet; `odds` has three asks with the call decided by the rule of 2 and 4 and checked
+against the exact chance; showdown options are sets of player indexes; the catalog guard checks
+each unit that has a file plus each lesson of each listed unit (so phase 6 does not wait for
+phase 7), and a unit file is named for its unit id. Findings, each `open`: outs misleading spots
+that the validator cannot refuse (paired-board flush draw, a four-flush board, backdoor draws)
+need care in phases 6 and 7; the catalog is empty, so the key test checks nothing yet;
+`content/cast.ts` (BD-28) is not written; phase 8 maps `OUTLINE` to item 8's `PathOutline`.
+**Left owed:** Zach reads the lesson titles and hand descriptions (strings in the builder's
+report, `STATE.md`); the commit.
+
+**17. Content: units 1 and 2 (board item 10, app phase 6).** Done 2026-10-05 under `/autopilot`,
+on branch `main` in the main checkout, not committed. Built by Opus 5.5; two Opus review rounds
+(the second by a fresh reviewer) and two fix rounds; no relay passes. `app/src/content/units/hands.ts`
+(5 lessons: 18 concept, 17 hand-name, 15 showdown) and `units/table.ts` (5 lessons, 50 concept)
+are listed in `UNITS`; `app/src/content/cast.ts` holds the `D18` names Flop, Kicker and Ace
+(BD-28). The validator passes with 50 exercises in each unit and the 32 checkable written keys all
+equal `computeKey`; the reviewer solved all 31 hand-name and showdown items from the cards and
+found no wrong key. The first review found one wrong key, three wrong explanations, six terms
+used before they are taught and ten minor items; the second found a wrong fact about the ace
+playing low, a few untaught terms, one duplicate exercise and some copy; all were applied, and
+the answer indexes are spread (hands 15, 20, 14, 1; table 17, 19, 14). Gate after the last round:
+exit 0, run lines 78, 18 and 6, tests passing (314 with items 11 and 12 under way). The final
+round was applied without a third review. Judgment calls, reversals in the builder's report
+(`STATE.md`): keys are typed and checked a second time (rule Q3), not computed in the data;
+`cast.ts` was written here; all of unit 2 is concept, so its keys are checked by review only,
+not by a test. Findings, each `open`: room-specific rules noted but left (odd-chip rule,
+heads-up button, tournament all-in show-down); the seven-card hand-name prompts say "two hole
+cards and five on the board", but the data does not mark the split, so the lesson screen (item
+13) must show the last five cards as the board. **Left owed:** Zach reads the copy (every prompt,
+option and explanation is in the two unit files); the commit.
+
+**18. Content: units 3 and 4 and the preflop chart (board item 11, app phase 7).** Done 2026-10-05
+under `/autopilot`, on branch `main` in the main checkout, not committed. Built by Opus 5.5;
+reviewed by Fable 5.1 (the plan's Deep review of the chart and its keys) and by two Opus concept
+reviews; one consolidated fix round; no relay passes. `app/src/content/opening-chart.ts` is the
+raise-first-in chart for 6-max at 100 big blinds, blinds only, the small blind raising or folding:
+UTG 152, HJ 206, CO 326, BTN 454 and SB 382 of 1,326 combinations, with a test for containment
+(UTG in HJ in CO in BTN; CO in SB in BTN) and pinned counts. `units/preflop.ts` (21 concept, 29
+preflop) and `units/odds.ts` (14 concept, 14 outs, 22 odds) are listed in `UNITS`. The Deep
+reviewer recomputed the counts, the containment, all 29 preflop keys and all 65 checkable keys
+with its own enumeration and found no wrong key; no hand on the chart is one that solver charts
+fold; the chart is tighter than published raise-first-in ranges at every seat (most at the
+button and small blind), which the file's comment now says, with the shares marked approximate
+and from memory. The chart was written from principles and cites no source. The fix round
+applied one false claim ("72o is the weakest"), one incomplete rule (the rule of 4 also applies
+when the bettor is all in), one false header comment (a gutshot beside a flush draw in
+`odds-1-09`, fixed by changing the turn card), the pot-odds definition, the "about a third"
+wording and about 25 copy points; no key changed. Tests after the round: content and cards, 14
+files, 143 passed. Findings, each `open`: the chart should get a checked source citation; the
+small blind's raise-or-fold range is the farthest from solver output; the keys of concept items
+are checked by review only. **Left owed:** Zach reads the copy and the chart; the commit.
+
+**19. Tabs, the path and the stat bar (board item 12, app phase 8).** Done 2026-10-05 under
+`/autopilot`, on branch `main` in the main checkout, not committed. Built by Opus 5.5, audited by
+Opus in a snapshot copy (verdict: non-blocking findings); no relay passes. Three native tabs
+(Learn, Practice, Profile; Practice and Profile are placeholders); `PlayerProvider` mounted at the
+root and seen working on iOS and Android; the BD-13 route `felto://dev/fixture/<name>` (does
+nothing unless `__DEV__`); the game `PathOutline` built from `OUTLINE`; the temporary `/`
+redirect deleted. The art module names all 84 SVGs the app draws, with a test that checks every
+viewBox against its file; `PathNodeArt` draws the BD-9 gold arc over `node_current_base` with
+the geometry of `tools/build_icons.py:264-278` (the auditor checked start angle, direction,
+sweep and the zero and full cases). The stat bar, the path view model and its tests, and the
+tokens were added. Gate exit 0, run lines 78, 18 and 6, 31 files and 314 tests; nothing under
+`assets/` or `tools/` changed. Seen on the iPhone 17 Pro, the `Pixel_9` and the iPad Pro
+13-inch (portrait), light and dark, plus an Android tablet in landscape: `unit1-mid` shows
+lessons 1 to 3 finished, lesson 4 current with the arc at three fifths, lesson 5 and the boss
+locked, and the bar 4, 240, 2, 20. The auditor wrote its own tests on the fresh, `unit1-mid`,
+`zero-lives` and `boss-ready` fixtures and the boss-pass and chest-open states, and all agreed
+with `DESIGN.md` 10.1. Found: iPadOS 26 puts native tabs at the top; `adb screencap` is stale
+after `wm size` (use `adb emu screenrecord screenshot`); a deep link during a cold start can be
+dropped. Judgment calls and the new strings are in the builder's report (`STATE.md`). Findings,
+each `open`: (a) after placement (D20) the path shows three current lessons at once and a faded
+chest under a complete boss (`game/path.ts:35-44`, `unit-header.tsx:31-35`; item 20 must settle
+this); (b) the zero-lives path looks like `unit1-mid`, so the out-of-lives sheet (item 14) must
+block the tap; (c) the Expo dev-menu button hides the gem count in the Android light shot, no
+clean Android `fresh` shot, Android shots stop at lesson 4, and no iPad landscape shot exists;
+(d) the claim that a fixture survived a restart has no screenshot; (e) stat labels read "1
+lives" and "1 streak freezes" and D10's "hearts" is not used; the current node label gives no
+progress; `route-error.tsx:17` is plain register; (f) the dev routes still exist in a release
+build (they only show a page). **Left owed:** iPad landscape; the error banner and the error
+boundary on screen; Zach reads the strings; the commit.
+
+**20. Random dealers for practice (board item 18, app phase 14).** Done 2026-10-05 under
+`/autopilot`, on branch `main` in the main checkout, not committed. Built by Opus 5.5; the Default
+review (Opus, read-only) found one blocking template and five smaller points, all fixed in one
+round; the fix round was not re-reviewed; no relay passes. `app/src/drills/` holds a seeded
+dealer for each of `hand-name`, `showdown`, `preflop`, `outs` and `odds` (`D21`, BD-26). Every
+key is computed (the evaluator, the showdown, the opening chart, the outs counter, the odds
+arithmetic), never typed, and every dealt exercise passes `validateExercise` (`checked.ts`
+throws otherwise). `openKinds(state)` maps unit progress to the open kinds through `unitDone`,
+so the placement check counts too; `dealSet` deals a Practice set of the dial's size, with ids
+`practice-<setSeed>-<n>-<kind>-<childSeed>`. Tests deal 10,000 seeds of each kind through the
+validator, `computeKey` and an independent second count (`second-count.ts`: a bit-mask
+evaluator, a brute force over all 21 five-card choices for showdowns, every card left in the deck
+for outs, and the arithmetic re-derived); they also check seed replay, the answer-position
+spread, and the truth of each template, including the rank words. The reviewer ran 100,000 seeds
+per dealer with no throw, no wrong key and no spot with two defensible answers. The blocking
+finding was a showdown explanation that called flush and high-card comparisons "kickers" in about
+3% of seeds; it now says "Compare the cards from the top". Gate exit 0 (each step run alone),
+40 files, 378 tests; nothing under `assets/` or `tools/` changed. Judgment calls and the
+template strings are in the builder's report (`STATE.md`): hand-name picks its category first;
+showdown forces some splits; preflop balances raise and fold; outs deals only flush, straight and
+three of a kind; odds draws from fixed pools; `dealSet` was added beyond the scope. Findings,
+each `open`: no `As built:` note under `D21` in `DESIGN.md` (the `PLAN.md` header carries it).
+**Left owed:** Zach reads the template strings; the commit.
+
+**21. The lesson: exercises, feedback and finish (board item 13, app phase 9).** Done 2026-10-05
+under `/autopilot`, on branch `main` in the main checkout, not committed. Built by Opus 5.5,
+audited by Opus in a snapshot copy (verdict: blocking findings, fixed by item 14's builder in the
+same loop; the fixes were checked by this session through typecheck, lint and the full test run,
+47 files and 408 tests, and by item 14's own audit); no relay passes. The route
+`app/src/app/lesson/[id].tsx` is a full-screen modal; a current or finished lesson stop on the
+path opens it. All eight exercise kinds the schema has (concept, hand-name, showdown, preflop,
+outs, pot-odds, equity, call) draw through `app/src/components/exercise/` and a pure, tested view
+model; a seven-card hand-name shows the first two cards as the hole cards and the last five as the
+board. The loop is a pure reducer (`components/lesson/lesson-run.ts`) under a hook: each answer
+is recorded at once with `recordAnswer`, `finishSession` runs only after the last exercise, and
+0 hearts before the end stops the lesson without counting it (D8). Check and Continue are the
+universal `@expo/ui` `Button`; feedback is the universal `BottomSheet`; the progress bar is a
+platform pair. Sound and haptics are in `app/src/feedback/` (`expo-audio` with the silent switch
+honoured, `expo-haptics`). The audit's blocking finding was that audio errors could crash a
+lesson or spend a second life (no error handling in `app/src/feedback/`); it was fixed by routing
+every effect through `feedback/safely.ts` and moving the run state before any effect
+(`session-steps.ts`), with a test that fails on the old order. The auditor's own 11 tests
+confirmed the loop rules: a wrong answer spends a life at once, leaving keeps the spent life and
+gives nothing, a double Continue finishes once, and the screen scores by the content key. Also
+fixed in the same round: Sound off loads no audio, the Android Back button asks to leave, the WAV
+imports moved to `app/src/art/sounds.ts` (rule U6 now covers art and sound, standard 1.0.1),
+raw sizes became tokens, and several copy and accessibility points. Seen on the iPhone 17 Pro
+and `Pixel_9`, light and dark: every kind with its question, right and wrong feedback, and one
+whole lesson walked on both platforms (8 right, 2 wrong: +80 XP, a 1-day streak). Judgment calls
+are in the builder's report (`STATE.md`). Findings, each `open`: replaying a finished lesson gives
+XP and the streak again (`game/session.ts:52-63`; a decision for Zach); no iPad lesson shot;
+sounds not heard, haptics not felt; the feedback sheet covers the lower choices on small
+screens. **Left owed:** Zach hears the sounds and reads the strings; the commit.
+
+**22. Boss, review, chest and lives (board item 14, app phase 10).** Done 2026-10-05 under
+`/autopilot`, on branch `main` in the main checkout, not committed. Built by Opus 5.5, audited by
+Opus in a snapshot copy (verdict: non-blocking findings); no relay passes. It also fixed every
+finding of item 13's audit (step 21). The boss (`boss/[unit]`), review (`review/[unit]`) and
+chest (`chest/[unit]`) are full-screen modal routes over one session loop (`components/lesson`:
+a `Session` type and `session-steps.ts`); the out-of-lives sheet is a transparent-modal route;
+path taps go through `components/path/stop-route.ts`, so at 0 hearts a lesson or the boss opens
+the sheet and a refill opens the tapped stop. The review costs no hearts, puts the unit's misses
+first and stays open at 0 hearts. The chest has no open art, so it opens as a plain reveal; the
+gems come only from `openChest` (once per unit). The standard is 1.0.1 (U6 covers art and
+sound). The auditor wrote 17 tests of its own against D8 and all passed (7 of 10 fails and 8
+passes; the boss opens after five finished lessons; the chest gives +20 once; a refill costs 20
+and is refused at full hearts or with 19 gems; a throwing sound neither spends a second life nor
+sticks the session). Gate exit 0, 47 files and 408 tests; the boss pass and fail were played on
+the iPhone 17 Pro and `Pixel_9`, light and dark (most runs through the dev link `?play=`; the
+steps around them by hand). Findings, each `open`: (a) two taps on Check inside one render both
+read "answering" and a wrong answer then spends two hearts (`session-steps.ts:16-23`,
+`use-lesson-run.ts:25-32`; a ref guard like `movedOnFrom` fixes it; the comment at
+`session-steps.ts:13-15` overstates the protection); (b) no test pins "state moves before
+effects": reversing the order kept all 425 tests green, only `safely` is pinned; (c) the review
+is the XP farm: it is free, open at 0 hearts and pays 10 XP per right answer on every replay
+(allowed by D8 and 10.1; a decision for Zach); a failed boss gives XP and a streak day by D8's
+text; (d) Back on the boss finish screen skips "Open the chest" (the chest stays tappable);
+(e) `useLessonRun` is about 30 lines (O1) and a comment at `components/boss/unit-exercises.ts:11`
+says what, not why (O3). **Left owed:** a boss played wholly by hand; iPad; sounds heard; Zach
+reads the strings; the commit.
+
+**23. The Practice tab (board item 19, app phase 15).** Done 2026-10-05 under `/autopilot`, on
+branch `main` in the main checkout, not committed. Built by Opus 5.5, audited by Opus in a
+snapshot copy together with item 15 (verdict: non-blocking findings, one fix round, the fixes
+checked by the builder's gate: 59 files, 479 tests); no relay passes. The Practice tab
+(`screens/practice-screen.tsx`) lists the five dealt kinds, open or locked, naming the unit that
+opens each, with one "Start a set" that deals a mixed set of ten from the open kinds
+(`components/practice/practice-menu.ts`, tested). The set runs as the full-screen modal
+`practice-set` over the lesson loop with a `practice` session hosted by the squid; the seed is
+the clock at opening. Practice never reads hearts: it opens at 0, hides the heart count and
+spends none; a finished set gives 5 XP per right answer and counts the day; a set left early
+gives nothing. It also fixed the finding of step 22: the Check double-tap race (a `checkedFor`
+ref in `session-steps.ts`) with `session-order.test.ts`, which pins state before effects (the
+auditor's mutants fail it). The auditor's own tests (practice kinds by progress, 5 XP per right
+answer, sizes 9 and 11 give nothing, no heart spent) agreed with D21. Fixed after the audit: the
+odds tile said "1 Cards to come" beside "On the flop" (it now reads "1 card, The turn only",
+"2 cards, Turn and river" or "1 card, The river", checked over every written and 2,000 dealt
+exercises), and the locked set screen showed the fish instead of the squid. Seen on the iPhone
+17 Pro and `Pixel_9`, light and dark. Findings, each `open`: no fixture opened a practice kind
+when it was built (item 20 adds `all-done`); a free practice set shows "+0 XP" and a streak tile
+when nothing was right (true by `finishSession`); the fix round was not seen on a device.
+**Left owed:** Zach reads the strings; the commit.
+
+**24. Profile, settings and the reminder (board item 15, app phase 11).** Done 2026-10-05 under
+`/autopilot`, on branch `main` in the main checkout, not committed. Built by Opus 5.5, audited by
+Opus in a snapshot copy (verdict: one blocking finding, fixed in one round; the fix was not
+re-audited and was not seen on a device); no relay passes. Profile is a native settings form
+(`FieldGroup` in a `Host`): the stats, the `D19` freeze shop (10 gems, at most 2, the button
+greyed out with a reason line), a Sound switch that also pauses a playing effect, the `D11`
+reminder switch and a platform time picker, and a reset behind a platform alert that backs up
+the latest state and keeps the settings. The reminder follows BD-18: `reminder/plan.ts` plans up
+to seven `DATE` notifications, none on a played day; `ReminderSync` reschedules at start, on
+resume, after a finish and on each settings change; the permission is asked after a first finish
+of a day or when the switch is turned on, never at launch; `reminder-device.ts` is the only
+importer of `expo-notifications` and cancels only this app's ids. `STATE_VERSION` is 2 (settings
+gain `reminder`) with a migration. The auditor's own 20 tests passed: a v1 save with extra fields
+loads with every field kept, and garbage, a v3 value, a missing version and version 0 are backed
+up before anything is written; the plan keeps the local hour across the 2026-11-01 and
+2027-03-14 changes; the freeze shop and same-tick changes agree with `D19`. The blocking finding
+was a stale clock: replans between resume events used the mount time, so on iOS a refused past
+trigger could leave the week with no reminders, and a finish after midnight left the day unplayed.
+It is fixed by `reminder/replan.ts` (reads the clock when it runs, skips dates not in the future,
+schedules each reminder in its own `try`), with a test that fails on the old behaviour (3 of 5).
+Also fixed: one time format (`reminder/clock-format.ts`), the Android row looks disabled when the
+reminder is off, Reset is red, the form background matches the page, the footer is true on a day
+already played, and `PlayerProvider` and `ReminderSync` mount from one `root-providers.tsx`.
+Gate exit 0, 59 files and 479 tests. Seen on the iPhone 17 Pro and `Pixel_9` before the fix
+round: the stats, the freeze shop, both permission prompts, the time pickers, the phone's list of
+scheduled reminders (7, then 6 after a finish), a reset. Findings, each `open`: no notification
+has been seen arriving; the fix round was not seen on a device (iOS dark form background, the red
+reset row, the iOS picker locale, the Android muted row, and no "modifiers" log after toggling the
+switch); `lesson-closed.tsx` should use `formatClockTime` from `@/reminder/clock-format` (it forces
+the 12-hour form); the phone's own 12 or 24-hour switch cannot be read without a localization
+package. **Left owed:** Zach reads the strings; the commit.
+
+**25. Onboarding and the placement check (board item 20, app phase 16).** Done 2026-10-05 under
+`/autopilot`, on branch `main` in the main checkout, not committed. Built by Opus 5.5, audited by
+Opus in a snapshot copy (verdict: non-blocking findings); no relay passes. The root stack
+(`components/root-stack.tsx`) is guarded with `Stack.Protected`: onboarding (welcome, cast, "How
+much poker do you know?") is open only while `onboarded` is false and the tabs and every session
+route only after, so the back gesture cannot return to onboarding. "I am new" completes
+onboarding at unit 1; "I know the basics" opens the check when `placement` is `not-taken`. The
+check is the lesson loop with a `placement` session kind: five exercises from each of units 1 and
+2 by a seeded shuffle with a clock seed at open, the fish hosts, no hearts shown or spent, no
+miss recorded, no XP, no streak; it ends in `finishPlacement` (8 right marks units 1 and 2
+finished and opens unit 3 with chests left closed) and a pass or fail result. `game/path.ts` now
+has one rule (the first unfinished lesson of the first unit not done is the only current stop; a
+placed unit shows its boss complete and its review open), which fixes the finding of step 19; a
+placed unit's chest stays faded under the line "You placed past this unit. Beat Ace to win its
+chest.", because winning that boss in play gives it. New fixtures `placed` and `all-done`;
+`screens/placeholder-screen.tsx` deleted; the `fresh` fixture now opens onboarding. The
+auditor's own 18 tests against D20 and D8 passed (8, 9 and 10 right place; 7 right changes only
+the flag; the check runs once; a wrong size changes nothing; a placed player who beats the boss
+gets the chest once; one current lesson in every fixture; ten distinct exercises, five per unit,
+reproducible; no heart and no miss; no reminder permission asked). Gate exit 0, 59 files and 479
+tests. Seen on the iPhone 17 Pro and `Pixel_9`, light and dark (the full ten-question walks used
+the `?play=` link; the first two answers by hand). Judgment calls (`STATE.md`): five from each
+unit; `onboarded` set only by "I am new" or the result button; pass and fail both play the
+lesson-finished sound. Findings, each `open`: the result screen's X or Android Back returns to
+the level screen, where "I am new" then lands a placed player past units 1 and 2 (harmless); the
+X is labelled "Leave the lesson" during the check (`lesson-header.tsx:21`); `placement.ts:13` and
+`session.ts:47` accept a right count that is not a whole number (the UI cannot produce one);
+`useLoadFixture` is about 19 lines (O1); the faded chest is very dim on a dark background; a
+dev-only floating sheet after a fixture link over a result; no iPad shot; sounds not heard.
+**Left owed:** Zach reads the strings; the commit.
+
+**26. Close out the app (board item 16, app phase 12).** Done 2026-10-05 under `/autopilot`, on
+branch `main` in the main checkout, not committed. Built by Sonnet 5.5, audited by Opus together
+with a fresh-checkout proof (verdict: non-blocking findings); no relay passes. Documents plus four
+small code fixes; no screen was built. `docs/conventions-typescript.md` is 1.1.0: every correct
+example is real felto code with a checked `file:line` (the auditor printed all 45 citations and
+read each against its rule), `grep -n ezhomesteading` prints nothing, the lint and Metro facts are
+re-read from `app/node_modules` (the standard had said the config turns `import/order` off; it is
+never on), the registry holds Z1 to Z4, and a Known gaps list names the raw `fontWeight` strings
+(45 sites, U5) and the long hooks. `docs/incomplete/app/RUNTIME-PASS.md` is one ordered list of
+47 entries for a person on a device plus the decisions that are Zach's. Four fixes from the audits,
+each caught by its test (the auditor ran 8 mutants and all failed their tests): the closed-lesson
+time uses `formatClockTime`, stat labels use singular forms and D10's "hearts", the route error
+line is warm ("Flop dropped the deck drawing this screen.", button "Deal again"), and the current
+path node's label gives its progress. **Fresh-checkout proof:** on a copy of the working tree with
+no `app/node_modules`, `bun install --cwd app --frozen-lockfile` (851 packages) then the whole-repo
+gate, each step alone, exit 0: run lines 78, 18 and 6, typecheck, lint, 63 files and 490 tests;
+the generated art is byte-identical between runs and equal to the working tree; all 1,012 local
+imports resolve; a throwaway failing test made the test script exit 1. The auditor also tabled
+the MVP against `DESIGN.md`: every user-visible requirement is built; partial or missing are
+the open-chest art (the gem replaces the chest), a notice that a streak freeze was spent, the
+minimum-version dials (read nowhere; the SDK floors are the same), and an app icon and splash
+(`app.json` has none, so the home screen shows the default Expo icon). The audit's seven small
+findings were fixed in a doc round (the stat-label and zero-hearts walk entries in
+`RUNTIME-PASS.md`, the `Answer: pending` lines of `D15` to `D21` amended to Zach's answers of
+2026-10-05, the `CLAUDE.md` citation, the HEAD-isolation command, the `PLAN.md` phase 6
+header). Findings, each `open`: the long-function list in the standard undercounts
+(`useReminderSync` 20 lines, `useProfileControls` 21, `playerActions` 36, four dealers 17 to
+19). **Left owed:** Zach walks `RUNTIME-PASS.md` and decides what it lists as his; the commit.
+
+**27. Autopilot run of 2026-10-05, the whole app.** Ran 01:26 to about 08:15 EDT. Every board row
+is `DONE` (items 1 to 21; steps 9 to 26), the plan's 16 phases are built, and a fresh checkout
+passes the whole-repo gate (63 files, 490 tests). The rundown is
+`docs/incomplete/autopilot-2026-10-05/RUNDOWN.md`; the record of the run is `STATE.md` beside it.
+Weekly usage ended at 49%, under Zach's 65% stop. Nothing is committed; no one has held the app on
+a phone. Zach's answers to `D15` to `D21` are now in `DESIGN.md`.
+
 ## Style rules
 
 Python follows `docs/conventions-python.md` (written in step 2, 2026-10-04). Read it in full
 before editing anything in `tools/`. No formatter or linter is configured (Zach, 2026-10-04), so
 nothing settles style mechanically.
+
+TypeScript under `app/` follows `docs/conventions-typescript.md` (written 2026-10-05, board
+item 6; version 1.1.0 since board item 16). Read it in full before writing anything in `app/`. Lint there is `expo lint` with
+`eslint-config-expo/flat`, installed 2026-10-05 (board item 7); every rule in the standard is
+*review* until a tool is shown to catch it.

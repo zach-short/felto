@@ -203,7 +203,7 @@ Every phase except phase 1 also waits on Zach's commit of the art and of this fo
 
 ### Phase 1. Change the icon generator for the app
 
-**Status:** `PLANNED`. Driver Mechanical (Sonnet 5). Lane A. Waits on board item 4 and GATE 2.
+**Status:** `BUILT 2026-10-05, commit pending (Zach)`. Driver Mechanical (Sonnet 5). Lane A. Waits on board item 4 and GATE 2.
 
 Scope:
 
@@ -240,7 +240,13 @@ second copy of the numbers would break rule H1 of the Python standard.
 
 ### Phase 2. Write the TypeScript standard and re-add the app rules
 
-**Status:** `PLANNED`. Driver Default (Opus 5.5). Lane B. Waits on phase 1.
+**Status:** `BUILT 2026-10-05, commit pending (Zach)`. Driver Default (Opus 5.5). Lane B. Waits on phase 1.
+As built: the standard has 21 rules in six groups (N, B, V, O, U, Q) and one registry entry,
+Z1 for BD-16; its letters are used by neither `docs/conventions-python.md` nor either
+`ezhomesteading` standard. B2 adds `src/drills/` to the three folders BD-4 names, because phase
+14 tests it the same way. The two re-added rules sit in `docs/AGENT-PRACTICES.md` Part 6, under
+"Stored player data and both platforms". The sweep ran as a read-only subagent in the main
+checkout, not in its own worktree (the `/autopilot` override).
 
 Scope:
 
@@ -277,7 +283,22 @@ already disagree); a rule written for Next.js; padding rules that lint already s
 
 ### Phase 3. Scaffold `app/` and draw the art on both platforms
 
-**Status:** `PLANNED`. Driver Default. Lane B. Waits on phase 2.
+**Status:** `BUILT 2026-10-05, commit pending (Zach)`. Driver Default (Opus 5.5). Lane B. Waits on phase 2.
+As built: Expo 57.0.26 with React Native 0.86.3, from `bunx expo install`. The app gate is
+`bun run --cwd app typecheck && bun run --cwd app lint && bun run --cwd app test`, run from the
+root with no `cd`; the form `bun --cwd app run <script>` exits 0 without running anything
+(bun 1.2.9), so it is banned in `CLAUDE.md`. `FeltoRank.ttf` is Nunito ExtraBold
+(`@expo-google-fonts/nunito` 0.4.2) with its name table set to the family `FeltoRank` by
+fontTools 4.62.1, timestamps kept, so the bytes rebuild the same (SHA-1 `156acf08`); iOS takes
+the family name from the file, so a file name alone would not do. Both platforms draw the
+ranks in it. The SVGr config lives in `app/svg-transformer.js`, because svgr looks for an
+`.svgrrc` beside each SVG, which is in `../assets`. Metro also needs
+`resolver.nodeModulesPaths` so files in `../assets` resolve `react-native-svg`. The art module
+is `app/src/art/` with five entries; phase 8 adds the rest. The `expo-splash-screen` config was
+dropped: with no image it breaks the Android resource link. The iPad Pro 13-inch simulator was seen in
+portrait only, from a Release build (the debug build stops on an "Open in Felto?" prompt that
+the simulator tool had no grant to tap); no iOS simulator can be rotated from here, so iPad
+landscape is owed. Android tablet landscape was seen through `wm size 2560x1600`.
 
 Scope:
 
@@ -332,7 +353,20 @@ the phase runs long, the dark-mode and tablet checks go to a pass-off prompt (Pa
 
 ### Phase 4. Game state and the data module
 
-**Status:** `PLANNED`. Driver Default. Lane B. Waits on phase 3.
+**Status:** `BUILT 2026-10-05, commit pending (Zach)`. Driver Default (Opus 5.5). Lane B. Waits on phase 3.
+As built: the rules take a `PathOutline` (unit ids and lesson ids in path order,
+`app/src/game/path.ts`), not the content schema, so this phase does not wait on phase 5; phase 8
+builds the outline from the content. The stored value is `{ version, player }` under
+`felto.player`, version 1 (`app/src/storage/migrations.ts`); an unreadable value goes to
+`felto.player.backup.<epoch ms>`, one key per failure, so no backup overwrites another. Missed
+days are applied lazily (`settleStreak`): each missed local day uses one held freeze, and the
+first missed day with none left breaks the streak and the freezes are gone. A boss passed by play
+readies the chest; the placement check records its units in `placedUnits`, so their chests stay
+closed until the boss is played. The provider is `app/src/storage/player-provider.tsx` with
+`usePlayer` in `use-player.ts`; it reads the store synchronously, so there is no loading state.
+Not built here, because the files belong to the root layout and the dev routes: mounting
+`PlayerProvider` in `app/src/app/_layout.tsx`, and the route `app/src/app/dev/fixture/[name].tsx`
+for `felto://dev/fixture/<name>`, which calls `actions.loadFixture` (BD-13).
 
 Scope:
 
@@ -369,7 +403,20 @@ core importing a native module, which fails in node.
 
 ### Phase 5. Cards, the evaluator and the content schema
 
-**Status:** `PLANNED`. Driver Default. Lane C, in a worktree. Waits on phase 3.
+**Status:** `BUILT 2026-10-05, commit pending (Zach); Deep review done (HANDOFF step 18)`. Driver
+Default (Opus 5.5). Lane C, built in the main checkout under `/autopilot`. Waits on phase 3.
+As built: `app/src/cards/` holds the card type and notation (`card.ts`), the deck (`deck.ts`),
+the evaluator (`evaluate.ts`: it scores every five-card subset of five to seven cards and keeps
+the highest, so no shortcut picks the hand), showdown with splits (`showdown.ts`), descriptions
+(`describe.ts`), outs (`outs.ts`: unseen cards that give the target category or better on the
+next card), pot odds and the rule of 2 and 4 (`odds.ts`: `pot` is always the pot before the
+bet), and the 169-hand notation for phase 7 (`hand-class.ts`). The enumeration test takes about
+2 seconds. A second evaluator, written by another method inside
+`evaluate-cross-check.test.ts`, agrees on every five-card hand and on 200,000 seeded six- and
+seven-card deals. `app/src/content/` holds the schema (`schema.ts`), the four unit records
+(`outline.ts`), the validator (`validate.ts`), `computeKey` (`compute-key.ts`) and `catalog.ts`,
+where phases 6 and 7 list each unit and the chart so that `keys.test.ts` checks them. The `odds`
+kind has three asks: `pot-odds`, `equity` and `call`.
 
 Scope:
 
@@ -402,7 +449,8 @@ fast enough to run in every gate (aim for under 10 seconds).
 
 ### Phase 6. Content: units 1 and 2
 
-**Status:** `PLANNED`. Driver Default. Lane C. Waits on phase 5.
+**Status:** `BUILT 2026-10-05, commit pending (Zach)`. Driver Default. Lane C. Waits on phase 5.
+As built: see `HANDOFF.md` ledger step 17 (board item 10).
 
 Scope:
 
@@ -424,7 +472,16 @@ first version rather than teach one house's rule.
 
 ### Phase 7. Content: units 3 and 4, and the preflop chart
 
-**Status:** `PLANNED`. Driver Default. Lane C. Waits on phase 6.
+**Status:** `BUILT 2026-10-05, commit pending (Zach); Deep review done (HANDOFF step 18)`. Driver
+Default (Opus 5.5). Lane C, built in the main checkout under `/autopilot`. Waits on phase 6.
+As built: the chart is `app/src/content/opening-chart.ts` (`OPENING_CHART`, raise first in,
+6-max, 100 big blinds, blinds only, no ante; written from principles and tighter than common
+solver-based charts: UTG 152 of 1,326 combinations, HJ 206, CO 326, BTN 454, SB 382), re-exported
+by `catalog.ts`. `opening-chart.test.ts` checks the hand names, the containment UTG to HJ to CO
+to BTN, CO inside SB inside BTN (a judgment call beyond the scope's test), and pins the counts.
+Unit 3 is `units/preflop.ts` (21 `concept`, 29 `preflop`); unit 4 is `units/odds.ts` (14
+`concept`, 14 `outs`, 7 `pot-odds`, 7 `equity`, 8 `call`). `keys.test.ts` checks all 65
+checkable keys of the two units against `computeKey`, unchanged.
 
 Scope:
 
@@ -448,7 +505,27 @@ review check it); pot odds stated as a ratio in one place and a percentage in an
 
 ### Phase 8. Tabs, the path and the stat bar
 
-**Status:** `PLANNED`. Driver Default. Lane B. Waits on phases 4 and 6.
+**Status:** `BUILT 2026-10-05, commit pending (Zach)`. Driver Default (Opus 5.5). Lane B. Waits on phases 4 and 6.
+As built: three `NativeTabs` (Learn, Practice, Profile) in `app/src/components/app-tabs.tsx`,
+under `app/src/app/(tabs)/`; `(tabs)/index.tsx` is now `/`, so the temporary redirect file
+`app/src/app/index.tsx` is deleted. `PlayerProvider` is mounted in `app/src/app/_layout.tsx` and
+ran on both platforms: a fixture written by it survived a full restart of the app. The BD-13
+route is `app/src/app/dev/fixture/[name].tsx` (hook `app/src/screens/use-load-fixture.ts`; it
+does nothing unless `__DEV__`). The game `PathOutline` is built once from `OUTLINE` in
+`app/src/components/path/path-outline.ts`. The art module now names all 84 SVGs it draws
+(cards, path nodes, UI icons, mascots; chips are left out as decoration): the viewBoxes are in
+`app/src/art/sizes.ts`, checked against every file by `sizes.test.ts`, and the components are in
+`registry.ts`; `Mascot`, `CardArt` and `PathNodeArt` ask for art by name. `PathNodeArt` draws
+every node in a 270 square with all discs on one centre, and draws the BD-9 arc over
+`node_current_base` with the geometry of `tools/build_icons.py:264-278` (no arc at zero, since a
+round cap on a zero dash draws a dot). The path's node states, arc fraction and stat numbers are
+a pure view model (`components/path/path-view-model.ts`, `components/stat-values.ts`) with a
+vitest file that checks this phase's done-when on the `unit1-mid` fixture. The screen wrapper
+gained a `top` slot that stays put above the scroll (the stat bar). On the iPad, iPadOS 26 draws
+the native tabs as a bar at the top, not the bottom. `adb exec-out screencap` returns a stale
+blank frame after `wm size`; `adb emu screenrecord screenshot <file>` shows the real screen. A
+deep link that arrives while the app cold-starts can be dropped, with a React warning from
+`expo-router/build/fork/useLinking.native.js:127`; sending it again once the app runs works.
 
 Scope:
 
@@ -478,7 +555,25 @@ blurs its hard shadow.
 
 ### Phase 9. The lesson: exercises, feedback and finish
 
-**Status:** `PLANNED`. Driver Default. Lane B. Waits on phase 8.
+**Status:** `BUILT 2026-10-05, commit pending (Zach)`. Driver Default (Opus 5.5). Lane B. Waits on phase 8.
+As built: the route is `app/src/app/lesson/[id].tsx`, declared a `fullScreenModal` with gestures
+off in `app/src/app/_layout.tsx`; a lesson stop on the path that is current or finished opens it
+(`components/path/path-stop-view.tsx`). All six kinds of the schema, with the three `odds` asks,
+draw through one `ExerciseView` (`components/exercise/`): a pure view model gives each kind its
+cards or number tiles and its option labels (`exercise-view-model.ts`, tested), and a seven-card
+`hand-name` shows the first two cards as the hole cards and the last five as the board. The loop
+is a pure reducer (`components/lesson/lesson-run.ts`, tested) under the hook `use-lesson-run.ts`,
+which records each answer at once (`recordAnswer`) and calls `finishSession` only after the last
+exercise; at 0 lives before the end the lesson stops and does not count (`D8`). Check and
+Continue are the universal `@expo/ui` `Button`, made column-wide by a sized label; the feedback is
+the universal `BottomSheet` with an `RNHostView`; the progress bar is the platform pair
+`lesson-progress.ios.tsx` and `.android.tsx` with a shared `.d.ts`. Sound and haptics are
+`app/src/feedback/` (one `expo-audio` player per effect, made when the first lesson opens;
+`playsInSilentMode: false`). The out-of-lives sheet is phase 10; until then a plain message
+stands in. In a development build `felto://lesson/<id>?at=<n>&pick=<m>&check=1` opens any lesson
+at any exercise with a choice made and checked, for screenshots. Inside the native modal the
+native `SafeAreaView` read a top inset of 0 on some opens on iOS, so the lesson frame pads by the
+root provider's insets.
 
 Scope:
 
@@ -505,7 +600,27 @@ Watch for: a `BottomSheet` inside a modal on Android; a card row that overflows 
 
 ### Phase 10. Boss, review, chest and lives
 
-**Status:** `PLANNED`. Driver Default. Lane B. Waits on phase 9.
+**Status:** `BUILT 2026-10-05, commit pending (Zach)`. Driver Default (Opus 5.5). Lane B. Waits on phase 9.
+As built: the boss, the review and the chest are the routes `boss/[unit]`, `review/[unit]` and
+`chest/[unit]`, full-screen modals like the lesson; the out-of-lives sheet is the route
+`out-of-lives`, a transparent modal holding the universal `BottomSheet`, so the path shows behind
+it. A boss and a review run the lesson's own loop: `components/lesson/lesson-run.ts` gained a
+`Session` (kind, id, host character, exercises), `LessonRunView` takes a session and a finish view,
+and `ExerciseView` and `FeedbackSheet` take the host (the shark is sad at a right answer and smug at
+a wrong one, `DESIGN.md` 10.5). The draws are pure: `components/boss/boss-session.ts` and
+`components/review/review-session.ts` call `drawBoss` and `reviewSet` with a seed taken from the
+clock at opening. A path tap goes through `components/path/stop-route.ts`: at 0 hearts a lesson or
+the boss opens the sheet, not the session (item 12's audit); the review always opens. A ready
+chest in the unit header is tappable. The art has one chest and no open state, so the opening is a
+plain reveal (the chest gives way to the gem and "+20 gems!"). Development links for screenshots:
+`felto://boss/<unit>?seed=<n>&play=<r|w...>`, the same for `review/` and `lesson/`, plays the
+first answers through the real choose, check and continue; `felto://out-of-lives?kind=<lesson|boss>&id=<id>`
+opens the sheet. Also done here, from the audit of item 13: audio can no longer throw into a
+session (`feedback/safely.ts`, and the run's state moves before any sound, `session-steps.ts`);
+Sound off loads no audio; Android's back button asks to leave, also over the feedback sheet; the
+WAV imports moved to `app/src/art/sounds.ts` (rule U6, standard 1.0.1). The fixture link, sent
+while a modal is open or just closed, can stack a second Learn screen drawn as a card (seen on iOS;
+relaunching clears it).
 
 Scope: the boss mode with the shark, the review mode with the squid, the chest modal (20 gems,
 once per unit), and the out-of-lives sheet with the time to the next life and the refill
@@ -521,7 +636,30 @@ Watch for: a chest awarded twice for one unit; a review that costs a life.
 
 ### Phase 11. Profile, settings and the reminder
 
-**Status:** `PLANNED`. Driver Default. Lane B. Waits on phase 10.
+**Status:** `BUILT 2026-10-05, commit pending (Zach)`. Driver Default (Opus 5.5). Lane B. Waits on phase 10.
+As built: Profile is a native settings form (`FieldGroup` in a `Host` that fills the centred
+column, `components/profile/profile-frame.tsx`), not the screen wrapper's scroll view, because the
+form scrolls by itself. Sections: the stats as `ListItem` rows with the stat icons; the streak
+freeze shop (held, gems, a `Button` greyed out when full or short of gems, a line saying why); the
+settings (`Switch` for Sound, `Switch` for the reminder, the reminder time); reset progress behind
+React Native's `Alert`. The time is a platform pair (`reminder-time.ios.tsx`, `.android.tsx`): on
+iOS SwiftUI's `DatePicker` drawn as a row of the form, because the community picker is that same
+view inside its own `Host` and a `Host` cannot sit inside the form's `Host`; on Android a row that
+opens the `@expo/ui/community/datetime-picker` time dialog, drawn outside the form. The reminder
+follows BD-18, not a `DAILY` trigger: `reminder/plan.ts` plans up to seven `DATE` notifications
+(ids `felto.reminder.<day>`), none on a day with a finish and none already past;
+`reminder/use-reminder-sync.ts`, mounted once at the root through `components/root-providers.tsx`,
+runs `reminder/replan.ts`, which reads the clock when it runs (not at the last render), cancels this
+app's own ids with `cancelScheduledNotificationAsync`, skips any time not in the future and schedules
+each reminder on its own, so one failure cannot empty the week; it runs at start, on return to the front, after a
+finish and on each settings change, all through one queue (`reminder/queue.ts`). The permission is
+asked after the first finish of a day while the app runs, or when the player turns the switch on,
+never at launch; Android gets the channel `streak-reminder` first. Each reminder's line reads the
+streak as it will stand at that moment, freezes counted. Stored state is version 2: settings gain
+`reminder {on, hour, minute}`, on at 19:00, with a migration from version 1 and tests that load a
+version 1 save. Reset backs up the latest state under a backup key, then keeps the settings and
+the welcome-seen flag. Sound off also pauses any loaded effect (`feedback/effects.ts`
+`stopEffects`). The development link `felto://dev/reminders` lists the reminders the phone holds.
 
 Scope: the Profile tab (stats in `List` and `FieldGroup`); the reminder `Switch` and time
 picker; reset progress behind the platform alert; the reminder of `D11`, planned as in BD-18,
@@ -542,7 +680,18 @@ Watch for: the permission prompt shown at launch; a reminder planned in UTC.
 
 ### Phase 12. Close out
 
-**Status:** `PLANNED`. Driver Mechanical (Sonnet 5). Lane B. Waits on every other phase.
+**Status:** `BUILT 2026-10-05, commit pending (Zach)`. Driver Mechanical (Sonnet 5). Lane B. Waits on every other phase.
+As built: `docs/conventions-typescript.md` is 1.1.0: every correct example is real felto code with a
+checked `file:line`, the lint and Metro facts are re-read from `app/node_modules` (the sentence
+that said the config turns `import/order` off was wrong: it is never on), the registry holds Z1
+to Z4, and a Known gaps list names what no entry sanctions (raw `fontWeight` strings, two long
+hooks, two comments that say what). `RUNTIME-PASS.md` is one ordered list of 47 entries for a
+person on a device. Four small fixes from the audits, each with a test that fails on the old
+code: the closed-lesson time uses `formatClockTime`; stat labels use singular forms and D10's
+"hearts"; the route error line is in the warm register; the current path node's label gives its
+progress. `As built:` notes were added under D14 to D18 in `DESIGN.md`. `CLAUDE.md`,
+`HANDOFF.md` standing sections and `docs/README.md` match the tree. Nothing was built on a
+screen, so no screenshot exists for this phase.
 
 Scope: replace every `ezhomesteading` example in `docs/conventions-typescript.md` with felto
 code and check every line citation in it; check `CLAUDE.md`, `HANDOFF.md` and `docs/README.md`
@@ -560,7 +709,11 @@ the pass, not this phase.
 
 ### Phase 13. Write the sound generator
 
-**Status:** `PLANNED`, if Zach accepts `D15`. Driver Default. Lane A. Waits on phase 3.
+**Status:** `BUILT 2026-10-05, commit pending (Zach); approval by ear owed (Zach)`. Driver Default (Opus 5.5). Lane A. Waits on phase 3.
+
+As built: the six files are `answer_right`, `answer_wrong`, `lesson_finish`, `boss_pass`,
+`boss_fail` and `chest_open` (`.wav`), 0.36 s to 0.90 s long, peaks 0.45 to 0.65 of full scale.
+The generator has its own `write()` and does not import `tools/common.py` (rule W1).
 
 Scope:
 
@@ -588,7 +741,24 @@ breaks determinism.
 
 ### Phase 14. Random dealers for practice
 
-**Status:** `PLANNED`, if Zach accepts `D21`. Driver Default. Lane C. Waits on phase 7.
+**Status:** `BUILT 2026-10-05, commit pending (Zach)`. Driver Default (Opus 5.5). Lane C,
+built in the main checkout under `/autopilot`. Waits on phase 7.
+As built: `app/src/drills/` holds one seeded dealer for each checkable kind (`hand-name.ts`,
+`showdown.ts`, `preflop.ts`, `outs.ts`, `odds.ts`), `deal.ts` (`dealExercise`, and `dealSet` for a
+Practice set of `DIALS.practiceSetSize`) and `open-kinds.ts` (`openKinds(state)`, through
+`unitDone`, so the placement check opens kinds too). Every key is computed by the evaluator, the
+outs counter, the odds arithmetic or `OPENING_CHART`, never typed, and `checked.ts` throws on any
+exercise `validateExercise` refuses. Dealers pick the answer or category first so rare hands,
+splits, raises and calls all appear. The outs dealer deals a flush, a straight or three of a kind
+only, on an unpaired board with at most two of a suit, and keeps a spot only when every out makes
+the target's own shape and, on the turn, none plays from the board alone. Odds prices are never
+on a half percent, and a call is dealt only with the rule of 2 and 4 and the exact chance both 3
+points clear of the price. Tests deal 10,000 seeds of each kind and check the validator,
+`computeKey`, an independent second count (`second-count.ts`: a bit-mask evaluator, all 21
+five-card choices for a showdown, every card left for outs, the arithmetic re-derived), seed
+replay, the answer-position spread (at most 1/n + 10 points), and the words of each explanation
+against the second count. The Default review found one blocking template (a flush tie called
+"kickers") and five smaller points; all were fixed in one round.
 
 Scope:
 
@@ -612,8 +782,21 @@ is already made.
 
 ### Phase 15. The Practice tab
 
-**Status:** `PLANNED`, if Zach accepts `D21`. Driver Default. Lane B. Waits on phases 10 and
-14, with lane C merged.
+**Status:** `BUILT 2026-10-05, commit pending (Zach)`. Driver Default (Opus 5.5). Lane B. Waits
+on phases 10 and 14, with lane C merged.
+As built: the Practice tab (`screens/practice-screen.tsx`) lists the five dealt kinds, each open
+with what it asks or locked with the unit that opens it ("Finish unit 3, Preflop, to open
+this."), from `components/practice/practice-menu.ts` (tested). One "Start a set" button deals a
+mixed set of every open kind; there is no button per kind. The set is the route `practice-set`,
+a full-screen modal like the boss, over the lesson loop with a `Session` of kind `practice`
+hosted by the squid; the seed is the clock when the set opens. Practice never reads hearts: the
+tab and the set open at 0, the set hides the heart count, and a wrong answer spends none.
+Leaving early asks "Leave this set?" and gives nothing. Development links:
+`felto://practice-set?seed=<n>&play=<r|w...>`, and `&deal=<kind>` deals one kind even before it
+is open, since no BD-13 fixture opens units 3 and 4. Also done here, from the audit of item 14:
+two presses of Check in one render no longer spend two hearts (a `checkedFor` ref in
+`session-steps.ts`), and `components/lesson/session-order.test.ts` fails if the run's state
+stops moving before its effects.
 
 Scope: the Practice tab of `DESIGN.md` 10.7: the open kinds, a button to start a set, the
 lesson screen in practice mode (no lives), the squid's poses, the effects, and the results
@@ -629,7 +812,19 @@ Watch for: a kind offered before its unit is finished.
 
 ### Phase 16. Onboarding and the placement check
 
-**Status:** `PLANNED`, if Zach accepts `D20`. Driver Default. Lane B. Waits on phase 15.
+**Status:** `BUILT 2026-10-05, commit pending (Zach)`. Driver Default (Opus 5.5). Lane B. Waits
+on phase 15.
+As built: the root navigator (`components/root-stack.tsx`) opens only the `onboarding` stack
+while `onboarded` is false and only the tabs and sessions once it is true (Expo Router
+`Stack.Protected`); the development routes stay open in both. The stack is welcome, cast and
+"How much poker do you know?" (`screens/welcome-screen.tsx`, `cast-screen.tsx`,
+`level-screen.tsx`), then the check (`onboarding/placement`), a `Session` of kind `placement`
+hosted by the fish, with no hearts shown, spent or missed, ending in `finishPlacement` and a
+pass or fail result whose button finishes onboarding. The ten are five from each of units 1 and
+2, seeded from the clock (`components/onboarding/placement-session.ts`). Also done here: one
+current lesson on the path (`game/path.ts`), a placed unit's header line and closed chest, the
+fixtures `placed` and `all-done`, and `screens/placeholder-screen.tsx` deleted. Development
+link: `felto://onboarding/placement?seed=<n>&play=<r|w...>` after the fixture `fresh`.
 
 Scope: the three first-launch screens and the placement check of `D20` and `DESIGN.md` 10.7,
 with the names from `cast.ts` and the first-launch flag from the data module.

@@ -22,23 +22,23 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 | 2 | Move the shared generator code into one module | `DONE: HANDOFF 3` | Sonnet 5 | A | nothing | `tools/build_icons.py`, `tools/build_mascots.py`, the new shared module in `tools/`, `docs/conventions-python.md` |
 | 3 | Reconcile the line citations in the Python standard | `DONE: HANDOFF 4` | Sonnet 5 | A | nothing | `docs/conventions-python.md` |
 | 4 | Name `tools/common.py` in the standard's scope sentence | `DONE: HANDOFF 8` | Sonnet 5 | A | nothing | `docs/conventions-python.md` |
-| 5 | App phase 1: change the icon generator for the app | `HELD` | Sonnet 5 | A | items 4 and 21; Zach's answer to `D15` to `D21` | `tools/build_icons.py`, `assets/icons/path/node_current_base.svg`, `assets/icons/ui/streak_freeze.svg`, `assets/icons/cards/*.svg`, `docs/conventions-python.md`, `CLAUDE.md` |
-| 6 | App phase 2: write the TypeScript standard and re-add the app rules | `HELD` | Opus 5.5 | B | item 5 | `docs/conventions-typescript.md`, `docs/AGENT-PRACTICES.md`, `docs/README.md`, `CLAUDE.md`, `.gitignore` |
-| 7 | App phase 3: scaffold `app/` and draw the art on both platforms | `HELD` | Opus 5.5 | B | item 6; the art commit | `app/` config files, `app/src/app/dev/`, `app/src/config/`, `app/src/theme/`, `CLAUDE.md`, `docs/AGENT-PRACTICES.md`, `.personal-config.json`, `.gitignore` |
-| 8 | App phase 4: game state and the data module | `HELD` | Opus 5.5 | B | item 7 | `app/src/game/`, `app/src/storage/` |
-| 9 | App phase 5: cards, the evaluator and the content schema | `HELD` | Opus 5.5 | C | item 7; a push | `app/src/cards/`, `app/src/content/` except `units/` lessons |
-| 10 | App phase 6: content, units 1 and 2 | `HELD` | Opus 5.5 | C | item 9 | `app/src/content/units/` (units 1 and 2) |
-| 11 | App phase 7: content, units 3 and 4, and the preflop chart | `HELD` | Opus 5.5 | C | item 10 | `app/src/content/units/` (units 3 and 4), the chart file |
-| 12 | App phase 8: tabs, the path and the stat bar | `HELD` | Opus 5.5 | B | items 8 and 10; lane C merged | `app/src/app/(tabs)/`, `app/src/art/`, the path, mascot and stat bar components |
-| 13 | App phase 9: the lesson | `HELD` | Opus 5.5 | B | items 12 and 17 | `app/src/app/lesson/`, the exercise and feedback components |
-| 14 | App phase 10: boss, review, chest and lives | `HELD` | Opus 5.5 | B | item 13 | the boss, review, chest and out-of-lives routes and components |
-| 15 | App phase 11: profile, settings and the reminder | `HELD` | Opus 5.5 | B | item 14 | the Profile route and components, the reminder module |
-| 16 | App phase 12: close out | `HELD` | Sonnet 5 | B | items 5 to 15 and 17 to 20 | `docs/conventions-typescript.md`, `docs/incomplete/app/RUNTIME-PASS.md` |
-| 17 | App phase 13: write the sound generator | `HELD` | Opus 5.5 | A | item 7 | `tools/build_sounds.py`, `assets/sounds/`, `docs/conventions-python.md`, `CLAUDE.md`, `.personal-config.json` |
-| 18 | App phase 14: random dealers for practice | `HELD` | Opus 5.5 | C | item 11 | `app/src/drills/` |
-| 19 | App phase 15: the Practice tab | `HELD` | Opus 5.5 | B | items 14 and 18; lane C merged | the Practice route and components |
-| 20 | App phase 16: onboarding and the placement check | `HELD` | Opus 5.5 | B | item 19 | the onboarding routes and components |
-| 21 | Fix two stale lines that board item 4 found | `OPEN` | Sonnet 5 | A | nothing | `docs/conventions-python.md`, `docs/incomplete/app/DESIGN.md` |
+| 5 | App phase 1: change the icon generator for the app | `DONE: HANDOFF 11` | Sonnet 5 | A | items 4 and 21; Zach's answer to `D15` to `D21` | `tools/build_icons.py`, `assets/icons/path/node_current_base.svg`, `assets/icons/ui/streak_freeze.svg`, `assets/icons/cards/*.svg`, `docs/conventions-python.md`, `CLAUDE.md` |
+| 6 | App phase 2: write the TypeScript standard and re-add the app rules | `DONE: HANDOFF 12` | Opus 5.5 | B | item 5 | `docs/conventions-typescript.md`, `docs/AGENT-PRACTICES.md`, `docs/README.md`, `CLAUDE.md`, `.gitignore` |
+| 7 | App phase 3: scaffold `app/` and draw the art on both platforms | `DONE: HANDOFF 13` | Opus 5.5 | B | item 6; the art commit | `app/` config files, `app/src/app/dev/`, `app/src/config/`, `app/src/theme/`, `CLAUDE.md`, `docs/AGENT-PRACTICES.md`, `.personal-config.json`, `.gitignore` |
+| 8 | App phase 4: game state and the data module | `DONE: HANDOFF 15` | Opus 5.5 | B | item 7 | `app/src/game/`, `app/src/storage/` |
+| 9 | App phase 5: cards, the evaluator and the content schema | `DONE: HANDOFF 16` | Opus 5.5 | C | item 7; a push | `app/src/cards/`, `app/src/content/` except `units/` lessons |
+| 10 | App phase 6: content, units 1 and 2 | `DONE: HANDOFF 17` | Opus 5.5 | C | item 9 | `app/src/content/units/` (units 1 and 2) |
+| 11 | App phase 7: content, units 3 and 4, and the preflop chart | `DONE: HANDOFF 18` | Opus 5.5 | C | item 10 | `app/src/content/units/` (units 3 and 4), the chart file |
+| 12 | App phase 8: tabs, the path and the stat bar | `DONE: HANDOFF 19` | Opus 5.5 | B | items 8 and 10; lane C merged | `app/src/app/(tabs)/`, `app/src/art/`, the path, mascot and stat bar components |
+| 13 | App phase 9: the lesson | `DONE: HANDOFF 21` | Opus 5.5 | B | items 12 and 17 | `app/src/app/lesson/`, the exercise and feedback components |
+| 14 | App phase 10: boss, review, chest and lives | `DONE: HANDOFF 22` | Opus 5.5 | B | item 13 | the boss, review, chest and out-of-lives routes and components |
+| 15 | App phase 11: profile, settings and the reminder | `DONE: HANDOFF 24` | Opus 5.5 | B | item 14 | the Profile route and components, the reminder module |
+| 16 | App phase 12: close out | `DONE: HANDOFF 26` | Sonnet 5 | B | items 5 to 15 and 17 to 20 | `docs/conventions-typescript.md`, `docs/incomplete/app/RUNTIME-PASS.md` |
+| 17 | App phase 13: write the sound generator | `DONE: HANDOFF 14` | Opus 5.5 | A | item 7 | `tools/build_sounds.py`, `assets/sounds/`, `docs/conventions-python.md`, `CLAUDE.md`, `.personal-config.json` |
+| 18 | App phase 14: random dealers for practice | `DONE: HANDOFF 20` | Opus 5.5 | C | item 11 | `app/src/drills/` |
+| 19 | App phase 15: the Practice tab | `DONE: HANDOFF 23` | Opus 5.5 | B | items 14 and 18; lane C merged | the Practice route and components |
+| 20 | App phase 16: onboarding and the placement check | `DONE: HANDOFF 25` | Opus 5.5 | B | item 19 | the onboarding routes and components |
+| 21 | Fix two stale lines that board item 4 found | `DONE: HANDOFF 9` | Sonnet 5 | A | nothing | `docs/conventions-python.md`, `docs/incomplete/app/DESIGN.md` |
 
 **Do not paste a prompt marked DONE**: a fresh session would build it again.
 
@@ -469,3 +469,69 @@ Part 11, `git add` with the exact files (`docs/conventions-python.md`,
 `docs/incomplete/app/DESIGN.md`, `HANDOFF.md`, `PASSOFF.md`), then `git commit` with the same
 files and a short lowercase message. Documents only: there is nothing to run and no runtime
 entry to walk.
+
+### 6 to 20. Prompts written by autopilot, 2026-10-05
+
+*Written 2026-10-05 by the `/autopilot` run (`docs/incomplete/autopilot-2026-10-05/STATE.md`), on Zach's
+instruction in chat to keep going until the MVP is met: "write new passoffs and what not until the
+mvp is met". Items 6 to 20 share one prompt shape, below; each item's own lines follow it. Every
+fact a prompt cites must be re-checked by grep before use: the line numbers move.*
+
+**The shared prompt (read it with the item's own lines).** Work in the main checkout
+`/Users/zachshort/Projects/felto`, not a worktree: the art is staged and uncommitted, and a
+worktree starts at `HEAD`, so it would lack the art and every earlier phase. Read `HANDOFF.md`
+first (the gate, the invariants and the code map are there; do not re-derive them), then
+`CLAUDE.md`, then the code standard for the files you touch (`docs/conventions-python.md` for
+`.py`, `docs/conventions-typescript.md` for `app/`, once it exists), then `docs/AGENT-PRACTICES.md`
+Part 8.1, then `docs/incomplete/app/DESIGN.md` sections 8 to 10 and every decision the phase
+cites, then sections 0 and 1 of `docs/incomplete/app/PLAN.md`, then the item's phase in that file.
+The phase holds the scope, the subagents, the done-when and the watch-for; follow them. Zach's
+answers of 2026-10-05: `D14` to `D21` are all accepted as recommended; `D18` names are Flop (fish),
+Kicker (squid), Ace (shark). `DESIGN.md` may still print "Answer: pending"; this paragraph is the
+answer. Session rules: absolute dates only; every claim carries a `file:line` or the command that
+produced it; grep before you record an absence; never run `git commit`, `git push`, `git add -A`
+or `git add .`; use `git -C <path>` and absolute paths, never `cd`.
+
+Under `/autopilot` these overrides hold, and they beat anything in the phase text:
+- Do not edit `PASSOFF.md`. Do not add a ledger step to `HANDOFF.md`: report the exact text of the
+  step and of any code-map or Known-facts change, and the orchestrator writes it at the next free
+  number. You may edit the standing sections of `HANDOFF.md`, your own phase header and `As built:`
+  notes in `PLAN.md` and `DESIGN.md`, and append your runtime entries to
+  `docs/incomplete/app/RUNTIME-PASS.md`.
+- Zach is not at the keyboard. Anything the phase says to show or ask Zach (a render to approve, a
+  sound to hear, a copy question) is done as far as you can alone, and listed as owed in the
+  report. Never block on it. A decision the phase does not settle: take the recommended option,
+  log it as a judgment call with its reversal, and go on.
+- A phase that names a subagent: if you have the Agent tool, spawn it as the phase says (its own
+  worktree is not possible here, so a read-only subagent only, told never to edit). If you do not
+  have the tool, say so and list the review as owed to the orchestrator, which runs it.
+- Report: the gates as run with their output, `git status --short` of the files you changed or
+  added, what the screenshots or renders show (take them on both simulators where the phase says),
+  the text for the ledger step, any number you claimed, every judgment call with its reversal,
+  every user-facing string you added, and what was not verified.
+- Relay: if you pass roughly two thirds of your budget (more than about 25 files read, or past two
+  thirds with substantial work left), STOP and make your final output a standalone pass-off prompt
+  for a fresh agent: done, where you stopped and how far, paths, the exact remaining list.
+
+| Item | Phase in `PLAN.md` | Own lines |
+|---|---|---|
+| 6 | Phase 2 | Writes `docs/conventions-typescript.md` and re-adds two rules to `docs/AGENT-PRACTICES.md`. The sweep subagent reads `~/Projects/ezhomesteading/docs/conventions.md`. The `.gitignore` line for `.claude/worktrees/` is part of it. Nothing under `app/` yet. |
+| 7 | Phase 3 | Scaffolds `app/`. Builds and screenshots on the iOS simulator and the `Pixel_9` emulator (`ANDROID_HOME` set, Java 17 if needed; `PLAN.md` section 0 rows 20 and 21). Includes the `D15` to `D17` additions: `expo-audio`, `expo-system-ui`, light and dark tokens, the colour swap, the screen wrapper, the iPad landscape and dark checks. If the native build fails for an environment reason, fix the environment, do not stub the app. The art commit is Zach's; the art files exist on disk, and that is enough. |
+| 8 | Phase 4 | Game state and the data module under `app/src/game/` and `app/src/storage/`, with the `D19` streak freeze rules and the dials. Tests are vitest. |
+| 9 | Phase 5 | Cards, the evaluator and the content schema. The evaluator is where a silent error lives: test it by enumeration. The plan names one Deep review of it. |
+| 10 | Phase 6 | Units 1 and 2 content, 100 written exercises, in `app/src/content/units/`. The plan names a Default review of every concept item. Names use Flop, Kicker and Ace. Added after the Deep review of item 9 (2026-10-05): `outs` exercises never target `one-pair` or `two-pair` (board pairings count as outs); write "with one card to come" in the prompt; a unit file is named for its unit id (`units/hands.ts` holds unit `hands`), is listed in `UNITS` in `app/src/content/catalog.ts` with every lesson of the outline for that unit, and the app reads units only through the catalog (the guard is in `keys.test.ts`). Zach has not read any copy; list every string in the report. |
+| 11 | Phase 7 | Units 3 and 4 and the preflop chart. The chart is a strategy claim: the plan names one Deep review of the chart and its keys. Same outs and catalog rules as item 10. |
+| 12 | Phase 8 | Tabs, the path and the stat bar, with the node ring drawn over `node_current_base`. Also owed from item 8 (ledger step 15): mount `PlayerProvider` in `app/src/app/_layout.tsx`; write the BD-13 dev route `app/src/app/dev/fixture/[name].tsx`; build the game `PathOutline` from `OUTLINE` in `app/src/content/outline.ts`; replace the temporary `/` redirect in `app/src/app/index.tsx` (it breaks rule U1 until then). The provider and hook have never run on a device: run them. Screenshots on both platforms, light and dark, phone and iPad. |
+| 13 | Phase 9 | The lesson: every exercise kind, feedback and finish. From item 10 (ledger step 17): seven-card hand-name exercises say "two hole cards and five on the board" but the data has no marker, so show the last five cards as the board. If it runs long, hand the last two exercise kinds to a pass-off prompt (the phase says so). |
+| 14 | Phase 10 | (Item 12's audit: at zero lives the current lesson must not open, since the path draws it as current.) Boss, review, chest and lives, with the `D19` freeze in Profile's shop if the phase places it there. |
+| 15 | Phase 11 | Profile, settings, the Sound and Dark-mode-follows-phone switches, and the daily reminder (`expo-notifications`). |
+| 16 | Phase 12 | Close out: Also: `app/src/components/lesson/lesson-closed.tsx:49` should use `formatClockTime` from `@/reminder/clock-format` (ledger step 24); and the fix rounds of items 15, 19 and 20 were not seen on a device: list them in RUNTIME-PASS.md. Also from item 12's audit: stat labels say "1 lives" and "1 streak freezes" (use singular forms) and D10's warm word is "hearts"; `route-error.tsx:17` is plain register; the current node's accessibility label gives no progress. reconcile the standard's examples, write `RUNTIME-PASS.md`'s final form, records. Mechanical. It waits on items 5 to 15 and 17 to 20. |
+| 17 | Phase 13 | `tools/build_sounds.py` and `assets/sounds/`: six WAV effects from `math`, `struct` and `wave`, deterministic, in the gate. An agent cannot hear: check length, sample rate, peak level and silence at both ends with `wave`, and list "approve by ear" as owed to Zach. |
+| 18 | Phase 14 | Random dealers for practice under `app/src/drills/`, checked by seeded tests over thousands of deals. The plan names a Default review. |
+| 19 | Phase 15 | The Practice tab (`D21`), reusing the lesson screen. Also fix, since you reuse the run loop (audit of item 14, ledger step 22): two taps on Check inside one render both read `answering` and a wrong answer spends two hearts (`app/src/components/lesson/session-steps.ts:16-23`, `use-lesson-run.ts:25-32`): add a ref guard like `movedOnFrom`, fix the comment at `session-steps.ts:13-15`, and add a test that fails when the order "state moves before effects" is reversed (a `record` or `showWords` that throws, or a call-order record). |
+| 20 | Phase 16 | Onboarding and the placement check (`D20`). Also from item 19 (ledger steps 23 to 24): add a BD-13 fixture `all-done` (all four units finished, every Practice kind open) to `app/src/game/fixtures.ts` with its test, so Practice can be seen without the `deal=` link; and the lesson loop's `placeholder-screen.tsx` has no user now (delete it if nothing imports it). From the audit of item 12 (ledger step 19): after placement the path shows three current lessons at once and a faded chest under a complete boss (`app/src/game/path.ts:35-44`, `app/src/components/path/unit-header.tsx:31-35`): settle one rule (the first unfinished lesson of the first unfinished unit is current; a placed-past unit shows its boss complete and its chest per D20) and test it; item 8's game code may be edited for this one change. |
+
+Hand back, for every item: the gate (the Python gate, then the app gate once `app/` exists, in the
+form `CLAUDE.md` records), green, and `git diff --stat -- assets tools` showing only what the item
+meant to change; then the two copyable blocks, `git add` with the exact files and `git commit` with
+the same files and a short lowercase message.

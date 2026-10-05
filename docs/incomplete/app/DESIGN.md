@@ -27,7 +27,7 @@ its own folder as well, because it runs through scope, design, plan and several 
 | 2 | The generated art is complete for a first build | 76 icon SVGs and 18 mascot SVGs | `ls assets/icons/*/*.svg \| wc -l`; `ls assets/mascots/*/*.svg \| wc -l` |
 | 3 | The art describes a lesson-path game | Path nodes `available`, `complete`, `locked`, `boss`, `review`, plus `current` with a progress ring. UI icons `streak_flame`, `xp_bolt`, `lives_heart`, `gem`, `chest`. Chips in six colours, each with a stack. A card back and all 52 faces | `tools/build_icons.py:247-253`, `:371`, `:352-358`, `:34`, `:143-144` |
 | 4 | Three mascots, six poses each | fish, squid, shark; `happy`, `sad`, `cheer`, `think`, `smug`, `sleep` | `tools/build_mascots.py:336-337` |
-| 5 | The mascot layer ids are a rig contract | Every pose of a character keeps the same ids | `docs/conventions-python.md:519-537` (rule I3) |
+| 5 | The mascot layer ids are a rig contract | Every pose of a character keeps the same ids | `docs/conventions-python.md`, rule I3 (cited as lines 519-537 until 2026-10-05; the lines moved, the rule ID did not) |
 | 6 | No asset is in any commit | HEAD holds 0 files under `assets/`. The index holds 129 staged files. `origin/main` is `5da0bca`, the same as local `main`, so GitHub holds none of the art | `git ls-tree -r HEAD --name-only \| grep -c '^assets/'`; `git ls-files assets \| wc -l`; `git branch -vv` |
 | 7 | The Higgsfield art cannot be made again | 32 files, 21 MB, from a paid, non-deterministic service. `assets/gallery.html` links all 32 by name | `du -sh assets/higgsfield`; `CLAUDE.md:15-16` |
 | 8 | The style is approved | Icon direction 4, "extruded flat", was chosen; the squid without a shadow was approved | `assets/gallery.html`, Round 7 and Round 5 captions |
@@ -413,6 +413,16 @@ lives gives a player with no lives something useful to do: practice on what they
 Against: a refill for gems lets a player skip the wait. At 20 gems a refill costs one whole
 chest, so it stays rare. This adds one dial, "Life refill price: 20 gems" (section 10.2).
 
+As built (phase 10, 2026-10-05): choices the rule left open. A passed boss can be played again,
+as a finished lesson can; it gives XP and counts for the streak again, but its chest only once. A
+boss played to its end and failed gives XP and counts for the streak (`game/session.ts`). The
+boss and review draws are seeded from the clock when they open. At 0 lives a tap on the current
+lesson or the boss opens the out-of-lives sheet in place of the session; after a refill the sheet
+opens the stop that was tapped. A session that runs out of hearts part way shows the sleeping fish
+and "Out of hearts for now.", without the refill, since the session already does not count.
+Replaying a finished lesson also gives XP and streak again; that was item 8's rule and is left for
+Zach to decide.
+
 ### D9. Mascot roles
 
 Proposed 2026-10-05, recommended. Answer: accepted, 2026-10-05 (the GATE 2 reply
@@ -459,6 +469,14 @@ already exists (section 4). Against: a permission prompt, and the edge cases of 
 scheduling: a phone that is off at 19:00, or a time-zone change. `PLAN.md` phase 11 schedules a
 week of single reminders ahead and cancels the one for any day the player finishes, so a missed
 day never sends two.
+
+As built (phase 11, 2026-10-05): the reminder is on at 19:00 for every player, and a version 1
+save migrates to that. The permission is asked after the first finish of a day made while the app
+runs (a lesson, a boss or a review), or when the player turns the switch on, never at launch.
+Without permission no reminder is scheduled, and Profile says so under the switch. The reminder's
+text names the streak only when it will still be alive at that moment: "Your {n}-day streak is
+waiting. One quick lesson keeps it going.", else "One quick lesson starts a new streak.", under
+the title "Flop saved you a seat".
 
 ### D12. Name and identifiers
 
@@ -526,9 +544,15 @@ draw the ranks as outlines in the generator (no font at all, and the step Rive n
 import, `CLAUDE.md:84-85`, but thirteen hand-drawn glyphs is a larger art job that needs Zach's
 eye).
 
+As built (phases 1 and 3, 2026-10-05): `app/assets/fonts/FeltoRank.ttf` is Nunito ExtraBold with
+its name table set to `FeltoRank` (fontTools, one-off), embedded by the `expo-font` plugin, and
+`tools/build_icons.py:20` puts `'FeltoRank'` first. An agent saw the ranks rounded and the same
+shape on the iPhone 17 Pro and the `Pixel_9`; Zach's own look is owed (`RUNTIME-PASS.md`, entry 3).
+The file name `FeltoRank.ttf` is a sanctioned divergence from kebab-case (`conventions-typescript.md`, Z3).
+
 ### D15. Sound effects, made by a generator in this repo
 
-Proposed 2026-10-05, recommended. Answer: pending.
+Proposed 2026-10-05, recommended. Answer: accepted by Zach in chat, 2026-10-05 (was: pending).
 
 Six short effects: a right answer, a wrong answer, a finished lesson, a passed boss, a failed
 boss and the opened chest. A new generator, `tools/build_sounds.py`, on the standard library
@@ -545,9 +569,16 @@ each sound by ear (`PLAN.md`, phase 13). The alternatives are Higgsfield's audio
 and each run differs, as with the reference art) or a licensed sound pack. Music is left out
 because the request was "sound"; music is a separate yes.
 
+As built (phases 3 and 13, 2026-10-05): `tools/build_sounds.py` writes six 16-bit mono 44,100 Hz
+WAV files, 0.36 s to 0.90 s, to `assets/sounds/`, in the gate. The app plays them with
+`expo-audio` from `app/src/feedback/` (`playsInSilentMode: false`, one player per effect, made
+when the first lesson opens); the only importer of the files is `app/src/art/sounds.ts`. The
+Sound switch in Profile is on by default and also stops a playing effect. No agent has heard a
+sound: approval by ear is owed (`RUNTIME-PASS.md`, entry 2).
+
 ### D16. Dark mode follows the phone
 
-Proposed 2026-10-05, recommended. Answer: pending.
+Proposed 2026-10-05, recommended. Answer: accepted by Zach in chat, 2026-10-05 (was: pending).
 
 The app follows the phone's appearance setting, and every app colour has a light and a dark
 value in the token module. The art files do not change. The two colours in them that assume a
@@ -560,9 +591,16 @@ now depends on two hex values in the generators, so a test fails the gate if eit
 the art. The alternative is a generator that writes a dark copy of every SVG, which doubles the
 files and every visual check.
 
+As built (phases 3 and 8, 2026-10-05): the tokens with a light and a dark value are in
+`app/src/theme/tokens.ts`, and the two swapped hex values are in
+`app/src/art/colour-swap.json`, with a test that fails if either leaves the art. In dark mode
+the hard shadow is a tone below the page and the ring track a tone above it. The locked path
+nodes stay pale discs, as generated, and the faded chest is very dim on a dark page; whether
+that is acceptable is Zach's to judge (`RUNTIME-PASS.md`, entry 4).
+
 ### D17. Phones and tablets, in any orientation
 
-Proposed 2026-10-05, recommended. Answer: pending.
+Proposed 2026-10-05, recommended. Answer: accepted by Zach in chat, 2026-10-05 (was: pending).
 
 The app runs on phones and tablets, iPad and Android, in portrait and landscape. One layout
 serves all of them: every screen draws in a centred column at most 640 points wide (a dial), and
@@ -572,9 +610,14 @@ Defense: one layout to build and check, and a lesson is one column of content in
 Against: a tablet in landscape shows empty space at both sides of the column. The alternative is
 a two-pane tablet layout, the path beside the lesson, which is a second layout for every screen.
 
+As built (phases 3 and 8, 2026-10-05): the column is `DIALS.columnMaxWidth`, 640
+(`app/src/config/dials.ts:33`), read through `useColumnWidth`. Seen by an agent: the iPad Pro
+13-inch in portrait (Learn) and an Android tablet in landscape (Learn, light). Not seen: iPad
+landscape, and every screen other than Learn on a tablet (`RUNTIME-PASS.md`, entries 44 and 45).
+
 ### D18. Mascot names
 
-Proposed 2026-10-05, recommended: poker words. Answer: pending. This is the R7 ask for the
+Proposed 2026-10-05, recommended: poker words. Answer: poker words (Flop, Kicker, Ace), chosen by Zach in chat, 2026-10-05 (was: pending). This is the R7 ask for the
 names.
 
 | Set | Fish | Squid | Shark | Register |
@@ -589,9 +632,12 @@ Defense of poker words: unit 1 teaches the kicker, unit 2 the flop, and the shar
 the strong player a boss should be. Against: a new player meets the names before the words, and
 "Flop" can also read as a failure.
 
+As built (phase 6, 2026-10-05): the names are Flop, Kicker and Ace in `app/src/content/cast.ts`.
+Three strings in `app/src/content/units/` pun on them, so a rename there also rewrites those lines.
+
 ### D19. A streak freeze
 
-Proposed 2026-10-05, recommended. Answer: pending.
+Proposed 2026-10-05, recommended. Answer: accepted by Zach in chat, 2026-10-05 (was: pending).
 
 A streak freeze costs 10 gems (a dial), a player holds at most 2 (a dial), and Profile sells
 them. A held freeze is used by itself on a local day with no finish, so the streak survives one
@@ -604,9 +650,14 @@ Defense: it softens the one rule that punishes a single missed day, and a fixed 
 earned gems stays clear of hazards 2 and 3. Against: the refill and the freeze compete for scarce
 gems. That is the intent, and both prices are dials.
 
+As built (phase 8, 2026-10-05): the stat bar shows `streak_freeze` beside the streak when at
+least one freeze is held, with the count beside it only when more than one is held. No BD-13
+fixture holds a freeze, so the icon was checked on the art route `/dev/art`, which draws a sample
+bar with two.
+
 ### D20. Onboarding with a placement check
 
-Proposed 2026-10-05, recommended. Answer: pending.
+Proposed 2026-10-05, recommended. Answer: accepted by Zach in chat, 2026-10-05 (was: pending).
 
 The first launch shows three screens before the path: a welcome from the fish, the cast by
 name, and "How much poker do you know?" with two answers. "I am new" starts at unit 1. "I know
@@ -620,9 +671,19 @@ reuses written exercises, so it needs no new content. Against: two more screens 
 lesson. The `D13` item Zach brought back was "onboarding screens and a placement test"; if only
 the screens are wanted, the check is the part to drop.
 
+As built (phase 16, 2026-10-05): the check is five exercises from each of units 1 and 2. It
+shows no heart count, and a wrong answer neither spends a heart nor joins the review's misses. A
+check left part way counts for nothing and can be started again from the question screen;
+`onboarded` is set only by "I am new" or by the button under the check's result, so a check
+closed by the app shutting starts over. A placed unit shows every lesson and its boss complete
+and its review open; its boss can be played, and beating it gives the chest, so the chest stays
+faded (closed, not claimable) with the line "You placed past this unit. Beat Ace to win its
+chest." under the unit title. Only one lesson on the path is current: the first unfinished one
+of the first unit not done. The pass and the fail both play the lesson-finished sound.
+
 ### D21. Random hands in a Practice tab
 
-Proposed 2026-10-05, recommended. Answer: pending.
+Proposed 2026-10-05, recommended. Answer: accepted by Zach in chat, 2026-10-05 (was: pending).
 
 A third native tab, Practice, deals exercises at random, without end, for the kinds the player
 has opened: `hand-name` and `showdown` after unit 1, `preflop` after unit 3, `outs` and `odds`
@@ -636,6 +697,12 @@ Defense: practice that never runs out, from code the tests need anyway. Against:
 bug now reaches the player, not only the tests. Phase 5's enumeration test and Deep review stand
 between them, and phase 14 adds tests over thousands of seeded deals (`PLAN.md`). Template
 explanations read flatter than written ones.
+
+As built (phases 14 and 15, 2026-10-05): the dealers are `app/src/drills/`, and every key is
+computed. The tab lists all five kinds, open or locked with the unit that opens it, and one
+button deals a mixed set of ten from the open kinds. The squid thinks, cheers, is sad, and is
+happy at the end, as in a review. The set hides the heart count. It does not appear in the
+review: a dealt exercise has no stored id to miss (`game/session.ts`).
 
 ## 9. Rules that survive unchanged
 
@@ -687,6 +754,13 @@ later path that lets a player jump ahead.
 
 Above the path, a bar shows the streak (`streak_flame`), XP (`xp_bolt`), lives (`lives_heart`)
 and gems (`gem`), each with its number (`assets/icons/ui/`).
+
+As built (phase 8, 2026-10-05): a chest is faded while its boss is unpassed and drawn at full
+strength from the pass on, whether or not it is opened yet; the table above leaves the state
+between pass and opening open. The boss stop is captioned "Beat Ace" and the review "Review with
+Kicker", both from `content/cast.ts`, and each lesson stop carries its title from the outline.
+The stops swing left and right of the centre line. On iPadOS 26 the native tabs draw at the top
+of the screen.
 
 ### 10.2 Dials added by this design
 
@@ -754,6 +828,18 @@ review (`PLAN.md`, phase 5). The preflop chart gets its own Deep review (`PLAN.m
 | No finished lesson yet on this local day | fish, at the top of the path | `sleep` |
 
 The pose names and the 18 files come from `tools/build_mascots.py:336-337`.
+
+As built (phase 8, 2026-10-05): the table's last row is drawn at the top of the Learn path, and
+the fish shows `happy` once a lesson is finished that day; the table does not say what the fish
+does then, so that was the build's choice. A player with no progress at all sees the sleeping
+fish with a welcome line in place of the nap line (the empty state of rule U4). The Profile and
+Practice tabs, empty until phases 11 and 15, show the fish and the squid in `think`.
+
+As built (phase 10, 2026-10-05): the boss shows `think` beside each exercise, `sad` at a right
+answer and `smug` at a wrong one, then `sad` at a pass and `smug` at a fail. The chest shows the
+squid `happy` beside the closed chest and `cheer` beside the gem once it is opened; there is no
+open-chest art, so the gem replaces the chest. The review's squid shows `think`, `cheer`, `sad` and
+`happy` as the lesson's fish does.
 
 ### 10.6 The art in the app
 
