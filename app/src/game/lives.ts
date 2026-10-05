@@ -29,7 +29,7 @@ export function nextLifeAt(state: PlayerState, now: Date): Date | null {
 
 export function spendLife(state: PlayerState, now: Date): PlayerState {
   const settled = settleLives(state, now);
-  if (settled.lives === 0) return settled;
+  if (DIALS.devUnlimitedLives || settled.lives === 0) return settled;
   const livesClock = settled.lives >= DIALS.maxLives ? now.getTime() : settled.livesClock;
   return { ...settled, lives: settled.lives - 1, livesClock };
 }
@@ -45,6 +45,7 @@ export function refillLives(state: PlayerState, now: Date): RefillOutcome {
 // D8: at 0 lives, lessons and the boss close; the review, practice (D21) and the placement
 // check (D20) cost no lives and stay open.
 export function isOpenAtLives(kind: SessionKindForLives, state: PlayerState, now: Date): boolean {
+  if (DIALS.devUnlimitedLives) return true;
   if (kind === "lesson" || kind === "boss") return livesAt(state, now) > 0;
   return true;
 }

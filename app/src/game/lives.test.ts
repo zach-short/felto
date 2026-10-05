@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { isOpenAtLives, livesAt, nextLifeAt, refillLives, spendLife } from "@/game/lives";
 import { freshState } from "@/game/player-state";
@@ -49,5 +49,22 @@ describe("the life refill (D8)", () => {
 
   it("is refused while lives are full", () => {
     expect(refillLives({ ...freshState(t0), gems: 40 }, t0)).toEqual({ ok: false, reason: "lives-full" });
+  });
+});
+
+describe("the dev dial devUnlimitedLives", () => {
+  it("spends no life and keeps lessons and the boss open at 0 lives", async () => {
+    vi.resetModules();
+    vi.doMock("@/config/dials", async (importOriginal) => {
+      const original = await importOriginal<typeof import("@/config/dials")>();
+      return { DIALS: { ...original.DIALS, devUnlimitedLives: true } };
+    });
+    const lives = await import("@/game/lives");
+    const state = freshState(t0);
+    expect(lives.spendLife(state, t0).lives).toBe(5);
+    const empty = { ...state, lives: 0 };
+    expect(lives.isOpenAtLives("lesson", empty, t0)).toBe(true);
+    expect(lives.isOpenAtLives("boss", empty, t0)).toBe(true);
+    vi.doUnmock("@/config/dials");
   });
 });

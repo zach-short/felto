@@ -9,6 +9,10 @@ export const DIALS = {
   maxLives: 5,
   lifeRegainHours: 4,
   lifeRefillGems: 20,
+  // Temporary, for building with no users and no release: a wrong answer costs no heart and
+  // nothing closes at 0. Set it to false, or delete it with its two checks in game/lives.ts,
+  // before any build that real players get.
+  devUnlimitedLives: true,
   exercisesPerLesson: 10,
   xpPerRightAnswer: 10,
   lessonsPerUnit: 5,
