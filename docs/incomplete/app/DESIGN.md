@@ -427,6 +427,15 @@ and "Out of hearts for now.", without the refill, since the session already does
 Replaying a finished lesson also gives XP and streak again; that was item 8's rule and is left for
 Zach to decide.
 
+As built (unit stories phase 1, board item 22, 2026-10-05): the amendment at the top of this
+decision is built, so its words "not yet built" are no longer true. In the lessons of
+`DIALS.dealtLessons` (`hands-3` and `hands-5`) and in every boss, each exercise of a dealable kind
+is replaced in its place by a fresh deal of the same kind (`app/src/game/dealt-slots.ts`,
+`withDealtSlots`). The boss still draws its ten from the unit's fifty with `drawBoss`, and a
+concept exercise is played as written. A wrong dealt answer spends a heart and is not saved for
+the review (`app/src/game/session.ts`, `recordAnswer`). Details are under `US-1` to `US-3` in
+`docs/incomplete/unit-stories/DESIGN.md`, and in `HANDOFF.md` step 28.
+
 ### D9. Mascot roles
 
 Proposed 2026-10-05, recommended. Answer: accepted, 2026-10-05 (the GATE 2 reply

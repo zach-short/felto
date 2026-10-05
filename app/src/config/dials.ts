@@ -43,4 +43,9 @@ export const DIALS = {
   // D20
   placementSize: 10,
   placementPassRight: 8,
+
+  // unit-stories
+  // US-1 and US-3 (docs/incomplete/unit-stories/DESIGN.md): the lessons that deal fresh hands
+  // into their drill slots each time they open
+  dealtLessons: ["hands-3", "hands-5"],
 } as const;
