@@ -6,7 +6,9 @@ import { answerToRecord, sessionEnd } from "@/components/lesson/session-end";
 import { performCheck, performContinue } from "@/components/lesson/session-steps";
 import { PATH_OUTLINE } from "@/components/path/path-outline";
 import type { Exercise } from "@/content/schema";
+import { DIALS } from "@/config/dials";
 import { useAnswerFeedback } from "@/feedback/use-answer-feedback";
+import { useSound } from "@/feedback/use-sound";
 import { bossPasses } from "@/game/boss";
 import { livesAt } from "@/game/lives";
 import { usePlayer } from "@/storage/use-player";
@@ -17,6 +19,7 @@ import { usePlayer } from "@/storage/use-player";
 export function useLessonRun(session: Session, start = 0, pick: number | null = null) {
   const { state, actions } = usePlayer();
   const feedback = useAnswerFeedback();
+  const play = useSound();
   const [run, dispatch] = useReducer(runStep, { ...RUN_START, index: start, choice: pick });
   const movedOnFrom = useRef(-1);
   const checkedFor = useRef(-1);
@@ -35,7 +38,12 @@ export function useLessonRun(session: Session, start = 0, pick: number | null = 
       },
       showWords: (shown: Exercise) => setFeedbackWords({ answer: answerLabel(shown), explanation: shown.explanation }),
       playRight: feedback.right,
-      playWrong: feedback.wrong,
+      // Game feel phase 4: in a session that costs lives a wrong answer has just spent a heart
+      // (D8), so the heart's sound plays with the wrong answer's; it starts a third below it
+      playWrong: () => {
+        feedback.wrong();
+        if (costsLives(session)) play(DIALS.heartSound);
+      },
     });
   const moveOn = () =>
     performContinue(run, size, movedOnFrom, {

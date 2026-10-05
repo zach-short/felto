@@ -3,6 +3,8 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Art } from "@/art/art";
 import { heartsLabel } from "@/components/lesson/hearts-label";
 import { LessonProgress } from "@/components/lesson/lesson-progress";
+import { MotionView } from "@/motion/motion-view";
+import { useDrop } from "@/motion/use-drop";
 import { MIN_STAT_ICON, SPACE, TYPE } from "@/theme/tokens";
 import { useTheme } from "@/theme/use-theme";
 
@@ -13,9 +15,11 @@ type LessonHeaderProps = {
   onLeave: () => void;
 };
 
-// The top of the lesson: a way out, the progress bar and the hearts left (D8)
+// The top of the lesson: a way out, the progress bar and the hearts left (D8). Game feel phase 4:
+// the heart drops for a moment when a wrong answer spends one.
 export function LessonHeader({ done, lives, onLeave }: LessonHeaderProps) {
   const { colours } = useTheme();
+  const drop = useDrop(lives);
   return (
     <View style={styles.header}>
       <Pressable onPress={onLeave} accessibilityRole="button" accessibilityLabel="Leave the lesson" hitSlop={SPACE.md}>
@@ -24,7 +28,9 @@ export function LessonHeader({ done, lives, onLeave }: LessonHeaderProps) {
       <LessonProgress done={done} colour={colours.right} trackColour={colours.line} />
       {lives === null ? null : (
         <View style={styles.lives} accessible accessibilityLabel={heartsLabel(lives)}>
-          <Art name="lives_heart" width={MIN_STAT_ICON} />
+          <MotionView style={drop}>
+            <Art name="lives_heart" width={MIN_STAT_ICON} />
+          </MotionView>
           <Text style={[styles.count, { color: colours.text }]}>{lives}</Text>
         </View>
       )}

@@ -1,14 +1,19 @@
-import { BottomSheet, Column, RNHostView } from "@expo/ui";
 import { StyleSheet, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Mascot } from "@/art/mascot";
 import type { Pose } from "@/art/names";
 import { PrimaryButton } from "@/components/button/primary-button";
+import { useSheetFocus } from "@/components/lesson/use-sheet-focus";
 import { DIALS } from "@/config/dials";
 import type { CastRole } from "@/content/cast";
 import { useHaptics } from "@/feedback/use-haptics";
 import { useSound } from "@/feedback/use-sound";
-import { ART_SCALE, LINE_HEIGHT, SPACE, TYPE } from "@/theme/tokens";
+import { MotionView } from "@/motion/motion-view";
+import { useBounce } from "@/motion/use-bounce";
+import { useSheetRise } from "@/motion/use-sheet-rise";
+import { useTilt } from "@/motion/use-tilt";
+import { ART_SCALE, LINE_HEIGHT, SHEET_RADIUS, SPACE, TYPE } from "@/theme/tokens";
 import { useColumnWidth } from "@/theme/use-column-width";
 import { useTheme } from "@/theme/use-theme";
 
@@ -19,48 +24,61 @@ type FeedbackSheetProps = {
   answer: string;
   explanation: string;
   onContinue: () => void;
-  // The sheet closed without its button: a swipe, or Android's back button (session-steps.ts)
-  onDismiss: () => void;
   host?: CastRole;
 };
 
-// DESIGN.md 10.3: the answer feedback is a native sheet over the lesson. 10.5: the fish cheers a
-// right answer and is sad at a wrong one. D10: the warm register. GF-2: its Continue is the
-// primary button, so it is drawn inside the hosted React Native view with the words.
-export function FeedbackSheet({ shown, right, answer, explanation, onContinue, onDismiss, host = "fish" }: FeedbackSheetProps) {
+// DESIGN.md 10.3 made the answer feedback a native sheet; Zach replaced it on 2026-10-05 (board
+// item 29, an amendment of D2 under GF-2) with this view of the app's tokens, which rises on the
+// spring of PLAN.md section 3. It is drawn over the lesson by LessonFrame's overlay and closes only
+// by its Continue, or by Android's back button, which asks to leave (useHardwareBack). 10.5: the
+// fish cheers a right answer and is sad at a wrong one, and GF-6 bounces or tilts it once the sheet
+// is up. D10: the warm register. The sheet pads by the bottom inset itself, so its Continue clears
+// Android's gesture bar (finding (b) of HANDOFF steps 29 and 30).
+export function FeedbackSheet({ shown, right, answer, explanation, onContinue, host = "fish" }: FeedbackSheetProps) {
   const { colours } = useTheme();
   const column = useColumnWidth();
+  const insets = useSafeAreaInsets();
   const buzz = useHaptics();
   const play = useSound();
+  const rise = useSheetRise(shown);
+  const heading = useSheetFocus(shown);
+  const bounce = useBounce(shown && right, DIALS.sheetRiseMs);
+  const tilt = useTilt(shown && !right, DIALS.sheetRiseMs);
+  const edges = { paddingBottom: insets.bottom + SPACE.md, paddingLeft: insets.left, paddingRight: insets.right };
   return (
-    <BottomSheet isPresented={shown} onDismiss={onDismiss} containerColor={colours.surface}>
-      <Column>
-        <RNHostView matchContents>
-          <View style={[styles.sheet, { width: column }]}>
-            <View style={styles.body}>
+    <MotionView
+      onLayout={rise.onLayout}
+      pointerEvents={shown ? "auto" : "none"}
+      accessibilityViewIsModal={shown}
+      accessibilityElementsHidden={!shown}
+      importantForAccessibility={shown ? "auto" : "no-hide-descendants"}
+      style={[styles.sheet, edges, { backgroundColor: right ? colours.rightSoft : colours.wrongSoft }, rise.style]}
+    >
+      <View style={[styles.content, { width: column }]}>
+        <View style={styles.body}>
+          <MotionView style={bounce}>
+            <MotionView style={tilt}>
               <Mascot character={host} pose={feedbackPose(host, right)} width={column * ART_SCALE.sheetMascot} />
-              <View style={styles.words}>
-                <Text style={[styles.heading, { color: right ? colours.right : colours.wrong }]}>
-                  {right ? "Nice read!" : "So close."}
-                </Text>
-                {/* D10's line is "So close. It was {answer}.", but an answer label is a capitalised
-                    phrase ("Player 1 wins"), which reads badly mid-sentence, so it gets its own line */}
-                {right ? null : (
-                  <Text style={[styles.answer, { color: colours.text }]}>{`The answer: ${answer}`}</Text>
-                )}
-                <Text style={[styles.explanation, { color: colours.text }]}>{explanation}</Text>
-              </View>
-            </View>
-            <PrimaryButton
-              label="Continue"
-              onPress={onContinue}
-              pressHaptic={() => buzz(DIALS.pressHaptic)}
-              pressSound={() => play(DIALS.pressSound)}
-            />
+            </MotionView>
+          </MotionView>
+          <View style={styles.words}>
+            <Text ref={heading} accessibilityRole="header" style={[styles.heading, { color: right ? colours.right : colours.wrong }]}>
+              {right ? "Nice read!" : "So close."}
+            </Text>
+            {/* D10's line is "So close. It was {answer}.", but an answer label is a capitalised
+                phrase ("Player 1 wins"), which reads badly mid-sentence, so it gets its own line */}
+            {right ? null : <Text style={[styles.answer, { color: colours.text }]}>{`The answer: ${answer}`}</Text>}
+            <Text style={[styles.explanation, { color: colours.text }]}>{explanation}</Text>
           </View>
-        </RNHostView>
-      </Column>
-    </BottomSheet>
+        </View>
+        <PrimaryButton
+          label="Continue"
+          onPress={onContinue}
+          pressHaptic={() => buzz(DIALS.pressHaptic)}
+          pressSound={() => play(DIALS.pressSound)}
+        />
+      </View>
+    </MotionView>
   );
 }
 
@@ -72,7 +90,17 @@ function feedbackPose(host: CastRole, right: boolean): Pose {
 }
 
 const styles = StyleSheet.create({
-  sheet: { gap: SPACE.md },
+  sheet: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    alignItems: "center",
+    paddingTop: SPACE.lg,
+    borderTopLeftRadius: SHEET_RADIUS,
+    borderTopRightRadius: SHEET_RADIUS,
+  },
+  content: { gap: SPACE.md },
   body: { flexDirection: "row", alignItems: "center", gap: SPACE.md, paddingBottom: SPACE.sm },
   words: { flex: 1, gap: SPACE.xs },
   heading: { fontSize: TYPE.heading, fontWeight: "800" },

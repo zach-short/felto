@@ -307,6 +307,28 @@ back. It draws Check and Continue in the lesson loop, including the feedback she
 `docs/conventions-typescript.md` holds the divergence. The haptic and sound are props left for
 phases 2 and 3; the button plays neither yet.
 
+*Amendment, 2026-10-05 (Zach, in answer to board item 29, `PLAN.md` phase 4):* the answer feedback
+sheet and the lesson progress bar stop being native too. Both were native by `D2` (`DESIGN.md`
+10.3 of the app named SwiftUI's `ProgressView`, Compose's `LinearProgressIndicator` and the
+`@expo/ui` `BottomSheet`). Zach's reason, in his words as relayed for the item: he wants all buttons,
+toggles and similar controls to carry the app's tokens, and the native `@expo/ui` components do not
+match the native look. This amendment covers those two views only. Profile's switches, the time
+picker, the out-of-lives sheet and every other native control stay native until an item names them
+(`PLAN.md` BD-G24 to BD-G30; registry entry Z6 of `docs/conventions-typescript.md`). Defense: the
+sheet can now rise on the spring of `PLAN.md` section 3, carry the right and wrong colours, and pad
+itself above Android's gesture bar; the bar can fill after each answer. Against: the two platforms
+now draw both the same, and the screen-reader behaviour the native sheet gave for free (focus moved
+into it, the lesson behind it hidden) is written by hand (`use-sheet-focus.ts`, `LessonFrame`'s
+`overlayModal`), so a later change can break it with no gate to say so. The swipe that closed the
+native sheet is gone: the sheet closes by Continue, and on Android the back button asks to leave as
+before (BD-G24).
+
+*As built, 2026-10-05 (board item 29):* the sheet is `app/src/components/lesson/feedback-sheet.tsx`,
+an edge-to-edge view on the soft right or wrong colour with rounded top corners, drawn over the
+lesson by `LessonFrame`'s `overlay`; the bar is `app/src/components/lesson/lesson-progress.tsx`, a
+rounded track with a fill in the right colour that grows over `progressFillMs`. Seen on the iPhone
+17 simulator, light and dark. Not seen on Android (`PLAN.md` phase 4 header).
+
 ### GF-3. A haptic vocabulary and a Haptics switch
 
 Decided 2026-10-05 (Zach: "Yes, add the switch"). Haptics grow from one buzz to a small set
@@ -333,6 +355,12 @@ label only (BD-G16). Seen on the iPhone 17 simulator and the `Pixel_9` emulator,
 on and off; on each, the save already on the device loaded as version 3 with its progress. Not felt: a simulator has no haptics, and no one has held a phone
 with this build.
 
+*As built, 2026-10-05 (board item 29, `PLAN.md` phase 4):* choosing an option gives the selection
+tick (dial `selectHaptic`). The six answer and ending moments now go through the vocabulary, so
+`app/src/feedback/haptics.ts` is the one importer of `expo-haptics`: success for a right answer, a
+finish, a boss pass and a chest, and the rigid tap for a wrong answer and for a boss fail, which
+before gave the error buzz (BD-G25). Not felt.
+
 ### GF-4. Four unit colours and colours for moments
 
 Decided 2026-10-05 (Zach: "Four unit colours"). Tokens, each with a light and a dark value
@@ -341,6 +369,13 @@ pass, boss fail). Whether a coloured path node comes from a longer import swap t
 (`app/src/art/colour-swap.json`) or a change to `tools/build_icons.py` is decided at the start of
 the path phase, with the result written as a `BD` in the plan before any art changes. A generator
 change follows `docs/conventions-python.md`, never a hand edit of an SVG.
+
+*As built, 2026-10-05 (board item 29):* the unit colours reach a screen for the first time. Zach
+chose on 2026-10-05: a chosen answer row takes its unit's colour in a session of one unit (a
+lesson, a boss or a review) and the neutral accent in a practice set or the placement check.
+`app/src/components/lesson/session-colour.ts` finds the unit (`sessionUnit`, `chosenColour`, with
+`session-colour.test.ts`); the neutral accent is the existing `accent` token, which is unit 1's blue
+in light mode (BD-G26). The colour is the chosen row's border and raised edge (BD-G27).
 
 ### GF-5. Six new sound effects, from the generator
 
@@ -365,12 +400,22 @@ gate (`PLAN.md` BD-G19). `tap` is the press sound of Check and Continue, through
 played all six on the Mac on 2026-10-05 and answered "theyre fine ill update them later", so they
 stand as built until he changes them. Not yet heard on a phone.
 
+*As built, 2026-10-05 (board item 29):* `option_select` plays when an option is chosen (dial
+`selectSound`), and `heart_lost` plays with `answer_wrong` when a wrong answer spends a heart, in a
+lesson or a boss only (dial `heartSound`, BD-G28). Not heard: an agent cannot hear them, and no one
+has played them in the app.
+
 ### GF-6. Character through transforms on the existing poses
 
 Decided 2026-10-05, a recommendation Zach did not overrule. An idle bob, a bounce on right, a tilt
 on wrong, a squash on the finish screen, and mascots on more screens, all by moving the existing
 poses. No new art, no new poses (`CLAUDE.md`: generators only, `assets/higgsfield/` untouched).
 `Mascot` stays the one component (`D4`), so Rive replaces its body later.
+
+*As built, 2026-10-05 (board item 29):* the bounce on right and the tilt on wrong are on the
+feedback sheet's mascot, which already shows the cheer or sad pose, and start once the sheet is up
+(BD-G23). `Mascot` did not change: a `MotionView` around it carries the movement. The idle bob and
+the squash wait for later phases.
 
 ### GF-7. Built by moment, answer loop first
 
@@ -381,6 +426,11 @@ then the finish, chest and boss screens, then the path, then Learn, Profile and 
 
 Decided 2026-10-05, a consequence of the above. When the phone asks for reduced motion, bounces,
 sparkles and loops are skipped and fades stay. No screen needs motion to be understood.
+
+*As built, 2026-10-05 (board item 29):* in the answer loop, reduced motion skips the row's bounce
+and shake, the mascot's bounce and tilt, and the heart's drop. It keeps the colours, the right
+answer's flash (a fade), and three movements that show a change of state: the chosen row's lift,
+the sheet's rise and the bar's fill (BD-G22). Not seen with Reduce Motion on.
 
 ### GF-9. Photo features are parked
 

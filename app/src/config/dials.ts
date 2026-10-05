@@ -60,6 +60,28 @@ export const DIALS = {
   // GF-5: the effect a press plays, named from art/sounds.ts, so a name that is not an effect fails
   // the typecheck where it is played (the reason of BD-G18)
   pressSound: "tap",
+  // Game feel phase 4, the answer loop (board item 29). Values the plan's table does not give are
+  // proposed here, to be set on the phone. A choice row rests on an edge of its border colour, and
+  // the chosen row's face rises by chooseLift above it
+  choiceEdge: 4,
+  chooseLift: 3,
+  liftMs: 120,
+  // The right answer's row flashes the right colour over its face, and fades back
+  flashOpacity: 0.35,
+  flashMs: 320,
+  // The host tilts its head on a wrong answer: out, a smaller swing back, then rest
+  tiltDegrees: 8,
+  tiltMs: 360,
+  // The heart in the header drops and shrinks for a moment when a heart is lost
+  heartDropDistance: 6,
+  heartDropScale: 0.8,
+  heartDropMs: 300,
+  // A damping ratio of 1 or more stops the sheet's spring from overshooting its resting place
+  sheetRiseDamping: 1,
+  progressFillMs: 300,
+  // The touch and the effect of choosing an option, and the effect of a lost heart (GF-3, GF-5)
+  selectSound: "option_select",
+  heartSound: "heart_lost",
 
   // D17: every screen draws in a centred column at most this wide, in points
   columnMaxWidth: 640,
