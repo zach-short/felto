@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 270 270" width="270" height="270">
+<circle id="ring_track" cx="130" cy="128" r="108" fill="none" stroke="#DDE1EC" stroke-width="12"/>
+<circle id="ring_progress" cx="130" cy="128" r="108" fill="none" stroke="#FFC83A" stroke-width="12" stroke-linecap="round" stroke-dasharray="407.2 678.6" transform="rotate(-90 130 128)"/>
+<g id="face"><circle transform="translate(0.00 0.00)" cx="130" cy="128" r="80" fill="#2F7BF0"/></g>
+<ellipse id="gloss" cx="96" cy="82" rx="22" ry="11" transform="rotate(-38 96 82)" fill="#fff" opacity="0.55"/>
+<g id="glyph" transform="translate(130 130)"><path d="M0.0 -34.0 L8.8 -12.1 L32.3 -10.5 L14.3 4.6 L20.0 27.5 L0.0 15.0 L-20.0 27.5 L-14.3 4.6 L-32.3 -10.5 L-8.8 -12.1Z" fill="#FBF4EA" stroke="#FBF4EA" stroke-width="8" stroke-linejoin="round"/></g>
+</svg>

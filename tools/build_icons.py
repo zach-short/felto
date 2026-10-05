@@ -17,7 +17,7 @@ import os
 from common import CREAM, SHADOW, ext, gloss, sector, stroke, svg, tf, write
 
 OUT = os.path.join(os.path.dirname(__file__), "..", "assets", "icons")
-FONT = "'Arial Rounded MT Bold','Helvetica Neue',Arial,sans-serif"
+FONT = "'FeltoRank','Arial Rounded MT Bold','Helvetica Neue',Arial,sans-serif"
 
 
 def solid(sil, face, dark, dx=10, dy=14, shadow=True):
@@ -255,10 +255,11 @@ NODE_STATES = {
 NR = 80
 
 
-def node(face, dark, gcol, gshadow, glyph, ring=None):
+def node(face, dark, gcol, gshadow, glyph, ring=None, arc=True):
     """Same node size in every state. The current node has a progress ring
     around it, so it gets a larger canvas and no hard shadow (the ring
-    would otherwise sit under the shadow)."""
+    would otherwise sit under the shadow). arc=False leaves the progress arc
+    out, so the app can draw it from the player's real progress."""
     if ring is None:
         size, cx, cy = 230, 106, 98
     else:
@@ -269,11 +270,12 @@ def node(face, dark, gcol, gshadow, glyph, ring=None):
         r = 108
         circ = 2 * math.pi * r
         o.append(f'<circle id="ring_track" cx="{cx}" cy="{cy}" r="{r}" fill="none" stroke="#DDE1EC" stroke-width="12"/>')
-        o.append(
-            f'<circle id="ring_progress" cx="{cx}" cy="{cy}" r="{r}" fill="none" stroke="#FFC83A" stroke-width="12" '
-            f'stroke-linecap="round" stroke-dasharray="{circ * ring:.1f} {circ:.1f}" '
-            f'transform="rotate(-90 {cx} {cy})"/>'
-        )
+        if arc:
+            o.append(
+                f'<circle id="ring_progress" cx="{cx}" cy="{cy}" r="{r}" fill="none" stroke="#FFC83A" stroke-width="12" '
+                f'stroke-linecap="round" stroke-dasharray="{circ * ring:.1f} {circ:.1f}" '
+                f'transform="rotate(-90 {cx} {cy})"/>'
+            )
     if ring is None:
         o.append(solid(sil, face, dark, 9, 15))
     else:  # current node: flat disc inside the ring, no depth edge, no shadows
@@ -286,20 +288,28 @@ def node(face, dark, gcol, gshadow, glyph, ring=None):
 
 
 # ----------------------------------------------------------------- UI
-def ui_flame():
+ICE, ICE_DEPTH = "#38B6F5", "#0E6FB0"
+ICE_LIGHT, ICE_PALE = "#7FD3FF", "#A6E3FF"
+
+
+def ui_flame(face="#FF6A1A", dark="#C5360E", mid="#FFA81E", inner="#FFE066"):
     outer = "M80 8 C100 42 140 64 140 114 C140 152 114 182 80 182 C46 182 20 152 20 114 C20 86 40 70 48 46 C56 62 64 66 72 66 C64 44 68 26 80 8Z"
     sil = lambda f, x, y: f'<path {tf(x, y)} d="{outer}" fill="{f}"/>'
-    o = [solid(sil, "#FF6A1A", "#C5360E", 10, 12)]
+    o = [solid(sil, face, dark, 10, 12)]
     o.append(
         '<g transform="translate(80 182) scale(.76) translate(-80 -182)">'
-        f'<path d="{outer}" fill="#FFA81E"/></g>'
+        f'<path d="{outer}" fill="{mid}"/></g>'
     )
     o.append(
         '<g transform="translate(80 182) scale(.5) translate(-80 -182)">'
-        f'<path d="{outer}" fill="#FFE066"/></g>'
+        f'<path d="{outer}" fill="{inner}"/></g>'
     )
     o.append(gloss(46, 124, 9, 20, 12, 0.55))
     return svg(190, 210, "\n".join(o))
+
+
+def ui_freeze():
+    return ui_flame(ICE, ICE_DEPTH, ICE_LIGHT, ICE_PALE)
 
 
 def ui_bolt():
@@ -351,6 +361,7 @@ def ui_chest():
 
 UI_ICONS = {
     "streak_flame": ui_flame,
+    "streak_freeze": ui_freeze,
     "xp_bolt": ui_bolt,
     "lives_heart": ui_heart,
     "gem": ui_gem,
@@ -369,6 +380,7 @@ def main():
             n += write(OUT, "cards", f"card_{rank}_{suit}", card_face(rank, suit))
     n += sum(write(OUT, "path", f"node_{k}", node(*v)) for k, v in NODE_STATES.items())
     n += write(OUT, "path", "node_current", node(*NODE_STATES["available"], ring=0.6))
+    n += write(OUT, "path", "node_current_base", node(*NODE_STATES["available"], ring=0.6, arc=False))
     for name, fn in UI_ICONS.items():
         n += write(OUT, "ui", name, fn())
     print("wrote", n, "svgs to", os.path.abspath(OUT))
