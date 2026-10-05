@@ -131,7 +131,24 @@ broadways, small pairs).
 
 ### Phase 2: Preflop equity table
 
-Status: `PLANNED`.
+**BUILT 2026-10-05** (board item 36, lane H, on Opus 5.5, in worktree
+`.claude/worktrees/gto-equity`, branch `gto-equity` from `main` at `6caba99`, `HANDOFF.md` step 46;
+the commit is Zach's and pending). Built: `solver/equity.py`, the first numpy file (rule M4 of
+`docs/conventions-python.md`, amended to 1.3.0 the same day); `solver/data/equity.json`, one
+file with a `meta` header, the `hands` order, `E` to six decimals and `W` as integers (351,864
+bytes, SHA-256 `bb81c98be345d83fac13797a1a4bafb87f332bebf56d64f21240a83bac31861f`); and
+`solver/equity_test.py`, standard library only. Method: exact enumeration with suit symmetry, the
+2,598,960 boards in 134,459 classes under the 24 suit permutations, with integer counts, so the
+bound is the rounding, 0.0000005 per cell. Zach chose exact enumeration in chat on 2026-10-05.
+Two runs wrote the same bytes (`cmp`). Deviations from the text below: `W` is stored as counts,
+with the denominator 1,624,350 in the header, where `KEY-SPEC.md` 3.3 defines it divided (a note
+in `KEY-SPEC.md` 7.1 says so); the ten Monte Carlo matchups are in the test, and the five of the
+proof are recorded in step 46. What this phase forces on later phases: (1) item 37 reads `E` and
+`W` from that file with `json` and never reruns `equity.py` unless its source changes; (2) the
+solver tests join the whole-repo gate when the solver lands, Zach's answer of 2026-10-05, and item
+37 asks him whether that is phase 3a or 3b; (3) a run of `equity.py` took 260 to 559 seconds while
+other sessions loaded the Mac to a load average of 50 to 440 (step 46), so solver timings taken
+under that load are not the estimate of `KEY-SPEC.md` 9.
 
 1. `solver/equity.py` writes a 169 by 169 matrix of all-in equity between hand classes, from
    exact enumeration with suit symmetry, or from a sampling run with its error bound stated.

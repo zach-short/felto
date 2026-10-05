@@ -53,8 +53,8 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 | 33 | Game feel phase 8: close out both passes, items 26 to 32 and 46 to 57 (widened 2026-10-05) | `HELD` until items 26 to 32 and 46 to 57 are `DONE` | Sonnet 5 | F | items 26 to 32 and 46 to 57 | `docs/README.md`, `docs/incomplete/game-feel/`, `docs/incomplete/app/DESIGN.md`, `HANDOFF.md`, `CLAUDE.md` (the test counts left to this item, `HANDOFF.md` step 35) |
 | 34 | Flop in Rive: tune the spike rig, then play it on a perfect finish | `IN FLIGHT` (Phase A done, `HANDOFF 34`; Phase B built on branch `lane-g-flop-rive`, `HANDOFF 36`; the `lesson-finish.tsx` wiring waits on item 29) | Sonnet 5 | G | Zach's yes to Phase B; item 29 for `lesson-finish.tsx` | the Rive file in Zach's account; `app/package.json`, `app/bun.lock`, `app/assets/rive/` (new), `app/src/art/` (a new Rive file only), `app/src/config/dials.ts` (block `// game-feel`), `app/src/components/lesson/lesson-finish.tsx` |
 | 35 | GTO trainer phase 1: game spec, schema and feasibility | `DONE: HANDOFF 41` | Fable 5.1 | H | nothing | `docs/incomplete/gto-trainer/KEY-SPEC.md`, `solver/` (schema validator stub), `docs/conventions-rust.md` only if the estimate calls for Rust |
-| 36 | GTO trainer phase 2: preflop equity table | `OPEN` | Opus 5.5 | H | item 35 (`DONE`) | `solver/equity.py`, `solver/equity_test.py`, `solver/data/`, `docs/conventions-python.md` (the M4 amendment for numpy) |
-| 37 | GTO trainer phase 3a: solver core, one spot | `HELD` until item 36 is `DONE` | Fable 5.1 | H | item 36 | `solver/cfr.py`, `solver/best_response.py` |
+| 36 | GTO trainer phase 2: preflop equity table | `DONE: HANDOFF 46` | Opus 5.5 | H | item 35 (`DONE`) | `solver/equity.py`, `solver/equity_test.py`, `solver/data/`, `docs/conventions-python.md` (the M4 amendment for numpy), `.gitignore` (one `__pycache__/` line, Zach's yes 2026-10-05) |
+| 37 | GTO trainer phase 3a: solver core, four tuning spots (one spot until BD-T18) | `OPEN` | Fable 5.1 | H | item 36 (`DONE`) | `solver/cfr.py`, `solver/best_response.py`, `solver/config.py`, new `solver/*_test.py`, `docs/incomplete/gto-trainer/KEY-SPEC.md` sections 7.5 and 12 (the frozen dials and the hash) |
 | 38 | GTO trainer phase 3b: the full tree and convergence | `HELD` until item 37 is `DONE` | Fable 5.1 | H | item 37 | `solver/`, the raw strategy output |
 | 39 | GTO trainer phase 4: key export, validation and containment | `HELD` until item 38 is `DONE` | Opus 5.5, then a Fable 5.1 review | H | item 38 | `app/src/gto/key.ts`, `app/src/gto/data/` |
 | 40 | GTO trainer phase 5: the hand engine | `HELD` until item 35 is `DONE` | Opus 5.5 | I | item 35 (the schema); a fixture key until item 39 | `app/src/gto/` except `key.ts`, `data/` and `grade.ts` |
@@ -1902,6 +1902,104 @@ Not in scope, whoever asks: any solver code (CFR, best response, the tree); any 
 Hand back: the app gate green and unchanged; `python3 -m unittest discover -s solver -p
 '*_test.py'` green; two runs byte-identical; the five-matchup check recorded; then the two
 copyable blocks, with `git add -N` first for the new files.
+
+### 37. Build the solver core and tune the leaf model on its four spots
+
+**Model: Fable 5.1. Lane H. Waits on nothing (item 36 is `DONE: HANDOFF 46`).** Run this on
+Fable 5.1. If the session is on another model, do not start: hand the prompt off
+(`~/.claude/rules/model-routing.md`). A solver that converges to the wrong game compiles, passes
+every gate and teaches a wrong play to the players who notice. Run it in its own worktree if
+another lane is open; it writes under `solver/` and in `KEY-SPEC.md` sections 7.5 and 12 only.
+
+You are picking up felto, a poker-training app. Read, in order: `HANDOFF.md` (Environment, Code
+map, then steps 41 and 46), `docs/incomplete/gto-trainer/KEY-SPEC.md` in full (sections 2, 3 and
+8.2 are this item's contract), `docs/incomplete/gto-trainer/PLAN.md` section 1 (BD-T1 to
+BD-T19), section 3 (the dials) and phases 3a and 3b, `docs/AGENT-PRACTICES.md`, then
+`docs/conventions-python.md` in full (version 1.3.0: rule M4 lets `solver/` import numpy and
+nothing else outside the standard library). Session rules: never run `git commit`, `git push`,
+`git add -A` or `git add .`; print the two copyable blocks at the end (`git add -N` then
+`git add` the exact files you touched, then `git commit` the same files with a short lowercase
+message, with no `Co-Authored-By` line and no "Generated with" line). Talk to Zach in ASD-STE100
+Simplified Technical English. Documents you write have no em dashes and no contractions. Ask
+Zach in chat, in one batch, before any decision that is his.
+
+**Why this exists.** The trainer grades a player against a solved strategy, and that strategy is
+the one part of the effort with no fallback. This item writes the solver and a separate
+best-response check, and proves both on the smallest part of the tree that can fix the leaf
+model's nine dials. A solver can converge fast to the wrong game; the bands of `KEY-SPEC.md` 8.2
+are what tells a right solve from a stable wrong one.
+
+**What is fixed.** Read these; do not relitigate them.
+- The game is `KEY-SPEC.md` sections 2 and 3, frozen 2026-10-05 (BD-T11 to BD-T19): six seats,
+  100 big blinds, the sizes table of 2.3, the 65-node tree of 2.4, the payoffs of 2.5, the leaf
+  model of 3.2 (`s = e − c × e × (1 − e)^k`, the edge rule, the flat tax) and card removal
+  between the two live hands only (3.3).
+- The leaf inputs are `solver/data/equity.json` (step 46), read with `json`. `hands` is `HANDS`
+  of `solver/validate_key.py`; `E[h][g]` (169 by 169, six decimals) is the share of the pot class
+  `h` wins against class `g` over every deal that shares no card; `W[h][g]` (169 by 169,
+  integers) counts the ordered pairs of combinations of `h` and `g` that share no card, so the
+  joint deal probability is `W[h][g] / 1,624,350` and, given `h`, the other class is drawn in
+  proportion to the row `W[h]`. It was made by exact enumeration with suit symmetry; its only
+  error is the rounding, 0.0000005 per cell. Its SHA-256 is the key's `equity_table_sha256`
+  (`KEY-SPEC.md` 7.1, the note of 2026-10-05). Do not rerun `solver/equity.py` unless its
+  source changes; it is deterministic and slow under load (step 46 records its run time).
+- The hands of seats that fold are not dealt (3.3), so from an opener's open decision on, its
+  part of the tree depends on no earlier seat (2.2): the tree reads as five opener subtrees
+  (`UTG`, `HJ`, `CO`, `BTN`, `SB`) that share no hand and no decision. Verify that before you
+  rely on it. The four tuning spots of 3.2 sit in three of them: `BTN` (against `BB`: `c_srp`,
+  `c_3bp_oop`, `c_4bp`; against `SB`: `t_sb`), `CO` (against `BTN`: `t_ip`, `c_3bp`,
+  `c_4bp_oop`) and `SB` (against `BB`: `c_srp_oop`). An opener's open rate depends on every
+  defender behind it, so a band on an open rate means something only when that opener's whole
+  subtree is solved.
+- Phase 3a tunes on four spots, not the plan's one (the phase 1 header in `PLAN.md`, BD-T18).
+  The dials, their starting values and their ranges are `KEY-SPEC.md` 3.2 and the table in
+  section 9; they live in `solver/config.py` (`PLAN.md` section 3). `k` is reported at 1 and 2.
+- The stop rule is `gtoExploitabilityBb`, 0.005 bb per hand for every seat (`KEY-SPEC.md` 7.1),
+  and exploitability must keep falling as the iterations double (`PLAN.md` phase 3a).
+- The best-response check is written apart from the solver, so a bug in one cannot hide in the
+  other (`PLAN.md` phase 3a, step 3). Tests are built from hand-worked cases, never from the
+  solver's own output.
+- One iteration of the full tree costs about 10 ms on this Mac (`KEY-SPEC.md` 9). Other
+  sessions can load the Mac hard: on 2026-10-05 a load average of 50 to 440 and 8 GB of swap
+  made numpy steps 10 to 50 times slower (step 46). Keep arrays small and time on a quiet Mac.
+- The solver tests run with `python3 -m unittest discover -s solver -p '*_test.py'`, which
+  finds every `*_test.py` in `solver/`; `equity_test.py` is part of it. Zach chose on 2026-10-05
+  that this command joins the whole-repo gate when the solver lands.
+
+Do these, in order:
+1. **Write `solver/config.py`.** The solver dials of `PLAN.md` section 3 and `KEY-SPEC.md` 9,
+   each with its starting value and its range from 3.2, so the tuning reads one place.
+2. **Write `solver/cfr.py`.** CFR+ over the opener subtrees that hold the four spots, leaves
+   valued from `E`, `W` and `KEY-SPEC.md` 2.5 and 3; the strategy and the EV per node and hand in
+   the shape the key needs (7.1), so phase 3b only widens the tree.
+3. **Write `solver/best_response.py` and the tests.** A best response that reads a strategy and
+   returns each seat's gain in bb per hand. Tests in `solver/*_test.py` from cases worked by hand:
+   one leaf payoff from 2.5 and 3.2 per pot type, and a toy tree with a known equilibrium.
+4. **Tune and freeze.** Move the nine dials inside their ranges until every band of 8.2 for the
+   solved subtrees holds, and the big blind's range-level realization against the button sits in
+   0.65 to 0.90. Report the results at `k` 1 and 2. Write the frozen values into
+   `solver/config.py` and `KEY-SPEC.md` 12, recompute the hash with `spec_hash` in
+   `solver/validate_key.py`, and record it in 7.5 with the date.
+5. **Record it.** Append the next free `HANDOFF.md` step (read the file for the number), add the
+   new files to the code map, set the plan's phase 3a header to `BUILT` with the date, mark this
+   row `DONE: HANDOFF n`, write item 38's prompt (phase 3b: the full tree and convergence,
+   Fable 5.1) below this one, and flip item 38 to `OPEN`.
+
+Ask before building: (a) whether the solver tests join the whole-repo gate in `CLAUDE.md` and
+`gateCommand` at this item or at item 38, both of which can be read as "when the solver lands";
+(b) if no setting inside the ranges of 3.2 lands every band, which band gives way. A band missed
+is a finding for Zach, never a number tuned away in silence (`KEY-SPEC.md` 8.1). Both are his
+calls, and either answer may be no.
+
+Not in scope, whoever asks: the subtrees of `UTG` and `HJ` and convergence of the whole tree
+(item 38); key export and the app loader (item 39); any file under `app/`; any change to the
+game of sections 2 and 3 other than the frozen dial values; any change to the bands of 8.2; a
+rerun or an edit of `solver/equity.py`.
+
+Hand back: `python3 -m unittest discover -s solver -p '*_test.py'` green; exploitability per
+seat at the end of the run and at half the iterations; a table of every band of 8.2 for the
+solved subtrees with the solved value; the frozen dials and the new hash; then the two copyable
+blocks, with `git add -N` first for the new files.
 
 ## Items 46 to 57: the second game-feel pass
 

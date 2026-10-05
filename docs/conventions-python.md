@@ -19,11 +19,15 @@ governs `tools/` (`docs/incomplete/gto-trainer/PLAN.md`, BD-T3). The validator i
 `hashlib`, `json` and `sys`, so it complies with M4 as written. BD-T3 lets the solver proper
 import numpy; the first file that does so (phase 2 of that plan) must bring a dated amendment to
 M4 that names `solver/` as the one place a third-party import is allowed, and bump this version.
+Board item 36 made that amendment on 2026-10-05 (M4, version 1.3.0) and added two files:
+`solver/equity.py`, which writes the preflop equity table to `solver/data/equity.json` and
+imports numpy, and `solver/equity_test.py`, its tests, which import only the standard library.
 Rules that speak of "a generator" (M1, M2, G1, W1, W2) do not bind a validator, which generates
-nothing; M3, M4, H2, H3, H4, K1 and Y1 to Y3 bind every `.py` file. Read this file in full before
-you write or edit Python here.
+nothing; M3, M4, H2, H3, H4, K1 and Y1 to Y3 bind every `.py` file. `solver/equity.py` writes a
+file, so the generator rules bind it, and its docstring states what it computes and the method
+where M1 asks for the art style. Read this file in full before you write or edit Python here.
 
-Version 1.2.2. Written 2026-10-04 on Opus 5.5 for board item 1 (ledger step 2 in `HANDOFF.md`);
+Version 1.3.0. Written 2026-10-04 on Opus 5.5 for board item 1 (ledger step 2 in `HANDOFF.md`);
 revised 2026-10-05 on Sonnet 5.5 for board item 2 (ledger step 3), which moved the shared code
 into `tools/common.py`, for board item 3 (ledger step 4), which reconciled the line citations,
 for board item 4 (ledger step 8), which named `tools/common.py` in the scope sentence, and
@@ -34,7 +38,10 @@ G1, G3, G4, W1, W2, H2 and Y4 and named it in the scope sentence, and for board 
 Opus 5.5, which moved the sound generator citations that its six new effects shifted and set the
 count in W2 and the scope sentence to twelve; no rule changed. Version 1.2.2 on 2026-10-05 on
 Fable 5.1 for board item 35 (ledger step 41), which named `solver/validate_key.py` in the scope
-paragraph and said which rules bind a file that is not a generator; no rule changed.
+paragraph and said which rules bind a file that is not a generator; no rule changed. Version
+1.3.0 on 2026-10-05 on Opus 5.5 for board item 36 (ledger step 46), which amended rule M4 so that
+`solver/` may import numpy (BD-T3) and named the two new files in the scope paragraph; a rule
+changed.
 Zach answered the open questions on 2026-10-04 and took every recommendation. Those answers are
 cited below as "owner, 2026-10-04".
 
@@ -176,6 +183,36 @@ Incorrect, written for contrast:
 import sys
 sys.path.insert(0, os.path.dirname(__file__))
 from .shared import gloss
+```
+
+*Amended 2026-10-05, version 1.3.0, board item 36 (ledger step 46).* `solver/` may import
+numpy, and it is the one place in the repo that may import a module from outside the standard
+library. The reason is BD-T3 in `docs/incomplete/gto-trainer/PLAN.md`: the solver needs array
+arithmetic at a speed the standard library cannot reach, and it is a development tool whose
+output is committed, so the app never runs it. Import it as `import numpy as np`, the alias the
+numpy documentation sets as the convention (NumPy 2.4 user guide, "NumPy: the absolute basics
+for beginners", "How to import NumPy", read through Context7 on 2026-10-05). numpy is 2.4.3 at `/opt/homebrew/bin/python3`
+(`python3 -c "import numpy; print(numpy.__version__)"`, 2026-10-05). No other third-party module
+is allowed in `solver/`, and none is allowed anywhere else: `tools/` stays standard library only.
+A file in `solver/` that does not need numpy does not import it. `validate_key.py` and
+`equity_test.py` import only the standard library, so the test of the equity table runs on a
+Python with no numpy. The fresh-checkout recipe of `docs/AGENT-PRACTICES.md` Part 6 does not
+check for numpy, because no gated file imports it. Zach chose on 2026-10-05 that the solver tests
+join the whole-repo gate when the solver lands (board item 37 asks him whether that is phase 3a
+or 3b of the plan); the recipe gains a numpy check then, if a gated file needs it.
+
+Correct, the second example, `solver/equity.py:21-28`: the standard library, then numpy, then
+the sibling module by its plain name.
+
+```python
+import itertools
+import json
+import math
+import os
+
+import numpy as np
+
+from validate_key import HANDS
 ```
 
 ## Generation and determinism

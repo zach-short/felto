@@ -402,6 +402,13 @@ Field by field:
   holding that class. A grader treats a decision at a node whose `reach` is below the solver
   dial `reachFloor` (section 9, table) as "the solver never gets here": no EV loss is shown.
 
+Note, 2026-10-05 (board item 36, `HANDOFF.md` step 46): phase 2 writes one file,
+`solver/data/equity.json`, which holds both tables of section 3.3, `E` and `W`.
+`equity_table_sha256` is the SHA-256 of that file's bytes, so it names both. The file of
+2026-10-05 hashes to `bb81c98be345d83fac13797a1a4bafb87f332bebf56d64f21240a83bac31861f`, and
+`python3 solver/equity.py` writes the same bytes again. The file stores `W` as integer counts;
+the deal probability of section 3.3 is `W[h][g] / 1,624,350`, the file's `meta.pairs_total`.
+
 ### 7.2 Node ids
 
 A node id is the history of actions that reaches it, written as `SEAT:action` tokens joined by
