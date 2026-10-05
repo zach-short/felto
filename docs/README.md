@@ -1,0 +1,43 @@
+# Docs index: felto
+
+Every document in the repo has a line here: what it is, whether it is kept current, and the date
+it was last checked against the tree. It is ordered by status first, then by topic
+(`docs/AGENT-PRACTICES.md`, Part 8.2). Written 2026-10-05 for board item 6 and reconciled for
+board item 16 on the same date; the file list was taken with
+`find . -name '*.md' -not -path './.git/*' -not -path './.claude/*' -not -path '*/node_modules/*'`
+excluding the generated `app/ios`, `app/android` and `app/.expo` (13 files). A doc with no line
+here is invisible, so a new doc gets its line in the same change that adds it.
+
+## Open work
+
+Efforts in progress live in `docs/incomplete/<effort>/`. Their files change with every phase.
+
+| Doc | What it is | Kept current? | Checked |
+|---|---|---|---|
+| `docs/incomplete/app/DESIGN.md` | The app: what it is and why, decisions `D1` to `D21` | Yes, by amendment only: a decision is never edited in place | 2026-10-05 |
+| `docs/incomplete/app/PLAN.md` | The order of work for the app: facts, build decisions BD-1 to BD-28, 16 phases on board items 5 to 20 | Yes: each phase sets its own header | 2026-10-05 |
+| `docs/incomplete/app/RUNTIME-PASS.md` | The final, ordered list of what only a person on a device can still check, 47 entries and the decisions that are Zach's | Yes, until Zach has walked it; then the folder is archived (Stage 8) | 2026-10-05 |
+| `docs/incomplete/autopilot-2026-10-05/STATE.md` | The state file of the `/autopilot` run of 2026-10-05, with Zach's answers to `D15` to `D21` | No: a record of that run | 2026-10-05 |
+| `docs/incomplete/autopilot-2026-10-05/RUNDOWN.md` | The report of that run | No: a record of that run. It says items 6 to 20 had no prompts, which was true when it was written and is not true since the prompts were added to `PASSOFF.md` | 2026-10-05 |
+
+## Current
+
+| Doc | What it is | Kept current? | Checked |
+|---|---|---|---|
+| `HANDOFF.md` | The ledger: environment, settled decisions, code map, the step log. Read first | Yes; the step log is append-only | 2026-10-05 |
+| `PASSOFF.md` | The board: what is next, one standalone prompt per item | Yes | 2026-10-05 |
+| `CLAUDE.md` | The router and hazard list every session loads | Yes | 2026-10-05 |
+| `docs/AGENT-PRACTICES.md` | The process standard: how work is scoped, sized, routed, recorded and closed | Yes | 2026-10-05 |
+| `docs/conventions-python.md` | The code standard for every `.py` file (`tools/`), version 1.2.0 | Yes | 2026-10-05 |
+| `docs/conventions-typescript.md` | The code standard for every `.ts` and `.tsx` file under `app/`, version 1.1.0: 21 rules, registry Z1 to Z4, a Known gaps list, real felto examples | Yes | 2026-10-05 |
+| `docs/README.md` | This index | Yes | 2026-10-05 |
+
+## Not kept current
+
+| Doc | What it is | Why it is not current |
+|---|---|---|
+| `PART0-PROMPT.md` | The prompt that adapted the process standard to felto on 2026-10-04 | A one-time prompt. It is gitignored (`.gitignore:2`), and line 4 names a scratchpad path, not the repo (`HANDOFF.md`, Known facts) |
+
+## Standing rules that outlived their doc
+
+None on 2026-10-05: no effort has closed and been archived yet (Part 8.3).

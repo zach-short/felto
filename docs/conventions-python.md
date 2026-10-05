@@ -6,13 +6,21 @@ every `.py` file in the repo. On 2026-10-04 those were `tools/build_icons.py` an
 `tools/common.py`, the shared module that holds the code both generators use (rule H1). `ls tools`
 listed exactly those three, and `find . -name '*.py' -not -path './.git/*'` found no other `.py`
 file in the repo. `tools/common.py` imports only `math` and `os`, and each generator imports it by
-its plain name (`grep -nE '^(import|from)' tools/*.py`, rule M4). Read this file in full before
-you write or edit Python here.
+its plain name (`grep -nE '^(import|from)' tools/*.py`, rule M4). Later on 2026-10-05 board item
+17 added a fourth, `tools/build_sounds.py`, the sound generator. It writes six WAV files to
+`assets/sounds/` and imports only `math`, `os`, `struct` and `wave`; it does not import
+`tools/common.py`, because nothing there draws sound. Where a rule below names "the two
+generators" or "both files", it means the two SVG generators; each rule that also binds the sound
+generator says so. Read this file in full before you write or edit Python here.
 
-Version 1.1.2. Written 2026-10-04 on Opus 5.5 for board item 1 (ledger step 2 in `HANDOFF.md`);
+Version 1.2.0. Written 2026-10-04 on Opus 5.5 for board item 1 (ledger step 2 in `HANDOFF.md`);
 revised 2026-10-05 on Sonnet 5.5 for board item 2 (ledger step 3), which moved the shared code
 into `tools/common.py`, for board item 3 (ledger step 4), which reconciled the line citations,
-and for board item 4 (ledger step 8), which named `tools/common.py` in the scope sentence.
+for board item 4 (ledger step 8), which named `tools/common.py` in the scope sentence, and
+for board item 21 (ledger step 9), which corrected the import bullet under "What the rules rest on",
+and for board item 5 (ledger step 11), which moved the citations that the icon generator change
+shifted, and for board item 17 on Opus 5.5, which brought the sound generator under rules M1,
+G1, G3, G4, W1, W2, H2 and Y4 and named it in the scope sentence.
 Zach answered the open questions on 2026-10-04 and took every recommendation. Those answers are
 cited below as "owner, 2026-10-04".
 
@@ -23,8 +31,8 @@ Every rule has an ID. IDs are never renumbered. A rule that stops applying is ma
 
 Every rule carries an enforcement tag:
 
-- *gate*: the whole-repo gate, followed by `git diff --stat -- assets/icons assets/mascots`,
-  catches a violation.
+- *gate*: the whole-repo gate, followed by
+  `git diff --stat -- assets/icons assets/mascots assets/sounds`, catches a violation.
 - *review*: nothing catches a violation. The rule holds only while each session reads it.
 
 Every rule carries a provenance label:
@@ -48,9 +56,12 @@ retired, not rewritten.
 
 These facts were verified 2026-10-04. A rule that breaks one of them is wrong.
 
-- The generators import only `math` and `os` (`grep -nE '^(import|from)' tools/*.py`).
+- The generators import the standard library and the sibling module `tools/common.py`, and
+  nothing else (`grep -nE '^(import|from)' tools/*.py`, 2026-10-05). Before ledger step 3 they
+  imported only `math` and `os`.
 - The generators are deterministic. The gate ran with exit 0, and
-  `git diff --stat -- assets` was empty afterwards.
+  `git diff --stat -- assets` was empty afterwards. The sound generator joined on 2026-10-05:
+  two runs, one under `PYTHONHASHSEED=7`, gave the same `shasum` for all six WAV files.
 - Python is 3.14.6 at `/opt/homebrew/bin/python3` (`python3 -c "import sys; print(sys.version)"`).
 - The SVGs go into Rive. The mascot layer ids are the rig contract (`tools/build_mascots.py:7-9`).
 
@@ -60,7 +71,10 @@ These facts were verified 2026-10-04. A rule that breaks one of them is wrong.
 
 *review · [OURS]* The style sentence ties the code to the approved Higgsfield reference, and
 the run command lets a reader rebuild the art without opening `CLAUDE.md`. The word
-"highlight" in the example below is a quote from the source and is kept as written.
+"highlight" in the example below is a quote from the source and is kept as written. The sound
+generator's docstring states its sound style the same way, and adds a musical note for each
+effect: its pitches, its timing and its peak (`tools/build_sounds.py:1-30`). An agent cannot hear,
+so those notes are the only description of a sound that a reader can check against the code.
 
 Correct, `tools/build_icons.py:2-9`:
 
@@ -154,7 +168,9 @@ from .shared import gloss
 ### G1. Output depends only on the generator source
 
 *gate · [OURS]* A generator reads no clock, no random source, no environment variable, no
-command-line argument and no input file. Every value in an SVG comes from the source. The
+command-line argument and no input file. Every value in an SVG or a WAV comes from the source.
+The `wave` module writes no date into the header, so a WAV file's bytes depend only on its
+samples. The
 byte-identical rebuild is the only proof that a change touched only what it meant to touch.
 `grep -nE 'set\(|random|time\.|datetime|environ|getenv|argv|listdir|glob|uuid|hash\(|input\(' tools/*.py`
 found nothing on 2026-10-04.
@@ -202,6 +218,11 @@ literals and integer arithmetic are written raw. A raw float writes its full rep
 so `72 * 0.65` reaches `assets/icons/chips/chip_stack_red.svg` as `r="46.800000000000004"`. A
 harmless reordering of the arithmetic can then change the last digit and the art bytes with it.
 
+In the sound generator the fixed precision is the 16-bit sample: a float becomes an integer in
+one place only, `to_frames()`, through `round()` (`tools/build_sounds.py:79-83`). A sample can
+still move by one if the float arithmetic before it is reordered, or on a platform whose `math.sin`
+or `math.exp` (`tools/build_sounds.py:58`) differs in the last bit, so the byte-identical check holds on this Mac and is not proven elsewhere.
+
 Correct, `tools/common.py:28-29`:
 
 ```python
@@ -221,8 +242,10 @@ in the drift register.
 ### G4. A change that should not change the art proves it with an empty diff
 
 *gate · [OURS]* A refactor, a move or a rename in a generator runs the gate, then
-`git diff --stat -- assets/icons assets/mascots`. Any line in that output is a change in the art.
-A change in the art is allowed only when the art was meant to change.
+`git diff --stat -- assets/icons assets/mascots assets/sounds`. Any line in that output is a
+change in the art or the sound. A change there is allowed only when it was meant. Until
+`assets/sounds/` is committed, compare `shasum assets/sounds/*.wav` before and after the run
+instead, because `git diff` does not see an untracked file.
 
 Correct: the gate on 2026-10-04, followed by an empty `git diff --stat -- assets`.
 
@@ -236,6 +259,11 @@ diff. The gate rewrites every SVG in place, so a green gate alone cannot show wh
 *review · [OURS]* One function takes a subfolder, a name and the content, creates the folder
 and writes `<OUT>/<sub>/<name>.svg`. No other code opens a file for writing. One path gives one
 place to count files and one place that keeps output inside `OUT`.
+
+The sound generator has its own `write(name, frames)`, which writes `<OUT>/<name>.wav` through
+the `wave` module and returns 1 (`tools/build_sounds.py:144-151`). It does not use the shared
+`write()`, because that one opens a text file and adds `.svg`. It is the one write path of its
+file, so the rule holds there too.
 
 Correct, `tools/common.py:20-25`. It takes the output folder as its first argument and returns
 1, so `main()` can count (W2):
@@ -259,7 +287,7 @@ Incorrect, the inline write that `tools/build_mascots.py` held before 2026-10-05
 ### W2. `main()` prints the number of files it wrote, counted from the writes
 
 *review · [OURS]* The run line is the quick check that no asset went missing. Both
-files comply since 2026-10-05: icons print 76 and mascots print 18. The two wrong ways were both
+files comply since 2026-10-05: icons print 78 (76 when ledger step 3 made the fix, 78 since board item 5) and mascots print 18. The sound generator, added by board item 17, prints 6 (`tools/build_sounds.py:158`). The two wrong ways were both
 in the repo before then. `tools/build_icons.py` counted with `os.walk` over `OUT`, which also
 counts `assets/icons/preview.html` (77 for 76 SVGs), and never printed it.
 `tools/build_mascots.py` printed a count computed from the tables, so it printed 18 even if a
@@ -290,7 +318,7 @@ function of a fill colour and an offset. The shadow, the depth and the face all 
 calls to it (`tools/build_icons.py:23-30`, `tools/build_mascots.py:25-46`). How the callable is
 built is free: a lambda, a `def` or the `pth()` factory (sanctioned divergence S3). Details
 drawn on a face are not silhouettes. A detail with a one-step darker copy under it, such as
-the card-back emblem (`tools/build_icons.py:196-197`) or the chest lock (`345-346`), is
+the card-back emblem (`tools/build_icons.py:196-197`) or the chest lock (`355-356`), is
 outside this rule.
 
 Correct, `tools/build_icons.py:163-164`:
@@ -311,14 +339,14 @@ o.append('<path d="M98 20 L24 122 H72 L58 198 L140 84 H92 Z" fill="#C9CDE2"/>')
 *review · [OURS]* `solid()` paints the shadow, then the depth, then the face
 (`tools/build_icons.py:23-30`). The caller adds the details after it. Two icons are sanctioned
 exceptions. The current path node draws a flat face with no depth and no shadow, because the
-progress ring would otherwise sit under the shadow (`tools/build_icons.py:258-261`, `279-280`).
+progress ring would otherwise sit under the shadow (`tools/build_icons.py:258-262`, `281-282`).
 The chip stack is a three-quarter view with its own geometry, and it builds its shadow with
 `ext()` directly (`tools/build_icons.py:61-65`, `93`).
 
-Correct, `tools/build_icons.py:292`:
+Correct, `tools/build_icons.py:326`:
 
 ```python
-    o = [solid(sil, "#FF6A1A", "#C5360E", 10, 12)]
+    o = [solid(sil, "#E8252F", "#8E0F1A", 9, 12)]
 ```
 
 Incorrect, written for contrast:
@@ -356,7 +384,7 @@ the parts drawn before it.
 order is the paint order, and `"\n".join(o)` puts one layer on each line of the output.
 Helpers that return a fragment, such as `solid()` and the nested `eyes()`, may build a string.
 
-Correct, `tools/build_icons.py:313-318`:
+Correct, `tools/build_icons.py:323-328`:
 
 ```python
 def ui_heart():
@@ -382,7 +410,7 @@ Incorrect, written for contrast:
 rounds the corners. A stroke in another colour is a feature line or a glyph drawn on the face:
 a pupil, a mouth, a brow (`tools/common.py:10`), a node glyph, the card-back lattice.
 
-Correct, `tools/build_icons.py:307`:
+Correct, `tools/build_icons.py:317`:
 
 ```python
     sil = lambda f, x, y: f'<path {tf(x, y)} d="{d}" fill="{f}" stroke="{f}" stroke-width="10" stroke-linejoin="round"/>'
@@ -420,7 +448,7 @@ Incorrect, the check glyph in `tools/build_icons.py` before 2026-10-05:
 *review · [OURS]* This is the owner policy "tokens only", applied on 2026-10-04 to new code. A
 diff that adds a hex value outside a module-level assignment breaks this rule. The inline
 values that exist on 2026-10-04 stay (owner, 2026-10-04): 36 values on 30 lines in
-`build_icons.py` and 21 values on 15 lines in `build_mascots.py`, counted with Python's `ast`
+`build_icons.py` (28 lines since board item 5 folded the flame colours into parameters; the audit's own count read one lower on both dates) and 21 values on 15 lines in `build_mascots.py`, counted with Python's `ast`
 module. The one inline colour allowed in new code is shine white (C2).
 
 Correct, `tools/build_mascots.py:247-250`:
@@ -442,7 +470,7 @@ Incorrect, `tools/build_mascots.py:303`. `SH_FIN_D` already holds this value:
 
 *review · [OURS]* This is what both files do. `#fff` appears only on shine marks: the gloss
 (`tools/common.py:49`), the chip-stack glint
-(`tools/build_icons.py:122`), the bolt streak (`309`), the pupil glints
+(`tools/build_icons.py:122`), the bolt streak (`319`), the pupil glints
 (`tools/build_mascots.py:111`, `214`) and the glasses glints (`295-296`). Eye whites use the
 named constant `EYE = "#FFFFFF"` (`tools/build_mascots.py:18`).
 
@@ -483,12 +511,12 @@ FISH_DARK, FISH_RED = "#8E0F1A", "#E8252F"
 
 ### I1. Group ids are snake_case; clipPath ids are camelCase and end in `Clip`
 
-*review · [OURS]* This is what both files do. Group ids: `ring_track` (`tools/build_icons.py:271`),
+*review · [OURS]* This is what both files do. Group ids: `ring_track` (`tools/build_icons.py:272`),
 `pupil_l` (`tools/build_mascots.py:110`). ClipPath ids: `backClip` (`tools/build_icons.py:188`),
 `fishClip` (`tools/build_mascots.py:85`), `sqClip` (`175`), `lidClip_l` and `lidClip_r`
 (`115`). The suffixes `_l` and `_r` mean left and right.
 
-Correct, `tools/build_icons.py:271`:
+Correct, `tools/build_icons.py:272`:
 
 ```python
         o.append(f'<circle id="ring_track" cx="{cx}" cy="{cy}" r="{r}" fill="none" stroke="#DDE1EC" stroke-width="12"/>')
@@ -592,10 +620,11 @@ def gloss(x, y, rx=16, ry=8, rot=-35, op=0.55):
 *review · [OURS]* This is the owner policy "functions of roughly 6 to 15 lines", applied on
 2026-10-04. Count from the `def` line to the last line. A function that returns one whole SVG
 (`chip`, `chip_stack`, `card_face`, `card_back`, `node`, the `ui_*` functions, `fish`, `squid`,
-`shark`) is exempt, and so are the helpers nested inside it. The 6 in the policy guides against
+`shark`) is exempt, and so are the helpers nested inside it. In the sound generator a function
+that returns one whole effect (`answer_right` to `chest_open`) is exempt in the same way. The 6 in the policy guides against
 splitting a line or two into a function of its own. The two-line helpers that exist, such as
 `tf` and `ext`, comply. On 2026-10-04 one function broke the 15-line limit: `main` in
-`tools/build_icons.py`, at 19 lines (measured with `ast`). Since 2026-10-05 it is 14.
+`tools/build_icons.py`, at 19 lines (measured with `ast`). Since 2026-10-05 it is 14, and 15 since board item 5 added one write.
 
 Correct, `tools/common.py:53-62`: `sector`, 10 lines.
 
@@ -655,7 +684,7 @@ Correct, `tools/build_icons.py:136-137`:
 # stem overlaps the lobes without a seam.
 ```
 
-Incorrect, `tools/build_icons.py:279`:
+Incorrect, `tools/build_icons.py:281`:
 
 ```python
     else:  # current node: flat disc inside the ring, no depth edge, no shadows
@@ -730,8 +759,9 @@ Incorrect, written for contrast: a split inside an attribute value, with a backs
 ### Y4. A section banner divides each family of assets
 
 *review · [OURS]* A banner is a comment of dashes that ends in the family name in capitals, 70
-to 72 characters long (`tools/build_icons.py:33`, `127`, `204`, `288`;
-`tools/build_mascots.py:49`, `152`, `246`).
+to 72 characters long (`tools/build_icons.py:33`, `127`, `204`, `290`;
+`tools/build_mascots.py:49`, `152`, `246`; `tools/build_sounds.py:53`, `86`, `143`). In the
+sound generator a banner divides the synth helpers, the effects and the output.
 
 Correct, `tools/build_icons.py:33`:
 
@@ -747,7 +777,8 @@ Incorrect, written for contrast:
 
 ## Sanctioned divergence registry
 
-The two generators mirror each other. These are the only sanctioned differences between them.
+The two SVG generators mirror each other. The sound generator mirrors neither, so it is not in
+this registry. These are the only sanctioned differences between the two SVG generators.
 Any other difference is drift. Drift is fixed by a board item, not in passing. A new entry here
 needs a recorded reason and the owner's agreement.
 
@@ -756,7 +787,7 @@ needs a recorded reason and the owner's agreement.
 | S1 | How layers are built | `solid()`, lines 23-30 | `Part` and `shadow_of()`, lines 25-46 | An icon is one silhouette. A mascot is a rig of parts that Rive moves one by one. |
 | S2 | Shadow offset | Calculated from the depth offset, `(dx * 2.1, dy * 1.9)`, line 27 | Set once for each character, lines 95, 194, 285 | One shadow covers every part of a figure, so it is set once for the figure. |
 | S3 | How a silhouette is built | Lambdas and `card_sil` | `pth()`, `fin_sil` and lambdas | L1 fixes the call signature. The construction does not change the output. |
-| S4 | How variants are chosen | Data tables iterated in `main()`, lines 34-41, 247-253, 352-358 | `if` and `elif` for each pose inside the drawing function, lines 133-148, 223-242, 300-332 | Icon variants differ in data. Poses differ in shape. |
+| S4 | How variants are chosen | Data tables iterated in `main()`, lines 34-41, 247-253, 362-369 | `if` and `elif` for each pose inside the drawing function, lines 133-148, 223-242, 300-332 | Icon variants differ in data. Poses differ in shape. |
 
 ## Drift register
 
@@ -775,7 +806,7 @@ code that has since moved or changed, so they do not match the files now.
 | I3 | The docstring at `tools/build_mascots.py:7-9` | Fixed 2026-10-05, ledger step 3: the docstring points at the I3 table |
 | G3 | `tools/common.py:60-61` when called with float radii from `tools/build_icons.py:110`; `116-118`; `171-172` (centre written as `70.0 98.0`); `tools/build_mascots.py:169` (written as `137.0`); `187-188`; `193` | Stays (owner, 2026-10-04): a fix changes the art bytes. Found by reading the code; the list is not proven complete. |
 | C1 | 36 inline values in `build_icons.py` and 21 in `build_mascots.py`, including `"#0F2E96"` at mascots 303, 312, 328 and 329 | Stays (owner, 2026-10-04) |
-| K1 | `tools/build_icons.py:69`, `106-107`, `279`; `tools/build_mascots.py:160` | Stays (owner, 2026-10-04) |
+| K1 | `tools/build_icons.py:69`, `106-107`, `281`; `tools/build_mascots.py:160` | Stays (owner, 2026-10-04) |
 
 ## Owner policy, as it applies to these scripts
 
@@ -785,7 +816,7 @@ says how each one applies to the scripts in `tools/` (owner, 2026-10-04).
 | Policy | How it applies here | Rule |
 |---|---|---|
 | Comments explain why only | Why only, plus a legend over a table of positional tuples | K1 |
-| Functions of roughly 6 to 15 lines | Helpers at most 15 lines; a function that returns one whole SVG is exempt | H2 |
+| Functions of roughly 6 to 15 lines | Helpers at most 15 lines; a function that returns one whole SVG or one whole sound effect is exempt | H2 |
 | Strict types | No hints until a type checker runs | H3 |
 | Tokens only for design values | A new colour is named; the existing inline values stay | C1 |
 | Named exports only | Does not apply: a script exports nothing | none |

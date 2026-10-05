@@ -3,3 +3,9 @@
 !HANDOFF.md
 !PASSOFF.md
 !docs/AGENT-PRACTICES.md
+.claude/worktrees/
+app/node_modules/
+app/ios/
+app/android/
+app/.expo/
+app/expo-env.d.ts

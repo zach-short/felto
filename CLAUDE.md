@@ -2,7 +2,8 @@
 # felto
 
 > **Before writing or editing any code, read the matching code standard in full:
-> `docs/conventions-python.md` for every `.py` file. Not optional, not conditional on task size.
+> `docs/conventions-python.md` for every `.py` file, `docs/conventions-typescript.md` for every
+> `.ts` and `.tsx` file under `app/`. Not optional, not conditional on task size.
 > If you have not read it this session, read it now.**
 
 > **Before scoping, planning or building a feature, read `docs/AGENT-PRACTICES.md`.** It is the
@@ -23,19 +24,35 @@
 
 ## Stack
 
-- Python 3, standard library only (`math`, `os`). Verified on Python 3.14.6 at
-  `/opt/homebrew/bin/python3`, 2026-10-04.
+- Python 3, standard library only (`math`, `os`; the sound generator adds `struct` and `wave`,
+  2026-10-05). Verified on Python 3.14.6 at `/opt/homebrew/bin/python3`, 2026-10-04.
 - `xmllint` (libxml 20913, `/usr/bin/xmllint`) to check SVG well-formedness.
-- No package manifest, no lockfile, no CI, no tests, no linter (`ls -a`, 2026-10-04).
+- The app in `app/` (2026-10-05, board item 7): Expo SDK 57 (`expo` 57.0.26, React Native
+  0.86.3, React 19.2.3), expo-router with routes in `app/src/app/`, a development build
+  (`expo-dev-client`), TypeScript ~6.0.3 strict, bun 1.2.9 with `app/package.json` and
+  `app/bun.lock` (no manifest at the root), vitest 4.1 in a node environment, `expo lint` with
+  `eslint-config-expo/flat` and no formatter. SVG files are components through
+  `app/svg-transformer.js` (SVGr, SVGO off). Versions: `app/bun.lock`.
+- No CI. The Python side has no tests and no linter.
 - Rive is the intended animation tool for these assets (`tools/build_icons.py:12`).
 
 ## Architecture
 
-- There is no app code yet. The repo is an asset pipeline: two generators write SVGs, and
-  three HTML pages display them.
+- The repo is an asset pipeline and an app. Two generators write SVGs, one writes sounds, three
+  HTML pages display the art, and the Expo app in `app/` draws and plays the same files from
+  `../assets` through the `@art/*` alias (BD-6, BD-7 in `docs/incomplete/app/PLAN.md`). Only
+  `app/src/art/` imports an SVG or a WAV (rule U6).
+- The app, built 2026-10-05 (board items 7 to 20): three native tabs (Learn, Practice, Profile)
+  and full-screen session routes under `app/src/app/` (lesson, boss, review, chest, practice set,
+  onboarding with a placement check), each route a thin render of a screen in `app/src/screens/`.
+  Pure game rules are in `app/src/game/`, the evaluator in `app/src/cards/`, the four units and
+  the preflop chart in `app/src/content/`, the random dealers in `app/src/drills/`, the one data
+  module in `app/src/storage/` and the reminder in `app/src/reminder/`. The development routes
+  `/dev/art`, `/dev/fixture/<name>` and `/dev/reminders` also exist. It runs as a development
+  build only. `HANDOFF.md` has the code map.
 - The assets point at a game about poker: playing cards, chips, a lesson path with locked,
   current and boss nodes, a streak flame, XP, lives, gems and a chest
-  (`tools/build_icons.py:352-358`), and three mascots, fish, squid and shark, each in six poses
+  (`tools/build_icons.py:372-385`, `main()`), and three mascots, fish, squid and shark, each in six poses
   (`tools/build_mascots.py:336-337`).
 - The generated SVGs are deterministic. A rebuild in a scratch copy on 2026-10-04 was
   byte-identical to the files on disk (`diff -rq`).
@@ -46,19 +63,31 @@
 
 | Path | Belongs here | Does not |
 |---|---|---|
-| `tools/` | The SVG generators | Generated output |
-| `assets/icons/{cards,chips,path,ui}/` | Output of `build_icons.py` (76 SVGs) | Hand edits |
+| `tools/` | The SVG generators, the sound generator and their shared module | Generated output |
+| `assets/icons/{cards,chips,path,ui}/` | Output of `build_icons.py` (78 SVGs) | Hand edits |
 | `assets/mascots/{fish,squid,shark}/` | Output of `build_mascots.py` (18 SVGs) | Hand edits |
+| `assets/sounds/` | Output of `build_sounds.py` (6 WAV files, 16-bit mono, 44,100 Hz) | Hand edits, recorded audio |
 | `assets/higgsfield/` | Reference art from Higgsfield (19 PNG, 13 SVG), kept as received | Renamed or regenerated files |
 | `assets/gallery.html`, `assets/*/preview.html` | Pages to view the art in a browser | Anything a script reads |
-| `docs/` | The process standard and the Python code standard | Generated assets |
+| `app/` | The Expo app: config at its root, code in `app/src/` (198 source files, 63 test files), the rank font in `app/assets/fonts/` | A copy of any SVG or WAV; generated `ios/`, `android/`, `.expo/` (gitignored) |
+| `docs/` | The docs index (`docs/README.md`), the process standard, the Python and TypeScript code standards, and the effort folders `docs/incomplete/app/` (design, plan, runtime pass) and `docs/incomplete/autopilot-2026-10-05/` (that run's record) | Generated assets |
 
 ## Commands
 
-The whole-repo gate, also `gateCommand` in `.personal-config.json`. Run 2026-10-04, exit 0:
+The whole-repo gate, also `gateCommand` in `.personal-config.json`: the Python gate, then the
+app gate (typecheck, lint, vitest: 63 test files, 490 tests). Run 2026-10-05 from the repo root,
+each step exit 0:
 
 ```bash
-python3 tools/build_icons.py && python3 tools/build_mascots.py && xmllint --noout assets/icons/*/*.svg assets/mascots/*/*.svg
+python3 tools/build_icons.py && python3 tools/build_mascots.py && python3 tools/build_sounds.py && xmllint --noout assets/icons/*/*.svg assets/mascots/*/*.svg && bun run --cwd app typecheck && bun run --cwd app lint && bun run --cwd app test
+```
+
+A fresh checkout runs `bun install --cwd app` first. To build and open the app (a development
+build; Android needs `ANDROID_HOME=~/Library/Android/sdk` and Java 17):
+
+```bash
+bun run --cwd app ios
+JAVA_HOME=$(/usr/libexec/java_home -v 17) ANDROID_HOME=~/Library/Android/sdk bun run --cwd app android
 ```
 
 To view the art, open a page in a browser:
@@ -71,19 +100,31 @@ open assets/gallery.html
 
 - A generator that exits 0 and prints its `wrote ...` line proves only that files were written.
   Nothing checks how they look. Each generator prints a count taken from its writes
-  (`tools/build_icons.py:374`, `tools/build_mascots.py:345`), so a skipped write shows as a short count.
+  (`tools/build_icons.py:386`, `tools/build_mascots.py:345`, `tools/build_sounds.py:158`), so a
+  skipped write shows as a short count.
+- The sound generator's run line (6) proves only that six WAV files were written. An agent cannot
+  hear them: a sound is proven only when Zach plays it (`afplay assets/sounds/<name>.wav`) and
+  approves it.
 - `xmllint --noout` proves the SVG is well-formed XML, not that it draws the right shape.
-- The gate rewrites the generated SVGs in place. After the first commit, run
-  `git diff --stat -- assets/icons assets/mascots` after the gate: any line there is a change
-  in the art, and it must be one you meant.
+- The gate rewrites the generated SVGs and WAVs in place. After the first commit, run
+  `git diff --stat -- assets/icons assets/mascots assets/sounds` after the gate: any line there
+  is a change in the art or the sound, and it must be one you meant.
 - A visual change is proven only by looking at it. Render the SVG files themselves, not the
   preview pages.
+- Write `bun run --cwd app <script>`, never `bun --cwd app run <script>`. With bun 1.2.9 the
+  second form prints bun's usage and exits 0 without running the script, so a gate written
+  that way passes while checking nothing (found 2026-10-05).
+- The app gate proves types, lint and the pure-logic tests. It cannot see a screen: a screen
+  is proven by a screenshot on the iOS simulator and the Android emulator.
 
 ## Never do this
 
 - Never ship card SVGs into Rive with live `<text>`: convert the rank text to outlines first,
   or set the font in Rive (`tools/build_icons.py:11-12`).
-- Never call merged work shipped. Nothing ships from this repo: there is no app and no deploy.
+- Never call merged work shipped. Nothing ships from this repo: the app runs as a development
+  build on simulators only, and there is no store release and no deploy (`D13`).
+- Never copy an SVG under `app/`, and never let app tooling write under `assets/`. The app
+  draws the generated files where they are (`D5`).
 
 ## Where work is written down
 

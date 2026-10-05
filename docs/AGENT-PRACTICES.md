@@ -34,7 +34,12 @@ the Part 0 session the same day, on Opus 5.5. What was cut, and why:
 - **The migration rule and parity rules**: no migrations (`grep -rni migrat` outside this
   file finds nothing, 2026-10-04) and no second platform: there is no app code yet, only an
   asset pipeline. Re-add both when an app lands. The general numbered-resource rule stays,
-  because ledger steps and board items are numbered.
+  because ledger steps and board items are numbered. *Re-added 2026-10-05, board item 6 (app
+  phase 2 in `docs/incomplete/app/PLAN.md`), in felto's words:* the app in `app/` stores player
+  data on the phone and runs on iOS and Android (`docs/incomplete/app/DESIGN.md`, `D2` and
+  `D3`). Both rules are in Part 6, under "Stored player data and both platforms", and the seams
+  line in Part 5 names parity again. The cut above stays as it was written, because it was true
+  on 2026-10-04.
 - **Ratchet rules**: no linter of any kind runs here.
 
 Part 11 is kept as `personal-config` wrote it. Repo A and repo B worked examples are evidence
@@ -537,7 +542,7 @@ second subsystem, the second platform, a long debugging loop.
 - **It needs to read a large area to decide where to work.** That reading is a subagent's job.
 
 The seams that keep coming out right, in order: **data layer + reads → writes → shared
-contract → first platform's surfaces → second platform → close-out.**
+contract → first platform's surfaces → second platform + parity → close-out.**
 
 ## The relay: subagent budgets
 
@@ -592,10 +597,14 @@ A fresh checkout fails gates for purely environmental reasons before it fails a 
 all of this on entry, **before believing any gate**:
 
 ```bash
-command -v python3 >/dev/null && command -v xmllint >/dev/null
+command -v python3 >/dev/null && command -v xmllint >/dev/null && command -v bun >/dev/null && bun install --cwd app --frozen-lockfile
 ```
 
-That is the whole recipe for felto, verified 2026-10-04. The generators in `tools/` import only
+That is the whole recipe for felto, verified 2026-10-04 for `tools/` and extended 2026-10-05
+(board item 7) for the app: `app/node_modules` is gitignored, so a fresh checkout installs it
+from `app/bun.lock` before the app gate means anything. The native folders `app/ios` and
+`app/android` are gitignored too; `bun run --cwd app ios` and `run android` regenerate them, and
+no gate reads them. The paragraph below is the 2026-10-04 reasoning for `tools/`. The generators in `tools/` import only
 `math` and `os` (`grep -nE '^(import|from)' tools/*.py`), and there is no package manifest,
 lockfile or env file (`ls -a` at the root). The gitignored files (`.gitignore:1-2` and
 `~/.config/git/ignore:4-6`) are process documents, and no gate reads them. A fresh checkout
@@ -649,7 +658,7 @@ git add -N <new-path> && git commit -o <path> <path> -m "..."
   HEAD can look buildable when it is not.
 
 ```bash
-d=$(mktemp -d) && git archive HEAD | tar -x -C "$d" && cd "$d" && command -v python3 >/dev/null && command -v xmllint >/dev/null && python3 tools/build_icons.py && python3 tools/build_mascots.py
+d=$(mktemp -d) && git archive HEAD | tar -x -C "$d" && cd "$d" && command -v python3 >/dev/null && command -v xmllint >/dev/null && command -v bun >/dev/null && bun install --cwd app --frozen-lockfile && python3 tools/build_icons.py && python3 tools/build_mascots.py && python3 tools/build_sounds.py && xmllint --noout assets/icons/*/*.svg assets/mascots/*/*.svg && bun run --cwd app typecheck && bun run --cwd app lint && bun run --cwd app test
 ```
 
 - **Shell working directory resets between calls in some harnesses.** A relative-path check can
@@ -660,7 +669,8 @@ d=$(mktemp -d) && git archive HEAD | tar -x -C "$d" && cd "$d" && command -v pyt
 
 In felto these are the ledger step numbers in `HANDOFF.md` and the item numbers on the
 `PASSOFF.md` board: anything where two sessions can claim the same number. There are no
-migrations (verified 2026-10-04, `grep -rni migrat` outside this file).
+migrations (verified 2026-10-04, `grep -rni migrat` outside this file). Once the app's data
+module exists, the version of its stored state is one more (next section, added 2026-10-05).
 
 **Derive the next number by reading the resource immediately before you use it, never from a
 number written in any doc**, including this one. And **read names, not counts**.
@@ -668,6 +678,35 @@ number written in any doc**, including this one. And **read names, not counts**.
 > **Worked example, repo A.** `0074` exists twice on disk, so the file count is not the
 > highest number; and `0101` was claimed by another project mid-build, after the plan that
 > reserved it was written.
+
+## Stored player data and both platforms
+
+Re-added 2026-10-05 (see the list of cuts at the top of this file). Both rules apply to the app
+in `app/` and to nothing in `tools/`.
+
+**Stored player data is migrated, never dropped.** The app keeps all player state on the phone,
+in one stored value with a `version` field, behind one data module
+(`docs/incomplete/app/DESIGN.md`, `D3`; `PLAN.md`, BD-8). The version is a numbered resource:
+read the current number from the data module before you raise it, never from a doc. A change to
+the stored shape raises the version, ships a migration from the old version in the same commit,
+and ships a test that loads a saved value of the old shape. A stored value the module cannot
+read is copied to a backup key before a fresh state is written. A player's progress is the one
+thing in felto that no gate can rebuild, because it lives only on their phone.
+*Test:* every diff that changes the stored shape also changes the version, adds a migration and
+adds a test that loads the old shape; no code path writes a fresh state over a value it has not
+first backed up. Rule Q2 of `docs/conventions-typescript.md` is the same rule in code terms.
+
+**Every screen is seen on both platforms.** A screen is not called built until it has been seen
+running on an iOS simulator and on an Android emulator, and the hand-back has a screenshot of
+each (`DESIGN.md`, section 9; `PLAN.md`, section 0, row 20). The two platforms draw the same
+code through different native layers (`@expo/ui` uses SwiftUI on iOS and Jetpack Compose on
+Android), so a screen that is right on one can be wrong on the other, and no gate sees a screen.
+Work that brings the second platform level with the first is its own step, after the first
+platform's surfaces (the seams in Part 5). A difference between the two that is meant is
+written down in the sanctioned divergence registry of `docs/conventions-typescript.md`; any
+other difference is drift.
+*Test:* the hand-back of every phase that adds or changes a screen names a screenshot of it on
+each platform, or lists the missing one as `open`.
 
 ## Other shared state
 
@@ -987,8 +1026,8 @@ the same turn, batched. A decision built on a guess is built twice.
 | `Opus 5.5` | The default tier | Set by `personal-config` 2026-10-04 |
 | `Sonnet 5` | The mechanical tier | Set by `personal-config` 2026-10-04 |
 | `2026-08-16` | The date of the measurement Part 5's table carries | `2026-08-16` if you inherit it; the date you re-measured if a tier's model changed |
-| `command -v python3 >/dev/null && command -v xmllint >/dev/null` | Fresh-checkout recipe | Verified 2026-10-04 (Part 6) |
-| `python3 tools/build_icons.py && python3 tools/build_mascots.py` | Build, for the HEAD-isolation check | Run 2026-10-04: exit 0, output byte-identical to the files on disk |
+| `command -v python3 >/dev/null && command -v xmllint >/dev/null && command -v bun >/dev/null && bun install --cwd app --frozen-lockfile` | Fresh-checkout recipe | Verified 2026-10-04 for `tools/`; the bun part added 2026-10-05, board item 7 (Part 6) |
+| `python3 tools/build_icons.py && python3 tools/build_mascots.py && python3 tools/build_sounds.py && xmllint --noout assets/icons/*/*.svg assets/mascots/*/*.svg && bun run --cwd app typecheck && bun run --cwd app lint && bun run --cwd app test` | Build, for the HEAD-isolation check | Python part run 2026-10-04: exit 0, output byte-identical to the files on disk; app part added 2026-10-05, board item 7; sounds and xmllint steps added 2026-10-05 to match the whole-repo gate in `CLAUDE.md` |
 
 Gate commands, hazards and the directory map are not placeholders: they are discovered in 0.1
 and written straight into `CLAUDE.md`.
