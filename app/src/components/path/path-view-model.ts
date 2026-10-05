@@ -1,6 +1,7 @@
 import { PATH_OUTLINE } from "@/components/path/path-outline";
 import { CAST } from "@/content/cast";
 import { OUTLINE } from "@/content/outline";
+import { storyFor } from "@/content/stories/catalog";
 import { chestState, type ChestState } from "@/game/chest";
 import { finishedInUnit, pathNodes, placedPast, type PathNode } from "@/game/path";
 import type { PlayerState } from "@/game/player-state";
@@ -23,6 +24,9 @@ export type PathUnit = {
   chest: ChestState;
   // D20: placed past by the check, so the boss shows complete while the chest still waits for it
   placed: boolean;
+  // US-4 and US-5: the unit has a story, so its header shows the button that opens it. The story
+  // gates nothing, so this does not depend on the player's progress.
+  hasStory: boolean;
   stops: PathStop[];
 };
 
@@ -38,7 +42,8 @@ export function pathUnits(state: PlayerState): PathUnit[] {
       .filter((node) => node.unitId === unit.id)
       .map((node) => ({ node, title: stopTitle(node, titles), progress }));
     const chest = chestState(state, unit.id);
-    return { id: unit.id, number: index + 1, title: unit.title, chest, placed: placedPast(state, unit.id), stops };
+    const hasStory = storyFor(unit.id) !== null;
+    return { id: unit.id, number: index + 1, title: unit.title, chest, placed: placedPast(state, unit.id), hasStory, stops };
   });
 }
 

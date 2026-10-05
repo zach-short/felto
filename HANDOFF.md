@@ -155,6 +155,16 @@ answer in place.
   (`stopLabel`, a stop's spoken label with the current lesson's progress) and
   `components/route-error-copy.ts` (the warm error line). Each is outside React Native so
   vitest can read it.
+- Unit stories (board item 23, `docs/incomplete/unit-stories/` US-4 to US-7): the route
+  `app/src/app/story/[unit].tsx` renders `screens/story-screen.tsx`, a full-screen modal with the
+  session options. `components/story/` holds the pure tap split (`story-tap.ts`), the slide
+  reducer (`story-step.ts`) and the copy (`story-copy.ts`), each with its test, the hook
+  `use-story-run.ts`, and the views `story-frame.tsx` (the tap layer), `story-header.tsx`,
+  `story-slide.tsx`, `story-missing.tsx` and `story-button.tsx` (the header button).
+  `app/src/content/stories/` holds the schema, the validator `validate-story.ts`, the list
+  `catalog.ts` (`STORIES`, `storyFor`) with its key test `story-catalog.test.ts`, and the hands
+  story `hands.ts` (a placeholder until board item 24). `PathUnit.hasStory` is tested in
+  `components/path/unit-story.test.ts`.
 - `app/src/game/`: the game rules of `D8`, `D19` to `D21` as pure functions of the state, a
   path outline and the time (board item 8): lives, streak and freeze, sessions and XP, the path
   node states, the seeded boss draw, the review set, the chest, placement, and the named
@@ -808,6 +818,67 @@ passes the whole-repo gate (63 files, 490 tests). The rundown is
 `docs/incomplete/autopilot-2026-10-05/RUNDOWN.md`; the record of the run is `STATE.md` beside it.
 Weekly usage ended at 49%, under Zach's 65% stop. Nothing is committed; no one has held the app on
 a phone. Zach's answers to `D15` to `D21` are now in `DESIGN.md`.
+
+**31. The story engine, the route and the header button (board item 23, unit stories phase 2).**
+Done 2026-10-05, on Opus 5.5, in the worktree `.claude/worktrees/lane-e-story-engine` (branch
+`lane-e-story-engine`, from `main` at `b986f61`), not committed. Steps 28 to 30 belong to the
+parallel lanes (28 lane D, item 22; 29 item 26; 30 item 27) and are written in their own worktrees;
+each lane's session announced its number on 2026-10-05, so this lane took 31. Built US-4 to US-7
+of `docs/incomplete/unit-stories/DESIGN.md`: the dials `storyBackZone` 0.3, `storyWordsPerSlide`
+30 and `storySlidesPerUnit` 6 to 8 in one block under `// unit-stories` in `app/src/config/dials.ts`
+(lane D adds `dealtLessons` under the same comment, so the merge must keep both blocks); the story
+schema, validator, list and key test under `app/src/content/stories/`; the pure `storyTapAction`
+and `storyStep` with tests that pin the 30 percent line (just under it goes back, on it goes
+forward) and the first and last slide; the screen, the route `story/[unit]` with the session
+options, and the "Learn about {unit}" button on the unit header for a unit with a story; and a
+six-slide placeholder hands story for board item 24 to replace. The code map lists the files.
+The story reads and writes no player state, so `STATE_VERSION` stays 2. Build calls, each with its
+reversal, are `PLAN.md` BD-S7 to BD-S13 (lane D confirmed on 2026-10-05 that it took no BD-S
+number): one full-screen tap layer instead of two areas; the slide as one adjustable element for
+screen readers; every exit closes once through the reducer; the fish beside the words in
+landscape, reusing existing tokens because `app/src/theme/tokens.ts` is item 26's; an outlined
+native button under the title on every unit with a story, locked or not; the word dial read as a
+maximum and the key test built ahead of phase 3; a story-specific not-found view. Each decision
+has an `As built` note in the design.
+
+Proof. Whole-repo gate from `CLAUDE.md`, run in the worktree: exit 0, run lines 78, 18 and 6, 69
+test files and 531 tests (main has 63 and 490; this item adds 6 files and 41 tests), and
+`git diff --stat -- assets/icons assets/mascots assets/sounds` empty. The typecheck also passed
+with the typed routes that Metro generated in the worktree, which list `/story/[unit]`.
+**Seen running** on a new iPhone 17e simulator (`B84A7615`, 390 points wide) with `main`'s
+development build pointed at this worktree's Metro (port 8084), in light and dark: the header with
+the button (unit 1) and without it (unit 2), the first slide, the card slide and the last slide;
+a left tap on the first slide does nothing; left and right taps move one slide; the cross, "Back to
+the path" and a forward tap on the last slide each close the story; the stat bar read 4, 240, 2 and
+20 before and after. **Seen running** on the `Medium_Phone_API_36` emulator (1080 by 2400) in light
+and dark: the header with the button, the first slide, the card slide and the last slide in light,
+the header and the first slide in dark, a left tap on the first slide does nothing, and Android's back button
+closes the story with the app still open. **Not seen**, each `open`: a phone or a tablet in
+landscape, the not-found view (`felto://story/table`), the Android dark last slide, any iPad, and
+a screen reader. The emulator's display failed twice ("Failed to find ColorBuffer", then a black
+screen with software rendering) while the Mac's load average reached 90 and free disk fell to 3.6
+GiB under the other lanes' native builds; the emulator was stopped to give the machine back. The
+runtime entries for these are in `PLAN.md` section 7.
+
+Found, each `open`: (a) from 10:55 to 11:10 EDT taps and a lesson link arrived on the iPhone 17e
+that this session did not send (a debug log showed taps at x = 350 to 365 and 28; a `hands-3`
+question opened over the story). This session first guessed lane D's session; lane D's session
+reported on 2026-10-05 that none of its commands named that simulator, so the source is unknown.
+Parallel sessions that drive simulators by "booted" or by the tool's default device can reach
+another lane's device. (b) After the merge, `main`'s generated `app/.expo/types/router.d.ts` lacks
+`/story/[unit]` until Metro runs once in `main`, so `bun run --cwd app typecheck` in `main` may fail
+on `story-button.tsx` until then. (c) The new views add five raw `fontWeight` strings to the U5
+known gap of `docs/conventions-typescript.md` (45 sites on 2026-10-05). (d) `story-screen.tsx` and
+`story-missing.tsx` are two new call sites of `LessonButton`; item 26 removes `LessonButton` only
+when no call site is left (its BD-G7), so the story keeps it alive. (e) The `CLAUDE.md` and
+Environment test counts (63 and 490) are stale; this step leaves them for the close-out of board
+item 25, because every parallel lane changes them. (f) The development build's tools button
+covers the right end of the progress marks (development builds only). New strings, all in the warm
+register of `D10` or settled by US-5 and US-6: "Learn about hands" (and the three other unit
+labels), "Back to the path", "Close the story", "Story not found.", "This unit has no story yet.",
+"Next slide", "Previous slide", "Slide 1 of 6", and the six placeholder slides in
+`content/stories/hands.ts`. **Left owed:** the landscape, tablet, not-found and screen-reader
+checks above; Zach reads the strings; the commit, which is Zach's, from the worktree.
 
 ## Style rules
 
