@@ -1,6 +1,7 @@
 # Plan: repeat questions and unit stories
 
-Status: `PLANNED` 2026-10-05, awaiting GATE 2. Decisions `US-1` to `US-8` are in `DESIGN.md`,
+Status: phases 1 to 3 `MERGED` into `main` and phase 4 (the close-out) `BUILT`, 2026-10-05. The plan
+has been run; no GATE 2 reply is quoted in this file. Decisions `US-1` to `US-8` are in `DESIGN.md`,
 section 8, and are frozen. This plan is what is built, in what order, by whom, and done when.
 Read `docs/AGENT-PRACTICES.md` and `docs/conventions-typescript.md` first; the whole-repo gate and
 the hazards are in `CLAUDE.md` and `HANDOFF.md`.
@@ -54,8 +55,8 @@ Phase 4 waits on all three.
 
 ### Phase 1: Dealt hands in lessons and the boss
 
-**BUILT 2026-10-05, not committed** (board item 22, lane D, branch `lane-d-dealt-hands`,
-`HANDOFF.md` step 28). Deviations: `DEALERS` in `app/src/drills/deal.ts` is now exported (one
+**BUILT 2026-10-05, commit `810cc25`, `MERGED` as `0658776`** (board item 22, lane D, branch
+`lane-d-dealt-hands`, `HANDOFF.md` step 28). Deviations: `DEALERS` in `app/src/drills/deal.ts` is now exported (one
 word, in a file this phase did not list); a third test file holds the boss wiring
 (`app/src/components/boss/boss-dealt.test.ts`); one line of `boss-session.test.ts` changed,
 because `US-1` ended what it asserted. `hands-3` was seen on iOS and Android; the boss was not
@@ -96,7 +97,7 @@ it (design US-2). Also `D8` still says "unit's fifty": do not change the pool, o
 
 ### Phase 2: Story engine, route and header button
 
-**BUILT 2026-10-05, not committed** (board item 23, `HANDOFF.md` step 31). Built on Opus 5.5 in
+**BUILT 2026-10-05, commit `aed7054`, `MERGED` as `06cea5a`** (board item 23, `HANDOFF.md` step 31). Built on Opus 5.5 in
 the worktree `.claude/worktrees/lane-e-story-engine`, branch `lane-e-story-engine`, from `main` at
 `b986f61`. The build calls are BD-S7 to BD-S13. Seen running on the iOS simulator (iPhone 17e) in
 light and dark and on an Android emulator in light and dark; not seen in landscape or on a tablet
@@ -142,7 +143,7 @@ button that crowds the chest on a small phone.
 
 ### Phase 3: The hands story content
 
-**BUILT 2026-10-05, not committed** (board item 24, `HANDOFF.md` step 33). Built on Opus 5.5 in the
+**BUILT 2026-10-05, commit `1148b43`, `MERGED` as `21338ca`** (board item 24, `HANDOFF.md` step 33). Built on Opus 5.5 in the
 worktree `.claude/worktrees/lane-e-story-engine`, branch `lane-e-story-engine`, at `aed7054` (item 23).
 Zach chose the warm register in chat on 2026-10-05. Eight slides, four keyed; the Mechanical check
 of step 4 ran on Sonnet 5 in its own worktree and found no disagreement. The `As built` note is
@@ -175,9 +176,18 @@ before the lessons teach it. These pass every gate; the key test and Zach's read
 
 ### Phase 4: Close-out
 
-Driver Mechanical. Waits on phases 1 to 3. Folds the ledger step, reconciles the index
-(`docs/README.md`), writes the three hand-back blocks of Part 7, adds `As built` notes under `D8`
-and a dated pointer under `US-1`, and lists the runtime entries in one place.
+**BUILT 2026-10-05, not committed** (board item 25; its ledger step is written by a separate
+session, so this header names the item, not a step). Driver Mechanical (Sonnet 5), in its own
+worktree on `main` at `0658776`. Records only; no code changed. Done: the whole-repo gate re-run in a worktree
+at `main`'s commit `0658776` (section 5 has the numbers); `D8` of the app design checked against the code and given a
+dated pointer to `US-5` and `US-6`, `D9` given one to `US-7`; the index `docs/README.md`
+reconciled; the runtime entries of section 7 gathered, each marked seen or `open`. Not done, by
+design: archiving this folder, which waits until Zach has walked section 7 (Stage 7 and 8 of
+`docs/AGENT-PRACTICES.md`, Part 2.2), and folding the ledger.
+
+Waited on phases 1 to 3. Folds nothing; reconciles the index (`docs/README.md`), writes the three
+hand-back blocks of Part 7, adds a dated pointer under `D8` and `D9` of the app design, and lists
+the runtime entries in one place.
 
 ## 3. Dials
 
@@ -199,8 +209,11 @@ A story node on the path (option 2C). Auto-advance and hold to pause.
 
 - The saved list `missedExercises` is looked up by authored id (`unit-exercises.ts:12-15`). A dealt
   id in it is dropped without a message. Phase 1 pins it with a test.
-- 63 test files, 490 tests passed on 2026-10-05 (`HANDOFF.md`, Environment). The count rises with
-  this effort; the gate must still pass the whole of it.
+- Measured 2026-10-05 at the close-out, on `main` at `0658776` with every lane merged (this effort
+  and the game-feel items 26 to 28): 82 test files, 608 tests passed; typecheck and lint exit 0.
+  The count of 63 files and 490 tests that the plan was written against is stale. The stored
+  version is now 4 (`app/src/storage/migrations.ts:6`); fact 6 of section 0 was true when written
+  and this effort still changes no stored shape, but other work (game-feel) has moved the number.
 - The gate rewrites generated assets in place; after it, `git diff --stat -- assets/icons
   assets/mascots assets/sounds` must show nothing this effort did not mean (`CLAUDE.md`).
 - `app/src/config/dials.ts` is shared with the game-feel effort; each adds one block under its own
@@ -213,18 +226,52 @@ A story node on the path (option 2C). Auto-advance and hold to pause.
 `git add -A` or `git add .`; print the two blocks of Part 11 with the exact files touched. Each
 phase starts by running `git status --short` and checking the files it owns against the board.
 
-## 7. Runtime entries, written as the phases are planned
+## 7. Runtime entries, gathered at the close-out of 2026-10-05
 
-| Goal | Where | Right answer |
-|---|---|---|
-| A replayed drill lesson shows new cards | Learn tab, unit 1, lesson 3 "Name that hand", play it twice, iOS and Android | Eight hand-naming slots differ between the two plays; the two concept slots are the same |
-| The boss no longer repeats hands | Unit 1 boss after finishing its lessons, twice | The drill slots show cards you have not seen in a lesson; concept questions may repeat |
-| A dealt miss does not enter the review | Get a dealt answer wrong in lesson 3, finish, open the unit 1 review | The review does not list that hand |
-| The kickers lesson is unchanged | Unit 1, lesson 4 | The same six showdowns as before |
-| The story opens and closes | Learn tab, unit 1 header, "Learn about hands" | Right tap forward, left tap back, first-slide back does nothing, last slide shows only "Back to the path", Android back closes it |
-| The story costs nothing | Open and finish the story | Hearts, XP and streak are unchanged |
-| Only a unit with a story shows the button (added by phase 2) | Learn tab, the headers of units 1 and 2, iOS and Android, light and dark | Unit 1 shows "Learn about hands" under its title, beside the chest; unit 2 "The table" shows no button |
-| A unit without a story has a not-found page (added by phase 2) | Open `felto://story/table` on a development build | The sad fish, "Story not found.", "This unit has no story yet." and "Back to the path", which closes it |
-| A slide fits a phone on its side and a tablet (added by phase 2) | Rotate a phone to landscape inside the story, then a tablet in landscape (Android: `adb shell wm size 2560x1600` and `wm density 320`) | Landscape puts the fish beside the words; nothing is cut off on the card slide or the last slide, and "Back to the path" shows on the last |
-| A screen reader can move through the story (added by phase 2) | VoiceOver or TalkBack on, inside the story | The slide reads its title, body and position ("Slide 1 of 6"); swipe up goes to the next slide, swipe down to the one before |
-| The hands story walks unit 1 in order and every example matches its words (added by phase 3) | Learn tab, unit 1, "Learn about hands", tap through all eight slides on a phone, iOS and Android, light and dark | Eight marks; the titles run "Meet the deck", "Your two cards", "Best five of seven", "The ten hands", "Straights and flushes", "The big hands", "Kickers break ties", "Who wins the pot?"; the rows show four aces, K and Q, three eights, 5 to 9 in mixed suits, the royal flush in spades and a pair of aces with K, 9 and 4; no text or card is cut off, and only the last slide shows "Back to the path" |
+This section is the one place for this effort's runtime entries. Each was written by the phase that
+built it (`HANDOFF.md` steps 28, 31 and 33) and is collected here by board item 25. The last column
+says what has been seen running and by which step; `open` means nobody has seen it on a device yet.
+"Gates green" is not "seen running" (`docs/AGENT-PRACTICES.md`, R10). Nothing here blocks the
+close-out. It blocks only the claim that a thing was seen.
+
+| Goal | Where | Right answer | Status |
+|---|---|---|---|
+| A replayed drill lesson shows new cards (phase 1) | Learn tab, unit 1, lesson 3 "Name that hand", play it twice, iOS and Android | Eight hand-naming slots differ between the two plays; the two concept slots are the same | Seen 2026-10-05 on the iPhone Air simulator and the `Pixel_9` emulator, through `felto://lesson/hands-3?play=rrrrrrrrrr` (step 28). Lesson 5 not seen. Open for Zach on his phone |
+| The boss no longer repeats hands (phase 1) | Unit 1 boss after finishing its lessons, twice | The drill slots show cards you have not seen in a lesson; concept questions may repeat | `open`: covered by tests (`boss-dealt.test.ts`), not walked on a device (step 28) |
+| A dealt miss does not enter the review (phase 1) | Get a dealt answer wrong in lesson 3, finish, open the unit 1 review | The review does not list that hand | `open`: covered by `dealt-missed.test.ts`, not walked on a device (step 28) |
+| The kickers lesson is unchanged (phase 1) | Unit 1, lesson 4 | The same six showdowns as before | `open`: not walked (step 28) |
+| The story opens and closes (phase 2) | Learn tab, unit 1 header, "Learn about hands" | Right tap forward, left tap back, first-slide back does nothing, last slide shows only "Back to the path", Android back closes it | Seen 2026-10-05 on the iPhone 17e simulator in light and dark, and on the `Medium_Phone_API_36` emulator in light and dark, including Android back with the app left open (step 31). Not seen on a physical phone |
+| The story costs nothing (phase 2) | Open and finish the story | Hearts, XP and streak are unchanged | Seen on iOS: the stat bar read 4, 240, 2 and 20 before and after (steps 31 and 33). `open` on Android: no stat bar reading was written down |
+| Only a unit with a story shows the button (phase 2) | Learn tab, the headers of units 1 and 2, iOS and Android, light and dark | Unit 1 shows "Learn about hands" under its title, beside the chest; unit 2 "The table" shows no button | Seen on iOS in light and dark, units 1 and 2 (step 31). Android: unit 1 seen in light and dark; unit 2 `open` |
+| A unit without a story has a not-found page (phase 2) | Open `felto://story/table` on a development build | The sad fish, "Story not found.", "This unit has no story yet." and "Back to the path", which closes it | Seen on iOS in dark (step 33). `open` on Android and in light |
+| A slide fits a phone on its side and a tablet (phase 2) | Rotate a phone to landscape inside the story, then a tablet in landscape (Android: `adb shell wm size 2560x1600` and `wm density 320`) | Landscape puts the fish beside the words; nothing is cut off on the card slide or the last slide, and "Back to the path" shows on the last | `open`: no landscape, tablet or iPad run (steps 31 and 33). iOS cannot be rotated from this Mac (`HANDOFF.md`, Environment) |
+| A screen reader can move through the story (phase 2) | VoiceOver or TalkBack on, inside the story | The slide reads its title, body and position ("Slide 1 of 6"); swipe up goes to the next slide, swipe down to the one before | `open`: no screen reader run (steps 31 and 33). The hands story now has 8 slides, so the position reads "Slide 1 of 8" |
+| The hands story walks unit 1 in order and every example matches its words (phase 3) | Learn tab, unit 1, "Learn about hands", tap through all eight slides on a phone, iOS and Android, light and dark | Eight marks; the titles run "Meet the deck", "Your two cards", "Best five of seven", "The ten hands", "Straights and flushes", "The big hands", "Kickers break ties", "Who wins the pot?"; the rows show four aces, K and Q, three eights, 5 to 9 in mixed suits, the royal flush in spades and a pair of aces with K, 9 and 4; no text or card is cut off, and only the last slide shows "Back to the path" | Seen on the iPhone 17e: slides 1, 5 and 8 in light and dark, slides 2, 6 and 7 in one of the two (step 33). Slides 3 and 4 were not seen on a device, and no Android screen was seen (`open`). Zach has read the copy in chat but not yet on a phone |
+
+### Open findings carried forward, not fixed
+
+These are in the ledger as `open` and are listed here so the person who walks the pass sees them.
+None of them is this effort's to fix in the close-out.
+
+- Step 31 (a), repeated in step 33 (a): taps and a lesson link reached the iPhone 17e that the session
+  did not send. The simulator tool acts on the attached or first booted simulator when a call names
+  no device, so parallel sessions can reach one another's device. Name the device on every call.
+- Step 31 (b): after the merge, the generated `app/.expo/types/router.d.ts` in the main checkout lacks
+  `/story/[unit]` until Metro runs once there. On 2026-10-05 the main checkout's
+  `app/.expo/types/router.d.ts` already lists the story route, and the typecheck passed in a fresh
+  worktree that had no generated types (exit 0). The finding no longer reproduces; it is kept
+  because a fresh clone has never been tried on a machine with a different cache.
+- Step 31 (c): the story views add five raw `fontWeight` strings to the known gap of rule U5.
+- Step 31 (d): `story-screen.tsx` and `story-missing.tsx` call `LessonButton`, which game-feel item 26
+  removes only when no call site is left (its BD-G7).
+- Step 31 (e): the test counts in `CLAUDE.md` and in the `HANDOFF.md` Environment rows were stale.
+  This close-out measured them (section 5); `CLAUDE.md` is left to game-feel item 33 by Zach's
+  answer of 2026-10-05.
+- Step 31 (f): the development build's tools button covers the right end of the progress marks
+  (development builds only).
+- Step 33 (b): under heavy load a screenshot taken just after a tap can show the screen before the
+  tap. Take a second one.
+- Step 33 (c): slide 2 says the hole cards are face down while its row draws them face up. A teaching
+  choice, Zach's to keep or change.
+- Step 33 (d): on a 390-point phone the last slide ends with "fun!" alone on its line.
+- Step 33 (e): the `think` pose reads as worried on slides 3 and 5. That is the existing art.

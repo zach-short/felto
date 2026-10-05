@@ -414,6 +414,18 @@ Decided 2026-10-05 (Zach: "3a"). The framework and the unit 1 story are built he
 of the table, preflop and odds units are later items, because the preflop and odds slides make
 strategy claims whose errors pass every gate and need their own review.
 
+*As built, 2026-10-05 (board item 25, the close-out):* the framework and the unit 1 story are built
+and merged into `main` (phases 1 to 3, `HANDOFF.md` steps 28, 31 and 33). `STORIES` in
+`app/src/content/stories/catalog.ts` lists the hands story only, so the headers of the table,
+preflop and odds units show no button, and `felto://story/table` draws the not-found view. The
+dated pointers that the opening of section 8 promises are in `docs/incomplete/app/DESIGN.md`, under
+`D8` (to `US-1` to `US-3`, and `US-5` and `US-6`) and `D9` (to `US-7`). The runtime entries are in
+one place, `PLAN.md` section 7, each marked seen or `open`. Whole-repo gate on `main` at `0658776`,
+measured 2026-10-05: 82 test files and 608 tests, typecheck and lint exit 0. This effort changed no
+stored shape; the stored version is 4 on `main` because of other work. The words "not committed" in
+the notes above were true when each was written; the commits are `810cc25` (phase 1), `aed7054`
+(phase 2) and `1148b43` (phase 3).
+
 ### Rules that survive unchanged
 
 `D8` for hearts, XP, streak, the boss pass mark and the chest. `D9` for the mascot roles. `D10` for
