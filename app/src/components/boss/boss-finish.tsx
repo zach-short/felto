@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 
 import { Mascot } from "@/art/mascot";
-import { Reward } from "@/components/lesson/lesson-finish";
+import { LoganLine, Reward } from "@/components/lesson/lesson-finish";
 import { CAST } from "@/content/cast";
 import { DIALS } from "@/config/dials";
 import { ART_SCALE, SPACE, TYPE } from "@/theme/tokens";
@@ -15,11 +15,12 @@ type BossFinishProps = {
   // A chest waits only after the first pass of this unit's boss (D8)
   chestReady: boolean;
   streak: number;
+  loganMode: boolean;
 };
 
 // DESIGN.md 10.5: the shark is sad when the player beats it and smug when it wins. D8: a boss
 // played to its end gives 10 XP for each right answer and counts for the streak, passed or not.
-export function BossFinish({ right, size, passed, chestReady, streak }: BossFinishProps) {
+export function BossFinish({ right, size, passed, chestReady, streak, loganMode }: BossFinishProps) {
   const { colours } = useTheme();
   const column = useColumnWidth();
   const { title, line } = bossFinishCopy(right, size, passed, chestReady);
@@ -28,6 +29,8 @@ export function BossFinish({ right, size, passed, chestReady, streak }: BossFini
       <Mascot character="shark" pose={passed ? "sad" : "smug"} width={column * ART_SCALE.finishMascot} />
       <Text style={[styles.title, { color: colours.text }]}>{title}</Text>
       <Text style={[styles.line, { color: colours.textMuted }]}>{line}</Text>
+      {/* Only a win completes the stage, so a lost round gets no loving line */}
+      <LoganLine loganMode={loganMode && passed} />
       <View style={styles.stats}>
         <Reward art="xp_bolt" text={`+${right * DIALS.xpPerRightAnswer} XP`} />
         <Reward art="streak_flame" text={streak === 1 ? "1-day streak" : `${streak}-day streak`} />

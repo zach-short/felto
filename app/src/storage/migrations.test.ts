@@ -44,7 +44,7 @@ describe("the version 2 migration (rule Q2, PLAN.md phase 11)", () => {
     const reminder = { on: true, hour: 19, minute: 0 };
     expect(result).toEqual({
       status: "loaded",
-      state: { ...VERSION_1_PLAYER, settings: { sound: false, reminder, haptics: true } },
+      state: { ...VERSION_1_PLAYER, settings: { sound: false, reminder, haptics: true, loganMode: false } },
     });
   });
 

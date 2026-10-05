@@ -11,6 +11,11 @@ export function setHaptics(state: PlayerState, haptics: boolean): PlayerState {
   return { ...state, settings: { ...state.settings, haptics } };
 }
 
+// Logan Mode: the Logan Mode switch is stored beside Haptics (version 4)
+export function setLoganMode(state: PlayerState, loganMode: boolean): PlayerState {
+  return { ...state, settings: { ...state.settings, loganMode } };
+}
+
 // D11: the reminder switch in Profile. Turning it off keeps the chosen time for next time.
 export function setReminderOn(state: PlayerState, on: boolean): PlayerState {
   const reminder = { ...state.settings.reminder, on };

@@ -9,12 +9,14 @@ import type { PermissionState } from "@/reminder/reminder-device";
 type SettingsSectionProps = {
   sound: boolean;
   haptics: boolean;
+  loganMode: boolean;
   reminder: ReminderSetting;
   reminderTime: Date;
   permission: PermissionState | null;
   playedToday: boolean;
   onSound: (on: boolean) => void;
   onHaptics: (on: boolean) => void;
+  onLoganMode: (on: boolean) => void;
   onReminder: (on: boolean) => void;
   onTime: (time: Date) => void;
   onOpenTime: () => void;
@@ -27,12 +29,13 @@ const HAPTICS_HELP = "Little taps as you answer and press.";
 // DESIGN.md 10.3 and 10.7: the native Switch for Sound (D15), Haptics (GF-3) and the reminder,
 // and the reminder's time (D11). Dark mode has no switch: it follows the phone (D16).
 export function SettingsSection(props: SettingsSectionProps) {
-  const { sound, haptics, reminder, reminderTime, permission, playedToday } = props;
+  const { sound, haptics, loganMode, reminder, reminderTime, permission, playedToday } = props;
   const reminderWords = reminderLine(reminder.on, permission, formatClockTime(reminderTime), playedToday);
   return (
     <FieldGroup.Section title="Settings">
       <Switch label="Sound effects" value={sound} onValueChange={props.onSound} />
       <Switch label="Haptics" value={haptics} onValueChange={props.onHaptics} />
+      <Switch label="Logan Mode" value={loganMode} onValueChange={props.onLoganMode} />
       <Switch label="Daily reminder" value={reminder.on} onValueChange={props.onReminder} />
       <ReminderTimeRow
         time={reminderTime}

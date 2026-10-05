@@ -43,12 +43,14 @@ export function ProfileScreen() {
         <SettingsSection
           sound={state.settings.sound}
           haptics={state.settings.haptics}
+          loganMode={state.settings.loganMode}
           reminder={reminder}
           reminderTime={reminderTime}
           permission={controls.permission}
           playedToday={finishedToday(state, now)}
           onSound={controls.setSound}
           onHaptics={controls.setHaptics}
+          onLoganMode={controls.setLoganMode}
           onReminder={controls.setReminderOn}
           onTime={controls.setReminderTime}
           onOpenTime={dialog.show}

@@ -42,7 +42,7 @@ function BossOpening({ unitId, seed, play }: { unitId: string; seed?: string; pl
     const toChest = () => router.replace({ pathname: "/chest/[unit]", params: { unit: unitId } });
     const streak = currentStreak(state, new Date());
     return {
-      body: <BossFinish right={right} size={size} passed={passed} chestReady={chestReady} streak={streak} />,
+      body: <BossFinish right={right} size={size} passed={passed} chestReady={chestReady} streak={streak} loganMode={state.settings.loganMode} />,
       label: chestReady ? "Open the chest" : "Continue",
       onPress: chestReady ? toChest : () => router.back(),
     };
