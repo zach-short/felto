@@ -30,7 +30,8 @@ export type PlacementResult = "not-taken" | "passed" | "failed";
 // D11: the daily streak reminder, at a local hour and minute on the phone (stored version 2)
 export type ReminderSetting = { on: boolean; hour: number; minute: number };
 
-export type Settings = { sound: boolean; reminder: ReminderSetting };
+// GF-3: haptics is the Haptics switch in Profile, on by default (stored version 3)
+export type Settings = { sound: boolean; haptics: boolean; reminder: ReminderSetting };
 
 export function defaultReminder(): ReminderSetting {
   return { on: true, hour: DIALS.reminderHour, minute: DIALS.reminderMinute };
@@ -51,7 +52,7 @@ export function freshState(now: Date): PlayerState {
     missedExercises: [],
     onboarded: false,
     placement: "not-taken",
-    settings: { sound: true, reminder: defaultReminder() },
+    settings: { sound: true, haptics: true, reminder: defaultReminder() },
   };
 }
 

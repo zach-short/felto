@@ -8,13 +8,14 @@ import { usePlayer } from "@/storage/use-player";
 const { Success, Error: Failure } = Haptics.NotificationFeedbackType;
 
 // The sound and the touch of each moment in a session. BD-19: success for a right answer, error
-// for a wrong one, on every answer. D15: the Sound setting of the player turns the effects off.
-// feedback/moments.ts keeps every failure inside the moment (audit of item 13, B1).
+// for a wrong one, on every answer. D15: the Sound setting of the player turns the effects off,
+// and GF-3: the Haptics setting turns the touch off. feedback/moments.ts keeps every failure
+// inside the moment (audit of item 13, B1).
 export function useAnswerFeedback() {
   const { state } = usePlayer();
-  const sound = state.settings.sound;
+  const { sound, haptics } = state.settings;
   useEffect(() => prepareSound(sound, loadEffects), [sound]);
-  const devices = { sound, play: playEffect, buzz: Haptics.notificationAsync };
+  const devices = { sound, haptics, play: playEffect, buzz: Haptics.notificationAsync };
   return {
     right: feedbackMoment("answer_right", Success, devices),
     wrong: feedbackMoment("answer_wrong", Failure, devices),

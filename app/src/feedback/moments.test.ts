@@ -10,16 +10,17 @@ const boom = () => {
 describe("feedback moments (audit of item 13, B1 and finding 1)", () => {
   it("never throws when the sound or the buzz fails", async () => {
     const rejected = () => Promise.reject(new Error("no haptics"));
-    const moment = feedbackMoment("answer_right", "success", { sound: true, play: boom, buzz: rejected });
+    const moment = feedbackMoment("answer_right", "success", { sound: true, haptics: true, play: boom, buzz: rejected });
     expect(moment).not.toThrow();
     // A rejected buzz must be caught, or node reports an unhandled rejection and fails the run
     await new Promise((resolve) => setTimeout(resolve, 0));
   });
 
-  it("plays nothing with Sound off, and still buzzes", () => {
+  // Since GF-3 (board item 27) the buzz follows the Haptics switch: see moment-haptics.test.ts
+  it("plays nothing with Sound off, and still buzzes while Haptics is on", () => {
     const play = vi.fn();
     const buzz = vi.fn(() => Promise.resolve());
-    feedbackMoment("answer_wrong", "error", { sound: false, play, buzz })();
+    feedbackMoment("answer_wrong", "error", { sound: false, haptics: true, play, buzz })();
     expect(play).not.toHaveBeenCalled();
     expect(buzz).toHaveBeenCalledWith("error");
   });

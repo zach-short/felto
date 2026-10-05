@@ -9,7 +9,7 @@ import { completeOnboarding, finishPlacement } from "@/game/placement";
 import type { PlayerState } from "@/game/player-state";
 import type { Answer, SessionResult } from "@/game/session";
 import { finishSession, recordAnswer } from "@/game/session";
-import { resetProgress, setReminderOn, setReminderTime, setSound } from "@/game/settings";
+import { resetProgress, setHaptics, setReminderOn, setReminderTime, setSound } from "@/game/settings";
 import type { PlayerCell } from "@/storage/player-cell";
 
 type Change = (state: PlayerState, now: Date) => PlayerState;
@@ -45,6 +45,8 @@ export function playerActions(
       apply((s) => finishPlacement(s, run, outline)),
     completeOnboarding: () => apply((s) => completeOnboarding(s)),
     setSound: (sound: boolean) => apply((s) => setSound(s, sound)),
+    // GF-3: the Haptics switch in Profile
+    setHaptics: (haptics: boolean) => apply((s) => setHaptics(s, haptics)),
     // PLAN.md phase 11 and D11: the reminder switch and its time in Profile
     setReminderOn: (on: boolean) => apply((s) => setReminderOn(s, on)),
     setReminderTime: (hour: number, minute: number) => apply((s) => setReminderTime(s, hour, minute)),

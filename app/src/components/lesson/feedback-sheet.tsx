@@ -4,7 +4,9 @@ import { StyleSheet, Text, View } from "react-native";
 import { Mascot } from "@/art/mascot";
 import type { Pose } from "@/art/names";
 import { PrimaryButton } from "@/components/button/primary-button";
+import { DIALS } from "@/config/dials";
 import type { CastRole } from "@/content/cast";
+import { useHaptics } from "@/feedback/use-haptics";
 import { ART_SCALE, LINE_HEIGHT, SPACE, TYPE } from "@/theme/tokens";
 import { useColumnWidth } from "@/theme/use-column-width";
 import { useTheme } from "@/theme/use-theme";
@@ -27,6 +29,7 @@ type FeedbackSheetProps = {
 export function FeedbackSheet({ shown, right, answer, explanation, onContinue, onDismiss, host = "fish" }: FeedbackSheetProps) {
   const { colours } = useTheme();
   const column = useColumnWidth();
+  const buzz = useHaptics();
   return (
     <BottomSheet isPresented={shown} onDismiss={onDismiss} containerColor={colours.surface}>
       <Column>
@@ -46,7 +49,7 @@ export function FeedbackSheet({ shown, right, answer, explanation, onContinue, o
                 <Text style={[styles.explanation, { color: colours.text }]}>{explanation}</Text>
               </View>
             </View>
-            <PrimaryButton label="Continue" onPress={onContinue} />
+            <PrimaryButton label="Continue" onPress={onContinue} pressHaptic={() => buzz(DIALS.pressHaptic)} />
           </View>
         </RNHostView>
       </Column>

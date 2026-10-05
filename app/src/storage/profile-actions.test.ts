@@ -23,7 +23,7 @@ describe("the Profile actions (PLAN.md phase 11)", () => {
     actions.setReminderOn(false);
     expect(cell.get().freezes).toBe(1);
     expect(cell.get().gems).toBe(10);
-    expect(cell.get().settings).toEqual({ sound: false, reminder: { on: false, hour: 8, minute: 15 } });
+    expect(cell.get().settings).toEqual({ sound: false, haptics: true, reminder: { on: false, hour: 8, minute: 15 } });
   });
 
   it("refuses a third freeze, and a freeze without 10 gems (D19)", () => {

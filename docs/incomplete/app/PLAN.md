@@ -122,6 +122,10 @@ cites the number.
   lesson cancels that day's. A `DAILY` trigger (row 18) would fire on days already played.
   Reverse: one `DAILY` trigger.
 - **BD-19. Haptics on every answer:** success for right, error for wrong (row 19).
+  *Amended 2026-10-05 (board item 27, game-feel `GF-3`, `HANDOFF.md` step 30): the buzz follows a
+  stored Haptics switch in Profile, on by default, and no longer only the phone's own setting
+  (stored version 3; `app/src/feedback/moments.ts`, `app/src/feedback/should-buzz.ts`). Success
+  for right and error for wrong stand.*
 - **BD-20. App config:** light appearance only, portrait only, no tablet layout (`DESIGN.md`,
   `D13`), `typedRoutes: true` and `reactCompiler: true`, as in `lore` (row 7). Reverse: per flag.
   *Superseded in part 2026-10-05 by `D16` and `D17`, if Zach accepts them: the appearance

@@ -35,16 +35,16 @@ const VERSION_1_PLAYER = {
 };
 
 describe("the version 2 migration (rule Q2, PLAN.md phase 11)", () => {
-  it("is version 2", () => {
-    expect(STATE_VERSION).toBe(2);
-  });
+  // The version is pinned in haptics-migration.test.ts since it became 3 (board item 27)
 
   it("loads a stored version 1 player with every field kept and the reminder on at 19:00", () => {
     const raw = JSON.stringify({ version: 1, player: VERSION_1_PLAYER });
     const result = loadPlayer(memoryStore({ [PLAYER_KEY]: raw }).store, now);
+    // Since version 3 a version 1 save also takes the version 2 step, which turns Haptics on
+    const reminder = { on: true, hour: 19, minute: 0 };
     expect(result).toEqual({
       status: "loaded",
-      state: { ...VERSION_1_PLAYER, settings: { sound: false, reminder: { on: true, hour: 19, minute: 0 } } },
+      state: { ...VERSION_1_PLAYER, settings: { sound: false, reminder, haptics: true } },
     });
   });
 

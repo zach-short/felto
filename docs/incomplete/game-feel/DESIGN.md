@@ -316,6 +316,23 @@ stored, so the stored version rises from 2 to 3, a migration adds `settings.hapt
 every older save, and a test loads a version 2 save (`AGENT-PRACTICES.md` Part 6, rule Q2).
 Amends `BD-19` (haptics follow the phone only) and extends `D15`.
 
+*As built, 2026-10-05 (board item 27, `PLAN.md` phase 2, `HANDOFF.md` step 30):* `STATE_VERSION` is
+3 (`app/src/storage/migrations.ts:6`). The step from version 2 writes `haptics: true`, keeps every
+other field, and passes a value that is not a version 2 player on unchanged so the load backs it up;
+`app/src/storage/haptics-migration.test.ts` loads a version 2 save. The vocabulary is
+`app/src/feedback/haptics.ts`: a selection tick, a light, medium and rigid impact, and success, each
+inside `safely` and reached only through `buzz(touch, setting)` (BD-G17). The rule `shouldBuzz` sits
+in its own file so the pure `moments.ts` can call it in node (BD-G15). The six answer and ending
+moments keep their success and error buzzes and now follow the switch. Check and Continue give the
+light impact as the finger goes down (dial `pressHaptic`, BD-G18); the option tick and the heart
+tap wait for phase 4. Zach chose the copy in chat on 2026-10-05 from three registers and the line
+as first written: the label "Haptics" and the help line "Little taps as you answer and press." (the
+warm register, `D10`; "cheer you on" was dropped because the wrong-answer buzz does not cheer). The
+help line opens the Settings footer, above the reminder line, because the native `Switch` takes a
+label only (BD-G16). Seen on the iPhone 17 simulator and the `Pixel_9` emulator, light and dark,
+on and off; on each, the save already on the device loaded as version 3 with its progress. Not felt: a simulator has no haptics, and no one has held a phone
+with this build.
+
 ### GF-4. Four unit colours and colours for moments
 
 Decided 2026-10-05 (Zach: "Four unit colours"). Tokens, each with a light and a dark value

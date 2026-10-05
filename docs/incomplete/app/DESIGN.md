@@ -560,6 +560,8 @@ The file name `FeltoRank.ttf` is a sanctioned divergence from kebab-case (`conve
 
 > **Amended 2026-10-05 (not yet built, awaiting GATE 2):** six more effects are added from the same generator, and haptics get a stored on/off setting (stored version 3). See `docs/incomplete/game-feel/DESIGN.md`, `GF-3` and `GF-5`.
 
+> **Built 2026-10-05 for the haptics half (board item 27, game-feel phase 2, `HANDOFF.md` step 30).** `settings.haptics` is stored since version 3, with a Haptics switch under Sound effects in Profile, and every buzz passes it (`app/src/feedback/should-buzz.ts`). The six more effects are game-feel phase 3 (board item 28).
+
 Proposed 2026-10-05, recommended. Answer: accepted by Zach in chat, 2026-10-05 (was: pending).
 
 Six short effects: a right answer, a wrong answer, a finished lesson, a passed boss, a failed

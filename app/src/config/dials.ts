@@ -54,6 +54,9 @@ export const DIALS = {
   // GF-8: what the phone's Reduce Motion setting skips. The press and fades stay, because no
   // screen needs motion to be understood and a press with no answer feels broken
   reducedMotionSkips: ["bounce", "shake", "tilt", "pulse", "bob", "particles"],
+  // GF-3: the touch each kind of press gives, named from the vocabulary of feedback/haptics.ts
+  selectHaptic: "selection",
+  pressHaptic: "lightImpact",
 
   // D17: every screen draws in a centred column at most this wide, in points
   columnMaxWidth: 640,
