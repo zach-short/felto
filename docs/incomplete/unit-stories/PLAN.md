@@ -135,6 +135,14 @@ button that crowds the chest on a small phone.
 
 ### Phase 3: The hands story content
 
+**BUILT 2026-10-05, not committed** (board item 24, `HANDOFF.md` step 33). Built on Opus 5.5 in the
+worktree `.claude/worktrees/lane-e-story-engine`, branch `lane-e-story-engine`, at `aed7054` (item 23).
+Zach chose the warm register in chat on 2026-10-05. Eight slides, four keyed; the Mechanical check
+of step 4 ran on Sonnet 5 in its own worktree and found no disagreement. The `As built` note is
+under US-7 in `DESIGN.md`. Seen running on the iPhone 17e in light and dark; the Android result is
+in step 33. Main merged item 23 on 2026-10-05 (`06cea5a`, "merge lane-e-story-engine"), after this
+phase began; this phase changes only its two files, so it merges onto that.
+
 Lane B, after phase 2. Files it owns: `app/src/content/stories/hands.ts` (new, replaces the
 placeholder) and `hands-story.test.ts` (new).
 
@@ -212,3 +220,4 @@ phase starts by running `git status --short` and checking the files it owns agai
 | A unit without a story has a not-found page (added by phase 2) | Open `felto://story/table` on a development build | The sad fish, "Story not found.", "This unit has no story yet." and "Back to the path", which closes it |
 | A slide fits a phone on its side and a tablet (added by phase 2) | Rotate a phone to landscape inside the story, then a tablet in landscape (Android: `adb shell wm size 2560x1600` and `wm density 320`) | Landscape puts the fish beside the words; nothing is cut off on the card slide or the last slide, and "Back to the path" shows on the last |
 | A screen reader can move through the story (added by phase 2) | VoiceOver or TalkBack on, inside the story | The slide reads its title, body and position ("Slide 1 of 6"); swipe up goes to the next slide, swipe down to the one before |
+| The hands story walks unit 1 in order and every example matches its words (added by phase 3) | Learn tab, unit 1, "Learn about hands", tap through all eight slides on a phone, iOS and Android, light and dark | Eight marks; the titles run "Meet the deck", "Your two cards", "Best five of seven", "The ten hands", "Straights and flushes", "The big hands", "Kickers break ties", "Who wins the pot?"; the rows show four aces, K and Q, three eights, 5 to 9 in mixed suits, the royal flush in spades and a pair of aces with K, 9 and 4; no text or card is cut off, and only the last slide shows "Back to the path" |

@@ -1,44 +1,62 @@
 import type { Story } from "./schema";
 
-// A placeholder, written by board item 23 only so the story route can be run and seen: the
-// fewest slides the dial allows, one of them with a keyed card row. Board item 24 replaces this
-// file with the real hands story, whose copy goes to Zach first (docs/incomplete/unit-stories/
-// PLAN.md phase 3, R7).
+// The hands story (docs/incomplete/unit-stories/PLAN.md phase 3, board item 24), in the order unit
+// 1 teaches its terms: the deck and ranks, hole cards and the board, best five of seven
+// (`hands-1`), the ten hands from high card up (`hands-2`), kickers, then the pot (`hands-4`).
+// Zach chose the warm register on 2026-10-05 (R7, D10). The last slide promises no lesson,
+// because its only button goes back to the path (US-6).
 export const storyHands = {
   unit: "hands",
   slides: [
     {
       pose: "happy",
       title: "Meet the deck",
-      body: "A deck has 52 cards. Every card has a rank and a suit, and the ace sits on top. That is all you need for now!",
+      body: "Here is the whole deck: 52 cards in four suits, like these four aces. Ranks run from the 2 up to the ace on top. No suit beats another!",
+      cards: ["As", "Ah", "Ad", "Ac"],
     },
     {
-      pose: "think",
+      pose: "smug",
       title: "Your two cards",
-      body: "You get two cards of your own, face down. They are your hole cards, and nobody else sees them.",
-      cards: ["As", "Kd"],
-    },
-    {
-      pose: "happy",
-      title: "The board",
-      body: "Five more cards land face up in the middle. Everyone shares them. Together they are the board.",
+      body: "In Texas hold'em you get two cards face down, your hole cards. Only you see them. Then five shared cards land face up in the middle: the board.",
+      cards: ["Ks", "Qh"],
     },
     {
       pose: "think",
       title: "Best five of seven",
-      body: "Your hand is the best five cards you can make from your two and the five on the board.",
+      body: "Your two plus the board make seven cards, but a hand is always five: the best five. You can use both of yours, just one, or none at all.",
+    },
+    {
+      pose: "happy",
+      title: "The ten hands",
+      body: "Ten hands, from the bottom: high card, with no match. Then a pair, two of one rank. Then two pair, and three of a kind, like these eights.",
+      cards: ["8s", "8h", "8d", "Kc", "3s"],
+      key: "three-of-a-kind",
+    },
+    {
+      pose: "think",
+      title: "Straights and flushes",
+      body: "A straight is five ranks in a row, and the suits can mix, like these. A flush is five cards of one suit in any order. It beats the straight!",
+      cards: ["5d", "6c", "7h", "8s", "9d"],
+      key: "straight",
     },
     {
       pose: "cheer",
-      title: "A flush",
-      body: "Five cards of one suit make a flush. It beats a straight, and it loses to a full house.",
-      cards: ["Ah", "Jh", "8h", "5h", "2h"],
-      key: "flush",
+      title: "The big hands",
+      body: "A full house is three of a kind plus a pair. Then four of a kind, and the straight flush: a straight in one suit. On top: this royal flush!",
+      cards: ["As", "Ks", "Qs", "Js", "Ts"],
+      key: "royal-flush",
     },
     {
       pose: "smug",
-      title: "Off you go",
-      body: "That is the whole idea. The lessons show you each hand, one at a time.",
+      title: "Kickers break ties",
+      body: "This pair of aces plays with three side cards: the king, 9 and 4. Those are kickers. When two players hold the same pair, the higher kicker wins.",
+      cards: ["Ah", "Ac", "Kd", "9s", "4h"],
+      key: "one-pair",
+    },
+    {
+      pose: "cheer",
+      title: "Who wins the pot?",
+      body: "At the end, the best five-card hand wins the pot, all the chips bet in the hand. Equal hands split it. That is the whole idea. Have fun!",
     },
   ],
 } satisfies Story;
