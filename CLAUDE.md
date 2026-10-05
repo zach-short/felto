@@ -16,6 +16,8 @@
   Change the generator, then run it.
 - **Never regenerate, rename or move a file in `assets/higgsfield/`.** They came from a paid,
   non-deterministic external service, and `assets/gallery.html` links all 32 by filename.
+  The same holds for `assets/higgsfield-chest/` (six chest references, 2026-10-05,
+  `docs/incomplete/game-feel/DESIGN.md` section 9.2).
 - **Never trust a preview page as a picture of the current SVGs.** `assets/icons/preview.html`
   and `assets/mascots/preview.html` hold inline copies, and no script rebuilds them
   (`grep -n preview tools/*.py` finds nothing, 2026-10-04).
@@ -73,6 +75,7 @@
 | `assets/mascots/{fish,squid,shark}/` | Output of `build_mascots.py` (18 SVGs) | Hand edits |
 | `assets/sounds/` | Output of `build_sounds.py` (12 WAV files, 16-bit mono, 44,100 Hz) | Hand edits, recorded audio |
 | `assets/higgsfield/` | Reference art from Higgsfield (19 PNG, 13 SVG), kept as received | Renamed or regenerated files |
+| `assets/higgsfield-chest/` | Chest reference art from Higgsfield (6 PNG, 2026-10-05), kept as received | Renamed or regenerated files, anything a script reads |
 | `assets/gallery.html`, `assets/*/preview.html` | Pages to view the art in a browser | Anything a script reads |
 | `app/` | The Expo app: config at its root, code in `app/src/` (198 source files, 63 test files), the rank font in `app/assets/fonts/` | A copy of any SVG or WAV; generated `ios/`, `android/`, `.expo/` (gitignored) |
 | `docs/` | The docs index (`docs/README.md`), the process standard, the Python and TypeScript code standards, and the effort folders `docs/incomplete/app/` (design, plan, runtime pass) and `docs/incomplete/autopilot-2026-10-05/` (that run's record) | Generated assets |

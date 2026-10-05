@@ -457,3 +457,177 @@ All of `D8` (hearts, XP, lives timing, streak, boss, chest). `D9`, `D10`, `D14`,
 `D2` for every control not named in GF-2. The TypeScript standard, in particular `U4`, `U5`, `U6`,
 `B3` (a rule never reads the clock) and `Q2`. `assets/higgsfield/` and every generated SVG are
 never hand-edited.
+
+## 9. Second pass, opened 2026-10-05
+
+Status: `RATIFIED` 2026-10-05, from Zach's answers in chat the same day. Sections 1 to 8 are kept as
+written. This section adds decisions `GF-10` to `GF-19`; each names what it amends or supersedes.
+
+### 9.1 The ask, in Zach's words
+
+Four messages in one session on 2026-10-05, with 13 photos: the 12 Duolingo Chess photos of
+section 1.2 again (`~/Downloads/IMG_2859.HEIC` to `IMG_2870.HEIC`) and `IMG_2872.HEIC`, a text
+thread in which a friend who saw the app asks "Can it tell you its proud of you and loves you when
+you complete a stage".
+
+1. "improve the ui. more resemble duolingo. more custom popovers/components that are fun and
+   colorful and fit the design tokens of the app. more character position and animations."
+2. "I also would like to redraw the chest to be better looking and more three d. feel free to
+   generate more images with higgsfield and write more passoff items for rive animations and i
+   will have them completed"
+3. "more sparkles. more pleasent chimes instead of just high pitched blips, and characters talking
+   with their mouths animated would be awesome"
+4. "use lottie more for animations if possible. things like numbers animating when counting up/down
+   etc. more 3d text where applicable. fun game styled."
+
+### 9.2 What was checked first, 2026-10-05
+
+| # | Fact | Source |
+|---|---|---|
+| 1 | Phases 1 to 4 of `PLAN.md` are built and merged; board items 30 to 33 (phases 5 to 8) have rows and no prompts | `PASSOFF.md` rows 26 to 33; `grep -nE '^### [0-9]+\.' PASSOFF.md` |
+| 2 | The chest is one flat front view: a body, a lid, two gold bands and a lock, on the shared extrusion | `tools/build_icons.py:343-357` (`ui_chest`); `assets/icons/ui/chest.svg` rendered with `qlmanage` |
+| 3 | The chest rule is fixed: a boss passed by playing it readies 20 gems, once per unit | `app/src/game/chest.ts:7-17`; `app/src/config/dials.ts:22` (`chestGems`); app `DESIGN.md` `D6` and row "Chest" at `:189` |
+| 4 | The loot-box hazard covers a chest with random contents "that can be bought"; nothing in felto is for sale | app `DESIGN.md:204-205` (hazard 3); `D6`, option 6A |
+| 5 | Every random draw takes a seed so a test replays it | `app/src/game/seeded-random.ts:1-15`; `app/src/game/boss.ts:5` |
+| 6 | Flop's Rive rig has a separate `mouth` object, so a talk loop needs no new art | `PASSOFF.md` item 34, "The rig, by object id" (`mouth` `0-17`) |
+| 7 | `lottie-react-native` is not installed | `grep -n lottie app/package.json` finds nothing |
+| 8 | The only bundled font is `FeltoRank`, the card-rank face | `ls app/assets/fonts` |
+| 9 | The chosen icon style is "4 extruded flat" of the seventh Higgsfield round | `assets/gallery.html`, Round 7; `assets/higgsfield/20261005_025817_6791f9c3-0705-4da0-a64c-f78f42c3826b.png` |
+
+New reference art, generated 2026-10-05 with Higgsfield (`gpt_image_2_5`, quality high, the style
+image above as the reference), at Zach's invitation in message 2. Kept in a new folder,
+`assets/higgsfield-chest/`, so `assets/higgsfield/` is untouched (`CLAUDE.md`). The files are kept
+as received: `chest-1-closed.png` and `chest-2-open.png` (one wood chest, three-quarter view),
+`chest-3-states.png` (closed, ajar, open), `chest-4-tiers.png` (wood, blue, purple; not chosen),
+`chest-5-tiers-closed.png` and `chest-6-tiers-open.png` (the four chosen tiers, closed and open).
+
+### 9.3 Answers
+
+Asked in chat through the question tool on 2026-10-05, with a recommendation on each.
+
+| Ask | Answer | Note |
+|---|---|---|
+| Which chest to redraw | Not one of the offered options: "Tiers, wood (common), blue (rare), red (mythic), gold (legendary)" | `chest-5` and `chest-6` were generated from this answer |
+| How a tier is earned | "Randomize they click at least 3 times. in those three times it has the chance to turn into Rare->Mythic->Legendary. But the rarity is predetermined before they open, its just the animation changes" | Against my recommendation (tier by unit, which kept `D6` whole). Recorded as `GF-13`, with the condition below |
+| Mascots talking | Lessons, finish and path (the recommendation) | Lifts the part of `GF-9` that parked a mascot speaking in lessons |
+| Chimes | All 12 sounds, one family (the recommendation) | |
+| Native controls | All of them, with a custom tab bar too | Against my recommendation (keep the native tab bar) |
+
+### 9.4 Decisions
+
+#### GF-10. A kit of custom, token-styled pieces replaces every native control
+
+Decided 2026-10-05 (Zach: "All, with a custom tab bar too"). Every remaining native control becomes
+a custom piece drawn from the tokens: `LessonButton` and its call sites, the out-of-lives
+`BottomSheet`, the two `Alert.alert` dialogs, the Profile switches, the reminder time pickers, the
+`FieldGroup` and `ListItem` form, and `NativeTabs` (the list is step 37 of `HANDOFF.md`, "Native
+controls left"). The kit also adds what the photos show and the app lacks: a speech bubble with a
+tail, a popover card anchored to a point with an arrow, a callout tag ("NEW", "+20 XP"), a sparkle
+layer, 3D game text (`GF-16`) and a rolling number. Supersedes `D2` of the app design for every
+control, and the sentence of the `GF-2` amendment that kept "Profile's switches, the time picker,
+the out-of-lives sheet and every other native control" native. Defense: Zach said on 2026-10-05
+(step 37) that every button and toggle must carry the app's tokens, and the native controls do not.
+Against: screen-reader behaviour, focus, the iOS 26 glass tab bar and Android's back handling were
+free with the native pieces and are now written by hand, with no gate to catch a loss; each piece
+gets a written accessibility check in its item, and the registry of `docs/conventions-typescript.md`
+gets one entry for the kit.
+
+#### GF-11. The mascots talk, in a speech bubble, in lessons, on the finish screens and on the path
+
+Decided 2026-10-05 (Zach: the recommendation). Supersedes the part of `GF-9` that parked "a mascot
+that speaks inside lessons". In a lesson the host mascot says the prompt in a bubble; on a finish
+screen it says a warm line, including the friend's ask (it is proud of you); on the path it greets
+the player and points at the next lesson. The text types out at a dial speed. While it types, the
+static pose bobs; once a rig exists for that mascot (`GF-19`), its view-model boolean `talking` moves
+the mouth instead. Copy is in the warm register of `D10`, and each item lists the lines it adds.
+Defense: the photos and the friend both ask for a character who speaks to you. Against: it changes
+the lesson layout, and a long line on a small phone pushes the answer rows down; the item that
+builds it checks the smallest supported phone.
+
+#### GF-12. Characters are placed on the screen, as Duolingo places them
+
+Decided 2026-10-05 (message 1, "more character position"). Large mascots stand beside the path
+between nodes, alternating sides, in a muted version of the unit colour (as photos 2859 and 2860
+show), and appear on popovers, empty states and the finish, chest and boss screens. Uses the 18
+existing poses until the rigs of `GF-19` land.
+
+#### GF-13. Four chest tiers, decided before the chest opens, revealed by taps
+
+Decided 2026-10-05 (Zach). Tiers: common (wood), rare (blue), mythic (red), legendary (gold). The
+tier is decided by a seeded draw (`seeded-random.ts`) when the chest becomes ready, so it never
+changes by closing and reopening the app; the odds of each tier and the gems of each tier are dials.
+The player taps the closed chest at least three times; each tap shakes it, and on the taps the draw
+chose, it upgrades one tier with a flash. The last tap opens it. Amends `D8` ("20 gems, fixed") and
+`D6` (fixed contents). Defense: Zach asked for it, and the hazard it touches is defined by purchase
+(fact 4 of 9.2): an earned chest that cannot be bought is not a loot box under that definition.
+**Condition, written so it is not lost:** the day gems, chests or anything that leads to them can
+be bought (the GTO trainer scope proposes a paid tier, `docs/incomplete/gto-trainer/DESIGN.md`), this
+decision must be reopened with Zach before the purchase ships, because a random chest that can be
+bought rates 9+. Against: random rewards were refused once for that reason; this keeps them only
+while the condition holds.
+
+Art: `tools/build_icons.py` draws the four tiers, closed and open, in a three-quarter view from
+`assets/higgsfield-chest/chest-5-tiers-closed.png` and `chest-6-tiers-open.png`. Generated SVGs only;
+no hand edit (`CLAUDE.md`).
+
+#### GF-14. All twelve sounds are re-voiced as one family of pleasant chimes
+
+Decided 2026-10-05 (Zach: the recommendation). Keeps the twelve names, files and ceilings of `D15`
+and `GF-5`, and replaces how each one sounds: the happy ones become soft bell chimes in a lower,
+warmer register (notes of one major key, a soft attack, a long gentle decay); `tap` becomes a soft
+wooden knock; `answer_wrong`, `heart_lost` and `boss_fail` become soft low tones, never buzzers.
+Supersedes the sound design of `GF-5` and of `D15` (not the names). Each sound is proven only when
+Zach plays it.
+
+*As built, 2026-10-05 (board item 47, `HANDOFF.md` step 40):* every note is from C
+major; the happy sounds use a bell voice of four slightly inharmonic partials with an 8 ms attack
+and a fade to zero; `tap` is a short low knock; the three low tones fall in thirds and are the
+quietest. Built in a worktree, not yet merged. Zach played all twelve on the Mac on 2026-10-05
+and answered "sounds good"; not yet heard on a phone.
+
+#### GF-15. Lottie for particle effects, from a generator; numbers roll with Reanimated
+
+Decided 2026-10-05 (message 4, "use lottie more for animations if possible"). Bursts, confetti,
+sparkle showers, gem and chip fly-ups and flame flicker are Lottie files written by a new
+deterministic generator, `tools/build_lottie.py`, into `assets/lottie/`, and played by
+`lottie-react-native` through the art module (rule U6). Numbers that count up or down are a rolling
+odometer built with Reanimated, because a Lottie file holds a fixed animation and cannot show an
+arbitrary number. Amends `GF-1` (Reanimated for interface motion, Rive for characters) by adding a
+third runtime for effects, and `BD-G5` (particles as SVG shapes) for every effect a Lottie file
+draws. Defense: a generator keeps the house rule that art is made by code in this repo, with no
+download and no licence question. Against: a new native dependency and a rebuild of every
+development build; a third animation runtime to keep in step with SDK 57.
+
+#### GF-16. 3D game text where a number or a title celebrates
+
+Decided 2026-10-05 (message 4). A display font and a `GameText` piece that draws text with a thick
+outline and a darker extrusion below, in the style of the "2000" of photo 2862, for celebrations,
+counters, banners and big titles. Body text stays plain. The font is bundled with its licence beside
+it, as `FeltoRank` is (registry entry Z3).
+
+#### GF-17. More sparkles
+
+Decided 2026-10-05 (message 3). Twinkling sparkles on the current path node, every chest, the
+legendary tier, the finish screens and a perfect answer, and a burst on every celebration. Reduced
+motion skips them (`GF-8`).
+
+#### GF-18. A custom tab bar
+
+Decided 2026-10-05 (Zach). A tab bar in the style of the photos: coloured icons, a raised selected
+state, drawn from the tokens. The tab icons come from `tools/build_icons.py`. Part of `GF-10`,
+named apart because it replaces `NativeTabs` and the iOS 26 glass look.
+
+#### GF-19. Rive rigs for every mascot and the chest, built by Zach's sessions
+
+Decided 2026-10-05 (message 2: "write more passoff items for rive animations and i will have them
+completed"). Board items for: Flop talking, cheering and sad in the existing rig; a rig for Kicker
+(squid) and one for Ace (shark) with the same view-model contract; a chest rig with the four tiers,
+the tap shake, the upgrade flash and the opening; then one app item that plays them. Every rig keeps
+the `FlopRive` pattern: the static pose stands in under reduced motion or when the file fails to
+load, and only `app/src/art/` imports the runtime and the files (rule U6).
+
+### 9.5 Rules that survive unchanged
+
+Everything in "Rules that survive unchanged" of section 8, except where `GF-10` to `GF-19` name an
+amendment: hearts, XP, lives timing, streak and the boss rules of `D8` stay; only the chest rule
+changes. No art outside the generators, and `assets/higgsfield/` is never touched.
