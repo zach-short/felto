@@ -21,7 +21,7 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 | 1 | Write the Python code standard for `tools/` | `DONE: HANDOFF 2` | Opus 5.5 | A | nothing | `docs/conventions-python.md`, `CLAUDE.md` |
 | 2 | Move the shared generator code into one module | `DONE: HANDOFF 3` | Sonnet 5 | A | nothing | `tools/build_icons.py`, `tools/build_mascots.py`, the new shared module in `tools/`, `docs/conventions-python.md` |
 | 3 | Reconcile the line citations in the Python standard | `DONE: HANDOFF 4` | Sonnet 5 | A | nothing | `docs/conventions-python.md` |
-| 4 | Name `tools/common.py` in the standard's scope sentence | `OPEN` | Sonnet 5 | A | nothing | `docs/conventions-python.md` |
+| 4 | Name `tools/common.py` in the standard's scope sentence | `DONE: HANDOFF 8` | Sonnet 5 | A | nothing | `docs/conventions-python.md` |
 | 5 | App phase 1: change the icon generator for the app | `HELD` | Sonnet 5 | A | item 4; Zach's answer to `D15` to `D21` | `tools/build_icons.py`, `assets/icons/path/node_current_base.svg`, `assets/icons/ui/streak_freeze.svg`, `assets/icons/cards/*.svg`, `docs/conventions-python.md`, `CLAUDE.md` |
 | 6 | App phase 2: write the TypeScript standard and re-add the app rules | `HELD` | Opus 5.5 | B | item 5 | `docs/conventions-typescript.md`, `docs/AGENT-PRACTICES.md`, `docs/README.md`, `CLAUDE.md`, `.gitignore` |
 | 7 | App phase 3: scaffold `app/` and draw the art on both platforms | `HELD` | Opus 5.5 | B | item 6; the art commit | `app/` config files, `app/src/app/dev/`, `app/src/config/`, `app/src/theme/`, `CLAUDE.md`, `docs/AGENT-PRACTICES.md`, `.personal-config.json`, `.gitignore` |
@@ -244,6 +244,10 @@ chose; then the two copyable blocks from Part 11, `git add` with the exact files
 *Opened 2026-10-05, out of board item 3 (ledger step 4): the opening of
 `docs/conventions-python.md` says the standard covers every `.py` file and then lists two, but
 `tools/common.py` has been the third since ledger step 3.*
+
+*Correction, 2026-10-05, recorded in ledger step 8: this prompt says the `HANDOFF.md` code map
+read "version 1.1.1 (steps 2 to 5)". It read "(steps 2 to 4)" (`HANDOFF.md:92`), which was
+right, because step 5 did not touch the standard.*
 
 **Model: Sonnet 5 (Mechanical). Lane A. Waits on nothing.** Work in the main checkout; no
 worktree needed. This item edits one sentence in one document and no code.

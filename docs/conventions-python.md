@@ -1,12 +1,18 @@
 # Python code standard: felto
 
 This file is self-contained: it can be applied without reading any other document. It covers
-every `.py` file in the repo. On 2026-10-04 those are `tools/build_icons.py` and
-`tools/build_mascots.py` (`ls tools`). Read it in full before you write or edit Python here.
+every `.py` file in the repo. On 2026-10-04 those were `tools/build_icons.py` and
+`tools/build_mascots.py` (`ls tools`). On 2026-10-05 they are three: those two generators and
+`tools/common.py`, the shared module that holds the code both generators use (rule H1). `ls tools`
+listed exactly those three, and `find . -name '*.py' -not -path './.git/*'` found no other `.py`
+file in the repo. `tools/common.py` imports only `math` and `os`, and each generator imports it by
+its plain name (`grep -nE '^(import|from)' tools/*.py`, rule M4). Read this file in full before
+you write or edit Python here.
 
-Version 1.1.1. Written 2026-10-04 on Opus 5.5 for board item 1 (ledger step 2 in `HANDOFF.md`);
+Version 1.1.2. Written 2026-10-04 on Opus 5.5 for board item 1 (ledger step 2 in `HANDOFF.md`);
 revised 2026-10-05 on Sonnet 5.5 for board item 2 (ledger step 3), which moved the shared code
-into `tools/common.py`, and for board item 3 (ledger step 4), which reconciled the line citations.
+into `tools/common.py`, for board item 3 (ledger step 4), which reconciled the line citations,
+and for board item 4 (ledger step 8), which named `tools/common.py` in the scope sentence.
 Zach answered the open questions on 2026-10-04 and took every recommendation. Those answers are
 cited below as "owner, 2026-10-04".
 

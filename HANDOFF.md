@@ -89,7 +89,7 @@ until Zach answers them.
 - `assets/gallery.html`: shows the Higgsfield art; links all 32 files by name.
 - `assets/icons/preview.html`, `assets/mascots/preview.html`: inline SVG snapshots, written by
   no script.
-- `docs/conventions-python.md`: the Python code standard for `tools/`, version 1.1.1 (steps 2 to 4).
+- `docs/conventions-python.md`: the Python code standard for `tools/`, version 1.1.2 (steps 2 to 4 and 8).
 - `docs/incomplete/app/`: the app effort (Profile P). `DESIGN.md` is what the app is and why
   (`D1` to `D21`); `PLAN.md` is the order of work, 16 phases on board items 5 to 20 (step 7).
 
@@ -246,6 +246,28 @@ mascot names, a streak freeze, onboarding and randomly dealt hands in the first 
 and added board items 17 to 20. No code written; the gate exited 0 and
 `git diff --stat -- assets tools` was empty. **Left owed:** Zach's answers to `D15` to `D21`;
 the commit of the 129 staged art files and of this folder, which is Zach's; board item 4.
+
+**8. Name `tools/common.py` in the standard's scope sentence (board item 4).** Done 2026-10-05, on
+branch `main`, on Sonnet 5.5. The standard opened by saying it covers every `.py` file and then
+listed two, dated 2026-10-04 (`docs/conventions-python.md:3-5` before this step). That sentence
+stays as history, in the past tense, and a new one gives the state on 2026-10-05: three files, the
+two generators and `tools/common.py`, the shared module of rule H1. Checked 2026-10-05: `ls tools`
+lists `build_icons.py`, `build_mascots.py` and `common.py`; `find . -name '*.py' -not -path
+'./.git/*'` finds those three and no other; `grep -nE '^(import|from)' tools/*.py` shows that
+`common.py` imports `math` and `os` and that each generator imports `common` by its plain name.
+Bumped the standard to 1.1.2 and its code map entry to "steps 2 to 4 and 8". The item prompt said
+the entry read "steps 2 to 5". It read "steps 2 to 4", which was right: step 5 did not touch the
+standard. No rule's text changed. Read the nine lines that say "both files", "both generators" or
+"the two generators" (`grep -nE 'both (files|generators)|two generators'`, 2026-10-05): none is
+wrong, because each means the two generators, and `common.py` is not a generator. Rule C2 cites
+`tools/common.py:49` as a `#fff` site under "both files do"; `common.py` also follows C2 (its
+three colours are uppercase six-digit hex), so the sentence is right and only wider than it
+says. Found, not fixed: `docs/conventions-python.md:51` says the generators import only `math`
+and `os`, which the grep it cites no longer shows since step 3; and `docs/incomplete/app/DESIGN.md:30`
+cites `docs/conventions-python.md:519-537` for rule I3, which now sits at lines 525-543 because
+this step added six lines above it. Gate exit 0 (run lines 76 and 18) and
+`git diff --stat -- assets tools` empty. **Left owed:** those two stale lines, and the commit,
+which is Zach's.
 
 ## Style rules
 
