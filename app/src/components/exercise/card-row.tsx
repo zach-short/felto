@@ -10,15 +10,18 @@ type CardRowProps = {
   group: CardGroup;
   // The width this row may fill; a group beside another gets part of the column
   width: number;
+  // The column a card takes its share of: the half a split exercise lays it out in (D17), or the
+  // screen's column when not given
+  column?: number;
 };
 
 // A labelled row of cards. Five cards shrink to fit a small phone (PLAN.md phase 9, watch-for);
 // on a wide column the cards stop growing at the token share.
-export function CardRow({ group, width }: CardRowProps) {
+export function CardRow({ group, width, column }: CardRowProps) {
   const { colours } = useTheme();
-  const column = useColumnWidth();
+  const screenColumn = useColumnWidth();
   const count = Math.max(group.cards.length, 1);
-  const cardWidth = Math.min(column * ART_SCALE.lessonCard, (width - CARD_GAP * (count - 1)) / count);
+  const cardWidth = Math.min((column ?? screenColumn) * ART_SCALE.lessonCard, (width - CARD_GAP * (count - 1)) / count);
   return (
     <View style={[styles.group, { width }]}>
       {group.label ? <Text style={[styles.label, { color: colours.textMuted }]}>{group.label}</Text> : null}

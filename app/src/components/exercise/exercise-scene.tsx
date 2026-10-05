@@ -3,23 +3,23 @@ import { StyleSheet, Text, View } from "react-native";
 import { CardRow } from "@/components/exercise/card-row";
 import type { Fact, Scene } from "@/components/exercise/exercise-view-model";
 import { RADIUS, SPACE, TILE_BORDER, TILE_MIN_WIDTH, TYPE } from "@/theme/tokens";
-import { useColumnWidth } from "@/theme/use-column-width";
 import { useTheme } from "@/theme/use-theme";
 
 type ExerciseSceneProps = {
   scene: Scene;
+  // The width the scene lays out in: the column, or its half beside the answer rows (D17)
+  column: number;
 };
 
 // The cards or numbers above a prompt (DESIGN.md 10.4). A concept exercise has none.
-export function ExerciseScene({ scene }: ExerciseSceneProps) {
-  const column = useColumnWidth();
+export function ExerciseScene({ scene, column }: ExerciseSceneProps) {
   if (scene.kind === "none") return null;
   if (scene.kind === "facts") return <Facts facts={scene.facts} />;
   if (scene.kind === "cards") {
     return (
       <View style={styles.stack}>
         {scene.groups.map((group) => (
-          <CardRow key={group.label ?? "cards"} group={group} width={column} />
+          <CardRow key={group.label ?? "cards"} group={group} width={column} column={column} />
         ))}
       </View>
     );
@@ -28,10 +28,10 @@ export function ExerciseScene({ scene }: ExerciseSceneProps) {
   const playerWidth = (column - SPACE.md * (scene.players.length - 1)) / scene.players.length;
   return (
     <View style={styles.stack}>
-      <CardRow group={scene.board} width={column} />
+      <CardRow group={scene.board} width={column} column={column} />
       <View style={styles.players}>
         {scene.players.map((player) => (
-          <CardRow key={player.label} group={player} width={playerWidth} />
+          <CardRow key={player.label} group={player} width={playerWidth} column={column} />
         ))}
       </View>
     </View>

@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
+import { DENSITY, type Density } from "@/components/exercise/exercise-layout";
 import type { ChoiceMark } from "@/components/exercise/exercise-view-model";
 import { DIALS } from "@/config/dials";
 import { MotionView } from "@/motion/motion-view";
@@ -18,11 +19,13 @@ type ChoiceListProps = {
   chosenColour: string;
   // null once the answer is checked, so a choice cannot change under its feedback
   onChoose: ((index: number) => void) | null;
+  // How much air a row keeps above and below its label (exercise-layout.ts, D17)
+  density: Density;
 };
 
 // DESIGN.md 10.3: answer choices are not native controls; every kind uses this one tappable
 // shape, so every exercise looks alike.
-export function ChoiceList({ labels, marks, selected, chosenColour, onChoose }: ChoiceListProps) {
+export function ChoiceList({ labels, marks, selected, chosenColour, onChoose, density }: ChoiceListProps) {
   return (
     <View style={styles.list} accessibilityRole="radiogroup">
       {labels.map((label, index) => (
@@ -33,6 +36,7 @@ export function ChoiceList({ labels, marks, selected, chosenColour, onChoose }: 
           selected={selected[index]}
           chosenColour={chosenColour}
           onPress={onChoose ? () => onChoose(index) : null}
+          padding={DENSITY[density].rowPadding}
         />
       ))}
     </View>
@@ -45,13 +49,14 @@ type ChoiceProps = {
   selected: boolean;
   chosenColour: string;
   onPress: (() => void) | null;
+  padding: number;
 };
 
 // Game feel phase 4: a row rests on an edge of its border colour, as the primary button does
 // (GF-2). The chosen row lifts and takes its colour; a right answer the player chose bounces and
 // flashes the right colour; a wrong one shakes. Every movement is on a view inside the pressable,
 // so the tap target never moves under a finger.
-function Choice({ label, mark, selected, chosenColour, onPress }: ChoiceProps) {
+function Choice({ label, mark, selected, chosenColour, onPress, padding }: ChoiceProps) {
   const { colours } = useTheme();
   const border = { plain: colours.line, chosen: chosenColour, right: colours.right, wrong: colours.wrong }[mark];
   const fill = { plain: colours.surface, chosen: colours.surface, right: colours.rightSoft, wrong: colours.wrongSoft }[mark];
@@ -71,7 +76,7 @@ function Choice({ label, mark, selected, chosenColour, onPress }: ChoiceProps) {
       <MotionView style={[styles.row, shake]}>
         <MotionView style={bounce}>
           <View style={[styles.edge, { backgroundColor: border }]} />
-          <MotionView style={[styles.face, { borderColor: border, backgroundColor: fill }, lift]}>
+          <MotionView style={[styles.face, { paddingVertical: padding, borderColor: border, backgroundColor: fill }, lift]}>
             <MotionView pointerEvents="none" style={[styles.flash, { backgroundColor: colours.right }, flash]} />
             <Text style={[styles.label, { color: colours.text }]}>{label}</Text>
           </MotionView>
@@ -87,7 +92,6 @@ const styles = StyleSheet.create({
   row: { paddingBottom: DIALS.choiceEdge },
   edge: { position: "absolute", left: 0, right: 0, top: DIALS.choiceEdge, bottom: -DIALS.choiceEdge, borderRadius: RADIUS.md },
   face: {
-    paddingVertical: SPACE.md,
     paddingHorizontal: SPACE.md,
     borderRadius: RADIUS.md,
     borderWidth: CHOICE_BORDER,
