@@ -57,6 +57,14 @@ Zach chose to check the tool before aligning, at GATE 0.
 
 `zach-short/felto` stays private. Zach confirmed at GATE 0.
 
+### 2026-10-05: the app's first version
+
+Ratified at GATE 1 of `docs/incomplete/app/SCOPE.md` (section 7 holds the answers and section 3
+the defenses). A lesson path with drills; Expo for iOS and Android, with native UI components
+(`@expo/ui`) where they exist; progress on the device only; static mascot poses, Rive later; the
+app in `app/` in this repo; no money. The non-scope list and dials in that file are ratified too.
+Do not re-ask these; a change is a dated supersession.
+
 ## Code map
 
 - `tools/common.py`: the helpers both generators use (`svg`, `tf`, `ext`, `sector`, `gloss`,
@@ -184,6 +192,17 @@ in `HANDOFF.md` and `CLAUDE.md`. The commit is Zach's.
 `:38-39` now cite the current lines. `CLAUDE.md` no longer says the icons count is never printed
 (false since step 3); it cites the two `print` lines. Left as written: the citations inside steps
 2 and 3, which describe the code as it was on 2026-10-04. `git diff --stat -- assets tools` empty.
+
+**6. Scope the app.** Done 2026-10-05, on branch `main`, on Opus 5.5, with `/scope the app`. Wrote
+`docs/incomplete/app/SCOPE.md`: 26 verified facts, six decisions with options and defenses, the
+non-scope list, dials and nine hazards. Found that no asset is in any commit: HEAD holds 0 files
+under `assets/`, 129 are staged, and `origin/main` matches local `main` at `5da0bca`, so the
+Higgsfield art exists only on this disk. Corrected one claim the same day: the first survey read
+only `package.json` files and missed `furlough` (SwiftUI) and `drunktion` (Kotlin), which
+Zach's question "why not native Kotlin and Swift?" brought out; option 2D was added. GATE 1
+answers, 2026-10-05: every recommendation, with Expo using native UI components where they exist
+(Settled). No code written. **Left owed:** commit the staged assets; a TypeScript standard; the
+design and plan stages. The commit is Zach's.
 
 ## Style rules
 
