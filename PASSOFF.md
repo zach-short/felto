@@ -43,9 +43,9 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 | 23 | Unit stories phase 2: the story engine, the route and the header button | `OPEN` | Opus 5.5 | E | nothing | `app/src/app/story/`, `app/src/screens/story-screen.tsx`, `app/src/components/story/`, `app/src/content/stories/schema.ts`, `app/src/components/root-stack.tsx`, `app/src/components/path/unit-header.tsx`, `app/src/components/path/path-view-model.ts`, `app/src/config/dials.ts` (block `// unit-stories`) |
 | 24 | Unit stories phase 3: the hands story content | `HELD` until item 23 is `DONE` | Opus 5.5 | E | item 23 | `app/src/content/stories/hands.ts`, `app/src/content/stories/hands-story.test.ts` |
 | 25 | Unit stories phase 4: close out | `HELD` until items 22 to 24 are `DONE` | Sonnet 5 | E | items 22 to 24 | `docs/README.md`, `docs/incomplete/unit-stories/`, `docs/incomplete/app/DESIGN.md`, `HANDOFF.md` |
-| 26 | Game feel phase 1: Reanimated, the motion module, tokens and the primary button | `OPEN` | Opus 5.5 | F | nothing | `app/package.json`, `app/bun.lock`, `app/src/motion/`, `app/src/components/button/`, `app/src/theme/tokens.ts`, `app/src/config/dials.ts` (block `// game-feel`), `docs/conventions-typescript.md` |
-| 27 | Game feel phase 2: haptics, the Haptics switch and stored version 3 | `HELD` until item 26 is `DONE` | Opus 5.5 | F | item 26 | `app/src/feedback/`, `app/src/storage/migrations.ts`, `app/src/game/player-state.ts`, `app/src/components/profile/`, `app/src/screens/profile-screen.tsx` |
-| 28 | Game feel phase 3: six new sound effects | `HELD` until item 27 is `DONE` | Opus 5.5 | F | item 27 | `tools/build_sounds.py`, `assets/sounds/`, `app/src/art/sounds.ts`, `app/src/feedback/effects.ts` |
+| 26 | Game feel phase 1: Reanimated, the motion module, tokens and the primary button | `DONE: HANDOFF 29` | Opus 5.5 | F | nothing | `app/package.json`, `app/bun.lock`, `app/src/motion/`, `app/src/components/button/`, `app/src/theme/tokens.ts`, `app/src/config/dials.ts` (block `// game-feel`), `docs/conventions-typescript.md` |
+| 27 | Game feel phase 2: haptics, the Haptics switch and stored version 3 | `DONE: HANDOFF 30` | Opus 5.5 | F | item 26 | `app/src/feedback/`, `app/src/storage/migrations.ts`, `app/src/storage/check-state.ts`, `app/src/storage/player-actions.ts`, `app/src/game/player-state.ts`, `app/src/game/settings.ts`, `app/src/components/profile/`, `app/src/screens/profile-screen.tsx`, `app/src/components/lesson/lesson-run-view.tsx` and `feedback-sheet.tsx` (the press haptic only) |
+| 28 | Game feel phase 3: six new sound effects | `OPEN` | Opus 5.5 | F | item 27 | `tools/build_sounds.py`, `assets/sounds/`, `app/src/art/sounds.ts`, `app/src/feedback/effects.ts`, `app/src/config/dials.ts` (block `// game-feel`), `app/src/components/lesson/lesson-run-view.tsx` and `feedback-sheet.tsx` (the press sound only) |
 | 29 | Game feel phase 4: the answer loop | `HELD` until item 28 is `DONE` | Opus 5.5 | F | item 28 | `app/src/components/lesson/`, `app/src/components/exercise/`, `app/src/feedback/` |
 | 30 | Game feel phase 5: finish, chest and boss screens | `HELD` until item 29 is `DONE` | Opus 5.5 | F | item 29 | `app/src/components/lesson/lesson-finish.tsx`, `app/src/components/chest/`, `app/src/components/boss/boss-finish.tsx`, `app/src/screens/chest-screen.tsx` |
 | 31 | Game feel phase 6: the path | `HELD` until item 30 is `DONE` | Opus 5.5 | F | item 30 | `app/src/components/path/`, `app/src/art/path-node-art.tsx`, `app/src/art/colour-swap.json`, `tools/build_icons.py` only if the node decision needs it |
@@ -705,6 +705,10 @@ last slide, saying "gates green" or "seen running" per item (R10); then the two 
 
 ### 26. Install Reanimated and build the motion module, tokens and the primary button
 
+*`DONE: HANDOFF 29`, 2026-10-05, on branch `game-feel-1` in `.claude/worktrees/game-feel-1`, not
+committed. Do not paste this prompt. It reads "Move the Check and Continue call sites"; the build
+also moved the feedback sheet's Continue (`docs/incomplete/game-feel/PLAN.md`, BD-G12).*
+
 **Model: Opus 5.5. Lane F. Waits on nothing.** Use its own worktree: items 22 and 23 run beside it.
 
 You are picking up felto, a poker-learning app in `app/` (Expo SDK 57, React Native 0.86, TypeScript
@@ -774,6 +778,192 @@ button in light and dark on each; a line saying whether the press was felt on Za
 feel it: say "not felt"); then the two copyable blocks, `git add` with the exact files and `git commit`
 with the same files and a short lowercase message.
 
-Items 24, 25 and 27 to 33: their prompts are written by the session that closes the item before
+### 27. Add the haptic vocabulary, the Haptics switch and stored version 3
+
+*`DONE: HANDOFF 30`, 2026-10-05, on branch `game-feel-2` in `.claude/worktrees/game-feel-2`, not
+committed. Do not paste this prompt. Step 4 puts `shouldBuzz` in `haptics.ts`; the build put it in
+`should-buzz.ts`, because a node test cannot load `expo-haptics` (game-feel `PLAN.md` BD-G15).*
+
+*Written 2026-10-05 by the session that built item 26 (`HANDOFF.md` step 29), from phase 2 of
+`docs/incomplete/game-feel/PLAN.md`.*
+
+**Model: Opus 5.5. Lane F. Waits on item 26 (`DONE: HANDOFF 29`).** Use its own worktree. If
+Zach has not yet merged branch `game-feel-1` into `main`, make the worktree from that branch
+(`git worktree add -b game-feel-2 .claude/worktrees/game-feel-2 game-feel-1`), because `main`
+lacks Reanimated, the motion module and the primary button. Items 22 and 23 may run beside it.
+
+You are picking up felto, a poker-learning app in `app/` (Expo SDK 57, React Native 0.86,
+TypeScript strict, bun, a development build). Read `HANDOFF.md` first (the gate, the invariants,
+the code map, and two Known facts written by step 29: Reanimated needs a rebuild, and the Metro
+cache is shared across checkouts), then `docs/incomplete/game-feel/DESIGN.md` (`GF-3`, `GF-8`, and
+the `As built` notes under `GF-1` and `GF-2`) and `docs/incomplete/game-feel/PLAN.md` (sections 0
+and 1, including BD-G1 to BD-G14, phase 1's `BUILT` header, and phase 2), then
+`docs/AGENT-PRACTICES.md` and `docs/conventions-typescript.md` in full. Session rules, restated:
+never run `git commit`, `git push`, `git add -A` or `git add .`; absolute dates; no em dashes and
+no contractions in documents; no drive-by fixes, note and raise them; write
+`bun run --cwd app <script>`, never `bun --cwd app run <script>`; a change to the stored shape
+raises the version, ships its migration and a test that loads the old shape, in the same change.
+
+**Why this exists.** Zach asked for more haptics. On 2026-10-05 the app gives one success or
+error buzz on six moments and follows only the phone's own setting. Phase 2 grows that into a small
+vocabulary and, because more buzzing needs an off switch in the app, adds the Haptics switch
+Zach chose at GATE 1 (`GF-3`). It is the only stored-shape change in the game-feel effort.
+
+**What is fixed.** Read these before changing anything; do not relitigate them.
+- `STATE_VERSION` is 2 (`app/src/storage/migrations.ts:6`). Read it there before raising it
+  (BD-G2); the unit-stories effort changes no stored shape. The version 1 to 2 step
+  (`migrations.ts:11-20`) is the precedent: the new value is written out, not read from a dial,
+  and a value that is not the old shape is passed on unchanged so the check fails and the load
+  backs it up.
+- `Settings` is `{ sound, reminder }` (`app/src/game/player-state.ts:33`), filled in
+  `freshState` (`:54`) and checked by `app/src/storage/check-state.ts:38`. Sound is set by
+  `app/src/game/settings.ts:5` through `app/src/storage/player-actions.ts:47`, and its switch is
+  `app/src/components/profile/settings-section.tsx:27`, wired in `use-profile-controls.ts:16-17`
+  and `app/src/screens/profile-screen.tsx:44,49`.
+- The six buzzes: `Haptics.notificationAsync` with Success or Error in
+  `app/src/feedback/use-answer-feedback.ts:8-26`. `feedbackMoment` (`app/src/feedback/moments.ts:14-19`)
+  plays the sound only when Sound is on and always buzzes (BD-19). Every call into `expo-haptics`
+  goes through `safely` (`app/src/feedback/safely.ts:4-11`); keep that.
+- `PrimaryButton` (`app/src/components/button/primary-button.tsx`) takes `pressHaptic` and
+  `pressSound`, each run as the finger goes down. No call site passes either yet. The four call
+  sites are `app/src/components/lesson/lesson-run-view.tsx:65-69` and `feedback-sheet.tsx:49`.
+- The dials of `PLAN.md` section 3: option select is a selection tick, a button press is a light
+  impact. They go in the `// game-feel` block of `app/src/config/dials.ts`, which sits after the
+  `// D15` block (BD-G14).
+- `expo-haptics` is already a native dependency (`app/package.json`), so this phase needs no
+  rebuild of its own. A build made before item 26 still needs one for Reanimated.
+- Rule B2: `app/src/game/` imports no React Native or Expo module. `shouldBuzz(setting)` is pure and
+  tested in node (BD-G6).
+
+Do these, in order:
+1. **Read `STATE_VERSION`** and take the next number (3 if no one has raised it).
+2. **Add `settings.haptics`**, default `true`: the type and `freshState`, the shape check, and the
+   migration from 2 that writes `haptics: true` into every saved player and keeps every other
+   field. A new test file loads a version 2 save and gets version 3 with `haptics: true`, keeps a
+   version 2 save's extra fields, and still backs up a value that is not a player (rule Q2).
+3. **The action**: `setHaptics` in `app/src/game/settings.ts` and in `player-actions.ts`, beside
+   `setSound`.
+4. **The vocabulary** in `app/src/feedback/haptics.ts` (BD-G6): `selection`, `lightImpact`,
+   `mediumImpact`, `success`, `rigid`, each a named moment, each call inside `safely`, plus the pure
+   `shouldBuzz(setting)` with its own test file.
+5. **Connect the six existing moments** so the switch silences them: `feedbackMoment` buzzes only
+   when `shouldBuzz` says so. Adjust `moments.test.ts` where the old rule (always buzz) is pinned.
+6. **The press haptic**: pass a light impact, through the setting, to `pressHaptic` at the four
+   `PrimaryButton` call sites. The option-select tick is phase 4's (item 29), not this one.
+7. **The switch** in Profile beside Sound: a native `Switch` (switches stay native, `GF-2`), with a
+   label and one warm help line. Ask Zach for the words first (below).
+8. **Record it.** Next free ledger step (read `HANDOFF.md`; lanes D and E may also have taken
+   one); code map lines; a dated pointer under BD-19 in `docs/incomplete/app/PLAN.md` and a "built"
+   line under the amendment at `docs/incomplete/app/DESIGN.md` `D15`; an `As built` note under
+   `GF-3`; phase 2's `BUILT` header in the game-feel `PLAN.md`; the runtime entries of `PLAN.md`
+   section 7 for the switch and the old save; and item 28's pass-off prompt, from phase 3.
+
+Ask before building, in one batch: the switch's label and help line, in three registers (plain,
+warm, terse), because the copy is not settled (R7); for example "Haptics" with "Feel a tap when
+you answer and press." (plain), "Haptics" with "Little taps that cheer you on." (warm), or
+"Vibration" with no help line (terse). The answer may be none of these.
+
+Not in scope, whoever asks: new sounds and the press sound (item 28); the option-select tick, the
+answer-loop motion and the heart-lost buzz (item 29); any change to the Sound switch's behaviour;
+the other `LessonButton` call sites (items 30 and 32); badges, quests and a speaking mascot
+(`GF-9`).
+
+Hand back: the whole-repo gate from `CLAUDE.md`, green, with the test count; `git diff --stat --
+assets/icons assets/mascots assets/sounds` showing nothing; the test that loads a version 2 save,
+named; screenshots of Profile with the switch on and off, light and dark, on the iOS simulator and
+the Android emulator; a line saying the buzzes were "not felt" (an agent cannot feel one; Zach
+checks them on his phone); then the two copyable blocks, `git add` with the exact files and
+`git commit` with the same files and a short lowercase message.
+
+### 28. Add six sound effects from the generator, and the press sound
+
+*Written 2026-10-05 by the session that built item 27 (`HANDOFF.md` step 30), from phase 3 of
+`docs/incomplete/game-feel/PLAN.md`.*
+
+**Model: Opus 5.5. Lane F. Waits on item 27 (`DONE: HANDOFF 30`).** Use its own worktree. If Zach
+has not yet merged branch `game-feel-2` into `main`, make the worktree from that branch
+(`git worktree add -b game-feel-3 .claude/worktrees/game-feel-3 game-feel-2`), because `main`
+lacks Reanimated, the primary button and the Haptics switch. Items 22 and 23 may run beside it.
+
+You are picking up felto, a poker-learning app in `app/` (Expo SDK 57, React Native 0.86,
+TypeScript strict, bun, a development build) whose art and sound come from Python generators in
+`tools/`. Read `HANDOFF.md` first (the gate, the invariants, the code map, and the Known facts on
+the shared Metro cache, the simulator tool and the read-only emulator), then
+`docs/incomplete/game-feel/DESIGN.md` (`GF-5`, and the `As built` notes under `GF-1` to `GF-3`) and
+`docs/incomplete/game-feel/PLAN.md` (sections 0, 1 and 3, BD-G1 to BD-G18, phase 2's `BUILT`
+header, and phase 3), then `docs/AGENT-PRACTICES.md`, `docs/conventions-python.md` and
+`docs/conventions-typescript.md` in full. Session rules, restated: never run `git commit`,
+`git push`, `git add -A` or `git add .`; absolute dates; no em dashes and no contractions in
+documents; no drive-by fixes, note and raise them; write `bun run --cwd app <script>`, never
+`bun --cwd app run <script>`; never hand-edit a file under `assets/`, change the generator and run it.
+
+**Why this exists.** Zach asked for more sounds. On 2026-10-05 the app has six effects, each for an
+answer or an ending (`D15`), and nothing sounds when a button is pressed, an option is chosen, a
+heart is lost or XP comes in. `GF-5` adds six more from the same generator, and item 27 left the
+primary button's `pressSound` prop waiting for one of them.
+
+**What is fixed.** Read these before changing anything; do not relitigate them.
+- `tools/build_sounds.py` (162 lines) is standard library only (`math`, `os`, `struct`, `wave`) and
+  deterministic. Each effect is a function that fills a buffer with `note(...)` and returns
+  `to_frames(buf, peak)` (for example `chest_open`, `:125-130`); the `SOUNDS` table (`:133-140`)
+  lists them, and `main()` (`:154-158`) prints a count taken from its writes, so a skipped write
+  shows as a short count. Its docstring gives each effect's pitches, timing and peak (`:1-30`).
+- `app/src/art/sounds.ts` is the only WAV importer (rule U6): the `Effect` union (`:10-16`) and
+  `SOUND_SOURCES` (`:18-25`). `app/src/feedback/effects.ts` makes one player per key of
+  `SOUND_SOURCES` (`:14-21`), so a new key gets its player with no other change there.
+- The Sound switch gates the six moments in `app/src/feedback/moments.ts`; `playEffect` itself
+  reads no setting. The precedent for a gated call from a screen is item 27's `useHaptics()`
+  (`app/src/feedback/use-haptics.ts`), which reads the setting through `usePlayer()`.
+- `PrimaryButton` runs `pressSound` as the finger goes down (`app/src/components/button/primary-button.tsx:27-31`).
+  The four call sites already pass `pressHaptic`: `app/src/components/lesson/lesson-run-view.tsx`
+  (Check, the finish's Continue, the closed-session Continue) and `feedback-sheet.tsx` (Continue).
+- The dial of `PLAN.md` section 3 is a sound length ceiling of 0.6 s for the new effects. The `D15`
+  block of `app/src/config/dials.ts` holds `soundEffects: 6` and `soundMaxSeconds: 1`, and no code
+  reads either (`grep -rn "soundEffects\|soundMaxSeconds" app/src tools`, 2026-10-05). The generator
+  cannot read `dials.ts`.
+- `GF-5`'s list to choose from: tap, option select, node press, card slide, XP tick, streak up,
+  heart lost, reward claim, sparkle, perfect. The plan's default if Zach picks none: tap, option
+  select, heart lost, XP tick, reward claim, sparkle.
+- An agent cannot hear. Each sound is proven only when Zach plays it
+  (`afplay assets/sounds/<name>.wav`) and approves it (`CLAUDE.md`, "What the gates do not prove").
+
+Do these, in order:
+1. **Ask Zach for the six** (below) before writing any generator code.
+2. **Extend the generator** with one function per effect, each no longer than 0.6 s, and add each to
+   `SOUNDS`; keep the six old functions byte for byte. Describe each new one in the docstring as the
+   old ones are. Decide where the 0.6 s ceiling lives (a generator constant, a check, or both) and
+   record it as a `BD` in the game-feel `PLAN.md` with its reversal. Run `python3 tools/build_sounds.py`:
+   the run line must say 12.
+3. **Check the old six did not move**: `git diff --stat -- assets/sounds` lists only the six new files.
+4. **Register them** in `app/src/art/sounds.ts` only, with `@art/sounds/<name>.wav` imports, and add
+   each name to `Effect`.
+5. **The press sound**: if the six include tap, pass it, through the Sound setting, to `pressSound`
+   at the four call sites, the way item 27 passed `pressHaptic`. Any other new sound is wired by the
+   phase that owns its moment (option select and heart lost are item 29's); register it only.
+6. **Counts**: the "6 WAV files" in `CLAUDE.md` (Directory map, and the run-line note under
+   Commands) and in `HANDOFF.md` (the code map line for `tools/build_sounds.py`) become 12, in the
+   same change.
+7. **Record it.** Next free ledger step (read `HANDOFF.md`; lanes D and E may also have taken one);
+   code map lines; an `As built` note under `GF-5`; a "built" line under the `D15` amendment in
+   `docs/incomplete/app/DESIGN.md`; phase 3's `BUILT` header; runtime entries; item 29's pass-off
+   prompt, from phase 4.
+
+Ask before building, in one batch: which six effects (the plan's default above stands if Zach picks
+none), and, for each, one line on how it should feel (for example "tap: short, dry, low"), because
+the generator turns that line into pitches and timing. Both are Zach's calls.
+
+Not in scope, whoever asks: wiring option select, heart lost or any answer-loop sound into a screen
+(item 29); the finish, chest and boss screens (item 30); the path (item 31); recorded or licensed
+sounds (`GF-5` chose the generator); music; any change to the six old effects or to the Sound switch.
+
+Hand back: the whole-repo gate from `CLAUDE.md`, green, with the run lines (78, 18 and 12) and the
+test count; `git diff --stat -- assets/icons assets/mascots` empty and `git diff --stat --
+assets/sounds` showing only the six new files; the twelve `afplay` commands for Zach, one per line;
+each new sound marked "not heard" until Zach approves it; if the press sound is wired, a screenshot
+of a lesson on the iOS simulator and the Android emulator and the line "not heard"; then the two
+copyable blocks, `git add` with the exact files and `git commit` with the same files and a short
+lowercase message.
+
+Items 24, 25 and 29 to 33: their prompts are written by the session that closes the item before
 them, from the matching phase in `docs/incomplete/unit-stories/PLAN.md` or
 `docs/incomplete/game-feel/PLAN.md`.

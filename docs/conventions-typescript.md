@@ -6,15 +6,16 @@ The file extension decides which standard applies: `.py` files follow
 `docs/conventions-python.md`, and `.ts` and `.tsx` files follow this one. Read this file in full
 before you write or edit TypeScript here.
 
-Version 1.1.0. Written 2026-10-05 on Opus 5.5 for board item 6 (app phase 2 in `PLAN.md`), when
+Version 1.1.1. Written 2026-10-05 on Opus 5.5 for board item 6 (app phase 2 in `PLAN.md`), when
 `app/` did not yet exist. Revised 2026-10-05 (1.0.1, board item 14): rule U6 widened from the art
 to the art and the sound, after the audit of item 13 found the WAV imports outside the art
 module; no rule renumbered. Revised 2026-10-05 (1.1.0, board item 16, app phase 12): every
 correct example is now real felto code with a checked `file:line` (no example cites another
 repo); the lint and Metro facts are re-read from felto's own `app/node_modules`, which corrects
 the `import/order` sentence; sanctioned divergences Z2 to Z4 and a list of known gaps are added;
-no rule renumbered and no rule changed in meaning. The rules start from two earlier TypeScript
-standards of Zach's, which hold the same owner policy as felto's `.personal-config.json` and
+no rule renumbered and no rule changed in meaning. Revised 2026-10-05 (1.1.1, board item 26,
+game-feel phase 1): registry entry Z5 for the custom primary button of `GF-2`; no rule changed.
+The rules start from two earlier TypeScript standards of Zach's, which hold the same owner policy as felto's `.personal-config.json` and
 which `PLAN.md` BD-17 names. No rule id is copied from either: they use ids such as `F1`, `T1`,
 `L1` and `X1` with other meanings (`PLAN.md`, section 0, row 25). The ids below are felto's own.
 
@@ -610,6 +611,7 @@ and the owner's agreement.
 | Z2 | U1 (a `_layout.tsx` holds the navigator and nothing else) | `app/src/app/_layout.tsx` renders `RootProviders` around `RootStack` (`app/src/components/root-providers.tsx`, which mounts `PlayerProvider` and `ReminderSync`) | The player provider (rule B4) and the reminder sync (`D11`, BD-18) must sit above every route, and the navigator itself reads the player to guard onboarding (`D20`). The layout file stays a thin render of two components; the providers and the navigator live in `app/src/components/`. |
 | Z3 | N1 (kebab-case file names) | `app/assets/fonts/FeltoRank.ttf` and `FeltoRank-OFL.txt` | The file name is the font family name. On Android, `react-native-svg` finds an embedded font by its file name, so the name must equal the `'FeltoRank'` that `tools/build_icons.py` writes into every card face (`D14`, `PLAN.md` BD-22). Renaming the file breaks the ranks. |
 | Z4 | N2 (named exports only) | The ambient module declarations `app/src/types/svg.d.ts:13` and `app/src/types/sound.d.ts:5`, which declare `export default` inside `declare module` | They describe what Metro hands back for an `.svg` or `.wav` import, which is a default export; they define no export of felto's own. |
+| Z5 | `D2` (a native `@expo/ui` control wherever one exists), which U2 and U3 carry into code | `PrimaryButton` in `app/src/components/button/primary-button.tsx`, a React Native `Pressable` drawn the same on iOS and Android, used for Check and Continue (`app/src/components/lesson/lesson-run-view.tsx:65-69`, `feedback-sheet.tsx:49`) | `GF-2` of `docs/incomplete/game-feel/DESIGN.md`, agreed by Zach on 2026-10-05: a native `Button` cannot take a raised edge or a press that sinks it, which every button in the Duolingo references has. Switches, pickers and the time dialog stay native. Because it imports no `@expo/ui`, the button is one file, not a U3 pair (`PLAN.md` BD-G7). |
 
 ## Known gaps
 

@@ -29,6 +29,35 @@ export const DIALS = {
   soundEffects: 6,
   soundMaxSeconds: 1,
 
+  // game-feel: every motion value (docs/incomplete/game-feel/PLAN.md section 3, BD-G1), so no
+  // screen holds a raw number. Times in milliseconds, distances in points. Proposed values, to be
+  // set on the phone.
+  pressScale: 0.96,
+  pressDownMs: 90,
+  // The spring back after a press; a damping ratio under 1 lets it overshoot a little
+  pressReleaseMs: 220,
+  pressReleaseDamping: 0.55,
+  buttonEdge: 4,
+  bounceScale: 1.08,
+  bounceMs: 280,
+  shakeDistance: 6,
+  shakeSwings: 3,
+  shakeMs: 240,
+  sheetRiseMs: 320,
+  // Not in the plan's table: the fade-in of phase 1 needed a time, and 200 ms is short enough
+  // not to delay a reading eye
+  fadeMs: 200,
+  idleBobDistance: 3,
+  idleBobMs: 2400,
+  particleCount: 24,
+  particleMs: 900,
+  // GF-8: what the phone's Reduce Motion setting skips. The press and fades stay, because no
+  // screen needs motion to be understood and a press with no answer feels broken
+  reducedMotionSkips: ["bounce", "shake", "tilt", "pulse", "bob", "particles"],
+  // GF-3: the touch each kind of press gives, named from the vocabulary of feedback/haptics.ts
+  selectHaptic: "selection",
+  pressHaptic: "lightImpact",
+
   // D17: every screen draws in a centred column at most this wide, in points
   columnMaxWidth: 640,
 

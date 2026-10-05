@@ -149,6 +149,22 @@ answer in place.
   `Session` of kind `placement` (`components/onboarding/placement-session.ts` draws it;
   `components/lesson/session-end.ts` routes its end to `finishPlacement`). The fixture `fresh`
   opens onboarding; `placed` and `all-done` show the path after a pass and every Practice kind.
+- Motion and the primary button (board item 26, `GF-1`, `GF-2`): `app/src/motion/` is the only
+  importer of `react-native-reanimated` and `react-native-worklets` (BD-G3; `motion-boundary.test.ts`
+  fails otherwise). It holds `useReducedMotion` (the one reader of the phone's Reduce Motion
+  setting, BD-G4), `motionAllowed` over the dial `reducedMotionSkips`, the pure `motion-steps.ts`,
+  the hooks `usePressScale`, `useBounce` and `useFadeIn`, and `MotionView`.
+  `app/src/components/button/primary-button.tsx` is the raised Check and Continue button
+  (registry Z5 of the TypeScript standard); the native `LessonButton` still draws the other
+  primary actions.
+- Haptics and the Haptics switch (board item 27, `GF-3`): `app/src/feedback/haptics.ts` is the
+  vocabulary (a selection tick, a light, medium and rigid impact, and success), each call inside
+  `safely`, reached only through `buzz(touch, setting)`; a screen calls `useHaptics()`
+  (`use-haptics.ts`), which reads `settings.haptics`. The rule `shouldBuzz` is in `should-buzz.ts`,
+  so the pure `moments.ts` can call it in node (game-feel `PLAN.md` BD-G15). The six answer and
+  ending buzzes stay `Haptics.notificationAsync` in `use-answer-feedback.ts`, gated in `moments.ts`.
+  The lesson loop's `PrimaryButton`s give the dial `pressHaptic` (`lesson-run-view.tsx`,
+  `feedback-sheet.tsx`).
 - Pure copy helpers (board item 16): `components/lesson/closed-copy.ts` (`OUT_OF_HEARTS`,
   `nextLifeLine`, which formats the time with `formatClockTime`), `components/stat-values.ts`
   (`statLabel`, the singular and plural stat words), `components/path/path-view-model.ts`
@@ -162,10 +178,12 @@ answer in place.
 - `app/src/storage/`: the one data module (`D3`, BD-8, board item 8). `player-store.ts` is the
   pure core (load, check, migrate, save, back up); `migrations.ts` holds `STATE_VERSION`;
   `kv-store-adapter.ts` is the only importer of `expo-sqlite`; `player-provider.tsx` and
-  `use-player.ts` give screens the state and its actions. `STATE_VERSION` is 2 since board item
-  15 (settings gained the reminder; migration and tests in `migrations.ts` and `migrations.test.ts`).
+  `use-player.ts` give screens the state and its actions. `STATE_VERSION` is 3 since board item
+  27 (settings gained `haptics`; the step is in `migrations.ts`, the old-save test in
+  `haptics-migration.test.ts`); it was 2 from board item 15 (the reminder; `migrations.test.ts`).
 - Profile and the reminder (board item 15): `app/src/components/profile/` is the Profile form
-  (`FieldGroup`, the freeze shop, the settings, reset); `app/src/reminder/` plans the week of
+  (`FieldGroup`, the freeze shop, the settings, reset; the Haptics switch under Sound since board
+  item 27); `app/src/reminder/` plans the week of
   reminders (`plan.ts`, pure and tested) and keeps the phone in step (`use-reminder-sync.ts`,
   mounted at the root as `ReminderSync` inside `components/root-providers.tsx`; the clock is
   read in `replan.ts` when a replan runs); `clock-format.ts` is the one time-of-day format; `reminder-device.ts` is the only importer of
@@ -225,6 +243,29 @@ answer in place.
   only show a page; a fixture is refused unless `__DEV__` (`use-load-fixture.ts`).
 - **`PART0-PROMPT.md:4` names the wrong directory**, a scratchpad path under `/private/tmp`. The
   repo is `/Users/zachshort/Projects/felto`. Found 2026-10-04.
+- **Reanimated is native code since board item 26.** A development build made before it stops
+  at launch. After pulling that change, rebuild (`bun run --cwd app ios`, and the Android
+  command in Environment) on every simulator, emulator and phone.
+- **The Metro transform cache is shared by every checkout on this Mac** (`$TMPDIR/metro-cache`).
+  On 2026-10-05 the main checkout's `app/node_modules` held `react-native-worklets` 0.13.0 and
+  `react-native-reanimated`, dated 2026-10-05 01:50 and listed in no `package.json`. A worktree's
+  Metro then served code transformed with that 0.13.0 plugin, and the app stopped on "[Worklets]
+  Mismatch between JavaScript code version and Worklets Babel plugin version (0.10.1 vs.
+  0.13.0)". A Metro started with its own `TMPDIR` and `--clear` fixed it. When another Metro
+  runs, start a second one that way, on its own port: `TMPDIR=<a scratch folder>/ bunx expo start
+  --dev-client --port 8083 --clear` from `app/`, then `bunx expo run:ios --device <udid> --port
+  8083`.
+- **A tap from the simulator tool does not flip an `@expo/ui` `Switch` on the iOS simulator**
+  (2026-10-05, board item 27, the iPhone 17 simulator): three taps on Haptics and one on Sound
+  effects changed nothing on screen or in the stored value. A drag of the knob (`swipe` from one
+  end of the switch to the other, 0.3 s) flips it, and the stored value follows.
+- **A read-only emulator has no network.** When another checkout already runs an AVD, a second
+  copy starts with `emulator -avd <name> -read-only -port <n>` (2026-10-05, `Pixel_9` on 5556 while
+  another lane held it on 5560). In that copy `10.0.2.2` is unreachable (`ENETUNREACH`), so open
+  the development build on `http://localhost:<port>` after `adb reverse tcp:<port> tcp:<port>`.
+  An app installed in the AVD by another checkout may carry another native worklets version; this
+  one had 0.13.0 and stopped on "[Worklets] Mismatch between C++ code version and JavaScript code
+  version", so install this checkout's own build into the copy first.
 
 ## Step log
 
@@ -808,6 +849,118 @@ passes the whole-repo gate (63 files, 490 tests). The rundown is
 `docs/incomplete/autopilot-2026-10-05/RUNDOWN.md`; the record of the run is `STATE.md` beside it.
 Weekly usage ended at 49%, under Zach's 65% stop. Nothing is committed; no one has held the app on
 a phone. Zach's answers to `D15` to `D21` are now in `DESIGN.md`.
+
+**29. Reanimated, the motion module, tokens and the primary button (board item 26, game-feel
+phase 1).** Done 2026-10-05, on branch `game-feel-1` in `.claude/worktrees/game-feel-1`, made
+from local `main` at `b986f61`, on Opus 5.5; not committed. Step 28 is lane D's (board item 22,
+in its own worktree, by its message to this session on 2026-10-05), so this worktree's log goes
+from 27 to 29 until the branches merge. `bunx expo install` pinned `react-native-reanimated`
+4.5.1 and `react-native-worklets` 0.10.1; Expo's Babel preset adds the worklets plugin, so there is
+no `babel.config.js` (BD-G9). `app/src/motion/` wraps Reanimated (BD-G3) and holds
+`useReducedMotion` (BD-G4), `motionAllowed` over the new dial `reducedMotionSkips` (`GF-8`; the
+press and fades stay), the pure `motion-steps.ts`, `usePressScale`, `useBounce`, `useFadeIn` and
+`MotionView`; a new test fails if any file outside the folder imports Reanimated or worklets, and
+a planted import made it fail (BD-G13). `app/src/config/dials.ts` has a `// game-feel` block after
+the `D15` block (BD-G14) with the motion values of `PLAN.md` section 3 plus `fadeMs`,
+`pressReleaseMs` and `pressReleaseDamping`. `app/src/theme/tokens.ts` has the button's face, edge
+and label, its disabled three, four unit colours and four moment colours, light and dark, each
+copied from a chip of `tools/build_icons.py:35-40`, `:250` or `:251` (a script checked all 27
+colour citations in the file: none wrong); `BUTTON_HEIGHT` is 52. `PrimaryButton`
+(`app/src/components/button/primary-button.tsx`) draws Check and Continue in the lesson loop and
+the feedback sheet's Continue (BD-G12); its label is `TYPE.heading` so white on blue passes as
+large text (BD-G11); `pressHaptic` and `pressSound` props wait for phases 2 and 3. The other 12
+`LessonButton` uses stay native (BD-G7). The double-press guards of `session-steps.ts` were not
+touched, and their tests pass unchanged. Registry entry Z5 in `docs/conventions-typescript.md`
+(1.1.1); a "built" pointer under `D2` in `docs/incomplete/app/DESIGN.md`; `As built` notes under
+`GF-1` and `GF-2`; BD-G8 to BD-G14 and phase 1's `BUILT` header in the game-feel `PLAN.md`.
+Gate: exit 0, run lines 78, 18 and 6, 66 test files and 506 tests (16 new);
+`git diff --stat -- assets/icons assets/mascots assets/sounds` empty. **Seen running** on the
+iPhone 17 simulator (iOS 26.5) and the `Pixel_9` emulator, light and dark: the disabled, resting
+and held Check, the sheet's Continue at rest and held, one answer counted per press. **Not
+felt**: no one has pressed it on a phone. Found and handled: the shared Metro cache served code
+built by the main checkout's stray worklets 0.13.0 (Known facts); a Metro with its own `TMPDIR`
+fixed it. Findings, each `open`: (a) on the `Pixel_9`, during the first run under a load
+average of 77, Check was once drawn sunk after the lesson moved on and stayed sunk when enabled;
+four more tries with logging did not repeat it (the events came in order each time), so
+`usePressScale` now puts the button back at rest with a zero-length animation on every change of
+`disabled`, and the cause is unknown; (b) on Android the sheet's Continue sits about 14 dp above
+the gesture bar (phase 4 reworks the sheet); (c) `useBounce` and `useFadeIn` have never run,
+because no screen uses them yet; (d) `primary-button.tsx` adds one more raw `fontWeight` (rule
+U5 Known gaps; the dated count of 45 is left as written); (e) the Environment test row here and
+the counts in `CLAUDE.md` still say 63 files and 490 tests, left for the merge because lanes D and
+E change the same lines; (f) the main checkout's `app/node_modules` holds worklets 0.13.0 and
+Reanimated outside any manifest: after merging, run `bun install --cwd app --frozen-lockfile` in
+the main checkout and restart its Metro with `--clear`; (g) free disk was 4.1 GiB at 11:15 with
+three worktrees building native apps. Simulators: lanes now keep to their own devices (this lane:
+the iPhone 17 simulator, `Pixel_9` on `emulator-5556`, Metro on 8083), after an emulator of this
+lane stopped at 11:10 when another lane started one. **Left owed:** Zach rebuilds his phone's
+development build and presses Check and Continue; the commit, which is Zach's.
+
+Runtime entries (game-feel `PLAN.md` section 7, phase 1):
+
+| Goal | Where | Right answer |
+|---|---|---|
+| The new button feels right | Any lesson on the iPhone, after a rebuild from branch `game-feel-1`: Check, then the sheet's Continue | Each sinks while held and springs back on release; one press counts one answer; no buzz or sound of its own yet |
+| The build runs with Reanimated | The iPhone, the first launch after the rebuild | The app opens; no "[Worklets] Mismatch" screen |
+| A disabled Check reads as off | A lesson before an answer is picked, light and dark | A grey face on a darker grey edge, with a readable label |
+| The button never stays sunk | Android, a whole lesson | After each Continue, Check sits at rest with its edge showing (finding (a)) |
+
+**30. The haptic vocabulary, the Haptics switch and stored version 3 (board item 27, game-feel
+phase 2).** Done 2026-10-05, on branch `game-feel-2` in `.claude/worktrees/game-feel-2`, made from
+`game-feel-1` at `888b370` because item 26 is not yet merged into `main`, on Opus 5.5; not
+committed. Step 28 is lane D's and step 29 is item 26; this session told the sessions of lanes D and
+E by message that lane F takes 30. `STATE_VERSION` is 3 (`app/src/storage/migrations.ts:6`): settings
+gain `haptics`, on for a new player (`app/src/game/player-state.ts`) and checked as a boolean
+(`app/src/storage/check-state.ts`); the step from 2 writes `haptics: true`, keeps every other field,
+and passes a value that is not a version 2 player on unchanged, so the load backs it up. The
+old-save test is "loads a stored version 2 player with every field kept, extra ones too, and Haptics
+on" in `app/src/storage/haptics-migration.test.ts`; the same file backs up three bad version 2 values
+and refuses a version 3 player whose `haptics` is not a boolean. `setHaptics` is in
+`app/src/game/settings.ts` and `player-actions.ts` (`haptics-actions.test.ts`). The vocabulary is
+`app/src/feedback/haptics.ts`, reached through `useHaptics()` (BD-G17), and the rule `shouldBuzz` is in
+`should-buzz.ts` (BD-G15). The six answer and ending moments buzz only while the switch is on
+(`moments.ts`; 13 tests in `moment-haptics.test.ts`). The four `PrimaryButton`s of the lesson loop give
+the dial `pressHaptic`, a light impact, as the finger goes down (BD-G18). Zach chose the words in chat
+on 2026-10-05 from four offered (warm, plain, terse, and the prompt's warm line as written): the label
+"Haptics" and the help line "Little taps as you answer and press.", which opens the Settings footer
+above the reminder line (BD-G16). Three existing tests changed with the shape, each where an old value
+was pinned: `migrations.test.ts` lost its "is version 2" test (the new file pins 3) and its version 1
+load now expects `haptics: true`; `profile-actions.test.ts` expects `haptics: true` in the settings;
+`moments.test.ts` passes `haptics: true`. Four planted faults each failed their tests (the step drops
+`haptics`; the step resets the other settings; the moments ignore the switch; the check ignores
+`haptics`), and each file was restored with `cp` and compared with `cmp`. Gate: exit 0, run lines 78,
+18 and 6, 70 test files and 531 tests (25 new); `git diff --stat -- assets/icons assets/mascots
+assets/sounds` empty. **Seen running** on the iPhone 17 simulator (iOS 26.5, the development build of
+item 26, JavaScript from this branch) and on a read-only copy of `Pixel_9` on `emulator-5556` (this
+branch's own Android build, installed 12:22): Profile with the switch on and off, light and dark, and
+one right answer, the sheet and its Continue on each. The iPhone's own save, left by item 26 as
+version 2, loaded with its streak, XP, hearts and gems and was stored again as version 3 with
+`haptics: true` and no backup key (read with `sqlite3` from the app's `ExpoSQLiteStorage`). The
+emulator's save, left by another checkout's build, is now version 3 with XP 540 and `haptics: true`;
+its one backup key dates from 06:32, an earlier reset, and its value before the load was not read.
+Turning the switch off stored `haptics: false` and left Sound as it was, on both platforms. **Not
+felt**: a simulator has no haptics, and no one has held a phone with this build. Findings, each
+`open`: (a) step 29's finding (a) also on iOS: in a shot taken right after Check, the disabled Check
+was drawn sunk until the sheet covered it; the next question's Check was at rest; whether the press
+haptic plays a part was not tested; (b) `expo-haptics` is imported in two files, `haptics.ts` and
+`use-answer-feedback.ts`; phase 4, which moves the wrong answer to the rigid tap, can route the six
+moments through the vocabulary and leave one importer; (c) `shouldBuzz` is `return setting`: it is the
+one named rule, and the moment tests carry the weight; (d) the test counts in Environment and
+`CLAUDE.md` still say 63 files and 490 tests (step 29's (e)); (e) the `Pixel_9` AVD held a build from
+another checkout with worklets 0.13.0 native code (installed 2026-10-05 11:44), and the simulator
+tool's tap does not flip an `@expo/ui` `Switch` (both in Known facts); (f) this worktree's
+`app/android` holds about 1.4 GB of build output (gitignored); free disk ran between 4.0 and 7.0 GiB
+during the build with three checkouts building. **Left owed:** Zach turns Haptics off on his phone and
+confirms that no buzz is left, then on, and feels the press tap; the commit, which is Zach's.
+
+Runtime entries (game-feel `PLAN.md` section 7, phase 2):
+
+| Goal | Where | Right answer |
+|---|---|---|
+| The Haptics switch silences everything | The iPhone, after a rebuild from branch `game-feel-2` (or a reload, if the build has item 26): Profile, Haptics off, then a lesson | No buzz on Check, Continue, a right or wrong answer, a finish, a boss end or a chest; Sound still plays |
+| The press gives a tap | Haptics on, any lesson: Check, then the sheet's Continue | One light tap as the finger goes down, then the success or error buzz after Check |
+| An old save keeps its progress | Install the new build over the old one | Streak, XP, finished lessons, Sound and the reminder are unchanged; Haptics is on |
+| The words read right | Profile, Settings, light and dark | "Haptics" under "Sound effects"; the footer opens with "Little taps as you answer and press." |
 
 ## Style rules
 

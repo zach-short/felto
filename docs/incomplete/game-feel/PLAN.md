@@ -1,6 +1,8 @@
 # Plan: game feel
 
-Status: `PLANNED` 2026-10-05, awaiting GATE 2. Decisions `GF-1` to `GF-9` are in `DESIGN.md`,
+Status: `IN FLIGHT` since 2026-10-05, phases 1 and 2 built (board items 26 and 27). The line read "`PLANNED`
+2026-10-05, awaiting GATE 2" until Zach approved the plan in chat the same day (`PASSOFF.md`, the
+note above item 22). Decisions `GF-1` to `GF-9` are in `DESIGN.md`,
 section 8, and are frozen. This plan is what is built, in what order, by whom, and done when. Read
 `docs/AGENT-PRACTICES.md` and `docs/conventions-typescript.md` first; the whole-repo gate and the
 hazards are in `CLAUDE.md` and `HANDOFF.md`.
@@ -37,6 +39,17 @@ a screenshot" and "felt on the phone" are different claims.
 | BD-G5 | Particles (sparkles, confetti) are drawn with `react-native-svg` shapes moved by Reanimated; no canvas library is added | Add a library |
 | BD-G6 | The haptic vocabulary is one module, `app/src/feedback/haptics.ts`, with named moments, and a pure `shouldBuzz(setting)` so the rule is tested in node. Haptics read the stored setting; an off setting makes every call a no-op | Replace the module |
 | BD-G7 | The custom button is `app/src/components/button/primary-button.tsx`, with a platform-free implementation, because it uses no `@expo/ui` (rule U3 does not apply). The native `LessonButton` is removed only when every call site has moved | Keep both |
+| BD-G8 | Phase 1, 2026-10-05: the hook files are `use-press-scale.ts`, `use-bounce.ts` and `use-fade-in.ts`, not `press-scale.ts`, `bounce.ts` and `fade-in.ts` as phase 1 step 2 wrote them, because rule O2 names a hook's file for the hook. The pure parts are `motion-steps.ts` and `reduced-motion.ts`, each with its test, and `MotionView` is in `motion-view.ts` | Rename the three files |
+| BD-G9 | Phase 1: no `app/babel.config.js`. `babel-preset-expo` 57.0.13 adds `react-native-worklets/plugin` itself when the package is installed (`node_modules/babel-preset-expo/build/configs/expo.js:96-101`). It pushes the plugin before `@expo/ui/babel-plugin`, so it is not last in the preset's list; that is Expo's own order, and the press runs worklets on the simulators | Add a `babel.config.js` that passes `worklets: false` to the preset and lists the plugin last |
+| BD-G10 | Phase 1: every animation passes `ReduceMotion.Never` to Reanimated, and `motionAllowed(kind, reduced)` decides instead, from the dial `reducedMotionSkips`. Reanimated's own default (`ReduceMotion.System`) would skip the fades that `GF-8` keeps. The press and fades are not in the dial, so they stay under reduced motion | Drop `Never` and let Reanimated's default decide |
+| BD-G11 | Phase 1: the button label is `TYPE.heading` (20 points), not `TYPE.body`. White on the blue face is 4.0 to 1, which passes WCAG AA only as large text (bold from 18.66 px); dark mode puts a dark label on a lighter face (6.1 to 1) | Use `TYPE.body` and a darker face |
+| BD-G12 | Phase 1: "Check and Continue" is read as every button in the lesson loop: the bottom button of `lesson-run-view.tsx` (Check, the finish's Continue, the closed-session Continue) and the feedback sheet's Continue, which a player presses after every answer. The sheet's button is drawn inside the sheet's `RNHostView`. The other 12 `LessonButton` uses in 10 screen files (`grep -rn "<LessonButton" app/src`, 2026-10-05) stay native until phases 5 and 7, so `LessonButton` stays (BD-G7) | Put the sheet back on the native `Button` |
+| BD-G13 | Phase 1: `app/src/motion/motion-boundary.test.ts` fails when a file outside `src/motion/` imports `react-native-reanimated` or `react-native-worklets`, so BD-G3 is a gate, not only a review rule. A planted import made it fail on 2026-10-05 | Delete the test |
+| BD-G14 | Phase 1: the `// game-feel` block sits after the `// D15` block of `dials.ts`, not at the end, so the unit-stories blocks appended at the end merge without a conflict | Move the block |
+| BD-G15 | Phase 2, 2026-10-05: `shouldBuzz` is in its own file, `app/src/feedback/should-buzz.ts`, not in `haptics.ts` as BD-G6 and phase 2 step 3 wrote it. `haptics.ts` imports `expo-haptics`, and a vitest file in node that imports `expo-haptics` fails to load (a probe test, run and deleted 2026-10-05, stopped on a rolldown parse error inside `node_modules/expo-haptics`), while the pure `moments.ts` must call the rule and run in node | Pass the `expo-haptics` calls into `haptics.ts` as an argument and move `shouldBuzz` back into it |
+| BD-G16 | Phase 2: the Haptics help line opens the Settings section's footer, joined to the reminder line in one `Text` with a line break. The universal `Switch` takes a label and no help text (`app/node_modules/@expo/ui/build/universal/Switch/types.d.ts`), and the footer is a SwiftUI slot on iOS (`@expo/ui/ios/SlotView.swift`) and a Compose column on Android (`@expo/ui/src/universal/FieldGroup/FieldSection.android.tsx:78`), so one `Text` is the layout both draw the same. Zach saw this placement in the copy question before he chose | Give Sound and Haptics a section of their own, with the help line as its footer |
+| BD-G17 | Phase 2: the table of touches in `haptics.ts` is not exported. `buzz(touch, setting)` is the one way in, and a screen calls `useHaptics()` (`app/src/feedback/use-haptics.ts`), which reads the setting. The six answer and ending moments keep `Haptics.notificationAsync` with Success and Error in `use-answer-feedback.ts`, gated in `moments.ts`, because an error buzz is not in the `GF-3` vocabulary and phase 4 moves the wrong answer to the rigid tap | Export the table |
+| BD-G18 | Phase 2: the dials `selectHaptic` (`"selection"`) and `pressHaptic` (`"lightImpact"`) name touches of the vocabulary, so a name that is not a touch fails the typecheck where it is passed to `buzz`. `selectHaptic` is read by no code until phase 4 | Write the touch names at the call sites |
 
 ## 2. Phases
 
@@ -58,6 +71,17 @@ not collide (check "Files it owns" first). The unit-stories effort runs as lane 
 separate worktrees.
 
 ### Phase 1: Foundation
+
+**BUILT 2026-10-05, not committed: branch `game-feel-1`, worktree `.claude/worktrees/game-feel-1`
+(board item 26, `HANDOFF.md` step 29).** Reanimated 4.5.1 and worklets 0.10.1, as `bunx expo
+install` pinned them; built and run on the iPhone 17 simulator and the `Pixel_9` emulator. Build
+calls BD-G8 to BD-G14. Three values the plan did not give are new dials: `fadeMs` 200,
+`pressReleaseMs` 220 and `pressReleaseDamping` 0.55 (the plan says only "spring back"). The unit
+and moment colours are the chip faces of `tools/build_icons.py:35-40`, lighter in dark mode, and
+the moment colours take the deep extrusion tone in dark mode. What this changes for later phases:
+the press haptic and sound go in through `PrimaryButton`'s `pressHaptic` and `pressSound` props;
+the motion hooks must stay inside `src/motion/` (the boundary test fails otherwise); `useBounce`
+and `useFadeIn` exist but no screen uses them yet, so phase 4 is the first to run them.
 
 Files it owns: `app/package.json`, `app/bun.lock`, `app/babel.config.js` if one exists or is
 needed, `app/src/motion/*` (new), `app/src/components/button/*` (new),
@@ -96,6 +120,15 @@ Watch for: the dev build must be rebuilt on the phone (`Reanimated` is native co
 will crash on launch. A press that fires twice: the guards in `session-steps.ts` must keep working.
 
 ### Phase 2: Haptics and the Haptics switch
+
+**BUILT 2026-10-05, not committed: branch `game-feel-2`, worktree `.claude/worktrees/game-feel-2`,
+made from `game-feel-1` (board item 27, `HANDOFF.md` step 30).** Stored version 3, the vocabulary,
+the switch and the press haptic, with build calls BD-G15 to BD-G18. What this changes for later
+phases: a screen gives a touch with `useHaptics()` and a name from the vocabulary, never with
+`expo-haptics` itself; the dial `selectHaptic` is ready for phase 4's option tick; the six moments
+still use `Haptics.notificationAsync` in `use-answer-feedback.ts`, so phase 4, which moves the wrong
+answer to the rigid tap, can route them through the vocabulary and leave `haptics.ts` the one
+importer of `expo-haptics`. Phase 3 wires the press sound the same way the press haptic is wired.
 
 Files it owns: `app/src/feedback/*`, `app/src/storage/migrations.ts` and its test,
 `app/src/game/player-state.ts`, `app/src/components/profile/settings-section.tsx`,

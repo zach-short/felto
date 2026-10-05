@@ -16,7 +16,24 @@ export type ColourName =
   | "right"
   | "rightSoft"
   | "wrong"
-  | "wrongSoft";
+  | "wrongSoft"
+  // Game feel phase 1 (GF-2): the primary button's face, raised edge and label, and the same
+  // three when it is disabled
+  | "button"
+  | "buttonEdge"
+  | "buttonInk"
+  | "buttonOff"
+  | "buttonOffEdge"
+  | "buttonOffInk"
+  // GF-4: a colour for each unit, and one for each moment that fills a screen
+  | "unitHands"
+  | "unitTable"
+  | "unitPreflop"
+  | "unitOdds"
+  | "momentFinish"
+  | "momentChest"
+  | "momentBossPass"
+  | "momentBossFail";
 
 export type Scheme = "light" | "dark";
 
@@ -37,6 +54,24 @@ export const COLOURS: Record<Scheme, Record<ColourName, string>> = {
     rightSoft: "#E3F6EA",
     wrong: "#D9443B",
     wrongSoft: "#FCE6E4",
+    // The raised edge is the art's own extrusion: each chip colour is a face and a darker tone
+    // drawn down and to the right (tools/build_icons.py:35-40). White on this blue is 4.0 to 1,
+    // which passes only as large text, so the label is TYPE.heading
+    button: "#2F7BF0", // the blue chip's face, tools/build_icons.py:36
+    buttonEdge: "#0F47B8", // its extrusion, tools/build_icons.py:36
+    buttonInk: "#FFFFFF",
+    buttonOff: "#DADFEA", // the locked node's face, tools/build_icons.py:250
+    buttonOffEdge: "#A4ACC0", // its extrusion, tools/build_icons.py:250
+    buttonOffInk: "#5C6178",
+    // The chip faces, so a unit's colour is one the art already uses
+    unitHands: "#2F7BF0", // blue, tools/build_icons.py:36
+    unitTable: "#22B573", // green, tools/build_icons.py:37
+    unitPreflop: "#E8252F", // red, tools/build_icons.py:35
+    unitOdds: "#8A5BFF", // purple, tools/build_icons.py:40
+    momentFinish: "#22B573", // green, tools/build_icons.py:37
+    momentChest: "#FFC83A", // gold, tools/build_icons.py:39
+    momentBossPass: "#8A5BFF", // the boss node's purple, tools/build_icons.py:251
+    momentBossFail: "#3A4152", // the black chip, quiet on purpose, tools/build_icons.py:38
   },
   dark: {
     page: "#141824",
@@ -56,6 +91,23 @@ export const COLOURS: Record<Scheme, Record<ColourName, string>> = {
     rightSoft: "#173526",
     wrong: "#FF6B61",
     wrongSoft: "#3D1F22",
+    // On the dark page the faces take each chip's lighter highlight and the label goes dark
+    // (6.1 to 1); the edge keeps the deep extrusion, which still reads against the page
+    button: "#5A98F5", // the blue chip's highlight, tools/build_icons.py:36
+    buttonEdge: "#0F47B8", // its extrusion, tools/build_icons.py:36
+    buttonInk: "#141824",
+    buttonOff: "#2E3447",
+    buttonOffEdge: "#1B1F2B", // the black chip's extrusion, tools/build_icons.py:38
+    buttonOffInk: "#A3A8BE",
+    unitHands: "#5A98F5", // tools/build_icons.py:36
+    unitTable: "#45CC8F", // tools/build_icons.py:37
+    unitPreflop: "#F0414A", // tools/build_icons.py:35
+    unitOdds: "#A583FF", // tools/build_icons.py:40
+    // A screen-filling colour is the deep extrusion tone here, so a dark room is not lit up
+    momentFinish: "#0E7A4B", // tools/build_icons.py:37
+    momentChest: "#C98F00", // tools/build_icons.py:39
+    momentBossPass: "#4F2FC4", // tools/build_icons.py:251
+    momentBossFail: "#1B1F2B", // tools/build_icons.py:38
   },
 };
 
@@ -83,6 +135,10 @@ export const LINE_HEIGHT = {
 export const RADIUS = {
   md: 14,
 } as const;
+
+// GF-2: the primary button's face. Its raised edge is the dial buttonEdge, because the face moves
+// by exactly that much when pressed
+export const BUTTON_HEIGHT = 52;
 
 // DESIGN.md 10.1: a chest is drawn faded until its boss is passed
 export const OPACITY = {

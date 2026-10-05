@@ -291,6 +291,8 @@ Supersedes nothing.
 ### D2. Expo SDK 57 on iOS and Android, with native components where they exist
 
 > **Amended 2026-10-05 (not yet built, awaiting GATE 2): the primary buttons are not native.** Check, Continue and the primary action buttons become a custom component with a raised edge; switches, pickers and the time dialog stay native. See `docs/incomplete/game-feel/DESIGN.md`, `GF-2`.
+>
+> **Built 2026-10-05 for Check and Continue only (board item 26, game-feel phase 1).** The lesson loop's bottom button and the feedback sheet's Continue are `PrimaryButton` (`app/src/components/button/primary-button.tsx`). The other primary actions (onboarding, the chest, Practice, the closed-lesson screens) still use the native `LessonButton` until game-feel phases 5 and 7. Registry entry Z5 of `docs/conventions-typescript.md` records the divergence.
 
 Ratified 2026-10-05 (option 2A, with Zach's addition "using native ui components where
 available"). One TypeScript codebase on Expo SDK 57. Where `@expo/ui` has a component for a
@@ -557,6 +559,8 @@ The file name `FeltoRank.ttf` is a sanctioned divergence from kebab-case (`conve
 ### D15. Sound effects, made by a generator in this repo
 
 > **Amended 2026-10-05 (not yet built, awaiting GATE 2):** six more effects are added from the same generator, and haptics get a stored on/off setting (stored version 3). See `docs/incomplete/game-feel/DESIGN.md`, `GF-3` and `GF-5`.
+
+> **Built 2026-10-05 for the haptics half (board item 27, game-feel phase 2, `HANDOFF.md` step 30).** `settings.haptics` is stored since version 3, with a Haptics switch under Sound effects in Profile, and every buzz passes it (`app/src/feedback/should-buzz.ts`). The six more effects are game-feel phase 3 (board item 28).
 
 Proposed 2026-10-05, recommended. Answer: accepted by Zach in chat, 2026-10-05 (was: pending).
 

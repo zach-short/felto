@@ -17,6 +17,8 @@ export function useProfileControls() {
       actions.setSound(on);
       if (!on) safely(stopEffects);
     },
+    // GF-3: a buzz is over as it starts, so turning Haptics off has nothing to stop
+    setHaptics: (on: boolean) => actions.setHaptics(on),
     // D11: turning the reminder on is the one other moment the permission is asked. The ask is
     // queued before the change, so the replan that follows it can already schedule.
     setReminderOn: (on: boolean) => {

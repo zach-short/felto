@@ -6,6 +6,11 @@ export function setSound(state: PlayerState, sound: boolean): PlayerState {
   return { ...state, settings: { ...state.settings, sound } };
 }
 
+// GF-3: the Haptics switch is stored beside Sound (version 3)
+export function setHaptics(state: PlayerState, haptics: boolean): PlayerState {
+  return { ...state, settings: { ...state.settings, haptics } };
+}
+
 // D11: the reminder switch in Profile. Turning it off keeps the chosen time for next time.
 export function setReminderOn(state: PlayerState, on: boolean): PlayerState {
   const reminder = { ...state.settings.reminder, on };

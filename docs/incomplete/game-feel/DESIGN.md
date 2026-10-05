@@ -280,6 +280,12 @@ the UI thread, which is most of what the photos show. Against: a new native depe
 rebuild, and a version coupling to React Native 0.86 that only a build on the phone proves. The
 built-in `Animated` was weighed (option A1) and is the fallback if the build fails.
 
+*As built, 2026-10-05 (board item 26, `PLAN.md` phase 1):* `bunx expo install` pinned
+`react-native-reanimated` 4.5.1 and `react-native-worklets` 0.10.1, and both development builds
+compiled and ran the press on the iPhone 17 simulator and the `Pixel_9` emulator, so the fallback
+was not needed. No `babel.config.js` was added; Expo's preset adds the worklets plugin (BD-G9).
+Not yet run on Zach's phone, which needs the same rebuild.
+
 ### GF-2. A custom pressable for the main buttons
 
 Decided 2026-10-05 (Zach: "Yes, custom main buttons"). Check, Continue and the primary action
@@ -293,6 +299,14 @@ the raised coloured button and a native `Button` cannot take it
 look the same, so the divergence registry (`docs/conventions-typescript.md`, Z-entries) gets a new
 line. Rule U2 (wrap `@expo/ui` in `Host`) keeps applying to the controls that stay native.
 
+*As built, 2026-10-05 (board item 26):* `PrimaryButton` is a blue face on a darker raised edge,
+both taken from the blue chip of the art (`tools/build_icons.py:36`), 52 points high with a
+4-point edge. A press shrinks it to 0.96 and sinks the face onto the edge; the release springs
+back. It draws Check and Continue in the lesson loop, including the feedback sheet's Continue
+(BD-G12); the other primary actions are still native until phases 5 and 7. Registry entry Z5 of
+`docs/conventions-typescript.md` holds the divergence. The haptic and sound are props left for
+phases 2 and 3; the button plays neither yet.
+
 ### GF-3. A haptic vocabulary and a Haptics switch
 
 Decided 2026-10-05 (Zach: "Yes, add the switch"). Haptics grow from one buzz to a small set
@@ -301,6 +315,23 @@ Decided 2026-10-05 (Zach: "Yes, add the switch"). Haptics grow from one buzz to 
 stored, so the stored version rises from 2 to 3, a migration adds `settings.haptics = true` to
 every older save, and a test loads a version 2 save (`AGENT-PRACTICES.md` Part 6, rule Q2).
 Amends `BD-19` (haptics follow the phone only) and extends `D15`.
+
+*As built, 2026-10-05 (board item 27, `PLAN.md` phase 2, `HANDOFF.md` step 30):* `STATE_VERSION` is
+3 (`app/src/storage/migrations.ts:6`). The step from version 2 writes `haptics: true`, keeps every
+other field, and passes a value that is not a version 2 player on unchanged so the load backs it up;
+`app/src/storage/haptics-migration.test.ts` loads a version 2 save. The vocabulary is
+`app/src/feedback/haptics.ts`: a selection tick, a light, medium and rigid impact, and success, each
+inside `safely` and reached only through `buzz(touch, setting)` (BD-G17). The rule `shouldBuzz` sits
+in its own file so the pure `moments.ts` can call it in node (BD-G15). The six answer and ending
+moments keep their success and error buzzes and now follow the switch. Check and Continue give the
+light impact as the finger goes down (dial `pressHaptic`, BD-G18); the option tick and the heart
+tap wait for phase 4. Zach chose the copy in chat on 2026-10-05 from three registers and the line
+as first written: the label "Haptics" and the help line "Little taps as you answer and press." (the
+warm register, `D10`; "cheer you on" was dropped because the wrong-answer buzz does not cheer). The
+help line opens the Settings footer, above the reminder line, because the native `Switch` takes a
+label only (BD-G16). Seen on the iPhone 17 simulator and the `Pixel_9` emulator, light and dark,
+on and off; on each, the save already on the device loaded as version 3 with its progress. Not felt: a simulator has no haptics, and no one has held a phone
+with this build.
 
 ### GF-4. Four unit colours and colours for moments
 

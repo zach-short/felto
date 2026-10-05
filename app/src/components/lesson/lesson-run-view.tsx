@@ -5,7 +5,7 @@ import { Alert, Platform, StyleSheet, Text } from "react-native";
 
 import { ExerciseView } from "@/components/exercise/exercise-view";
 import { FeedbackSheet } from "@/components/lesson/feedback-sheet";
-import { LessonButton } from "@/components/lesson/lesson-button";
+import { PrimaryButton } from "@/components/button/primary-button";
 import { LessonClosed } from "@/components/lesson/lesson-closed";
 import { LessonFrame } from "@/components/lesson/lesson-frame";
 import { LessonHeader } from "@/components/lesson/lesson-header";
@@ -15,6 +15,8 @@ import { useAutoCheck } from "@/components/lesson/use-auto-check";
 import { useDevAutoplay } from "@/components/lesson/use-dev-autoplay";
 import { useHardwareBack } from "@/components/lesson/use-hardware-back";
 import { useLessonRun } from "@/components/lesson/use-lesson-run";
+import { DIALS } from "@/config/dials";
+import { useHaptics } from "@/feedback/use-haptics";
 import { livesAt, nextLifeAt } from "@/game/lives";
 import { usePlayer } from "@/storage/use-player";
 import { SPACE, TYPE } from "@/theme/tokens";
@@ -57,16 +59,24 @@ export function LessonRunView({ session, finish, start = 0, pick = null, autoChe
     confirmLeave(session.kind, () => router.back(), () => setSheetHidden(false));
   };
   const done = run.phase === "finished" ? finishView(run, size, finish, () => router.back()) : null;
+  // GF-3: every button of the loop gives the press touch as the finger goes down
+  const buzz = useHaptics();
+  const pressHaptic = () => buzz(DIALS.pressHaptic);
   return (
     <LessonFrame
       top={<LessonHeader done={run.answered / size} lives={showsHearts(session) ? livesAt(state, now) : null} onLeave={leave} />}
       bottom={
         done ? (
-          <LessonButton label={done.label} onPress={done.onPress} />
+          <PrimaryButton label={done.label} onPress={done.onPress} pressHaptic={pressHaptic} />
         ) : ended ? (
-          <LessonButton label="Continue" onPress={() => router.back()} />
+          <PrimaryButton label="Continue" onPress={() => router.back()} pressHaptic={pressHaptic} />
         ) : (
-          <LessonButton label="Check" onPress={check} disabled={run.choice === null || run.phase !== "answering"} />
+          <PrimaryButton
+            label="Check"
+            onPress={check}
+            disabled={run.choice === null || run.phase !== "answering"}
+            pressHaptic={pressHaptic}
+          />
         )
       }
     >

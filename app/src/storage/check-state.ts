@@ -35,7 +35,7 @@ const PLAYER_CHECKS: Record<string, Check> = {
   missedExercises: isStringList,
   onboarded: isBoolean,
   placement: isPlacement,
-  settings: (v) => hasFields(v, { sound: isBoolean, reminder: isReminder }),
+  settings: (v) => hasFields(v, { sound: isBoolean, haptics: isBoolean, reminder: isReminder }),
 };
 
 export function isPlayerState(value: unknown): value is PlayerState {
