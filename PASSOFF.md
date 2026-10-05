@@ -42,15 +42,27 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 | 22 | Unit stories phase 1: dealt hands in lessons 3 and 5 and in every boss | `DONE: HANDOFF 28` | Opus 5.5 | D | nothing | `app/src/game/dealt-slots.ts` (new), `app/src/game/session.ts`, `app/src/screens/lesson-screen.tsx`, `app/src/components/boss/boss-session.ts`, `app/src/config/dials.ts` (block `// unit-stories`), `app/src/drills/deal.ts` (the `DEALERS` export only) |
 | 23 | Unit stories phase 2: the story engine, the route and the header button | `DONE: HANDOFF 31` | Opus 5.5 | E | nothing | `app/src/app/story/`, `app/src/screens/story-screen.tsx`, `app/src/components/story/`, `app/src/content/stories/schema.ts`, `app/src/components/root-stack.tsx`, `app/src/components/path/unit-header.tsx`, `app/src/components/path/path-view-model.ts`, `app/src/config/dials.ts` (block `// unit-stories`) |
 | 24 | Unit stories phase 3: the hands story content | `DONE: HANDOFF 33` | Opus 5.5 | E | item 23 committed in the lane E worktree | `app/src/content/stories/hands.ts`, `app/src/content/stories/hands-story.test.ts` |
-| 25 | Unit stories phase 4: close out | `OPEN` | Sonnet 5 | E | items 22 to 24 | `docs/README.md`, `docs/incomplete/unit-stories/`, `docs/incomplete/app/DESIGN.md`, `HANDOFF.md` |
+| 25 | Unit stories phase 4: close out | `DONE: HANDOFF 35` | Sonnet 5 | E | items 22 to 24 | `docs/README.md`, `docs/incomplete/unit-stories/`, `docs/incomplete/app/DESIGN.md`, `HANDOFF.md` |
 | 26 | Game feel phase 1: Reanimated, the motion module, tokens and the primary button | `DONE: HANDOFF 29` | Opus 5.5 | F | nothing | `app/package.json`, `app/bun.lock`, `app/src/motion/`, `app/src/components/button/`, `app/src/theme/tokens.ts`, `app/src/config/dials.ts` (block `// game-feel`), `docs/conventions-typescript.md` |
 | 27 | Game feel phase 2: haptics, the Haptics switch and stored version 3 | `DONE: HANDOFF 30` | Opus 5.5 | F | item 26 | `app/src/feedback/`, `app/src/storage/migrations.ts`, `app/src/storage/check-state.ts`, `app/src/storage/player-actions.ts`, `app/src/game/player-state.ts`, `app/src/game/settings.ts`, `app/src/components/profile/`, `app/src/screens/profile-screen.tsx`, `app/src/components/lesson/lesson-run-view.tsx` and `feedback-sheet.tsx` (the press haptic only) |
 | 28 | Game feel phase 3: six new sound effects | `DONE: HANDOFF 32` | Opus 5.5 | F | item 27 | `tools/build_sounds.py`, `assets/sounds/`, `app/src/art/sounds.ts`, `app/src/feedback/effects.ts`, `app/src/config/dials.ts` (block `// game-feel`), `app/src/components/lesson/lesson-run-view.tsx` and `feedback-sheet.tsx` (the press sound only) |
-| 29 | Game feel phase 4: the answer loop | `OPEN` | Opus 5.5 | F | item 28 | `app/src/components/lesson/`, `app/src/components/exercise/`, `app/src/feedback/` |
+| 29 | Game feel phase 4: the answer loop | `DONE: HANDOFF 37` | Opus 5.5 | F | item 28 | `app/src/components/lesson/`, `app/src/components/exercise/`, `app/src/feedback/` |
 | 30 | Game feel phase 5: finish, chest and boss screens | `HELD` until item 29 is `DONE` | Opus 5.5 | F | item 29 | `app/src/components/lesson/lesson-finish.tsx`, `app/src/components/chest/`, `app/src/components/boss/boss-finish.tsx`, `app/src/screens/chest-screen.tsx` |
 | 31 | Game feel phase 6: the path | `HELD` until item 30 is `DONE` | Opus 5.5 | F | item 30 | `app/src/components/path/`, `app/src/art/path-node-art.tsx`, `app/src/art/colour-swap.json`, `tools/build_icons.py` only if the node decision needs it |
 | 32 | Game feel phase 7: Learn, Profile, empty states and mascot life | `HELD` until item 31 is `DONE` | Opus 5.5 | F | item 31 | `app/src/screens/learn-screen.tsx`, `app/src/screens/profile-screen.tsx`, `app/src/components/profile/`, `app/src/components/onboarding/`, `app/src/art/mascot.tsx` |
 | 33 | Game feel phase 8: close out | `HELD` until items 26 to 32 are `DONE` | Sonnet 5 | F | items 26 to 32 | `docs/README.md`, `docs/incomplete/game-feel/`, `docs/incomplete/app/DESIGN.md`, `HANDOFF.md` |
+| 34 | Flop in Rive: tune the spike rig, then play it on a perfect finish | `IN FLIGHT` (Phase A done, `HANDOFF 34`; Phase B built on branch `lane-g-flop-rive`, `HANDOFF 36`; the `lesson-finish.tsx` wiring waits on item 29) | Sonnet 5 | G | Zach's yes to Phase B; item 29 for `lesson-finish.tsx` | the Rive file in Zach's account; `app/package.json`, `app/bun.lock`, `app/assets/rive/` (new), `app/src/art/` (a new Rive file only), `app/src/config/dials.ts` (block `// game-feel`), `app/src/components/lesson/lesson-finish.tsx` |
+| 35 | GTO trainer phase 1: game spec, schema and feasibility | `OPEN` | Fable 5.1 | H | nothing | `docs/incomplete/gto-trainer/KEY-SPEC.md`, `solver/` (schema validator stub), `docs/conventions-rust.md` only if the estimate calls for Rust |
+| 36 | GTO trainer phase 2: preflop equity table | `HELD` until item 35 is `DONE` | Opus 5.5 | H | item 35 | `solver/equity.py`, `solver/data/` |
+| 37 | GTO trainer phase 3a: solver core, one spot | `HELD` until item 36 is `DONE` | Fable 5.1 | H | item 36 | `solver/cfr.py`, `solver/best_response.py` |
+| 38 | GTO trainer phase 3b: the full tree and convergence | `HELD` until item 37 is `DONE` | Fable 5.1 | H | item 37 | `solver/`, the raw strategy output |
+| 39 | GTO trainer phase 4: key export, validation and containment | `HELD` until item 38 is `DONE` | Opus 5.5, then a Fable 5.1 review | H | item 38 | `app/src/gto/key.ts`, `app/src/gto/data/` |
+| 40 | GTO trainer phase 5: the hand engine | `HELD` until item 35 is `DONE` | Opus 5.5 | I | item 35 (the schema); a fixture key until item 39 | `app/src/gto/` except `key.ts`, `data/` and `grade.ts` |
+| 41 | GTO trainer phase 6: grading and the review model | `HELD` until items 39 and 40 are `DONE` | Opus 5.5, then a Fable 5.1 review of `grade.ts` | I | items 39 and 40 | `app/src/gto/grade.ts`, the review model |
+| 42 | GTO trainer phase 7: the table screen and seats | `HELD` until item 40 is `DONE` | Opus 5.5 | I | item 40 | the table component and screen, `app/src/art/` seat wiring |
+| 43 | GTO trainer phase 8: three new characters | `HELD` until Zach has run the Higgsfield round | Opus 5.5, with Zach | J | Zach's round | `assets/higgsfield-table/`, `assets/gallery.html`, the art module |
+| 44 | GTO trainer phase 9: session flow, stored version 5 and the free allowance | `HELD` until items 41 and 42 are `DONE` | Opus 5.5 | I | items 41 and 42 | `app/src/storage/migrations.ts`, `app/src/config/dials.ts`, the Practice screen, the session and summary routes |
+| 45 | GTO trainer phase 10: copy, runtime pass and close-out | `HELD` until items 35 to 44 are `DONE` | Sonnet 5 | I | items 35 to 44 | `docs/README.md`, `docs/incomplete/gto-trainer/`, `HANDOFF.md` |
 
 **Do not paste a prompt marked DONE**: a fresh session would build it again.
 
@@ -1221,3 +1233,239 @@ lowercase message.
 Items 30 to 33: their prompts are written by the session that closes the item before
 them, from the matching phase in `docs/incomplete/unit-stories/PLAN.md` or
 `docs/incomplete/game-feel/PLAN.md`.
+
+## Item 34: Flop in Rive
+
+*Opened 2026-10-05. Zach asked for Flop, the fish mascot, to swim around frantically when a lesson
+ends with a perfect score, and for a spike to find out whether an agent can build the Rive rig
+through the Rive MCP and CLI. Phase A (the spike) was done on Opus 5.5 the same day and is
+`HANDOFF.md` step 34. Zach then chose to run all further Rive work on Sonnet, because the MCP calls
+are expensive. It is a spike for game-feel items 30 and 32, not a replacement for item 28 or 29.*
+
+### 34. Tune Flop's Rive rig, then play it on the finish screen for a perfect score
+
+**Model: Sonnet 5 (Zach's choice, 2026-10-05). Lane G. Waits on Zach's yes to Phase B, and on
+item 29 for `lesson-finish.tsx`.** Phase B gets its own worktree. Phase A needs none, because it
+edits only the Rive file in Zach's account.
+
+You are picking up felto, a poker-learning app in `app/` (Expo SDK 57, React Native 0.86, TypeScript
+strict, bun). Read `HANDOFF.md` first (step 34 is the record of the spike), then
+`docs/AGENT-PRACTICES.md`, then `docs/conventions-typescript.md` in full before any `.ts` or `.tsx`
+edit, then `docs/incomplete/game-feel/DESIGN.md` (`GF-1` to `GF-9`) and `PLAN.md` phases 5 and 7.
+Session rules, restated: never run `git commit`, `git push`, `git add -A` or `git add .`; use
+absolute dates; no em dashes, no contractions and no banned AI words in any document you write; no
+drive-by fixes, note them and raise them; write `bun run --cwd app <script>`, never
+`bun --cwd app run <script>`; never hand-edit an SVG under `assets/icons/` or `assets/mascots/`;
+never touch `assets/higgsfield/`; ask Zach before buying a Rive plan, running `rive login`, or
+downloading any file.
+
+**Why this exists.** Zach wants the end of a perfect lesson to feel like a celebration: Flop darts
+around the screen, wagging and flapping, instead of standing as a still pose. The static SVG poses
+cannot move a tail or a fin on its own, so Flop needs a rig. Motion feel is Zach's call; an agent
+can judge poses from stills, never timing.
+
+**What is fixed.** Read these before changing anything; do not relitigate them.
+
+- **What Rive can and cannot do here, with sources (verified 2026-10-05).** The CLI is
+  `~/.rive/bin/rive` 1.3.0 and is not on the shell's PATH. `rive doctor`: ok except "Not logged
+  in", which blocks only `--publish`, `--rev` and `push`. RML has animations and state machines;
+  state-machine inputs are deprecated in favour of view-model properties
+  (`~/.rive/versions/1.3.0/docs/state-machines.md:11-20`). **RML cannot import SVG**: `SVGAsset` is
+  editor-only and stripped on export (`docs/assets.md:236-246`). So the rig is built in the Rive
+  editor through the MCP, which imports SVG (`upload_asset`, then `assets_tool addSvgInstance`).
+  `.riv` export works on Zach's plan; `.rev` export is refused ("not available on this workspace's
+  plan"), so do not retry it. The pricing page lists runtime export under Cadet
+  (https://rive.app/docs/account-admin/pricing.md), but the export worked, so trust the export.
+- **The editor is sandboxed.** `upload_asset` with a local path and `export_file` to a local folder
+  both fail with "Operation not permitted". Use the recipe each error prints: call the same MCP over
+  HTTP at `http://127.0.0.1:9791/mcp` (initialize, take `mcp-session-id`, then `tools/call`), with a
+  data URI for uploads and `inline_base64: true` for exports. Never print base64 into the
+  conversation; pipe it to disk.
+- **The Rive file.** Opened by Zach 2026-10-05 as "Untitled", file id 2632317,
+  `https://editor.rive.app/file/untitled/2632317` (Zach may rename it "Flop"). It is the only
+  editable source of the rig: the repo can hold only the exported `.riv`. Artboard `Flop` (id
+  `0-2`), 600 by 520, transparent background (artboard fill `0-4`, colour `#00000000`).
+- **The rig, by object id.** `flop` `0-698` (pivot 290, 260 on the artboard) holds `fish` `0-15`
+  (at -210, -215), which holds, front to back: `mouth` `0-17`, `pupil_r` `0-30`, `eye_r` `0-37`,
+  `pupil_l` `0-41`, `eye_l` `0-48`, `body` `0-52`, `fin_r` `0-144`, `fin_l` `0-199`, `tail`
+  `0-254`, and the clip shape `fishClip` `0-596`. `flop_shadow` `0-699` (pivot 306.5, 271) sits
+  behind `flop` and holds `shadow` `0-345`, which holds `sh_tail` `0-694`, `sh_fin_l` `0-695`,
+  `sh_fin_r` `0-696` and `sh_body` `0-697`, ten extrusion copies each. Pivots in fish space: tail
+  root 300, 206; `fin_l` root 85, 270; `fin_r` root 295, 285; body centre 190, 205; each shadow
+  part has its part's pivot plus 16.5, 11. The pupils' origins are at the eye centres (150, 170
+  and 232, 170), so a blink closes eye and pupil together. Property keys: x 13, y 14, rotation 15
+  (degrees), scale x 16, scale y 17 (percent), opacity 18; timeline fps 56, duration 57 (frames),
+  loop 59 (0 one shot, 1 loop, 2 ping-pong); transition duration 158 (ms), interpolation 349.
+- **The shadow is a cast shadow on the page, by Zach's ask** ("keep in mind how the shadow would
+  realistically transform"). It is never inside `flop`. It follows the fish's x, y and rotation,
+  offset down-right by 16.5, 11. When the fish lifts toward the viewer (`flop` scales up to 108),
+  the shadow moves a further 24, 17 down-right and fades by 28 percent, and keeps its own size,
+  because a distant light does not shrink a shadow. Each shadow part rotates with its part. When
+  the fish turns (scale x through zero to -100), the shadow flips with it and stays down-right, and
+  `body` counter-flips (its scale x keyed to the facing), so its dark extrusion stays down-right and
+  its gloss stays upper-left.
+- **The animations.** `idle` (`0-6`, 144 frames at 60 fps, looped): a lift of 0.35 with a 6-unit
+  rise at frame 72, tail -8 to 8 every 36 frames, `fin_l` 0 to -14, `fin_r` 6 to -6, one blink at
+  frames 114 to 126. `frantic` (`0-700`, 96 frames, looped): a path through (290, 260), (225, 232),
+  (165, 212), a turn at frames 24 to 28, (300, 262), (425, 298), a turn back at 50 to 54,
+  (375, 318), (320, 290) and back to the start, with lifts up to 1.0 and tilts of -10 to 14
+  degrees; tail ±26 every 6 frames; fins 0 to ±40 every 4 frames, in opposite phase.
+- **The state machine.** `flop` (`0-7`, the default), one layer: Entry to `idle`; `idle` to
+  `frantic` when the view-model boolean `perfect` is true, and back when it is false; both
+  transitions 250 ms, cubic. View model `Flop` (`0-1391`), property `perfect` (`0-1393`), instance
+  `default` (`0-1395`), bound to the artboard. The editor's simulation confirmed both transitions
+  (frames 61 and 181 with `perfect` set at 60 and 180).
+- **Scratch tools of the spike**, in
+  `/private/tmp/claude-501/-Users-zachshort-Projects-felto/703cff9d-f1a9-40ff-8618-540a5318d950/scratchpad/rive/`,
+  which may be gone: `rv.py` (calls the MCP over HTTP; `move_origin(node, x, y)` moves a node's
+  origin and shifts its children back), `anim.py` (every pose of fish and shadow from one list, so
+  they cannot drift apart), `rekey.py` (pushes changed values onto the existing keyframes),
+  `stills.py` and `rest.json`, and `out/flop.riv` (27,939 bytes). If they are gone, re-export the
+  `.riv` from the Rive file and rebuild the helpers from this description.
+- **How to see a frame.** Moving a timeline's playhead does not change what `capture_artboard`
+  draws. The spike set the keyed values of one frame on the rest pose, captured, and restored the
+  rest pose from a saved snapshot, then checked that every value matched the snapshot. At a
+  keyframe this shows exactly what the timeline holds; between keyframes it does not.
+- **Known looks, Zach's to judge.** The fins and tail have a small dark edge (7 to 8 units) that
+  mirrors to the left side while Flop faces right. The body's shadow is faint at full lift, pale
+  on a pale page. Nobody has seen the motion play.
+- **Rules from the repo.** Only `app/src/art/` imports an SVG, a WAV or now a `.riv` (rule U6);
+  never copy an SVG under `app/` (`D5`). Screens never import Reanimated (BD-G3). Reduced motion is
+  read in one hook only, `useReducedMotion` in `app/src/motion/` (`GF-8`, BD-G4). Every timing and
+  size is a dial in `app/src/config/dials.ts` under `// game-feel`. A native library needs a rebuild
+  of the development build; `scripts/felto` is the front door (`felto sim`, `felto android`,
+  `felto phone-debug`); read it and the script it calls before running one.
+- **Decision record owed.** `GF-1` and the app's non-scope list say the mascots move with transforms
+  until Zach rigs them in Rive himself. This item is Zach's dated change to that (2026-10-05): an
+  agent builds the rig through the MCP. Record it as a dated amendment under `GF-1` in
+  `docs/incomplete/game-feel/DESIGN.md`, never as an edit of the decision.
+
+Do these, in order:
+
+1. **Phase A follow-up: let Zach watch it.** Ask Zach to open the file in the Rive editor, select
+   the `flop` state machine, press play and toggle `perfect`. Change what he names through the MCP,
+   keep fish and shadow keyed from one source (as `anim.py` does), and re-check the rest pose after
+   any still. Re-export `flop.riv`.
+2. **Phase B, only after Zach says yes.** Make the worktree. Choose the React Native runtime with
+   Context7 (`resolve-library-id`, then `query-docs`) for Expo SDK 57 and React Native 0.86; do not
+   answer from memory. Confirm from the docs that it can set a view-model boolean on a bound
+   instance. If it can only set state-machine inputs, stop and ask, because the file then needs a
+   `StateMachineBool` named `perfect`.
+3. **Install and rebuild.** Install with `bunx expo install`, then rebuild both development builds
+   with `scripts/felto`. If the build fails, stop and report; the fallback is Reanimated on the six
+   SVG poses (`GF-6`).
+4. **Place the file and the component.** `flop.riv` goes under `app/assets/rive/`. A new component
+   in `app/src/art/` plays it and is the only importer. It falls back to the static `happy` pose
+   through the existing `Mascot` if the file fails to load, and draws the static pose when
+   `useReducedMotion` says so. Every size and timing it needs is a dial under `// game-feel`.
+5. **Wire it for a perfect score only.** On the lesson finish screen, show the Rive Flop with
+   `perfect` true only when every answer was right; otherwise keep the static pose it draws now. Do not
+   change hearts, XP, streak or the pass mark.
+6. **Record it.** Read `HANDOFF.md` for the next free step and append it; add the new files to the
+   code map; add the `GF-1` amendment; write the runtime entries (what to tap, what Zach should see
+   on his phone).
+
+Ask before building: (a) Phase B at all: Zach decides after he watches the rig, and the answer may
+be to stop at Phase A or to use Reanimated instead. (b) `lesson-finish.tsx` is in item 29's files
+(`app/src/components/lesson/`) and in item 30's: wait for item 29, or ask Zach to accept the overlap.
+(c) Whether the exported `.riv` gets a "never regenerate by hand, re-export from the Rive file" rule
+in `CLAUDE.md`, like `assets/higgsfield/`, since the repo cannot rebuild it. All three are his calls,
+and any answer may be no.
+
+Not in scope, whoever asks: the other mascots (squid, shark) or the other five fish poses; a sad or
+other state; buying a Rive plan or `rive login`; any change to the generators or to `assets/`; any
+change to hearts, XP, streak, the pass mark or the finish-screen layout beyond the mascot; the
+chest and boss screens (item 30); the idle bob of the other screens (item 32).
+
+Hand back: for Phase A, the changes Zach asked for and a fresh `flop.riv`. For Phase B: the
+whole-repo gate from `CLAUDE.md`, green, with the run lines and the test count;
+`git diff --stat -- assets/icons assets/mascots assets/sounds` empty; screenshots of the perfect
+finish on the iOS simulator and the Android emulator, light and dark, saying "seen running" or
+"gates green" for each (R10); the reduced-motion screen; then the two copyable blocks, `git add`
+with the exact files (`git add -N` first for new ones) and `git commit` with the same files and a
+short lowercase message.
+
+## Items 35 to 45: the GTO trainer
+
+The scope is `docs/incomplete/gto-trainer/DESIGN.md` and the plan is
+`docs/incomplete/gto-trainer/PLAN.md`, approved by Zach in chat on 2026-10-05 (GATE 2). One
+phase per item. Per Part 3, each session writes the next item's prompt when it closes, so only
+item 35 has its prompt below. Items 36 to 45 are the plan's phases 2 to 10 and carry the
+status `HELD` until their dependency is `DONE`. Lanes: H (the key), I (the table), J (the art).
+
+### 35. Write the GTO game spec, freeze the key schema and check the solver is feasible
+
+**Model: Fable 5.1. Lane H. Waits on nothing.** Run this on Fable 5.1. If the session is on
+another model, do not start: hand the prompt off (`~/.claude/rules/model-routing.md`). A wrong
+choice here compiles, passes every gate, and teaches a wrong play to the players who notice.
+
+You are picking up felto, a poker-training app. Read, in order: `HANDOFF.md`, then
+`docs/incomplete/gto-trainer/DESIGN.md` (the scope and Zach's answers), then
+`docs/incomplete/gto-trainer/PLAN.md` (the plan, section 0 and phase 1), then
+`docs/AGENT-PRACTICES.md`, then `docs/conventions-python.md`. Session rules: never run
+`git commit`, `git push`, `git add -A` or `git add .`; print the two copyable blocks at the end
+(`git add` the exact files you touched, then `git commit` the same files with a short lowercase
+message, with no `Co-Authored-By` line and no "Generated with" line). Talk to Zach in
+ASD-STE100 Simplified Technical English. Documents you write have no em dashes and no
+contractions. Ask Zach in chat, in one batch, before any decision that is his.
+
+**Why this exists.** The app wants a trainer for serious players: a 6-max table, dealt hands,
+and a review that says where the player went wrong against a solved strategy. Everything else
+in the effort (the table, the grading, the paywall) is ordinary work on parts that exist. The
+strategy key is the one part with no fallback, so it is specified and checked for feasibility
+before any solver code exists.
+
+**What is fixed.** Read these; do not relitigate them.
+- Zach chose: an own solver (A2), preflop scored first with the hand run out to showdown after
+  (B1, BD-T5), new Higgsfield characters (C2), the paywall later (D1), grading by frequency and
+  EV loss (E1). `DESIGN.md` section 6, "Answers".
+- No public repo's range data is used. `jensbaagaard/poker-practice` has the right schema shape
+  but no licence file and a data README that describes extracting ranges from another app's
+  bundle; `byw1/poker-trainer` is MIT but raise-first-in only and hand-written
+  (`PLAN.md` section 0, rows 2 to 5, BD-T1).
+- The existing `OPENING_CHART` is a hand-written teaching chart, tighter than published solver
+  ranges at every seat (`app/src/content/opening-chart.ts:15-30`). It is not a key.
+- The solver lives in `solver/` and is a development tool; the app never runs it (BD-T3).
+  Python with numpy is the default; Rust is the fallback if the estimate is over an hour.
+- Multiway pots are not solved (BD-T4). Postflop is a runout (BD-T5). The key stores a
+  frequency and an EV per action per hand class (BD-T6).
+- Hands are seeds (BD-T7). The unit 3 chart and its lessons are not changed by this item.
+
+Do these, in order:
+1. **Write `KEY-SPEC.md`.** The exact game: six players, 100 big blinds, no ante, no rake, the
+   open, 3-bet, 4-bet and all-in sizes by position, the action tree node by node, how a leaf is
+   valued (all-in equity with a position-based realization factor, named as an approximation),
+   and what BD-T4 leaves out. Every simplification is named with the hands it moves most.
+2. **Freeze the schema.** Node ids, the 169 hand classes, one frequency and one EV per action,
+   the spec hash. Write it fresh; fact 3 of the plan is only a shape reference. Add a validator
+   stub under `solver/` that rejects a missing hand, a frequency sum other than 1 and a missing
+   EV.
+3. **Collect acceptance bands.** Delegate to a Default (Opus 5.5) subagent in its own worktree,
+   report only: at least three named public sources for open rates by seat and 3-bet and
+   fold-to-3-bet rates at 6-max 100 big blinds, each with its date. Check its diffstat when it
+   returns. Published numbers set bands; nothing is copied into the repo as data.
+4. **Estimate feasibility.** From the node count and the table size, write down whether a numpy
+   solver can solve the full tree in under an hour on this Mac (10 cores). If not, the fallback
+   is Rust (installed, 1.86): write `docs/conventions-rust.md` first, to the shape of Part 8.1,
+   before any Rust file.
+5. **Get a cold Deep read.** A separate Fable 5.1 subagent in its own worktree reads
+   `KEY-SPEC.md` with no other context and answers one question: can a correct solver of this
+   game still produce a strategy a strong player would call wrong, and where? Fold its answer
+   into the spec.
+6. **Record it.** Append the next free `HANDOFF.md` step, mark this row `DONE: HANDOFF n`,
+   write the prompt for item 36 below this one, and update the plan's phase 1 header.
+
+Ask before building: (a) the realization-factor model, if more than one is defensible; (b) the
+bet-size menu, because it fixes what a player can do at the table; (c) whether the spec may name
+the app's claim as "GTO", or must say "solver strategy for this game". All three are Zach's
+calls, and any answer may be to change the plan.
+
+Not in scope, whoever asks: writing solver code beyond the validator stub; copying any public
+chart or dataset into the repo; multiway solving; postflop scoring; any app screen; any art; the
+paywall; changes to unit 3 lessons or the opening chart.
+
+Hand back: `bun run --cwd app typecheck && bun run --cwd app lint && bun run --cwd app test`
+green and unchanged (63 test files, 490 tests, or the live count if another item moved it);
+`KEY-SPEC.md` complete and the cold review's answer recorded in it; every acceptance band
+carries a source and a date; then the two copyable blocks, with `git add -N` first for new
+files.
