@@ -290,6 +290,8 @@ Supersedes nothing.
 
 ### D2. Expo SDK 57 on iOS and Android, with native components where they exist
 
+> **Amended 2026-10-05 (not yet built, awaiting GATE 2): the primary buttons are not native.** Check, Continue and the primary action buttons become a custom component with a raised edge; switches, pickers and the time dialog stay native. See `docs/incomplete/game-feel/DESIGN.md`, `GF-2`.
+
 Ratified 2026-10-05 (option 2A, with Zach's addition "using native ui components where
 available"). One TypeScript codebase on Expo SDK 57. Where `@expo/ui` has a component for a
 control, the app uses it; section 10.3 names the component on each screen. The surfaces that
@@ -387,6 +389,8 @@ earlier seat opens) and a narrow Deep review. A full-ring table (nine seats) is 
 it adds three seat names and changes every chart.
 
 ### D8. Game rules
+
+> **Amended 2026-10-05 (not yet built, awaiting GATE 2):** in the lessons named by the dial `dealtLessons` and in every boss, each exercise of a dealable kind is dealt fresh, not read from the unit's fifty, and a dealt miss is not saved for the review. The unit's fifty stay the pool for concept exercises and the review. See `docs/incomplete/unit-stories/DESIGN.md`, `US-1` and `US-2`.
 
 Proposed 2026-10-05, recommended. Answer: accepted, 2026-10-05 (the GATE 2 reply
 quoted at the top of this section).
@@ -551,6 +555,8 @@ shape on the iPhone 17 Pro and the `Pixel_9`; Zach's own look is owed (`RUNTIME-
 The file name `FeltoRank.ttf` is a sanctioned divergence from kebab-case (`conventions-typescript.md`, Z3).
 
 ### D15. Sound effects, made by a generator in this repo
+
+> **Amended 2026-10-05 (not yet built, awaiting GATE 2):** six more effects are added from the same generator, and haptics get a stored on/off setting (stored version 3). See `docs/incomplete/game-feel/DESIGN.md`, `GF-3` and `GF-5`.
 
 Proposed 2026-10-05, recommended. Answer: accepted by Zach in chat, 2026-10-05 (was: pending).
 
