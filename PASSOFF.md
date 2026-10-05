@@ -39,6 +39,18 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 | 19 | App phase 15: the Practice tab | `DONE: HANDOFF 23` | Opus 5.5 | B | items 14 and 18; lane C merged | the Practice route and components |
 | 20 | App phase 16: onboarding and the placement check | `DONE: HANDOFF 25` | Opus 5.5 | B | item 19 | the onboarding routes and components |
 | 21 | Fix two stale lines that board item 4 found | `DONE: HANDOFF 9` | Sonnet 5 | A | nothing | `docs/conventions-python.md`, `docs/incomplete/app/DESIGN.md` |
+| 22 | Unit stories phase 1: dealt hands in lessons 3 and 5 and in every boss | `OPEN` | Opus 5.5 | D | nothing | `app/src/game/dealt-slots.ts` (new), `app/src/game/session.ts`, `app/src/screens/lesson-screen.tsx`, `app/src/components/boss/boss-session.ts`, `app/src/config/dials.ts` (block `// unit-stories`) |
+| 23 | Unit stories phase 2: the story engine, the route and the header button | `OPEN` | Opus 5.5 | E | nothing | `app/src/app/story/`, `app/src/screens/story-screen.tsx`, `app/src/components/story/`, `app/src/content/stories/schema.ts`, `app/src/components/root-stack.tsx`, `app/src/components/path/unit-header.tsx`, `app/src/components/path/path-view-model.ts`, `app/src/config/dials.ts` (block `// unit-stories`) |
+| 24 | Unit stories phase 3: the hands story content | `HELD` until item 23 is `DONE` | Opus 5.5 | E | item 23 | `app/src/content/stories/hands.ts`, `app/src/content/stories/hands-story.test.ts` |
+| 25 | Unit stories phase 4: close out | `HELD` until items 22 to 24 are `DONE` | Sonnet 5 | E | items 22 to 24 | `docs/README.md`, `docs/incomplete/unit-stories/`, `docs/incomplete/app/DESIGN.md`, `HANDOFF.md` |
+| 26 | Game feel phase 1: Reanimated, the motion module, tokens and the primary button | `OPEN` | Opus 5.5 | F | nothing | `app/package.json`, `app/bun.lock`, `app/src/motion/`, `app/src/components/button/`, `app/src/theme/tokens.ts`, `app/src/config/dials.ts` (block `// game-feel`), `docs/conventions-typescript.md` |
+| 27 | Game feel phase 2: haptics, the Haptics switch and stored version 3 | `HELD` until item 26 is `DONE` | Opus 5.5 | F | item 26 | `app/src/feedback/`, `app/src/storage/migrations.ts`, `app/src/game/player-state.ts`, `app/src/components/profile/`, `app/src/screens/profile-screen.tsx` |
+| 28 | Game feel phase 3: six new sound effects | `HELD` until item 27 is `DONE` | Opus 5.5 | F | item 27 | `tools/build_sounds.py`, `assets/sounds/`, `app/src/art/sounds.ts`, `app/src/feedback/effects.ts` |
+| 29 | Game feel phase 4: the answer loop | `HELD` until item 28 is `DONE` | Opus 5.5 | F | item 28 | `app/src/components/lesson/`, `app/src/components/exercise/`, `app/src/feedback/` |
+| 30 | Game feel phase 5: finish, chest and boss screens | `HELD` until item 29 is `DONE` | Opus 5.5 | F | item 29 | `app/src/components/lesson/lesson-finish.tsx`, `app/src/components/chest/`, `app/src/components/boss/boss-finish.tsx`, `app/src/screens/chest-screen.tsx` |
+| 31 | Game feel phase 6: the path | `HELD` until item 30 is `DONE` | Opus 5.5 | F | item 30 | `app/src/components/path/`, `app/src/art/path-node-art.tsx`, `app/src/art/colour-swap.json`, `tools/build_icons.py` only if the node decision needs it |
+| 32 | Game feel phase 7: Learn, Profile, empty states and mascot life | `HELD` until item 31 is `DONE` | Opus 5.5 | F | item 31 | `app/src/screens/learn-screen.tsx`, `app/src/screens/profile-screen.tsx`, `app/src/components/profile/`, `app/src/components/onboarding/`, `app/src/art/mascot.tsx` |
+| 33 | Game feel phase 8: close out | `HELD` until items 26 to 32 are `DONE` | Sonnet 5 | F | items 26 to 32 | `docs/README.md`, `docs/incomplete/game-feel/`, `docs/incomplete/app/DESIGN.md`, `HANDOFF.md` |
 
 **Do not paste a prompt marked DONE**: a fresh session would build it again.
 
@@ -535,3 +547,233 @@ Hand back, for every item: the gate (the Python gate, then the app gate once `ap
 form `CLAUDE.md` records), green, and `git diff --stat -- assets tools` showing only what the item
 meant to change; then the two copyable blocks, `git add` with the exact files and `git commit` with
 the same files and a short lowercase message.
+
+## Items 22 to 33: unit stories and game feel
+
+*Opened 2026-10-05, out of three things Zach asked for after running the development build on his
+iPhone: fewer repeated questions, an optional story before each unit, and more animation, colour,
+haptics, sound and character (12 Duolingo Chess photos as the reference). Scoped, ratified and
+planned in `docs/incomplete/unit-stories/` and `docs/incomplete/game-feel/` (GATE 1 and GATE 2
+answered by Zach in chat, 2026-10-05). Zach chose to run the two efforts in parallel: items 22
+and 23 and 26 are three lanes (D, E, F) that can start now, each in its own worktree. The three
+lanes all add one block to `app/src/config/dials.ts`, under the comments `// unit-stories` and
+`// game-feel`; this breaks the board rule that two items naming one file never run at once, so
+Zach accepted it on 2026-10-05 and a merge keeps both blocks. Items 24 and 27 to 33 have no prompt
+yet: the session that closes the item before each one writes its pass-off prompt (Part 7), from
+its phase in the matching `PLAN.md`, with what that session learned.*
+
+### 22. Deal fresh hands in lessons 3 and 5 and in every boss
+
+**Model: Opus 5.5. Lane D. Waits on nothing.** Use its own worktree: items 23 and 26 run beside it.
+
+You are picking up felto, a poker-learning app in `app/` (Expo SDK 57, TypeScript strict, bun).
+Read `HANDOFF.md` first (the build and test commands, the invariants, the code map; do not
+re-derive them), then `docs/incomplete/unit-stories/DESIGN.md` (decisions `US-1`, `US-2`, `US-3`)
+and `docs/incomplete/unit-stories/PLAN.md` (section 0 and phase 1), then `docs/AGENT-PRACTICES.md`
+and `docs/conventions-typescript.md` in full. Session rules, restated: never run `git commit`,
+`git push`, `git add -A` or `git add .`; use absolute dates; no em dashes and no contractions in
+any document you write; do not fix anything outside this item, note it and raise it; write
+`bun run --cwd app <script>`, never `bun --cwd app run <script>`.
+
+**Why this exists.** Zach noticed questions repeating a lot in the early lessons. A lesson plays the
+same ten questions in the same order every time, and a boss draws only from questions the player
+already answered. He chose to fix it by dealing fresh hands (US-1).
+
+**What is fixed.** Read these before changing anything; do not relitigate them.
+- The lesson screen plays the authored lesson as is (`app/src/screens/lesson-screen.tsx:55`). The
+  boss draws ten ids from the unit's fifty (`app/src/components/boss/boss-session.ts:18-27`,
+  `app/src/game/boss.ts:5-7`).
+- Dealers exist: `dealExercise(kind, seed)` and `dealSet` in `app/src/drills/deal.ts:12-34`, for
+  `hand-name`, `showdown`, `preflop`, `outs` and `odds`. Their keys are computed and tested. Their ids
+  start `practice-`.
+- Review and the saved `missedExercises` list work by authored id
+  (`app/src/game/session.ts:24-32`, `app/src/components/boss/unit-exercises.ts:12-15`). A dealt id in
+  that list is dropped without a message. This is the trap of the item.
+- Only `hands-3` ("Name that hand", 8 hand-name) and `hands-5` ("Who wins the pot?", 9 showdown and
+  1 hand-name) are dealt. `hands-1` is all concept. `hands-4` stays authored because a random
+  showdown rarely ties on a kicker (`app/src/drills/showdown.ts:12-16`). `hands-2` stays authored
+  unless step 1 shows its order is not meant.
+- Rule B2: `app/src/game/` imports no React Native or Expo module. Rule B3: no rule reads the clock;
+  the lesson screen already reads it once, at the edge (`lesson-screen.tsx:48`). No stored-shape
+  change, so no stored version bump.
+
+Do these, in order:
+1. **Read `hands-2` and confirm its order.** Open `app/src/content/units/hands.ts` from
+   `id: "hands-2"` and write down whether its eight hand-name exercises meet the ten hands one at a
+   time in a set order. If they do not, stop and ask Zach before putting it in the dial.
+2. **Add the dial** `dealtLessons` (`["hands-3", "hands-5"]`) to `app/src/config/dials.ts` as one block
+   under the comment `// unit-stories`. Another effort adds a block under `// game-feel`; keep both.
+3. **Write `app/src/game/dealt-slots.ts`** with `withDealtSlots(exercises, seed, dealers)`: replace, in
+   place, each exercise whose kind is a key of `dealers`; return the rest unchanged; seed each
+   replacement from the set seed and its position. The dealers are an argument, so the file imports no
+   dealer. Add `isDealtId`. Tests in new files `dealt-slots.test.ts` (length and kind order kept; a
+   concept untouched; two seeds differ for `hands-3`; the same seed repeats) and `dealt-missed.test.ts`.
+4. **Wire the lesson** in `lesson-screen.tsx`: for a lesson id in `dealtLessons`, play
+   `withDealtSlots(lesson.exercises, clockSeed(opened.now), DEALERS)`.
+5. **Wire the boss** in `bossAccess`: run `withDealtSlots` over the ten drawn exercises. `drawBoss` is
+   unchanged.
+6. **Do not remember a dealt miss.** In `recordAnswer` (`session.ts:24-32`), for a dealt id spend the
+   life and count the answer but leave `missedExercises` alone. The test: a wrong dealt answer spends a
+   life and leaves the list unchanged; a wrong authored answer still adds its id.
+7. **Record it.** Read `HANDOFF.md` for the next free step number and append the step; add the new file
+   to the code map; add an `As built` note under `D8` in `docs/incomplete/app/DESIGN.md` and under
+   `US-1` in the unit-stories design; write this item's runtime entries from `PLAN.md` section 7.
+
+Ask before building: only the `hands-2` question in step 1, if its order is not meant. Both
+outcomes are Zach's call, and the answer may be to leave `hands-2` authored.
+
+Not in scope, whoever asks: dealt hands in any lesson but `hands-3` and `hands-5`; a bigger authored
+pool per lesson (option 1B); any change to the placement check or to how the review fills; any change
+to hearts, XP, streak or the boss pass mark; any story code (item 23); any motion, colour or sound
+(items 26 and later).
+
+Hand back: the whole-repo gate from `CLAUDE.md`, green, with the test count; `git diff --stat --
+assets/icons assets/mascots assets/sounds` showing nothing; screenshots on the iOS simulator and the
+Android emulator of `hands-3` played twice (different cards in the eight drill slots), saying which
+claim you hold, "gates green" or "seen running" (R10); then the two copyable blocks, `git add` with the
+exact files and `git commit` with the same files and a short lowercase message.
+
+### 23. Build the story engine, the route and the header button
+
+**Model: Opus 5.5. Lane E. Waits on nothing.** Use its own worktree: items 22 and 26 run beside it.
+
+You are picking up felto, a poker-learning app in `app/` (Expo SDK 57, TypeScript strict, bun, Expo
+Router). Read `HANDOFF.md` first, then `docs/incomplete/unit-stories/DESIGN.md` (decisions `US-4` to
+`US-8`, and sections 1 and 2) and `docs/incomplete/unit-stories/PLAN.md` (section 0 and phase 2), then
+`docs/AGENT-PRACTICES.md` and `docs/conventions-typescript.md` in full. Session rules, restated: never
+run `git commit`, `git push`, `git add -A` or `git add .`; absolute dates; no em dashes and no
+contractions in documents; no drive-by fixes; `bun run --cwd app <script>`, never `bun --cwd app run`.
+
+**Why this exists.** Zach wants an optional, skippable rundown before a unit, as image-and-text slides
+you tap through like a Snapchat story: tap the right side to go forward, the left to go back. It
+explains the unit very simply, with examples. It must never block a lesson.
+
+**What is fixed.** Read these before changing anything; do not relitigate them.
+- One route `story/[unit]` rendering one `StoryScreen`, a thin route (rule U1), registered in
+  `app/src/components/root-stack.tsx` with the same options as the sessions:
+  `{ presentation: "fullScreenModal", gestureEnabled: false }` (`root-stack.tsx:5`).
+- The left 30 percent of the width goes back, the right 70 percent forward (dial `storyBackZone`). A
+  back tap on the first slide does nothing. The last slide shows one button, "Back to the path", and
+  never starts a lesson. No auto-advance, no hold to pause, no swipe (`US-6`).
+- The button on the unit header reads "Learn about {unit title in lower case}", only for a unit that
+  has a story (`US-5`); `app/src/components/path/unit-header.tsx:18-30`. It stores nothing. The story
+  gives no XP, spends no heart and counts for no streak. The path keeps its seven stops and its tests.
+- The host is the fish (`D9`), the voice is warm (`D10`). A slide is a pose, a title, about 30 words and
+  optionally a row of cards drawn with `CardRow` (`app/src/components/exercise/card-row.tsx:9-17`).
+- Android back closes the story through `useHardwareBack`
+  (`app/src/components/lesson/use-hardware-back.ts:5-12`).
+- Colours and sizes come from `app/src/theme/tokens.ts`, light and dark (rule U5). The art comes only
+  through `app/src/art/` (rule U6). Pure logic goes in files with a colocated test (rule Q1).
+- Only the hands story is built in this effort (`US-8`); item 24 writes its real content. Another
+  effort, game feel (item 26), is changing the buttons and adding motion at the same time; do not touch
+  `app/src/components/lesson/lesson-button.tsx` or `app/src/theme/tokens.ts`.
+
+Do these, in order:
+1. **Dials**: `storyBackZone` 0.30, `storyWordsPerSlide` 30, `storySlidesPerUnit` min 6 and max 8, as one
+   block under `// unit-stories` in `app/src/config/dials.ts`. Another effort adds a block under
+   `// game-feel`; keep both.
+2. **Schema and validator** under `app/src/content/stories/`: `Slide`, `Story`, and a validator beside
+   `validate.ts` that counts slides and words against the dials and checks that `cards` parse and
+   contain no duplicate (`hasDuplicate`, `app/src/content/validate.ts:7`). New test file.
+3. **Pure functions, each with its own test file**: `storyTapAction(x, width, zone)` and
+   `storyStep(state, event)` (in the style of `runStep`, `app/src/components/lesson/lesson-run.ts`).
+   Pin the edges: `x` just under and at 30 percent; first and last slide; never an index out of range.
+4. **The screen** `StoryScreen` in `app/src/screens/story-screen.tsx`, with its components under
+   `app/src/components/story/`: progress marks across the top, a close control, the mascot, title, body,
+   the optional `CardRow`, two `Pressable` zones that call `storyTapAction`. Name its three states
+   (rule U4): a unit with no story is drawn like a missing lesson id; there is no loading state because
+   the content is bundled; the empty state cannot happen, the validator requires slides.
+5. **The route and the button.** Add `app/src/app/story/[unit].tsx` and the stack entry; expose whether a
+   unit has a story from `path-view-model.ts`; add the button to `UnitHeader`.
+6. **A placeholder story** for `hands` with the minimum slides, only so the route can be run. Item 24
+   replaces it.
+7. **Record it.** Next free ledger step (read `HANDOFF.md`); code map lines for every new file; runtime
+   entries from `PLAN.md` section 7; an `As built` note under `US-4` to `US-6`.
+
+Ask before building: none. If the header button does not fit beside the chest on a small phone, the
+fix is yours to choose; record it as a `BD` with its reversal.
+
+Not in scope, whoever asks: the real hands story copy (item 24); stories for the table, preflop and odds
+units; a "seen" flag or a changing label (option 2B, which would need stored version 3, and the game
+feel effort owns that number); a story node on the path; auto-advance; any change to hearts, XP or the
+streak; any new art.
+
+Hand back: the whole-repo gate from `CLAUDE.md`, green; `git diff --stat -- assets/icons assets/mascots
+assets/sounds` showing nothing; screenshots on the iOS simulator and the Android emulator, light and
+dark, and on a tablet in landscape, of the header with and without a story button and of the first and
+last slide, saying "gates green" or "seen running" per item (R10); then the two copyable blocks.
+
+### 26. Install Reanimated and build the motion module, tokens and the primary button
+
+**Model: Opus 5.5. Lane F. Waits on nothing.** Use its own worktree: items 22 and 23 run beside it.
+
+You are picking up felto, a poker-learning app in `app/` (Expo SDK 57, React Native 0.86, TypeScript
+strict, bun, a development build). Read `HANDOFF.md` first, then `docs/incomplete/game-feel/DESIGN.md`
+(decisions `GF-1`, `GF-2`, `GF-4`, `GF-6`, `GF-8`) and `docs/incomplete/game-feel/PLAN.md` (sections 0,
+1 and phase 1), then `docs/AGENT-PRACTICES.md` and `docs/conventions-typescript.md` in full. Use the
+library docs, not memory, for Reanimated (Context7, `/websites/swmansion_react-native-reanimated`).
+Session rules, restated: never run `git commit`, `git push`, `git add -A` or `git add .`; absolute dates;
+no em dashes and no contractions in documents; no drive-by fixes; `bun run --cwd app <script>`, never
+`bun --cwd app run <script>`.
+
+**Why this exists.** Zach wants the app to feel more like Duolingo: more animation, colour, haptics,
+sound and character, with 12 Duolingo Chess photos as the reference. Every screen in the photos has one
+full-bleed colour, one raised coloured button and one character. The app today has no animation code,
+a 12-colour palette and native buttons that cannot take a raised edge. This item lays the foundation
+the other seven phases use. Nothing the player sees changes except the Check and Continue buttons.
+
+**What is fixed.** Read these before changing anything; do not relitigate them.
+- Zach chose Reanimated 4 with `react-native-worklets` (`GF-1`), installed with `bunx expo install` so
+  the versions match SDK 57, plus one native rebuild. The built-in `Animated` behind the same `motion`
+  module is the fallback if the build fails for a reason that is not a typo (BD-G3); stop and ask first.
+- Check and Continue become a custom component with a raised bottom edge, a press that sinks it, and
+  hooks left as props for a haptic and a sound; switches, pickers and the time dialog stay native
+  `@expo/ui` (`GF-2`, amends `D2`). Today they are `app/src/components/lesson/lesson-button.tsx:1-20`.
+- The double-press guards stay untouched: `app/src/components/lesson/session-steps.ts:17-27,38-48`. The
+  new button calls the same handlers. Their tests must pass unchanged.
+- Every motion value is a dial in `app/src/config/dials.ts`, in one block under `// game-feel`, with
+  the proposed values of `PLAN.md` section 3 (BD-G1). Another effort adds a block under
+  `// unit-stories`; keep both.
+- Every colour has a light and a dark value in `app/src/theme/tokens.ts` (rule U5): four unit colours
+  and four moment colours (finish, chest, boss pass, boss fail), and the raised-edge tone. A colour copied
+  from the art cites its generator line (`tools/common.py`).
+- A screen never imports Reanimated directly: the `app/src/motion/` module wraps it (BD-G3). One
+  `useReducedMotion` hook is the only place reduced motion is read (BD-G4, `GF-8`).
+- No new art, no hand edit of any SVG or of `assets/higgsfield/`, no change to the stored state.
+- The development build must be rebuilt: Reanimated is native code, and an old build crashes on launch.
+
+Do these, in order:
+1. **Install** with `bunx expo install react-native-reanimated react-native-worklets` from `app/`; check the
+   pinned versions and the Babel plugin (`react-native-worklets/plugin`, listed last) against the docs;
+   rebuild with `bun run --cwd app ios`, then the Android build (`JAVA_HOME=$(/usr/libexec/java_home -v 17)
+   ANDROID_HOME=~/Library/Android/sdk bun run --cwd app android`).
+2. **The motion module** under `app/src/motion/`: `use-reduced-motion.ts`, `press-scale.ts`, `bounce.ts`,
+   `fade-in.ts`. Tests, in new files, for any pure part.
+3. **Tokens and dials** as described above.
+4. **The primary button** in `app/src/components/button/primary-button.tsx`: face, raised edge, sink on
+   press, disabled and pressed states, label in the type tokens, sized by `useColumnWidth` like
+   `LessonButton`.
+5. **Move the Check and Continue call sites** to it. Remove `LessonButton` only if no call site is left;
+   otherwise leave it (BD-G7).
+6. **Register the divergence**: read `docs/conventions-typescript.md` and add the next free `Z` line saying the
+   primary buttons are not native (`GF-2`).
+7. **Record it.** Next free ledger step (read `HANDOFF.md`); code map lines; a dated pointer under `D2`
+   (already there, mark it built); runtime entries from `PLAN.md` section 7.
+
+Ask before building: if the Reanimated build fails, whether to fall back to the built-in `Animated`
+(`GF-1`). Both are Zach's call.
+
+Not in scope, whoever asks: any animation on a screen other than the button press; haptic or sound
+changes (items 27 and 28); the Haptics switch and any stored-state change (item 27); colour on the path
+(item 31); Rive; badges, quests and a speaking mascot (parked, `GF-9`).
+
+Hand back: the whole-repo gate from `CLAUDE.md`, green, with the test count; `git diff --stat --
+assets/icons assets/mascots assets/sounds` showing nothing; the app built and launched on the iOS
+simulator and the Android emulator with Reanimated linked, with screenshots of the resting and pressed
+button in light and dark on each; a line saying whether the press was felt on Zach's phone (you cannot
+feel it: say "not felt"); then the two copyable blocks, `git add` with the exact files and `git commit`
+with the same files and a short lowercase message.
+
+Items 24, 25 and 27 to 33: their prompts are written by the session that closes the item before
+them, from the matching phase in `docs/incomplete/unit-stories/PLAN.md` or
+`docs/incomplete/game-feel/PLAN.md`.
