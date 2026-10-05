@@ -41,7 +41,7 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 | 21 | Fix two stale lines that board item 4 found | `DONE: HANDOFF 9` | Sonnet 5 | A | nothing | `docs/conventions-python.md`, `docs/incomplete/app/DESIGN.md` |
 | 22 | Unit stories phase 1: dealt hands in lessons 3 and 5 and in every boss | `OPEN` | Opus 5.5 | D | nothing | `app/src/game/dealt-slots.ts` (new), `app/src/game/session.ts`, `app/src/screens/lesson-screen.tsx`, `app/src/components/boss/boss-session.ts`, `app/src/config/dials.ts` (block `// unit-stories`) |
 | 23 | Unit stories phase 2: the story engine, the route and the header button | `DONE: HANDOFF 31` | Opus 5.5 | E | nothing | `app/src/app/story/`, `app/src/screens/story-screen.tsx`, `app/src/components/story/`, `app/src/content/stories/schema.ts`, `app/src/components/root-stack.tsx`, `app/src/components/path/unit-header.tsx`, `app/src/components/path/path-view-model.ts`, `app/src/config/dials.ts` (block `// unit-stories`) |
-| 24 | Unit stories phase 3: the hands story content | `OPEN` | Opus 5.5 | E | item 23 committed in the lane E worktree | `app/src/content/stories/hands.ts`, `app/src/content/stories/hands-story.test.ts` |
+| 24 | Unit stories phase 3: the hands story content | `DONE: HANDOFF 33` | Opus 5.5 | E | item 23 committed in the lane E worktree | `app/src/content/stories/hands.ts`, `app/src/content/stories/hands-story.test.ts` |
 | 25 | Unit stories phase 4: close out | `HELD` until items 22 to 24 are `DONE` | Sonnet 5 | E | items 22 to 24 | `docs/README.md`, `docs/incomplete/unit-stories/`, `docs/incomplete/app/DESIGN.md`, `HANDOFF.md` |
 | 26 | Game feel phase 1: Reanimated, the motion module, tokens and the primary button | `DONE: HANDOFF 29` | Opus 5.5 | F | nothing | `app/package.json`, `app/bun.lock`, `app/src/motion/`, `app/src/components/button/`, `app/src/theme/tokens.ts`, `app/src/config/dials.ts` (block `// game-feel`), `docs/conventions-typescript.md` |
 | 27 | Game feel phase 2: haptics, the Haptics switch and stored version 3 | `DONE: HANDOFF 30` | Opus 5.5 | F | item 26 | `app/src/feedback/`, `app/src/storage/migrations.ts`, `app/src/storage/check-state.ts`, `app/src/storage/player-actions.ts`, `app/src/game/player-state.ts`, `app/src/game/settings.ts`, `app/src/components/profile/`, `app/src/screens/profile-screen.tsx`, `app/src/components/lesson/lesson-run-view.tsx` and `feedback-sheet.tsx` (the press haptic only) |
@@ -790,6 +790,74 @@ the last slide on iOS and Android, saying "gates green" or "seen running" (R10);
 then the two copyable blocks, `git add` with the exact files and `git commit` with the same files
 and a short lowercase message, both run from the lane E worktree.
 
+### 25. Close out the unit-stories effort: one record, the index and the runtime entries
+
+**Model: Sonnet 5. Lane E. Waits on items 22 to 24 committed and merged into `main`.** Work in the
+main checkout, `/Users/zachshort/Projects/felto`, once Zach has merged the lane D and lane E
+branches; no worktree. Written 2026-10-05 by the session that closed item 24 (`HANDOFF.md` step 33).
+
+You are picking up felto, a poker-learning app in `app/` (Expo SDK 57, TypeScript strict, bun). This
+item writes records only; it changes no code. Read `HANDOFF.md` first (steps 28, 31 and 33 are the
+three built phases of this effort), then `docs/incomplete/unit-stories/PLAN.md` (phase 4 and
+section 7) and `DESIGN.md` (`US-1` to `US-8` with their `As built` notes), then
+`docs/AGENT-PRACTICES.md` Parts 7 and 8.2 and `CLAUDE.md`. Session rules, restated: never run
+`git commit`, `git push`, `git add -A` or `git add .`; absolute dates; no em dashes and no
+contractions in any document; no drive-by fixes; `bun run --cwd app <script>`, never
+`bun --cwd app run <script>`.
+
+**Why this exists.** The unit-stories effort fixed repeated questions by dealing fresh hands (phase
+1) and added an optional tap-through story before unit 1 (phases 2 and 3). It was built in two
+lanes and two worktrees, so its record is split. This item makes the record one, so that Zach can
+walk what only a person can check and the folder can later be archived.
+
+**What is fixed.** Read these before changing anything; do not relitigate them.
+- Phase 1 is board item 22, lane D, ledger step 28, written in `.claude/worktrees/lane-d-dealt-hands`.
+  Phase 2 is item 23, step 31 (merged into `main` at `06cea5a`). Phase 3 is item 24, step 33. Before
+  you trust any of these, open the merged `HANDOFF.md` and read each step: step 28 was not in `main`
+  when step 33 was written.
+- Ledger numbers on 2026-10-05: `main` held 1 to 27 and 29 to 31 (29 and 30 are game-feel items 26
+  and 27), lane D 28, lane F 32 (game-feel item 28), lane E 33. Read every worktree's `HANDOFF.md`
+  (`git worktree list`) before you take the next number.
+- `PLAN.md` section 7 is the one place for this effort's runtime entries. Steps 31 and 33 say which
+  entries were seen running and which are `open`; carry each `open` one forward as written.
+- Open findings to carry, not fix: step 31 (a) to (f); step 33's findings (its "Found" paragraph).
+  Step 31 (e) left the test counts in `CLAUDE.md` and in the `HANDOFF.md` Environment rows for this
+  item, because every parallel lane changes them. `HANDOFF.md` is yours; `CLAUDE.md` is not in this
+  item's files (ask, below).
+- The design is frozen: add `As built` notes and dated pointers, never edit a decision in place
+  (`DESIGN.md` header). The folder stays in `docs/incomplete/` until Zach has walked the runtime
+  entries (Part 2.2, Stage 7); do not archive it.
+
+Do these, in order:
+1. **Re-verify** (Part 2.4, a resumed effort): `git log --oneline` shows lanes D and E merged; run the
+   whole-repo gate from `CLAUDE.md` in `main` and write down its run lines and test count. If the
+   gate is red, stop and report; a red gate is not this item's to fix.
+2. **Amend the app design**: an `As built` note under `D8` in `docs/incomplete/app/DESIGN.md` for the
+   dealt hands (if step 28 already wrote it, check it against the code and add only what is missing),
+   and a dated pointer to `US-1` to `US-8` where `D8` and `D9` meet this effort, as section 8 of the
+   unit-stories design promises.
+3. **Reconcile the index** `docs/README.md`: the unit-stories `PLAN.md` line names `BD-S1` to `BD-S6`
+   (it holds `BD-S1` to `BD-S13`) and should say phases 1 to 3 are built; set the checked dates; the
+   `HANDOFF.md` Environment test counts get the number from step 1.
+4. **Gather the runtime entries** in `PLAN.md` section 7: add any lane D entry that is missing, and
+   mark each entry seen (with its step) or `open`. Set the phase 4 header.
+5. **Record it.** One ledger step at the next free number; this row to `DONE`. Hand back the three
+   blocks of Part 7 (A: a pass-off for whatever Zach decides next, or "none"; B: the runtime entries;
+   C: the next model).
+
+Ask before building: whether to update the test count in `CLAUDE.md` (not this item's file; the
+game-feel close-out, item 33, may want it too). Zach's call, and the answer may be to leave it to
+item 33.
+
+Not in scope, whoever asks: any code; stories for the table, preflop and odds units (`US-8`); the
+game-feel documents; archiving the folder; folding the ledger (a separate clean-up); driving a
+simulator (nothing here needs one).
+
+Hand back: the whole-repo gate, green, with the test count; `git diff --stat -- assets/icons
+assets/mascots assets/sounds` showing nothing; the three blocks of Part 7; then the two copyable
+blocks, `git add` with the exact files and `git commit` with the same files and a short lowercase
+message.
+
 ### 26. Install Reanimated and build the motion module, tokens and the primary button
 
 *`DONE: HANDOFF 29`, 2026-10-05, on branch `game-feel-1` in `.claude/worktrees/game-feel-1`, not
@@ -1150,6 +1218,6 @@ and the Android emulator, light and dark; the lines "not felt" and "not heard"; 
 copyable blocks, `git add` with the exact files and `git commit` with the same files and a short
 lowercase message.
 
-Items 25 and 30 to 33: their prompts are written by the session that closes the item before
+Items 30 to 33: their prompts are written by the session that closes the item before
 them, from the matching phase in `docs/incomplete/unit-stories/PLAN.md` or
 `docs/incomplete/game-feel/PLAN.md`.

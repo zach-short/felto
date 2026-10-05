@@ -363,6 +363,24 @@ story, and it fails if no slide is keyed (BD-S12). The placeholder hands story
 (`content/stories/hands.ts`, six slides, one keyed flush) is not the real copy; phase 3 replaces
 it after Zach reads the registers.
 
+*As built, 2026-10-05 (board item 24, `HANDOFF.md` step 33, not committed):* the hands story is
+eight slides in `app/src/content/stories/hands.ts`, in the order unit 1 teaches its terms: the deck
+and its four suits, hole cards and the board, the best five of seven, the ten hands from high card
+up over three slides, kickers, then who wins the pot. Zach read the full draft and the plain, warm
+and terse versions of slides 1, 5 and 8 in chat on 2026-10-05 and chose warm, so `D10` holds for
+the story without a change. Four slides are keyed: three of a kind, a straight, a royal flush (one
+example for each group of the ten hands) and one pair (the kicker slide). Two more show cards with
+no key, because they name no hand: four aces in four suits on the deck slide and two hole cards.
+Every body is 28 to 30 words. The pot comes on the last slide because `hands-4` brings the word in,
+after kickers. `hands-story.test.ts` pins what is true of this story only: each keyed slide names
+its hand, every card row whose slide names a hand is keyed, all ten hands are first named in rank
+order from high card up, each slide that brings in new hands shows a stronger example than the
+slide before, the terms appear in the lesson order (deck, suits, ranks, hole cards, board, best
+five, the hands, kickers, pot), every row has 2 to 5 cards, and the last slide promises no lesson.
+Five mutants each failed at least one test. A Sonnet 5 read-only check in its own worktree found
+every card code valid, no card twice in a row and each key equal to both the evaluator and its own
+reading of the cards. No schema, validator or engine file changed.
+
 ### US-8. Only the hands story is built in this effort
 
 Decided 2026-10-05 (Zach: "3a"). The framework and the unit 1 story are built here. The stories

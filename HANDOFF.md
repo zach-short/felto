@@ -185,7 +185,8 @@ answer in place.
   `story-slide.tsx`, `story-missing.tsx` and `story-button.tsx` (the header button).
   `app/src/content/stories/` holds the schema, the validator `validate-story.ts`, the list
   `catalog.ts` (`STORIES`, `storyFor`) with its key test `story-catalog.test.ts`, and the hands
-  story `hands.ts` (a placeholder until board item 24). `PathUnit.hasStory` is tested in
+  story `hands.ts` (eight slides since board item 24, step 33; a placeholder before) with its own
+  test `hands-story.test.ts`. `PathUnit.hasStory` is tested in
   `components/path/unit-story.test.ts`.
 - `app/src/game/`: the game rules of `D8`, `D19` to `D21` as pure functions of the state, a
   path outline and the time (board item 8): lives, streak and freeze, sessions and XP, the path
@@ -1111,6 +1112,62 @@ Runtime entries (game-feel `PLAN.md` section 7, phase 3):
 | A press makes a tap | The iPhone, on a development build made after item 26 (Reanimated), with the JavaScript reloaded from branch `game-feel-3` (this item adds no native code), Sound on, ringer on, any lesson: choose an option, press Check, then the sheet's Continue | A short soft knock as the finger goes down on each, with the light buzz, then the answer sound after Check |
 | Sound off silences the press | Profile, Sound effects off, then a lesson | No tap on Check or Continue; the buzz stays while Haptics is on |
 | The silent switch silences the press | The iPhone's ringer switch on silent, Sound on, a lesson | No tap, as for the other effects (`D15`) |
+
+**33. The hands story: eight slides for unit 1 (board item 24, unit stories phase 3).** Done
+2026-10-05, on Opus 5.5, in the worktree `.claude/worktrees/lane-e-story-engine` (branch
+`lane-e-story-engine`, at `aed7054`, item 23), not committed. Step 32 belongs to lane F (game-feel
+item 28; its session announced the number on 2026-10-05), and `main` holds 29 to 31: during this
+item `main` merged item 23 (`06cea5a`) and game-feel items 26 and 27 (`4b592b9`), so this lane
+took 33. `app/src/content/stories/hands.ts` now holds eight slides in the order unit 1 teaches its
+terms (deck and suits, hole cards and the board, best five of seven, the ten hands from high card up
+over three slides, kickers, who wins the pot), and the new `hands-story.test.ts` holds 7 tests of
+what is true of this story only (`DESIGN.md` US-7, `As built`). Zach read the full draft and three
+registers of slides 1, 5 and 8 in chat on 2026-10-05 and chose warm (R7). Four slides are keyed
+(three of a kind, straight, royal flush, one pair) and two show cards with no key, because they
+name no hand (four aces, K and Q). No schema, validator, engine or token file changed.
+
+Proof. Whole-repo gate from `CLAUDE.md`, run in the worktree after the last code change: exit 0,
+run lines 78, 18 and 6, typecheck and lint clean, 70 test files and 538 tests (step 31 had 69 and
+531), and `git diff --stat -- assets/icons assets/mascots assets/sounds` empty. Five mutants of a
+copy of `hands.ts` (a wrong key, a dropped key, the big hands before the straights, the pot named
+on slide 3, a lesson promised on the last slide) each failed at least one test; the file was
+restored with `cp` and `diff -q` showed it equal. A Sonnet 5 read-only check, model passed
+explicitly, in its own worktree, ran `parseCards`, `hasDuplicate` and `evaluate` on every row and
+read each hand by hand: no disagreement. The harness removed its worktree, which it does only when
+nothing changed, and lane E's `git status --short` showed only this item's two files.
+**Seen running** on the iPhone 17e (`B84A7615`), with `main`'s development build on this worktree's
+Metro (port 8084), light and dark: slides 1, 5 and 8 in both, slides 2, 6 and 7 in one of them;
+eight progress marks; "Back to the path" closed the story onto the Learn tab with the stat bar
+at 4, 240, 2 and 20 before and after; `felto://story/table` drew the not-found view of step 31 in
+dark (the sad fish, "Story not found.", "This unit has no story yet.") and its button closed it.
+**Not seen**, each `open`: any Android screen, a phone or a tablet in landscape, and a screen reader.
+The `Medium_Phone_API_36` emulator was started twice and stopped with exit 137 (a kill signal) both
+times, at about 12:54 and 13:18 EDT, before its boot completed, while the load average ran 60 to
+114 and free disk 4.8 to 5.3 GiB. At the second stop the other lane's `Pixel_9` emulator stopped
+too, and at about 13:19 the iPhone 17e was found shut down, which this session did not do. iOS
+cannot be rotated here (Environment).
+
+Found, each `open`: (a) Input that this session did not send reached the iPhone 17e again. With
+the live simulator panel open, the story closed, the path scrolled to unit 2 and the Profile tab,
+then the Practice tab, opened. After `detach`, a tap on "Learn about hands" opened lesson
+`hands-1` instead; this session left it with the cross before any answer, and the stat bar was
+unchanged. The simulator tool acts on "the currently attached simulator, or the first booted one"
+when a call names no device (its own description), so another session's call that names none can
+land on lane E's device; clicks that Zach makes in the panel land there too. Lane F's session
+reported on 2026-10-05 that each of its simulator calls named the iPhone 17
+(`436D2BA3-7441-4B50-BA83-FDFD8D55856F`) by id, so the source is still unknown. `detach` also closed
+the panel for all five simulators it held (iPhone 17 Pro, iPhone 17, iPad Pro 13-inch (M5), iPhone
+Air, iPhone 17e), which other lanes may have been using. (b) Under this load a screenshot taken
+just after a tap often showed the screen before the tap; take a second screenshot before you
+judge. (c) The Sonnet check noted that slide 2 says the hole cards are face down while its row
+draws them face up; a teaching choice, and Zach's to keep or change. (d) On the 390-point phone the
+last slide ends with "fun!" alone on its line. (e) The `think` pose reads as worried on slides 3
+and 5; that is the existing art, not changed here. New strings, all in `hands.ts`: the titles
+"Meet the deck", "Your two cards", "Best five of seven", "The ten hands", "Straights and
+flushes", "The big hands", "Kickers break ties", "Who wins the pot?" and their eight bodies, as
+Zach read them in chat. The board row is `DONE` and item 25 has its prompt. **Left owed:** the
+Android, landscape, tablet and screen-reader checks; Zach reads the whole story on a phone; the
+commit, which is Zach's, from the worktree.
 
 ## Style rules
 
