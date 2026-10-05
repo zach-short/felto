@@ -1,9 +1,16 @@
 import { describe, expect, it } from "vitest";
 
+import { DIALS } from "@/config/dials";
 import { chestState, openChest } from "@/game/chest";
+import { chestTier } from "@/game/chest-tier";
 import { freshState } from "@/game/player-state";
 
-const start = freshState(new Date(2026, 9, 5, 12));
+// Since GF-13 a chest pays the gems of its tier, so the start takes the first seed that draws a
+// common chest for u1: the cases below keep the 20 gems that D8 gave every chest
+const commonSeed = Array.from({ length: 100 }, (_, seed) => seed).find(
+  (seed) => chestTier(seed, "u1", DIALS.chestOdds) === "common",
+);
+const start = { ...freshState(new Date(2026, 9, 5, 12)), chestSeed: commonSeed ?? 0 };
 
 describe("the chest (D8, D6)", () => {
   it("is closed until the boss is passed", () => {
@@ -11,7 +18,8 @@ describe("the chest (D8, D6)", () => {
     expect(openChest(start, "u1")).toBe(start);
   });
 
-  it("gives 20 gems once per unit", () => {
+  it("gives a common chest's 20 gems once per unit", () => {
+    expect(commonSeed).toBeDefined();
     const passed = { ...start, passedBosses: ["u1"] };
     expect(chestState(passed, "u1")).toBe("ready");
     const opened = openChest(passed, "u1");

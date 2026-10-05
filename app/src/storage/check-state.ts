@@ -32,6 +32,7 @@ const PLAYER_CHECKS: Record<string, Check> = {
   passedBosses: isStringList,
   placedUnits: isStringList,
   openedChests: isStringList,
+  chestSeed: isWholeIn(0, 0xffff_ffff),
   missedExercises: isStringList,
   onboarded: isBoolean,
   placement: isPlacement,

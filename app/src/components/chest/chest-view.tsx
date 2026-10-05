@@ -5,7 +5,6 @@ import { Mascot } from "@/art/mascot";
 import type { Pose } from "@/art/names";
 import type { ChestMoment } from "@/components/chest/chest-moment";
 import { CAST } from "@/content/cast";
-import { DIALS } from "@/config/dials";
 import { ART_SCALE, OPACITY, SPACE, TYPE } from "@/theme/tokens";
 import { useColumnWidth } from "@/theme/use-column-width";
 import { useTheme } from "@/theme/use-theme";
@@ -13,15 +12,17 @@ import { useTheme } from "@/theme/use-theme";
 type ChestViewProps = {
   moment: ChestMoment;
   gems: number;
+  // The gems this chest holds, which since GF-13 depend on its tier (chestPrize)
+  prize: number;
 };
 
 // DESIGN.md 10.3 and 10.5: after a boss pass the squid opens the chest, cheering. The art has one
 // chest and no open state or animation, so the opening is a plain reveal: the chest gives way to
 // the gem and the count (PLAN.md phase 10).
-export function ChestView({ moment, gems }: ChestViewProps) {
+export function ChestView({ moment, gems, prize }: ChestViewProps) {
   const { colours } = useTheme();
   const column = useColumnWidth();
-  const { pose, title, line } = chestCopy(moment, gems);
+  const { pose, title, line } = chestCopy(moment, gems, prize);
   const revealed = moment === "just-opened";
   return (
     <View style={styles.view}>
@@ -37,8 +38,7 @@ export function ChestView({ moment, gems }: ChestViewProps) {
   );
 }
 
-function chestCopy(moment: ChestMoment, gems: number): { pose: Pose; title: string; line: string } {
-  const prize = DIALS.chestGems;
+function chestCopy(moment: ChestMoment, gems: number, prize: number): { pose: Pose; title: string; line: string } {
   if (moment === "ready") {
     return { pose: "happy", title: `${CAST.squid} found a chest!`, line: `You beat ${CAST.shark}, so what is inside is yours.` };
   }

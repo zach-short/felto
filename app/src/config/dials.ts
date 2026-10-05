@@ -19,7 +19,16 @@ export const DIALS = {
   bossDraw: 10,
   bossPassRight: 8,
   reviewMaxSize: 10,
-  chestGems: 20,
+
+  // The chest (GF-13, board item 50; amends D8's fixed 20 gems). CONDITION, from GF-13: the day
+  // gems, chests or anything that leads to them can be bought, this rule is reopened with Zach
+  // before the purchase ships, because a random chest that can be bought rates 9+ for loot boxes
+  // (docs/incomplete/app/DESIGN.md:204-205). The odds are per cent; a tier's share is its weight
+  // over the sum (game/chest-tier.ts). A change here also changes the tier of a ready chest not
+  // yet opened. Zach kept these odds and gems on 2026-10-05.
+  chestOdds: { common: 55, rare: 30, mythic: 12, legendary: 3 },
+  // The gems a chest of each tier holds; common keeps the 20 that every chest held before GF-13
+  chestGems: { common: 20, rare: 35, mythic: 60, legendary: 100 },
 
   // D11: the streak reminder, local time on the phone
   reminderHour: 19,

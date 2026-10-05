@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { chestMoment } from "./chest-moment";
 import { PATH_OUTLINE } from "@/components/path/path-outline";
 import { DIALS } from "@/config/dials";
-import { openChest } from "@/game/chest";
+import { chestPrize, openChest } from "@/game/chest";
 import { fixtureState } from "@/game/fixtures";
 import { finishSession } from "@/game/session";
 
@@ -18,10 +18,11 @@ describe("the chest after a boss (PLAN.md phase 10)", () => {
     expect(chestMoment(finishSession(READY, result(8), NOW), UNIT, false)).toBe("ready");
   });
 
-  it("gives 20 gems once: a second open and a second pass give nothing more (watch-for)", () => {
+  it("gives its tier's gems once: a second open and a second pass give nothing more (watch-for)", () => {
     const passed = finishSession(READY, result(8), NOW);
     const opened = openChest(passed, UNIT);
-    expect(opened.gems).toBe(READY.gems + DIALS.chestGems);
+    // Since GF-13 the chest pays the gems of its tier, not a fixed 20
+    expect(opened.gems).toBe(READY.gems + chestPrize(passed, UNIT));
     expect(chestMoment(opened, UNIT, true)).toBe("just-opened");
     expect(openChest(opened, UNIT).gems).toBe(opened.gems);
     const again = finishSession(opened, result(10), NOW);
