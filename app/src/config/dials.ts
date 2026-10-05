@@ -57,6 +57,9 @@ export const DIALS = {
   // GF-3: the touch each kind of press gives, named from the vocabulary of feedback/haptics.ts
   selectHaptic: "selection",
   pressHaptic: "lightImpact",
+  // GF-5: the effect a press plays, named from art/sounds.ts, so a name that is not an effect fails
+  // the typecheck where it is played (the reason of BD-G18)
+  pressSound: "tap",
 
   // D17: every screen draws in a centred column at most this wide, in points
   columnMaxWidth: 640,

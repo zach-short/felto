@@ -7,6 +7,7 @@ import { PrimaryButton } from "@/components/button/primary-button";
 import { DIALS } from "@/config/dials";
 import type { CastRole } from "@/content/cast";
 import { useHaptics } from "@/feedback/use-haptics";
+import { useSound } from "@/feedback/use-sound";
 import { ART_SCALE, LINE_HEIGHT, SPACE, TYPE } from "@/theme/tokens";
 import { useColumnWidth } from "@/theme/use-column-width";
 import { useTheme } from "@/theme/use-theme";
@@ -30,6 +31,7 @@ export function FeedbackSheet({ shown, right, answer, explanation, onContinue, o
   const { colours } = useTheme();
   const column = useColumnWidth();
   const buzz = useHaptics();
+  const play = useSound();
   return (
     <BottomSheet isPresented={shown} onDismiss={onDismiss} containerColor={colours.surface}>
       <Column>
@@ -49,7 +51,12 @@ export function FeedbackSheet({ shown, right, answer, explanation, onContinue, o
                 <Text style={[styles.explanation, { color: colours.text }]}>{explanation}</Text>
               </View>
             </View>
-            <PrimaryButton label="Continue" onPress={onContinue} pressHaptic={() => buzz(DIALS.pressHaptic)} />
+            <PrimaryButton
+              label="Continue"
+              onPress={onContinue}
+              pressHaptic={() => buzz(DIALS.pressHaptic)}
+              pressSound={() => play(DIALS.pressSound)}
+            />
           </View>
         </RNHostView>
       </Column>

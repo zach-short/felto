@@ -1,6 +1,6 @@
 # Plan: game feel
 
-Status: `IN FLIGHT` since 2026-10-05, phases 1 and 2 built (board items 26 and 27). The line read "`PLANNED`
+Status: `IN FLIGHT` since 2026-10-05, phases 1 to 3 built (board items 26 to 28). The line read "`PLANNED`
 2026-10-05, awaiting GATE 2" until Zach approved the plan in chat the same day (`PASSOFF.md`, the
 note above item 22). Decisions `GF-1` to `GF-9` are in `DESIGN.md`,
 section 8, and are frozen. This plan is what is built, in what order, by whom, and done when. Read
@@ -50,6 +50,8 @@ a screenshot" and "felt on the phone" are different claims.
 | BD-G16 | Phase 2: the Haptics help line opens the Settings section's footer, joined to the reminder line in one `Text` with a line break. The universal `Switch` takes a label and no help text (`app/node_modules/@expo/ui/build/universal/Switch/types.d.ts`), and the footer is a SwiftUI slot on iOS (`@expo/ui/ios/SlotView.swift`) and a Compose column on Android (`@expo/ui/src/universal/FieldGroup/FieldSection.android.tsx:78`), so one `Text` is the layout both draw the same. Zach saw this placement in the copy question before he chose | Give Sound and Haptics a section of their own, with the help line as its footer |
 | BD-G17 | Phase 2: the table of touches in `haptics.ts` is not exported. `buzz(touch, setting)` is the one way in, and a screen calls `useHaptics()` (`app/src/feedback/use-haptics.ts`), which reads the setting. The six answer and ending moments keep `Haptics.notificationAsync` with Success and Error in `use-answer-feedback.ts`, gated in `moments.ts`, because an error buzz is not in the `GF-3` vocabulary and phase 4 moves the wrong answer to the rigid tap | Export the table |
 | BD-G18 | Phase 2: the dials `selectHaptic` (`"selection"`) and `pressHaptic` (`"lightImpact"`) name touches of the vocabulary, so a name that is not a touch fails the typecheck where it is passed to `buzz`. `selectHaptic` is read by no code until phase 4 | Write the touch names at the call sites |
+| BD-G19 | Phase 3, 2026-10-05: the 0.6 s ceiling of section 3 lives in `tools/build_sounds.py` as `SHORT_CEILING`, beside `CEILING` (one second, `D15`), with the six `GF-5` names in the tuple `SHORT` (`:60-66`). `checked()` (`:235-242`) stops the run with an error when an effect is longer than its ceiling, so the gate fails before the file is written; a planted 0.65 s `tap` stopped it with exit 1 on 2026-10-05. It is not a dial in `app/src/config/dials.ts`: the generator cannot read that file, no app code needs the number, and the `D15` block there already holds `soundMaxSeconds`, which no code reads (`grep -rn "soundEffects\|soundMaxSeconds" app/src tools`, 2026-10-05) | Move the ceiling to a dial and check the WAV lengths in a vitest test that reads the files |
+| BD-G20 | Phase 3: the press sound reaches `PrimaryButton` the way the press haptic does (BD-G17, BD-G18). The dial `pressSound` (`"tap"`) names an effect of `app/src/art/sounds.ts`, so a wrong name fails the typecheck where it is played; a screen calls `useSound()` (`app/src/feedback/use-sound.ts`), which reads `settings.sound`; the rule is the pure `playThrough(effect, sound, play)` in `app/src/feedback/sound-switch.ts`, with its test, because `effects.ts` imports `expo-audio` and vitest in node cannot load it (the reason of BD-G15). The six moments of `moments.ts` keep their own `if (devices.sound)`, so that file did not change | Inline the setting check at the call sites |
 
 ## 2. Phases
 
@@ -154,6 +156,18 @@ Watch for: a stored value the module cannot read is copied to a backup key befor
 written (rule Q2); do not break that path.
 
 ### Phase 3: Sound
+
+**BUILT 2026-10-05, not committed: branch `game-feel-3`, worktree `.claude/worktrees/game-feel-3`,
+made from `main` at `4b592b9` after Zach merged `game-feel-2` (board item 28, `HANDOFF.md` step 32).**
+Zach chose the plan's default six (tap, option select, heart lost, XP tick, reward claim, sparkle)
+and the feel line offered for each, in chat on 2026-10-05. The generator writes twelve files; the
+six old ones are byte for byte as they were. Build calls BD-G19 and BD-G20. The press sound (`tap`)
+plays on Check and Continue; the other five are registered and wired nowhere. What this changes for
+later phases: a screen plays an effect with `useSound()` and a name from `Effect`, never with
+`playEffect` itself; `option_select` and `heart_lost` wait for phase 4, `xp_tick`, `reward_claim`
+and `sparkle` for phase 5. `heart_lost` starts a major third under `answer_wrong`, so the two may
+play together. Zach played the six on the Mac the same day and answered "theyre fine ill update
+them later"; none has been heard on a phone.
 
 Files it owns: `tools/build_sounds.py`, `assets/sounds/*` (generated), `app/src/art/sounds.ts`,
 `app/src/feedback/effects.ts`, `docs/conventions-python.md` only if a rule is touched.

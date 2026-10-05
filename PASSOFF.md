@@ -45,8 +45,8 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 | 25 | Unit stories phase 4: close out | `HELD` until items 22 to 24 are `DONE` | Sonnet 5 | E | items 22 to 24 | `docs/README.md`, `docs/incomplete/unit-stories/`, `docs/incomplete/app/DESIGN.md`, `HANDOFF.md` |
 | 26 | Game feel phase 1: Reanimated, the motion module, tokens and the primary button | `DONE: HANDOFF 29` | Opus 5.5 | F | nothing | `app/package.json`, `app/bun.lock`, `app/src/motion/`, `app/src/components/button/`, `app/src/theme/tokens.ts`, `app/src/config/dials.ts` (block `// game-feel`), `docs/conventions-typescript.md` |
 | 27 | Game feel phase 2: haptics, the Haptics switch and stored version 3 | `DONE: HANDOFF 30` | Opus 5.5 | F | item 26 | `app/src/feedback/`, `app/src/storage/migrations.ts`, `app/src/storage/check-state.ts`, `app/src/storage/player-actions.ts`, `app/src/game/player-state.ts`, `app/src/game/settings.ts`, `app/src/components/profile/`, `app/src/screens/profile-screen.tsx`, `app/src/components/lesson/lesson-run-view.tsx` and `feedback-sheet.tsx` (the press haptic only) |
-| 28 | Game feel phase 3: six new sound effects | `OPEN` | Opus 5.5 | F | item 27 | `tools/build_sounds.py`, `assets/sounds/`, `app/src/art/sounds.ts`, `app/src/feedback/effects.ts`, `app/src/config/dials.ts` (block `// game-feel`), `app/src/components/lesson/lesson-run-view.tsx` and `feedback-sheet.tsx` (the press sound only) |
-| 29 | Game feel phase 4: the answer loop | `HELD` until item 28 is `DONE` | Opus 5.5 | F | item 28 | `app/src/components/lesson/`, `app/src/components/exercise/`, `app/src/feedback/` |
+| 28 | Game feel phase 3: six new sound effects | `DONE: HANDOFF 32` | Opus 5.5 | F | item 27 | `tools/build_sounds.py`, `assets/sounds/`, `app/src/art/sounds.ts`, `app/src/feedback/effects.ts`, `app/src/config/dials.ts` (block `// game-feel`), `app/src/components/lesson/lesson-run-view.tsx` and `feedback-sheet.tsx` (the press sound only) |
+| 29 | Game feel phase 4: the answer loop | `OPEN` | Opus 5.5 | F | item 28 | `app/src/components/lesson/`, `app/src/components/exercise/`, `app/src/feedback/` |
 | 30 | Game feel phase 5: finish, chest and boss screens | `HELD` until item 29 is `DONE` | Opus 5.5 | F | item 29 | `app/src/components/lesson/lesson-finish.tsx`, `app/src/components/chest/`, `app/src/components/boss/boss-finish.tsx`, `app/src/screens/chest-screen.tsx` |
 | 31 | Game feel phase 6: the path | `HELD` until item 30 is `DONE` | Opus 5.5 | F | item 30 | `app/src/components/path/`, `app/src/art/path-node-art.tsx`, `app/src/art/colour-swap.json`, `tools/build_icons.py` only if the node decision needs it |
 | 32 | Game feel phase 7: Learn, Profile, empty states and mascot life | `HELD` until item 31 is `DONE` | Opus 5.5 | F | item 31 | `app/src/screens/learn-screen.tsx`, `app/src/screens/profile-screen.tsx`, `app/src/components/profile/`, `app/src/components/onboarding/`, `app/src/art/mascot.tsx` |
@@ -964,6 +964,12 @@ checks them on his phone); then the two copyable blocks, `git add` with the exac
 
 ### 28. Add six sound effects from the generator, and the press sound
 
+*`DONE: HANDOFF 32`, 2026-10-05, on branch `game-feel-3` in `.claude/worktrees/game-feel-3`, not
+committed. Do not paste this prompt. The worktree was made from `main` at `4b592b9`, because Zach
+had merged `game-feel-2` by then. `effects.ts` did not change; the press sound added
+`app/src/feedback/use-sound.ts`, `sound-switch.ts` and its test (game-feel `PLAN.md` BD-G20), and
+the moved citations touched `docs/conventions-python.md` (1.2.1).*
+
 *Written 2026-10-05 by the session that built item 27 (`HANDOFF.md` step 30), from phase 3 of
 `docs/incomplete/game-feel/PLAN.md`.*
 
@@ -1051,6 +1057,99 @@ of a lesson on the iOS simulator and the Android emulator and the line "not hear
 copyable blocks, `git add` with the exact files and `git commit` with the same files and a short
 lowercase message.
 
-Items 25 and 29 to 33: their prompts are written by the session that closes the item before
+### 29. Bring the answer loop to life: choose, check, right, wrong and the sheet
+
+*Written 2026-10-05 by the session that built item 28 (`HANDOFF.md` step 32), from phase 4 of
+`docs/incomplete/game-feel/PLAN.md`.*
+
+**Model: Opus 5.5. Lane F. Waits on item 28 (`DONE: HANDOFF 32`).** Use its own worktree. If Zach
+has not yet merged branch `game-feel-3` into `main`, make the worktree from that branch
+(`git worktree add -b game-feel-4 .claude/worktrees/game-feel-4 game-feel-3`), because `main`
+lacks the six new sounds and `useSound()`; if he has, make it from `main`. On 2026-10-05 a session
+that merged worktrees removed lane F's worktree while it was still clean (`HANDOFF.md`, Known
+facts), so check `git worktree list` before each long step until the first edit lands.
+
+You are picking up felto, a poker-learning app in `app/` (Expo SDK 57, React Native 0.86,
+TypeScript strict, bun, a development build) whose art and sound come from Python generators in
+`tools/`. Read `HANDOFF.md` first (the gate, the invariants, the code map, and the Known facts on
+the shared Metro cache, the simulator tool, the read-only emulator and the removed worktree), then
+`docs/incomplete/game-feel/DESIGN.md` (`GF-3` to `GF-8`, with the `As built` notes under `GF-1`,
+`GF-2`, `GF-3` and `GF-5`) and `docs/incomplete/game-feel/PLAN.md` (sections 0, 1 and 3, BD-G1 to
+BD-G20, the `BUILT` headers of phases 1 to 3, and phase 4), then `docs/AGENT-PRACTICES.md` and
+`docs/conventions-typescript.md` in full. Session rules, restated: never run `git commit`,
+`git push`, `git add -A` or `git add .`; absolute dates; no em dashes and no contractions in
+documents; no drive-by fixes, note and raise them; write `bun run --cwd app <script>`, never
+`bun --cwd app run <script>`; never hand-edit a file under `assets/`.
+
+**Why this exists.** Zach asked for more animation, colour, haptics, sound and character, with
+Duolingo Chess as the reference. The answer loop (choose, Check, right or wrong, the sheet,
+Continue) is where he spends most of his time (`GF-7`). Phases 1 to 3 built the parts: the motion
+module, the raised button, the haptic vocabulary with its switch, and the sounds. This phase puts
+them on the loop.
+
+**What is fixed.** Read these before changing anything; do not relitigate them.
+- Motion goes through `app/src/motion/` only (BD-G3); `motion-boundary.test.ts` fails if any other
+  file imports Reanimated or worklets. It holds `useBounce` and `useFadeIn`, which no screen has
+  used yet, so this phase is the first to run them; there is no shake or tilt hook yet. Every
+  animation passes `ReduceMotion.Never` and asks `motionAllowed(kind, reduced)` instead (BD-G10);
+  `reducedMotionSkips` in `app/src/config/dials.ts` lists bounce, shake, tilt, pulse, bob and
+  particles. Every value is a dial in the `// game-feel` block (BD-G1): `bounceScale`, `bounceMs`,
+  `shakeDistance`, `shakeSwings`, `shakeMs`, `sheetRiseMs`.
+- A touch is `useHaptics()` and a name from the vocabulary (`app/src/feedback/haptics.ts`); the dial
+  `selectHaptic` (`"selection"`) is read by no code yet. A sound is `useSound()` and a name from
+  `Effect` (`app/src/feedback/use-sound.ts`, BD-G20); `option_select` and `heart_lost` are
+  registered in `app/src/art/sounds.ts` and played nowhere yet. `heart_lost` starts a major third
+  under `answer_wrong`, so the two may play together (`tools/build_sounds.py` docstring).
+- The six answer and ending moments still buzz with `Haptics.notificationAsync` in
+  `app/src/feedback/use-answer-feedback.ts`, gated in `moments.ts`; the plan moves the wrong answer
+  to the rigid tap, which can route the six through the vocabulary and leave `haptics.ts` the one
+  importer of `expo-haptics` (step 30, finding (b)).
+- The choice rows are React Native `Pressable`s (`app/src/components/exercise/choice-list.tsx:39`),
+  so motion can reach them. The feedback sheet is the native `@expo/ui` `BottomSheet`
+  (`app/src/components/lesson/feedback-sheet.tsx`) and the progress bar is a native platform pair
+  (`lesson-progress.ios.tsx`, `lesson-progress.android.tsx`); both are native by `D2`.
+- The double-press guards are `checkedFor` and `movedOnFrom` in
+  `app/src/components/lesson/session-steps.ts:19-21,40-42`; `lesson-run.test.ts`,
+  `session-steps.test.ts` and `session-order.test.ts` must pass untouched.
+- Four unit colours and the right and wrong colours are tokens with light and dark values
+  (`app/src/theme/tokens.ts`, `unitHands` to `unitOdds`, `right`, `rightSoft`, `wrong`,
+  `wrongSoft`).
+- Open findings that land here: the Check button was once drawn sunk after the lesson moved on
+  (steps 29 and 30, finding (a)); on Android the sheet's Continue sits about 14 dp above the
+  gesture bar (step 29, finding (b)).
+
+Do these, in order:
+1. **Choosing an option**: the selection tick and `option_select` through the switches, and the
+   chosen row lifts and takes a colour (the answer to the second question below).
+2. **Check**: a right answer bounces the row and flashes the right colour, and the host bounces
+   (`GF-6`); a wrong answer shakes the row, the host tilts, and the heart in the header drops with
+   a short animation and `heart_lost`. A new shake or tilt hook goes in `app/src/motion/`, with any
+   pure part tested in a new file (rule Q1). A shake must not move the tap target from under a
+   finger.
+3. **The sheet and the progress bar**, as Zach answers the first question below.
+4. **Reduced motion**: bounce, shake and tilt are skipped; colour and fades stay (`GF-8`).
+5. **Record it**: the next free ledger step (read `HANDOFF.md`; other lanes may have taken one),
+   code map lines, `As built` notes under the `GF` decisions this touches, phase 4's `BUILT` header
+   with any `BD`, runtime entries, and item 30's pass-off prompt, from phase 5.
+
+Ask before building, in one batch: (1) the sheet and the progress bar are native by `D2`, and a
+native sheet rises with its own motion, not a spring of ours; keep them native, or replace them
+with custom views as `GF-2` did for the buttons (a dated amendment of `D2`)? (2) which colour the
+chosen row takes in a session that is not one unit's (a practice set mixes kinds, the placement
+check mixes units 1 and 2). Both are Zach's calls, and the answer to either may be no.
+
+Not in scope, whoever asks: the finish, chest and boss screens (item 30); the path, node presses
+and header counters outside the lesson (item 31); Learn, Profile and mascot idle life (item 32);
+new sounds or changes to the twelve; the other `LessonButton` call sites; badges, quests and a
+speaking mascot (`GF-9`).
+
+Hand back: the whole-repo gate from `CLAUDE.md`, green, with the run lines (78, 18 and 12) and the
+test count; `git diff --stat -- assets/icons assets/mascots assets/sounds` empty; the three guard
+test files unchanged; screenshots of the chosen, right, wrong and sheet states on the iOS simulator
+and the Android emulator, light and dark; the lines "not felt" and "not heard"; then the two
+copyable blocks, `git add` with the exact files and `git commit` with the same files and a short
+lowercase message.
+
+Items 25 and 30 to 33: their prompts are written by the session that closes the item before
 them, from the matching phase in `docs/incomplete/unit-stories/PLAN.md` or
 `docs/incomplete/game-feel/PLAN.md`.

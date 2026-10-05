@@ -349,6 +349,22 @@ effects, chosen from: tap, option select, node press, card slide, XP tick, strea
 reward claim, sparkle, perfect. The exact six are fixed at the sound phase and each is proven
 only when Zach plays it (`afplay assets/sounds/<name>.wav`). They extend `D15`.
 
+*As built, 2026-10-05 (board item 28, `PLAN.md` phase 3, `HANDOFF.md` step 32):* Zach chose the
+plan's default six in chat on 2026-10-05, and the feel line offered for each: tap ("very short,
+dry, low; a soft knock"), option select ("one light high pluck, lighter than tap"), heart lost ("a
+short low hollow pop that dips down, quieter than answer_wrong"), XP tick ("a tiny bright tick,
+made to repeat fast"), reward claim ("two bright notes up a fifth, then a short shimmer; not a run
+like chest_open") and sparkle ("three or four quick, airy high notes falling, quieter than
+chest_open"). They are `tap`, `option_select`, `heart_lost`, `xp_tick`, `reward_claim` and
+`sparkle` in `tools/build_sounds.py`, 30 ms to 0.48 s of sound in files of 0.035 s to 0.5 s, peaks
+0.3 to 0.55; the docstring gives each one's pitches, timing and peak. Two choices the lines left
+open: "hollow" is a tone of odd partials only (`HOLLOW`), and the reward's shimmer is two pure
+tones 7 Hz apart that beat. The 0.6 s ceiling is a generator constant with a check that fails the
+gate (`PLAN.md` BD-G19). `tap` is the press sound of Check and Continue, through the Sound switch
+(BD-G20); the other five are registered in `app/src/art/sounds.ts` and played nowhere yet. Zach
+played all six on the Mac on 2026-10-05 and answered "theyre fine ill update them later", so they
+stand as built until he changes them. Not yet heard on a phone.
+
 ### GF-6. Character through transforms on the existing poses
 
 Decided 2026-10-05, a recommendation Zach did not overrule. An idle bob, a bounce on right, a tilt
