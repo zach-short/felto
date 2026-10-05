@@ -22,7 +22,7 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 | 2 | Move the shared generator code into one module | `DONE: HANDOFF 3` | Sonnet 5 | A | nothing | `tools/build_icons.py`, `tools/build_mascots.py`, the new shared module in `tools/`, `docs/conventions-python.md` |
 | 3 | Reconcile the line citations in the Python standard | `DONE: HANDOFF 4` | Sonnet 5 | A | nothing | `docs/conventions-python.md` |
 | 4 | Name `tools/common.py` in the standard's scope sentence | `DONE: HANDOFF 8` | Sonnet 5 | A | nothing | `docs/conventions-python.md` |
-| 5 | App phase 1: change the icon generator for the app | `HELD` | Sonnet 5 | A | item 4; Zach's answer to `D15` to `D21` | `tools/build_icons.py`, `assets/icons/path/node_current_base.svg`, `assets/icons/ui/streak_freeze.svg`, `assets/icons/cards/*.svg`, `docs/conventions-python.md`, `CLAUDE.md` |
+| 5 | App phase 1: change the icon generator for the app | `HELD` | Sonnet 5 | A | items 4 and 21; Zach's answer to `D15` to `D21` | `tools/build_icons.py`, `assets/icons/path/node_current_base.svg`, `assets/icons/ui/streak_freeze.svg`, `assets/icons/cards/*.svg`, `docs/conventions-python.md`, `CLAUDE.md` |
 | 6 | App phase 2: write the TypeScript standard and re-add the app rules | `HELD` | Opus 5.5 | B | item 5 | `docs/conventions-typescript.md`, `docs/AGENT-PRACTICES.md`, `docs/README.md`, `CLAUDE.md`, `.gitignore` |
 | 7 | App phase 3: scaffold `app/` and draw the art on both platforms | `HELD` | Opus 5.5 | B | item 6; the art commit | `app/` config files, `app/src/app/dev/`, `app/src/config/`, `app/src/theme/`, `CLAUDE.md`, `docs/AGENT-PRACTICES.md`, `.personal-config.json`, `.gitignore` |
 | 8 | App phase 4: game state and the data module | `HELD` | Opus 5.5 | B | item 7 | `app/src/game/`, `app/src/storage/` |
@@ -38,6 +38,7 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 | 18 | App phase 14: random dealers for practice | `HELD` | Opus 5.5 | C | item 11 | `app/src/drills/` |
 | 19 | App phase 15: the Practice tab | `HELD` | Opus 5.5 | B | items 14 and 18; lane C merged | the Practice route and components |
 | 20 | App phase 16: onboarding and the placement check | `HELD` | Opus 5.5 | B | item 19 | the onboarding routes and components |
+| 21 | Fix two stale lines that board item 4 found | `OPEN` | Sonnet 5 | A | nothing | `docs/conventions-python.md`, `docs/incomplete/app/DESIGN.md` |
 
 **Do not paste a prompt marked DONE**: a fresh session would build it again.
 
@@ -311,7 +312,7 @@ below.*
 *Opened 2026-10-05, out of ledger step 7 (`docs/incomplete/app/PLAN.md`, phase 1). `HELD` on
 Zach's answer to `DESIGN.md` `D15` to `D21`, because `D19` adds an icon to this item.*
 
-**Model: Sonnet 5 (Mechanical). Lane A. Waits on board item 4 and Zach's answer to `D19`.** Work in the main
+**Model: Sonnet 5 (Mechanical). Lane A. Waits on board items 4 and 21 and Zach's answer to `D19`.** Work in the main
 checkout; no worktree needed. Escalate to Opus 5.5 the moment the art diff holds a change you
 cannot explain at once.
 
@@ -344,8 +345,8 @@ them in its default face. And the streak freeze (`D19`) needs an icon.
   function draws both flames; the flame path is never copied. If he declined it, skip it.
 - Rule H1 (one copy of shared code), rule G4 (an art change is meant, and the art diff shows
   exactly it) and rule W2 (the run line prints a count taken from the writes).
-- Board item 4 also edits `docs/conventions-python.md`. It must be `DONE` first; if it is still
-  `OPEN`, do it first, from its own prompt above.
+- Board items 4 and 21 also edit `docs/conventions-python.md`. Item 4 is `DONE: HANDOFF 8`.
+  Item 21 must be `DONE` first; if it is still `OPEN`, do it first, from its own prompt below.
 
 Do these, in order:
 1. **Run the gate, then the art diff.** Both must be clean before you edit, or the diff after
@@ -380,3 +381,91 @@ Hand back: the gate `python3 tools/build_icons.py && python3 tools/build_mascots
 and 18; the output of `git diff --stat -- assets/icons assets/mascots`; what the two renders show;
 then the two copyable blocks from Part 11, `git add` with the exact files, then `git commit`
 with the same files and a short lowercase message.
+
+### 21. Fix two stale lines: the import fact in the Python standard and a citation in the design
+
+*Opened 2026-10-05, out of board item 4 (ledger step 8): that step found two lines made wrong by
+the work around it and left them owed. Zach agreed to this item in chat on 2026-10-05, in answer
+to the recommendation "reword line 51 and cite rule I3 in `DESIGN.md:30` without line numbers".
+It sits before item 5 because both name `docs/conventions-python.md`; item 5 now waits on it. Do
+not confuse this item number with the design decision `D21`: they have nothing to do with each
+other.*
+
+**Model: Sonnet 5 (Mechanical). Lane A. Waits on nothing.** Work in the main checkout; no
+worktree needed. This item edits two documents and no code. Run it before item 5.
+
+You are picking up felto, an asset pipeline with no app code yet; an app is designed in
+`docs/incomplete/app/` and not built. Read `HANDOFF.md` first (step 8 and the code map), then
+`docs/conventions-python.md` in full, then `CLAUDE.md`. Session rules: absolute dates only; every
+claim carries a `file:line` or the command that produced it; ask Zach in one batch, in chat,
+before building on a guess; never run `git commit`, `git push`, `git add -A` or `git add .`.
+
+**Why this exists.** A reader who trusts line 51 of the standard believes the generators import
+nothing but `math` and `os`. That has been false since ledger step 3, and it is the exact import
+that rule M4 governs. A reader who follows `DESIGN.md:30` to lines 519-537 of the standard lands
+six lines before rule I3, because board item 4 added six lines above it. The second line will
+break again at the next edit to the standard unless the citation stops using line numbers.
+
+**What is fixed.** Read these before changing anything; do not relitigate them. Line numbers
+below were taken on 2026-10-05; re-grep before you trust one.
+- Line 51 of `docs/conventions-python.md` reads: "The generators import only `math` and `os`
+  (`grep -nE '^(import|from)' tools/*.py`)." It sits under "What the rules rest on", which says
+  "These facts were verified 2026-10-04". The grep it cites shows, on 2026-10-05,
+  `tools/build_icons.py:14-15` (`math`, `os`) and `:17` (`from common import ...`),
+  `tools/build_mascots.py:13` (`os`) and `:15` (`from common import ...`), and
+  `tools/common.py:5-6` (`math`, `os`).
+- That section holds facts, not rules. No rule's text changes in this item, and rule M4 already
+  says what the corrected fact says ("Import the standard library only; import a sibling module
+  by its plain name"). Rule IDs never change.
+- `docs/incomplete/app/DESIGN.md:30` is row 5 of the ground-truth table in section 1 ("What
+  exists, verified 2026-10-05"). It cites `docs/conventions-python.md:519-537` (rule I3). Rule I3
+  sat at lines 519-537 before step 8 and sits at 525-543 now
+  (`grep -nE '^### I3' docs/conventions-python.md`). Rule IDs never move; lines do.
+- The design is frozen: it changes by amendment, never by editing a decision in place
+  (`docs/AGENT-PRACTICES.md`, Stage 3). Row 5 is a verified fact in the ground-truth table, not a
+  decision, so correcting its citation is not a design change. Rule R5 still applies: the old
+  value must stay findable, with the date and the reason.
+- On 2026-10-05, `grep -rnE 'conventions-python\.md(:| ?,? ?lines? ?)[0-9]' --include='*.md' .`
+  found citations of the standard's lines only in `DESIGN.md:30`, in `HANDOFF.md` step 8 and in
+  `PASSOFF.md` prompts. The last two kinds describe the state when written and stay.
+
+Do these, in order:
+1. **Run the gate, then `git diff --stat -- assets tools`.** Both must be clean before you edit;
+   this item changes no code, but a dirty tree makes the final diff mean nothing. Then run the
+   import grep and the I3 grep above, so the text you write carries your own check and its date.
+2. **Reword the bullet at line 51 of the standard.** Say what the grep shows now: the generators
+   import the standard library and the sibling module `tools/common.py`, and nothing else. A
+   suggested form: "The generators import the standard library and the sibling module
+   `tools/common.py`, and nothing else (`grep -nE '^(import|from)' tools/*.py`, 2026-10-05)."
+   Put the date on the bullet, because the section heading says 2026-10-04. Then run the commands
+   behind the other three bullets in that section and list, in your hand-back, any that is wrong;
+   do not fix them here (no drive-by fixes).
+3. **Change row 5 of `docs/incomplete/app/DESIGN.md` (line 30).** Cite the rule, not lines: for
+   example "`docs/conventions-python.md`, rule I3 (cited as lines 519-537 until 2026-10-05; the
+   lines moved, the rule ID did not)". Touch no other cell and no other row.
+4. **Prove it.** Re-run the citation grep from "What is fixed". It must find no live line
+   citation of the standard in `DESIGN.md` or `PLAN.md`. Open `DESIGN.md` at the row and read it
+   against `grep -nE '^### I3'`.
+5. **Bump the standard to 1.1.3.** Update the version line at the top of the standard (add board
+   item 21 and its ledger step to the revision sentence) and the code map entry in `HANDOFF.md`
+   (it reads "version 1.1.2 (steps 2 to 4 and 8)"; add this item's step).
+6. **Record it.** A new ledger step at the next free number, read from `HANDOFF.md` and not from
+   this prompt; set this row to `DONE: HANDOFF <n>`. Do not edit step 8: you did not write it.
+   Your step says it closes what step 8 left owed.
+
+Ask before building: nothing is expected to need Zach. If a rule's text would have to change to
+match the new bullet, stop and ask; that would make this item bigger than it is.
+
+Not in scope, whoever asks: any change under `tools/` or `assets/`; any rule's text; the C1 counts
+of 36 and 21; `CLAUDE.md`; the history inside `HANDOFF.md` steps 3 and 8 and inside the
+`PASSOFF.md` prompts; any decision `D1` to `D21` in `DESIGN.md`; line citations in `DESIGN.md` or
+`PLAN.md` that point into code under `tools/` (item 5 moves those lines, so a fix now rots).
+
+Hand back: the gate `python3 tools/build_icons.py && python3 tools/build_mascots.py && xmllint
+--noout assets/icons/*/*.svg assets/mascots/*/*.svg`, green, with the run lines reading 76 and
+18, and `git diff --stat -- assets tools` empty; the new bullet and the new row 5, as written;
+the list of other wrong bullets in that section, if any; then the two copyable blocks from
+Part 11, `git add` with the exact files (`docs/conventions-python.md`,
+`docs/incomplete/app/DESIGN.md`, `HANDOFF.md`, `PASSOFF.md`), then `git commit` with the same
+files and a short lowercase message. Documents only: there is nothing to run and no runtime
+entry to walk.
