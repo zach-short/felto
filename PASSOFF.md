@@ -21,6 +21,7 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 | 1 | Write the Python code standard for `tools/` | `DONE: HANDOFF 2` | Opus 5.5 | A | nothing | `docs/conventions-python.md`, `CLAUDE.md` |
 | 2 | Move the shared generator code into one module | `DONE: HANDOFF 3` | Sonnet 5 | A | nothing | `tools/build_icons.py`, `tools/build_mascots.py`, the new shared module in `tools/`, `docs/conventions-python.md` |
 | 3 | Reconcile the line citations in the Python standard | `DONE: HANDOFF 4` | Sonnet 5 | A | nothing | `docs/conventions-python.md` |
+| 4 | Name `tools/common.py` in the standard's scope sentence | `OPEN` | Sonnet 5 | A | nothing | `docs/conventions-python.md` |
 
 **Do not paste a prompt marked DONE**: a fresh session would build it again.
 
@@ -221,3 +222,56 @@ Hand back: the gate `python3 tools/build_icons.py && python3 tools/build_mascots
 tools` empty; the citation count before and after; the list of "gone" citations and what Zach
 chose; then the two copyable blocks from Part 11, `git add` with the exact files, then
 `git commit` with the same files and a short lowercase message.
+
+### 4. Name `tools/common.py` in the standard's scope sentence
+
+*Opened 2026-10-05, out of board item 3 (ledger step 4): the opening of
+`docs/conventions-python.md` says the standard covers every `.py` file and then lists two, but
+`tools/common.py` has been the third since ledger step 3.*
+
+**Model: Sonnet 5 (Mechanical). Lane A. Waits on nothing.** Work in the main checkout; no
+worktree needed. This item edits one sentence in one document and no code.
+
+You are picking up felto, an asset pipeline with no app code. Read `HANDOFF.md` first (steps 3
+to 5 and the code map), then `docs/conventions-python.md` in full, then `CLAUDE.md`. Session
+rules: absolute dates only; every claim carries a `file:line` or the command that produced it;
+ask Zach in one batch, in chat, before building on a guess; never run `git commit`, `git push`,
+`git add -A` or `git add .`.
+
+**Why this exists.** The standard opens by saying which files it covers. A reader who trusts
+that sentence will think the repo has two Python files and may miss that rule H1 sends shared
+code to a third.
+
+**What is fixed.** Do not relitigate these.
+- The sentence is at `docs/conventions-python.md:3-5`: "It covers every `.py` file in the repo.
+  On 2026-10-04 those are `tools/build_icons.py` and `tools/build_mascots.py` (`ls tools`)."
+  Checked 2026-10-05: `ls tools` lists `build_icons.py`, `build_mascots.py` and `common.py`.
+- The 2026-10-04 date was true when written. Keep it as history, and add the current state with
+  its own date and its own check.
+- Rule IDs never change. No rule is added, retired or reworded. Do not edit any rule's text.
+- Nine lines say "both generators", "both files" or "the two generators" (`grep -nE 'both
+  (files|generators)|two generators' docs/conventions-python.md`, 2026-10-05). Read each and
+  list any that is now wrong; do not fix them in this item. In rules C2, C3, I1 and H4 the
+  phrase means the two generators, which is still right.
+
+Do these, in order:
+1. **Run `ls tools` and `grep -nE '^(import|from)' tools/*.py`.** The new sentence must carry
+   the result of your own check, with today's date, not a copy of this prompt.
+2. **Edit the sentence at lines 3-5.** Name all three files and say what `tools/common.py` is
+   (the shared module, rule H1). Keep the "read it in full" instruction.
+3. **Check the other lines named above** and list any that are wrong in your hand-back.
+4. **Bump the standard to 1.1.2.** Update the version line at the top, and the code map entry in
+   `HANDOFF.md` (it reads "version 1.1.1 (steps 2 to 5)"; extend the step range).
+5. **Record it.** A new ledger step at the next free number, read from `HANDOFF.md`; set this
+   row to `DONE: HANDOFF <n>`.
+
+Ask before building: nothing is expected to need Zach.
+
+Not in scope, whoever asks: any change under `tools/` or `assets/`; any rule's text; the C1
+counts of 36 and 21 (a separate recount, if Zach wants one); `CLAUDE.md`.
+
+Hand back: the gate `python3 tools/build_icons.py && python3 tools/build_mascots.py && xmllint
+--noout assets/icons/*/*.svg assets/mascots/*/*.svg`, green, and `git diff --stat -- assets
+tools` empty; the list of other "both files" lines that are wrong, if any; then the two
+copyable blocks from Part 11, `git add` with the exact files, then `git commit` with the same
+files and a short lowercase message.
