@@ -4,10 +4,9 @@ This file is self-contained: it can be applied without reading any other documen
 every `.py` file in the repo. On 2026-10-04 those are `tools/build_icons.py` and
 `tools/build_mascots.py` (`ls tools`). Read it in full before you write or edit Python here.
 
-Version 1.1.0. Written 2026-10-04 on Opus 5.5 for board item 1 (ledger step 2 in `HANDOFF.md`);
+Version 1.1.1. Written 2026-10-04 on Opus 5.5 for board item 1 (ledger step 2 in `HANDOFF.md`);
 revised 2026-10-05 on Sonnet 5.5 for board item 2 (ledger step 3), which moved the shared code
-into `tools/common.py`. Line citations in the rules below were taken before that move and are
-stale for `tools/build_icons.py` and `tools/build_mascots.py`; the drift register is current.
+into `tools/common.py`, and for board item 3 (ledger step 4), which reconciled the line citations.
 Zach answered the open questions on 2026-10-04 and took every recommendation. Those answers are
 cited below as "owner, 2026-10-04".
 
@@ -84,7 +83,7 @@ import os
 builds the path from the file's own location, so a generator writes to the same place from any
 working directory.
 
-Correct, `tools/build_mascots.py:16`:
+Correct, `tools/build_mascots.py:17`:
 
 ```python
 OUT = os.path.join(os.path.dirname(__file__), "..", "assets", "mascots")
@@ -102,7 +101,7 @@ OUT = os.path.join("assets", "mascots")
 generator does nothing at import time. It runs only through `main()` behind the `__name__`
 guard.
 
-Correct, `tools/build_mascots.py:383` and `393-394`:
+Correct, `tools/build_mascots.py:340` and `348-349`:
 
 ```python
 def main():
@@ -154,7 +153,7 @@ byte-identical rebuild is the only proof that a change touched only what it mean
 `grep -nE 'set\(|random|time\.|datetime|environ|getenv|argv|listdir|glob|uuid|hash\(|input\(' tools/*.py`
 found nothing on 2026-10-04.
 
-Correct, `tools/build_icons.py:64-65`: the data is in the source.
+Correct, `tools/build_icons.py:34-35`: the data is in the source.
 
 ```python
 CHIPS = {
@@ -176,7 +175,7 @@ hashing changes per process. On 2026-10-04 one six-colour set printed three diff
 under `PYTHONHASHSEED` 1, 2 and 3. Sort a directory listing before you iterate over it. A
 violation shows up only on some runs, so no gate catches it reliably.
 
-Correct, `tools/build_mascots.py:379-380`:
+Correct, `tools/build_mascots.py:336-337`:
 
 ```python
 POSES = ["happy", "sad", "cheer", "think", "smug", "sleep"]
@@ -197,14 +196,14 @@ literals and integer arithmetic are written raw. A raw float writes its full rep
 so `72 * 0.65` reaches `assets/icons/chips/chip_stack_red.svg` as `r="46.800000000000004"`. A
 harmless reordering of the arithmetic can then change the last digit and the art bytes with it.
 
-Correct, `tools/build_mascots.py:30-31`:
+Correct, `tools/common.py:28-29`:
 
 ```python
 def tf(x, y):
     return f'transform="translate({x:.2f} {y:.2f})"'
 ```
 
-Incorrect, `tools/build_icons.py:159`:
+Incorrect, `tools/build_icons.py:117`:
 
 ```python
 f'<circle r="{rx * 0.65}" fill="{color}"/>'
@@ -282,13 +281,13 @@ Incorrect, the mascots line before 2026-10-05:
 
 *review · [OURS]* A shape that gets a shadow and a stepped extrusion is described once, as a
 function of a fill colour and an offset. The shadow, the depth and the face all come from
-calls to it (`tools/build_icons.py:37-49`, `tools/build_mascots.py:63-77`). How the callable is
+calls to it (`tools/build_icons.py:23-30`, `tools/build_mascots.py:25-46`). How the callable is
 built is free: a lambda, a `def` or the `pth()` factory (sanctioned divergence S3). Details
 drawn on a face are not silhouettes. A detail with a one-step darker copy under it, such as
-the card-back emblem (`tools/build_icons.py:238-239`) or the chest lock (`387-388`), is
+the card-back emblem (`tools/build_icons.py:196-197`) or the chest lock (`345-346`), is
 outside this rule.
 
-Correct, `tools/build_icons.py:205-206`:
+Correct, `tools/build_icons.py:163-164`:
 
 ```python
 def card_sil(f, x, y):
@@ -304,13 +303,13 @@ o.append('<path d="M98 20 L24 122 H72 L58 198 L140 84 H92 Z" fill="#C9CDE2"/>')
 ### L2. An icon gets its shadow, depth and face from `solid()`
 
 *review · [OURS]* `solid()` paints the shadow, then the depth, then the face
-(`tools/build_icons.py:42-49`). The caller adds the details after it. Two icons are sanctioned
+(`tools/build_icons.py:23-30`). The caller adds the details after it. Two icons are sanctioned
 exceptions. The current path node draws a flat face with no depth and no shadow, because the
-progress ring would otherwise sit under the shadow (`tools/build_icons.py:300-303`, `321-322`).
+progress ring would otherwise sit under the shadow (`tools/build_icons.py:258-261`, `279-280`).
 The chip stack is a three-quarter view with its own geometry, and it builds its shadow with
-`ext()` directly (`tools/build_icons.py:102-106`, `135`).
+`ext()` directly (`tools/build_icons.py:61-65`, `93`).
 
-Correct, `tools/build_icons.py:334`:
+Correct, `tools/build_icons.py:292`:
 
 ```python
     o = [solid(sil, "#FF6A1A", "#C5360E", 10, 12)]
@@ -325,11 +324,11 @@ Incorrect, written for contrast:
 ### L3. A mascot is a list of `Part`s with one shared shadow from `shadow_of()`
 
 *review · [OURS]* Each part is a `<g id="...">` that holds its own depth and face, so the Rive
-rig can move it (`tools/build_mascots.py:56-70`). The figure has one shadow, drawn first, from
+rig can move it (`tools/build_mascots.py:25-39`). The figure has one shadow, drawn first, from
 every part, including a part that is drawn later in the pose. The fish think pose draws `fin_l`
-last but puts it in the shadow (`tools/build_mascots.py:136-138`).
+last but puts it in the shadow (`tools/build_mascots.py:92-95`, `142`).
 
-Correct, `tools/build_mascots.py:326-329`:
+Correct, `tools/build_mascots.py:283-286`:
 
 ```python
     parts = [dorsal, fl] + ([] if pose == "think" else [fr]) + [body]
@@ -351,7 +350,7 @@ the parts drawn before it.
 order is the paint order, and `"\n".join(o)` puts one layer on each line of the output.
 Helpers that return a fragment, such as `solid()` and the nested `eyes()`, may build a string.
 
-Correct, `tools/build_icons.py:355-360`:
+Correct, `tools/build_icons.py:313-318`:
 
 ```python
 def ui_heart():
@@ -375,9 +374,9 @@ Incorrect, written for contrast:
 *review · [OURS]* The style has no outlines (`tools/build_icons.py:4`,
 `tools/build_mascots.py:4`). A stroke on a silhouette has the same colour as its fill and only
 rounds the corners. A stroke in another colour is a feature line or a glyph drawn on the face:
-a pupil, a mouth, a brow (`tools/build_mascots.py:20`), a node glyph, the card-back lattice.
+a pupil, a mouth, a brow (`tools/common.py:10`), a node glyph, the card-back lattice.
 
-Correct, `tools/build_icons.py:349`:
+Correct, `tools/build_icons.py:307`:
 
 ```python
     sil = lambda f, x, y: f'<path {tf(x, y)} d="{d}" fill="{f}" stroke="{f}" stroke-width="10" stroke-linejoin="round"/>'
@@ -392,11 +391,11 @@ Incorrect, written for contrast:
 ### L6. An open line with round caps and joins is drawn with `stroke()`
 
 *review · [OURS]* `stroke()` writes `fill="none"`, a round cap and a round join
-(`tools/build_mascots.py:34-38`). Any line with exactly those attributes uses it. `stroke()`
+(`tools/common.py:32-36`). Any line with exactly those attributes uses it. `stroke()`
 lives in `tools/common.py` (H1). The one inline copy in the icons file, the check glyph, now
 calls it (2026-10-05).
 
-Correct, `tools/build_mascots.py:181`:
+Correct, `tools/build_mascots.py:138`:
 
 ```python
         o.append(f'<g id="mouth">{stroke("M168 284 Q190 260 212 284", 7, FISH_ORANGE)}</g>')
@@ -418,7 +417,7 @@ values that exist on 2026-10-04 stay (owner, 2026-10-04): 36 values on 30 lines 
 `build_icons.py` and 21 values on 15 lines in `build_mascots.py`, counted with Python's `ast`
 module. The one inline colour allowed in new code is shine white (C2).
 
-Correct, `tools/build_mascots.py:290-293`:
+Correct, `tools/build_mascots.py:247-250`:
 
 ```python
 SH_BODY, SH_BODY_D = "#3A7BFF", "#1747B8"
@@ -427,7 +426,7 @@ SH_BELLY = "#F6FAFF"
 SH_PINK = "#F7799F"
 ```
 
-Incorrect, `tools/build_mascots.py:346`. `SH_FIN_D` already holds this value:
+Incorrect, `tools/build_mascots.py:303`. `SH_FIN_D` already holds this value:
 
 ```python
         o.append(f'<g id="mouth">{stroke("M176 214 Q200 194 224 214", 6, "#0F2E96")}</g>')
@@ -436,12 +435,12 @@ Incorrect, `tools/build_mascots.py:346`. `SH_FIN_D` already holds this value:
 ### C2. Write colours as six-digit uppercase hex; write shine white as `#fff`
 
 *review · [OURS]* This is what both files do. `#fff` appears only on shine marks: the gloss
-(`tools/build_icons.py:55`, `tools/build_mascots.py:52`), the chip-stack glint
-(`tools/build_icons.py:164`), the bolt streak (`351`), the pupil glints
-(`tools/build_mascots.py:154`, `257`) and the glasses glints (`338-339`). Eye whites use the
-named constant `EYE = "#FFFFFF"` (`tools/build_mascots.py:19`).
+(`tools/common.py:49`), the chip-stack glint
+(`tools/build_icons.py:122`), the bolt streak (`309`), the pupil glints
+(`tools/build_mascots.py:111`, `214`) and the glasses glints (`295-296`). Eye whites use the
+named constant `EYE = "#FFFFFF"` (`tools/build_mascots.py:18`).
 
-Correct, `tools/build_icons.py:18-19`:
+Correct, `tools/common.py:8-9`:
 
 ```python
 SHADOW = "#C9CDE2"
@@ -458,11 +457,11 @@ SHADOW = "#c9cde2"
 
 *review · [OURS]* Every colour pair and every colour table in both files puts the face first
 and the darker depth colour (`dark`) second, with any light accent after them: `CHIPS`
-(`tools/build_icons.py:64-71`), `NODE_STATES` (`289-295`), `solid(sil, face, dark)` (`42`),
-`Part(pid, sil, face, dark)` (`tools/build_mascots.py:59`) and the character pairs (`81-82`,
-`196-198`, `290-291`).
+(`tools/build_icons.py:34-41`), `NODE_STATES` (`247-253`), `solid(sil, face, dark)` (`23`),
+`Part(pid, sil, face, dark)` (`tools/build_mascots.py:28`) and the character pairs (`50-51`,
+`153-155`, `247-248`).
 
-Correct, `tools/build_mascots.py:81`:
+Correct, `tools/build_mascots.py:50`:
 
 ```python
 FISH_RED, FISH_DARK = "#E8252F", "#8E0F1A"
@@ -478,12 +477,12 @@ FISH_DARK, FISH_RED = "#8E0F1A", "#E8252F"
 
 ### I1. Group ids are snake_case; clipPath ids are camelCase and end in `Clip`
 
-*review · [OURS]* This is what both files do. Group ids: `ring_track` (`tools/build_icons.py:313`),
-`pupil_l` (`tools/build_mascots.py:153`). ClipPath ids: `backClip` (`tools/build_icons.py:230`),
-`fishClip` (`tools/build_mascots.py:128`), `sqClip` (`219`), `lidClip_l` and `lidClip_r`
-(`158`). The suffixes `_l` and `_r` mean left and right.
+*review · [OURS]* This is what both files do. Group ids: `ring_track` (`tools/build_icons.py:271`),
+`pupil_l` (`tools/build_mascots.py:110`). ClipPath ids: `backClip` (`tools/build_icons.py:188`),
+`fishClip` (`tools/build_mascots.py:85`), `sqClip` (`175`), `lidClip_l` and `lidClip_r`
+(`115`). The suffixes `_l` and `_r` mean left and right.
 
-Correct, `tools/build_icons.py:313`:
+Correct, `tools/build_icons.py:271`:
 
 ```python
         o.append(f'<circle id="ring_track" cx="{cx}" cy="{cy}" r="{r}" fill="none" stroke="#DDE1EC" stroke-width="12"/>')
@@ -505,7 +504,7 @@ no file under `assets/icons/` or `assets/mascots/` held a duplicate id. This com
 python3 -c "import glob,re,collections;[print(f,d) for f in glob.glob('assets/*/*/*.svg') for d in [[k for k,v in collections.Counter(re.findall(r'\bid=\"([^\"]+)\"',open(f).read())).items() if v>1]] if d]"
 ```
 
-Correct, `tools/build_mascots.py:158`: the id inside the per-eye loop carries the eye.
+Correct, `tools/build_mascots.py:115`: the id inside the per-eye loop carries the eye.
 
 ```python
                     f'<clipPath id="lidClip_{nm}"><ellipse cx="{x}" cy="{ey}" rx="36" ry="{ry}"/></clipPath>'
@@ -522,9 +521,9 @@ Incorrect, written for contrast:
 *review · [OURS]* This is the Rive rig contract. A pose may add an id. A pose never drops an id
 that the other poses carry, and never uses an id for a different part. A part that changes
 shape keeps its id: the squid's chin arm in the think pose is `arm_r`
-(`tools/build_mascots.py:236`), like its right arm in the cheer pose (`231`), and the shark's
-chin fin is `fin_r` (`357`). A feature that a pose hides keeps an empty group, so the id
-survives (`252`).
+(`tools/build_mascots.py:193`), like its right arm in the cheer pose (`188`), and the shark's
+chin fin is `fin_r` (`314`). A feature that a pose hides keeps an empty group, so the id
+survives (`209`).
 
 Before 2026-10-05 the docstring at `tools/build_mascots.py:7-9` listed `face`, `eye_l`,
 `eye_r`, `pupil_l` and `pupil_r` for every character. That was wrong for two of the three: no
@@ -537,7 +536,7 @@ This table is the contract as measured from the 18 SVGs on 2026-10-04:
 | squid | `body`, `eye_l`, `eye_r`, `face`, `mouth`, `pupil_l`, `pupil_r`, `shadow`, `sqClip`, `tentacles` | cheer: `arm_l`, `arm_r`; think: `arm_r` |
 | shark | `belly`, `body`, `dorsal`, `fin_l`, `fin_r`, `glasses`, `mouth`, `shadow` | sleep: `eyes_closed`; smug: `arms`, `arm_a`, `arm_b` |
 
-Correct, `tools/build_mascots.py:252`: the sleeping squid keeps an empty `eye_l` and `eye_r`.
+Correct, `tools/build_mascots.py:209`: the sleeping squid keeps an empty `eye_l` and `eye_r`.
 
 ```python
                 s += f'<g id="eye_{nm}"></g><g id="pupil_{nm}">' + stroke(f"M{x - 20} {ey} Q{x} {ey + 16} {x + 20} {ey}", 5) + "</g>"
@@ -592,7 +591,7 @@ splitting a line or two into a function of its own. The two-line helpers that ex
 `tf` and `ext`, comply. On 2026-10-04 one function broke the 15-line limit: `main` in
 `tools/build_icons.py`, at 19 lines (measured with `ast`). Since 2026-10-05 it is 14.
 
-Correct, `tools/build_icons.py:74-83`: `sector`, 10 lines.
+Correct, `tools/common.py:53-62`: `sector`, 10 lines.
 
 Incorrect, `main` in `tools/build_icons.py` before 2026-10-05: 19 lines.
 
@@ -602,7 +601,7 @@ Incorrect, `main` in `tools/build_icons.py` before 2026-10-05: 19 lines.
 and can be wrong with no signal. Retire this rule when a checker is adopted. Neither file has a
 hint on 2026-10-04 (`grep -nE '\) *->' tools/*.py` finds nothing).
 
-Correct, `tools/build_mascots.py:34`:
+Correct, `tools/common.py:32`:
 
 ```python
 def stroke(d, w=5, color=INKL):
@@ -617,11 +616,11 @@ def stroke(d: str, w: int = 5, color: str = INKL) -> str:
 ### H4. A helper that one function uses is nested inside that function
 
 *review · [OURS]* This is what both files do: `curve`, `band`, `strip` and `sil_all` inside
-`chip_stack` (`tools/build_icons.py:111-133`), and `eyes` and `open_mouth` inside `fish`
-(`tools/build_mascots.py:144-174`). A helper that two functions in one file use goes to module
+`chip_stack` (`tools/build_icons.py:69-91`), and `eyes` and `open_mouth` inside `fish`
+(`tools/build_mascots.py:101-131`). A helper that two functions in one file use goes to module
 level. A helper that both files use goes to the shared module (H1).
 
-Correct, `tools/build_icons.py:114-118`:
+Correct, `tools/build_icons.py:72-76`:
 
 ```python
     def band(y):
@@ -640,17 +639,17 @@ used only by `chip_stack`.
 
 *review · [OURS]* This is the owner policy "comments explain why only". The exception covers a
 table whose rows are unnamed tuples, where the legend is the only place the field order is
-written (`tools/build_icons.py:288`). The comments that say what exist on 2026-10-04 stay
+written (`tools/build_icons.py:246`). The comments that say what exist on 2026-10-04 stay
 (owner, 2026-10-04) and are listed in the drift register.
 
-Correct, `tools/build_icons.py:178-179`:
+Correct, `tools/build_icons.py:136-137`:
 
 ```python
 # spades = the heart flipped, plus a flared stem. Drawn in two paths so the
 # stem overlaps the lobes without a seam.
 ```
 
-Incorrect, `tools/build_icons.py:321`:
+Incorrect, `tools/build_icons.py:279`:
 
 ```python
     else:  # current node: flat disc inside the ring, no depth edge, no shadows
@@ -667,7 +666,7 @@ No formatter runs, so these rules are prose only.
 name. Short local names are normal here: `o` for the layer list, `s` for a fragment, `d` for
 path data or a folder, `f` for a fill or a file.
 
-Correct, `tools/build_mascots.py:56`:
+Correct, `tools/build_mascots.py:25`:
 
 ```python
 class Part:
@@ -686,11 +685,11 @@ single quotes when that avoids escaping a double quote (ruff settings, `quote-st
 through Context7 on 2026-10-04). SVG attributes use double quotes, so a Python string that holds
 markup uses single quotes.
 
-Correct, `tools/build_mascots.py:170` and `390`:
+Correct, `tools/build_mascots.py:127` and `345`:
 
 ```python
             '<g id="mouth">'
-    print("wrote", sum(len(POSES) for _ in BUILDERS), "svgs to", os.path.abspath(OUT))
+    print("wrote", n, "svgs to", os.path.abspath(OUT))
 ```
 
 Incorrect, written for contrast:
@@ -705,12 +704,12 @@ Incorrect, written for contrast:
 (`awk 'length>88' tools/*.py`). When a string is split, it is split into adjacent literals inside
 parentheses, at a break between attributes or between path commands.
 
-Correct, `tools/build_icons.py:23-27`:
+Correct, `tools/common.py:13-17`:
 
 ```python
-def svg(w, h, body):
+def svg(w, h, body, x0=0, y0=0):
     return (
-        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" '
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{x0} {y0} {w} {h}" '
         f'width="{w}" height="{h}">\n{body}\n</svg>\n'
     )
 ```
@@ -725,10 +724,10 @@ Incorrect, written for contrast: a split inside an attribute value, with a backs
 ### Y4. A section banner divides each family of assets
 
 *review · [OURS]* A banner is a comment of dashes that ends in the family name in capitals, 70
-to 72 characters long (`tools/build_icons.py:63`, `169`, `246`, `330`;
-`tools/build_mascots.py:80`, `195`, `289`).
+to 72 characters long (`tools/build_icons.py:33`, `127`, `204`, `288`;
+`tools/build_mascots.py:49`, `152`, `246`).
 
-Correct, `tools/build_icons.py:63`:
+Correct, `tools/build_icons.py:33`:
 
 ```python
 # ---------------------------------------------------------------- CHIPS
@@ -748,15 +747,16 @@ needs a recorded reason and the owner's agreement.
 
 | # | Difference | `build_icons.py` | `build_mascots.py` | Reason |
 |---|---|---|---|---|
-| S1 | How layers are built | `solid()`, lines 42-49 | `Part` and `shadow_of()`, lines 56-77 | An icon is one silhouette. A mascot is a rig of parts that Rive moves one by one. |
-| S2 | Shadow offset | Calculated from the depth offset, `(dx * 2.1, dy * 1.9)`, line 46 | Set once for each character, lines 138, 237, 328 | One shadow covers every part of a figure, so it is set once for the figure. |
+| S1 | How layers are built | `solid()`, lines 23-30 | `Part` and `shadow_of()`, lines 25-46 | An icon is one silhouette. A mascot is a rig of parts that Rive moves one by one. |
+| S2 | Shadow offset | Calculated from the depth offset, `(dx * 2.1, dy * 1.9)`, line 27 | Set once for each character, lines 95, 194, 285 | One shadow covers every part of a figure, so it is set once for the figure. |
 | S3 | How a silhouette is built | Lambdas and `card_sil` | `pth()`, `fin_sil` and lambdas | L1 fixes the call signature. The construction does not change the output. |
-| S4 | How variants are chosen | Data tables iterated in `main()`, lines 64-71, 289-295, 394-405 | `if` and `elif` for each pose inside the drawing function, lines 176-191, 266-285, 343-375 | Icon variants differ in data. Poses differ in shape. |
+| S4 | How variants are chosen | Data tables iterated in `main()`, lines 34-41, 247-253, 352-358 | `if` and `elif` for each pose inside the drawing function, lines 133-148, 223-242, 300-332 | Icon variants differ in data. Poses differ in shape. |
 
 ## Drift register
 
 These sites break a rule above on 2026-10-04. A session that edits one of these lines does not
-fix the drift in passing (owner policy: note and raise). Each row says what happens to it.
+fix the drift in passing (owner policy: note and raise). Each row says what happens to it. Line numbers in a row marked fixed are the 2026-10-04 lines of
+code that has since moved or changed, so they do not match the files now.
 
 | Rule | Sites | What happens |
 |---|---|---|
@@ -767,9 +767,9 @@ fix the drift in passing (owner policy: note and raise). Each row says what happ
 | H2 | `tools/build_icons.py:394-412`, `main` at 19 lines | Fixed 2026-10-05, ledger step 3: `main` is 14 lines |
 | Y1 | `tools/build_icons.py:395`, the name `l` | Fixed 2026-10-05, ledger step 3: `l` renamed `light` |
 | I3 | The docstring at `tools/build_mascots.py:7-9` | Fixed 2026-10-05, ledger step 3: the docstring points at the I3 table |
-| G3 | `tools/build_icons.py:81-82` when called with float radii from `152`; `158-160`; `213-214` (centre written as `70.0 98.0`); `tools/build_mascots.py:212` (written as `137.0`); `230-231`; `236` | Stays (owner, 2026-10-04): a fix changes the art bytes. Found by reading the code; the list is not proven complete. |
-| C1 | 36 inline values in `build_icons.py` and 21 in `build_mascots.py`, including `"#0F2E96"` at mascots 346, 355, 371 and 372 | Stays (owner, 2026-10-04) |
-| K1 | `tools/build_icons.py:111`, `148-149`, `321`; `tools/build_mascots.py:203` | Stays (owner, 2026-10-04) |
+| G3 | `tools/common.py:60-61` when called with float radii from `tools/build_icons.py:110`; `116-118`; `171-172` (centre written as `70.0 98.0`); `tools/build_mascots.py:169` (written as `137.0`); `187-188`; `193` | Stays (owner, 2026-10-04): a fix changes the art bytes. Found by reading the code; the list is not proven complete. |
+| C1 | 36 inline values in `build_icons.py` and 21 in `build_mascots.py`, including `"#0F2E96"` at mascots 303, 312, 328 and 329 | Stays (owner, 2026-10-04) |
+| K1 | `tools/build_icons.py:69`, `106-107`, `279`; `tools/build_mascots.py:160` | Stays (owner, 2026-10-04) |
 
 ## Owner policy, as it applies to these scripts
 

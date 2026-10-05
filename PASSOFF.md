@@ -20,7 +20,7 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 |---|------|--------|-------|------|----------|---------------|
 | 1 | Write the Python code standard for `tools/` | `DONE: HANDOFF 2` | Opus 5.5 | A | nothing | `docs/conventions-python.md`, `CLAUDE.md` |
 | 2 | Move the shared generator code into one module | `DONE: HANDOFF 3` | Sonnet 5 | A | nothing | `tools/build_icons.py`, `tools/build_mascots.py`, the new shared module in `tools/`, `docs/conventions-python.md` |
-| 3 | Reconcile the line citations in the Python standard | `OPEN` | Sonnet 5 | A | nothing | `docs/conventions-python.md` |
+| 3 | Reconcile the line citations in the Python standard | `DONE: HANDOFF 4` | Sonnet 5 | A | nothing | `docs/conventions-python.md` |
 
 **Do not paste a prompt marked DONE**: a fresh session would build it again.
 

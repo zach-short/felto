@@ -67,7 +67,7 @@ Zach chose to check the tool before aligning, at GATE 0.
 - `assets/gallery.html`: shows the Higgsfield art; links all 32 files by name.
 - `assets/icons/preview.html`, `assets/mascots/preview.html`: inline SVG snapshots, written by
   no script.
-- `docs/conventions-python.md`: the Python code standard for `tools/`, version 1.1.0 (steps 2 and 3).
+- `docs/conventions-python.md`: the Python code standard for `tools/`, version 1.1.1 (steps 2 to 4).
 
 ## Invariants
 
@@ -162,6 +162,22 @@ read 76 and 18, and `git diff --stat -- assets/icons assets/mascots` was empty e
 **Left owed:** line citations in the other rules of the standard (for example Y3, M2, L1 to L5)
 still point at pre-move line numbers in the two generators; no reconcile pass is done. The
 commit is Zach's.
+
+**4. Reconcile the line citations in the Python standard (board item 3).** Done 2026-10-05, on
+branch `main`, on Sonnet 5.5. `grep -nE 'tools/build_(icons|mascots)\.py:[0-9]'` found 67 lines
+before and 59 after; the 8 that left cite `tools/common.py` now, which the grep does not match.
+Moved every live citation in `docs/conventions-python.md` to the lines the code holds now (rules
+M2 to Y4, registry S1, S2 and S4, drift rows G3, C1 and K1), each read by a scratchpad script that
+printed the first cited line (113 citations, none off). Two citations pointed at rewritten code;
+Zach chose, 2026-10-05, both as recommended: Y2 now cites `tools/build_mascots.py:127` and `345`
+with the current `print` as its example, and Y3 cites `tools/common.py:13-17` with the current
+`svg` signature. Rows in the drift register marked fixed keep their 2026-10-04 lines as history,
+with a sentence saying so. Bumped the standard to 1.1.1 and removed its stale-citation sentence.
+Gate green, and `git diff --stat -- assets tools` empty. Found, not fixed: `HANDOFF.md:75` and
+`:94` and `CLAUDE.md:14`, `:38-39` and `:73` cite old lines (`CLAUDE.md:73` also says the count is
+never printed, false since step 3); the standard's line 4 names two `.py` files, with the
+2026-10-04 date; the C1 counts of 36 and 21 were not recounted. **Left owed:** those stale lines
+in `HANDOFF.md` and `CLAUDE.md`. The commit is Zach's.
 
 ## Style rules
 
