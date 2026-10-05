@@ -5,6 +5,7 @@ import { unitExercises } from "./unit-exercises";
 import { PATH_OUTLINE } from "@/components/path/path-outline";
 import { reviewAccess } from "@/components/review/review-session";
 import { DIALS } from "@/config/dials";
+import { isDealtId } from "@/game/dealt-slots";
 import { fixtureState } from "@/game/fixtures";
 import type { PlayerState } from "@/game/player-state";
 import { finishSession } from "@/game/session";
@@ -18,14 +19,16 @@ function passed(state: PlayerState): PlayerState {
 }
 
 describe("bossAccess (D8)", () => {
-  it("opens on boss-ready with ten different exercises of the unit, hosted by the shark", () => {
+  // Until US-1 (2026-10-05) every id was one of the unit's fifty; a drill slot is now dealt
+  // fresh, so its id is a dealt id (boss-dealt.test.ts checks which slots)
+  it("opens on boss-ready with ten different exercises, each of the unit or dealt, hosted by the shark", () => {
     const access = bossAccess(READY, UNIT, NOW, 7);
     if (access.kind !== "open") throw new Error(access.kind);
     const pool = new Set((unitExercises(UNIT) ?? []).map((exercise) => exercise.id));
     const ids = access.session.exercises.map((exercise) => exercise.id);
     expect(access.session).toMatchObject({ kind: "boss", id: UNIT, host: "shark" });
     expect(new Set(ids).size).toBe(DIALS.bossDraw);
-    expect(ids.every((id) => pool.has(id))).toBe(true);
+    expect(ids.every((id) => pool.has(id) || isDealtId(id))).toBe(true);
   });
 
   it("draws the same ten for the same seed and others for another", () => {

@@ -11,7 +11,7 @@ import { dealShowdown } from "./showdown";
 // Every kind a program can key (`DESIGN.md` 10.4); `concept` needs a writer, so it is never dealt.
 export type DrillKind = Exclude<ExerciseKind, "concept">;
 
-const DEALERS: Readonly<Record<DrillKind, (seed: number) => Exercise>> = {
+export const DEALERS: Readonly<Record<DrillKind, (seed: number) => Exercise>> = {
   "hand-name": dealHandName,
   showdown: dealShowdown,
   preflop: dealPreflop,

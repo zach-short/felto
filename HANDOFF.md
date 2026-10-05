@@ -191,7 +191,10 @@ answer in place.
 - `app/src/game/`: the game rules of `D8`, `D19` to `D21` as pure functions of the state, a
   path outline and the time (board item 8): lives, streak and freeze, sessions and XP, the path
   node states, the seeded boss draw, the review set, the chest, placement, and the named
-  fixtures of BD-13. `PlayerState` is in `player-state.ts`.
+  fixtures of BD-13. `PlayerState` is in `player-state.ts`. Since board item 22 (step 28),
+  `dealt-slots.ts` deals fresh hands into the drill slots of the lessons in `DIALS.dealtLessons`
+  and of every boss (`US-1`), and its `isDealtId` keeps a dealt miss out of `missedExercises`
+  (`US-2`); the dealers it is handed are `DEALERS` of `app/src/drills/deal.ts`.
 - `app/src/storage/`: the one data module (`D3`, BD-8, board item 8). `player-store.ts` is the
   pure core (load, check, migrate, save, back up); `migrations.ts` holds `STATE_VERSION`;
   `kv-store-adapter.ts` is the only importer of `expo-sqlite`; `player-provider.tsx` and
@@ -872,6 +875,75 @@ passes the whole-repo gate (63 files, 490 tests). The rundown is
 `docs/incomplete/autopilot-2026-10-05/RUNDOWN.md`; the record of the run is `STATE.md` beside it.
 Weekly usage ended at 49%, under Zach's 65% stop. Nothing is committed; no one has held the app on
 a phone. Zach's answers to `D15` to `D21` are now in `DESIGN.md`.
+
+**28. Deal fresh hands in lessons 3 and 5 and in every boss (board item 22, unit stories phase
+1).** Done 2026-10-05, on Opus 5.5, in the worktree `.claude/worktrees/lane-d-dealt-hands` on
+branch `lane-d-dealt-hands`, not committed. The branch was made from local `main` at `b986f61`,
+because `origin/main` is still at `5da0bca`, which holds no app. Decisions `US-1` to `US-3` of
+`docs/incomplete/unit-stories/DESIGN.md` are built. The plan's step 1 found that `hands-2` stays
+authored: each of its eight `hand-name` prompts defines one new hand before it asks about it
+(`app/src/content/units/hands.ts:113`, `:122`, `:131`, `:140`, `:149`, `:158`, `:167`, `:184`),
+so the order is meant and no question went to Zach. New `app/src/game/dealt-slots.ts`:
+`withDealtSlots` (`:29-37`) replaces each exercise whose kind has a dealer with a fresh deal of
+that kind in its own place; it draws a seed for every place, dealt or not, so a place's deal
+depends only on the set seed and the place; and it gives a dealt slot an id of the shape
+`dealSet` writes (`practice-<seed>-<place>-<kind>-<child seed>`). `isDealtId` (`:14-16`) tests the
+`practice-` prefix (BD-S2), and `isDealtLesson` (`:22-24`) reads the new dial `dealtLessons`
+(`app/src/config/dials.ts:46-49`, block `// unit-stories`). The lesson screen builds its session
+once, inside the `useState` that already fixed the access, seeded by `clockSeed` of the opening
+time, so a re-render never deals again (`app/src/screens/lesson-screen.tsx:50-53`, `:74-84`).
+`bossAccess` runs `withDealtSlots` over the ten drawn exercises with the boss seed
+(`app/src/components/boss/boss-session.ts:29`); `drawBoss` is unchanged. `recordAnswer` spends
+the heart for a wrong dealt answer and leaves `missedExercises` alone
+(`app/src/game/session.ts:27-36`). No stored shape changed, so `STATE_VERSION` stays 2.
+
+Build-level calls, each reversible. (1) `DEALERS` in `app/src/drills/deal.ts:14` is now
+exported, one word, because the plan passes that table and it was private to the file; the board
+row did not list `drills/deal.ts`, no other open row names it, and the row now lists it. Reverse:
+drop the `export` and build the table at the two call sites. (2) `boss-session.test.ts:31`
+asserted that every boss id is one of the unit's fifty, which `US-1` ends; it now also accepts a
+dealt id, with a comment saying when and why (R5). (3) A third new test file,
+`app/src/components/boss/boss-dealt.test.ts`, holds the boss wiring (rule Q1). (4) The lesson
+screen reads the clock once when it opens, where it read it twice before.
+
+Tests: `dealt-slots.test.ts` (12), `dealt-missed.test.ts` (4) and `boss-dealt.test.ts` (3). They
+include a computed-key check over 100 seeds of `hands-3` and `hands-5` (rule Q3), a check that no
+authored id starts with `practice-`, and a check that every lesson in the dial exists. Three
+mutants each fail a test: `recordAnswer` keeping a dealt miss, `bossAccess` without the deal, and
+one seed for every place. The last one first passed every test, so the test "never deals one hand
+into two slots of the same list" was added. Whole-repo gate from the worktree root, exit 0: run
+lines 78, 18 and 6, typecheck, lint, 66 test files and 509 tests (63 and 490 before);
+`git diff --stat -- assets/icons assets/mascots assets/sounds` is empty.
+
+Seen running, on the iPhone Air simulator (iOS 26.5) and a `Pixel_9` emulator, each with the
+existing development build and a Metro on port 8085 from the worktree: `hands-3` played twice on
+each platform through the dev link `felto://lesson/hands-3?play=rrrrrrrrrr`, which answers
+through the same choose, Check and Continue a tap uses. A screen recording gave one frame per
+slot. On both platforms all eight drill slots show other cards in the second play, and slots 3
+and 4 show the same two authored concept questions. The boss and the missed-list rule were not
+walked on a device; their tests cover them. Device facts found: lanes D, E and F compete for
+simulators and emulators, and another session shut down this session's first simulator (an
+iPhone 17 Pro Max); a second instance of an AVD cannot start while one runs writable
+(`-read-only` needs every instance read-only); an Android deep link sent without the package name
+was ignored while the app ran, and `am start ... com.zachshort.felto` delivered it; the disk had
+3.6 GiB free at the end of the session (`df -h /Users`, 2026-10-05).
+
+Not done, and why. No fold of this ledger or the board, which `/close-out` asks for: lanes E and F
+edit both files in their own worktrees at the same time, and a fold in one lane would conflict
+with both; fold after the three lanes merge. The Environment test counts and `CLAUDE.md` still say
+63 files and 490 tests; each names the run it came from, lanes E and F change the count too, and
+item 25 reconciles them.
+
+Runtime entries (`PLAN.md` section 7, the phase 1 rows): a replayed drill lesson shows new cards
+(Learn, unit 1, lesson 3 "Name that hand", twice, iOS and Android: the eight hand slots differ,
+the two concept slots are the same; seen 2026-10-05 as above); the boss no longer repeats hands
+(unit 1 boss after its lessons, twice: the drill slots show cards not seen in a lesson, concept
+questions may repeat; not seen); a dealt miss does not enter the review (a wrong dealt answer in
+lesson 3, finish, open the unit 1 review: that hand is not listed; not seen); the kickers lesson is
+unchanged (unit 1, lesson 4: the same six showdowns as before; not seen).
+**Left owed:** the commit, which is Zach's, in the worktree; then the merge of
+`lane-d-dealt-hands` into `main`, where the `// unit-stories` block of `dials.ts` meets lane E's
+block of the same name and keeps both.
 
 **29. Reanimated, the motion module, tokens and the primary button (board item 26, game-feel
 phase 1).** Done 2026-10-05, on branch `game-feel-1` in `.claude/worktrees/game-feel-1`, made

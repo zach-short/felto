@@ -1,5 +1,6 @@
 import { DIALS } from "@/config/dials";
 import { bossPasses } from "@/game/boss";
+import { isDealtId } from "@/game/dealt-slots";
 import { spendLife } from "@/game/lives";
 import type { PlayerState } from "@/game/player-state";
 import { withItem } from "@/game/player-state";
@@ -20,15 +21,18 @@ export type SessionResult = {
 
 // D8: a wrong answer costs a life at once in a lesson or a boss, and the life stays lost if the
 // lesson is left. A review costs none, and a right answer there clears the miss. Practice
-// exercises are dealt at random (D21), so they have no id to remember.
+// exercises are dealt at random (D21), so they have no id to remember. US-2: nor has a dealt slot
+// in a lesson or a boss, so its miss spends the life but is not kept, as the review could not
+// find it in the unit's pool.
 export function recordAnswer(state: PlayerState, answer: Answer, now: Date): PlayerState {
   const { kind, exerciseId, right } = answer;
   if (kind === "review" && right) {
     return { ...state, missedExercises: state.missedExercises.filter((id) => id !== exerciseId) };
   }
   if (right || (kind !== "lesson" && kind !== "boss")) return state;
-  const missedExercises = withItem(state.missedExercises, exerciseId);
-  return { ...spendLife(state, now), missedExercises };
+  const spent = spendLife(state, now);
+  if (isDealtId(exerciseId)) return spent;
+  return { ...spent, missedExercises: withItem(state.missedExercises, exerciseId) };
 }
 
 // The sessions whose length the design fixes; a review is up to reviewMaxSize (D8)

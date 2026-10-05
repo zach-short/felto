@@ -260,6 +260,20 @@ unit's fifty" still holds for the draw, and the unit's fifty are still the pool 
 exercises and for the review. What dies is the claim that each drawn exercise is one of the
 fifty.
 
+As built (phase 1, board item 22, 2026-10-05): built as written. The dealers are handed in as a
+table (BD-S1), and that table is `DEALERS` of `app/src/drills/deal.ts:14`, now exported for it.
+Each place in the list draws its own seed from the set seed, in order and whether it is dealt or
+not, so the deal at a place depends only on the seed and the place, and no two places share a
+deal. A dealt slot's id has the shape that `dealSet` writes (`practice-<seed>-<place>-<kind>-<child
+seed>`), so any slot replays with `dealExercise`. A lesson's seed is `clockSeed` of the time it
+opens, and its session is built once together with its access (`app/src/screens/lesson-screen.tsx`),
+so a re-render never deals again. A boss deals with the seed of its draw, which the development
+link `?seed=` fixes. The test line that every boss id is one of the unit's fifty
+(`app/src/components/boss/boss-session.test.ts:31`) was true until this note; it now also accepts
+a dealt id. Seen on the iPhone Air simulator and a `Pixel_9` emulator: two plays of `hands-3`
+dealt other cards into all eight drill slots on each platform (`HANDOFF.md` step 28). The boss was
+not walked on a device.
+
 ### US-2. A dealt exercise is never remembered as missed
 
 Decided 2026-10-05, as the consequence of US-1. A dealt exercise has no authored id in the unit's
@@ -274,6 +288,12 @@ review honest. Against: a hand the player got wrong in a dealt slot does not com
 review. The practice tab is where fresh hands live, so this is the same trade the design already
 made there.
 
+As built (phase 1, board item 22, 2026-10-05): `isDealtId` (`app/src/game/dealt-slots.ts`) tests
+the `practice-` prefix, and for such an id `recordAnswer` returns the state with the heart spent
+and the missed list unchanged (`app/src/game/session.ts`). A test checks that no authored
+exercise id starts with that prefix, so an authored miss is never read as a dealt one
+(`app/src/game/dealt-slots.test.ts`); `app/src/game/dealt-missed.test.ts` holds the rule itself.
+
 ### US-3. Three lessons stay fully authored
 
 Decided 2026-10-05. `hands-1` (ten concept questions), `hands-2` ("The ten hands") and `hands-4`
@@ -284,6 +304,13 @@ in five and does not aim at kickers). `hands-2` has eight `hand-name` exercises 
 lesson title, are meant to meet the ten hands one at a time; the plan's first step reads the
 lesson to confirm the order before this stands (`PLAN.md`, phase 1, step 1). If the order is not
 meant, `hands-2` may join the dial by a dated amendment.
+
+As built (phase 1, board item 22, 2026-10-05): the plan's step 1 read `hands-2`, and the order is
+meant. Each of its eight `hand-name` prompts defines one new hand and then asks about it: three of
+a kind, two pair, straight, flush, full house, four of a kind, straight flush and high card
+(`app/src/content/units/hands.ts:113-184`). So `hands-2` stays authored, as this decision says,
+and no question went to Zach. A test pins the dial to `hands-3` and `hands-5` among the hands
+lessons (`app/src/game/dealt-slots.test.ts`).
 
 ### US-4. A story is one route per unit, drawn from typed content
 

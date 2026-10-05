@@ -1,7 +1,9 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 
+import type { SessionAccess } from "@/components/boss/boss-session";
 import { devPlay } from "@/components/boss/dev-params";
+import { clockSeed } from "@/components/boss/unit-exercises";
 import { LessonButton } from "@/components/lesson/lesson-button";
 import { LessonClosed } from "@/components/lesson/lesson-closed";
 import { LessonFinish } from "@/components/lesson/lesson-finish";
@@ -11,7 +13,10 @@ import type { FinishView } from "@/components/lesson/lesson-run-view";
 import { LessonRunView } from "@/components/lesson/lesson-run-view";
 import type { Lesson } from "@/content/schema";
 import { DIALS } from "@/config/dials";
+import { DEALERS } from "@/drills/deal";
+import { isDealtLesson, withDealtSlots } from "@/game/dealt-slots";
 import { nextLifeAt } from "@/game/lives";
+import type { PlayerState } from "@/game/player-state";
 import { currentStreak } from "@/game/streak";
 import { usePlayer } from "@/storage/use-player";
 
@@ -40,13 +45,17 @@ function LessonOpening({ id, at, pick, check, play }: LessonOpeningProps) {
     onPress: () => router.back(),
   });
   // Decided once, when the lesson opens: a life spent inside the lesson must not close it under
-  // the player (D8 lets the lesson run to the next exercise, then stops it)
-  const [opened] = useState(() => ({ now: new Date(), access: lessonAccess(state, id, new Date(), start !== null) }));
+  // the player (D8 lets the lesson run to the next exercise, then stops it), and a dealt hand
+  // must not change under the player when the screen draws again (US-1)
+  const [opened] = useState(() => {
+    const now = new Date();
+    return { now, access: openLesson(state, id, now, start !== null) };
+  });
   if (opened.access.kind === "open") {
     const devPick = start === null ? null : devIndex(pick);
     return (
       <LessonRunView
-        session={lessonSession(opened.access.lesson)}
+        session={opened.access.session}
         finish={finish}
         start={start ?? 0}
         pick={devPick}
@@ -62,8 +71,16 @@ function LessonOpening({ id, at, pick, check, play }: LessonOpeningProps) {
   );
 }
 
-function lessonSession(lesson: Lesson) {
-  return { kind: "lesson", id: lesson.id, host: "fish", exercises: lesson.exercises } as const;
+function openLesson(state: PlayerState, id: string, now: Date, skipLock: boolean): SessionAccess {
+  const access = lessonAccess(state, id, now, skipLock);
+  return access.kind === "open" ? { kind: "open", session: lessonSession(access.lesson, now) } : access;
+}
+
+// US-1: a lesson named in the dial deals fresh hands into its drill slots, seeded from the clock
+// when it opens (BD-12), so a replay or a retry after hearts run out shows new cards
+function lessonSession(lesson: Lesson, now: Date) {
+  const exercises = isDealtLesson(lesson.id) ? withDealtSlots(lesson.exercises, clockSeed(now), DEALERS) : lesson.exercises;
+  return { kind: "lesson", id: lesson.id, host: "fish", exercises } as const;
 }
 
 function devIndex(value: string | undefined): number | null {

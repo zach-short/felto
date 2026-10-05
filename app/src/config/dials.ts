@@ -82,4 +82,7 @@ export const DIALS = {
   // The most words in a slide's body: "about 30", read at a glance
   storyWordsPerSlide: 30,
   storySlidesPerUnit: { min: 6, max: 8 },
+  // US-1 and US-3 (docs/incomplete/unit-stories/DESIGN.md): the lessons that deal fresh hands
+  // into their drill slots each time they open
+  dealtLessons: ["hands-3", "hands-5"],
 } as const;

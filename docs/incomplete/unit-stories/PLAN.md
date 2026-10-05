@@ -54,6 +54,13 @@ Phase 4 waits on all three.
 
 ### Phase 1: Dealt hands in lessons and the boss
 
+**BUILT 2026-10-05, not committed** (board item 22, lane D, branch `lane-d-dealt-hands`,
+`HANDOFF.md` step 28). Deviations: `DEALERS` in `app/src/drills/deal.ts` is now exported (one
+word, in a file this phase did not list); a third test file holds the boss wiring
+(`app/src/components/boss/boss-dealt.test.ts`); one line of `boss-session.test.ts` changed,
+because `US-1` ended what it asserted. `hands-3` was seen on iOS and Android; the boss was not
+walked on a device.
+
 Lane A. Waits on nothing. Files it owns: `app/src/game/dealt-slots.ts` (new) and its test,
 `app/src/game/session.ts`, `app/src/screens/lesson-screen.tsx`,
 `app/src/components/boss/boss-session.ts`, `app/src/config/dials.ts` (block `// unit-stories`).
