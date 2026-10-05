@@ -438,6 +438,16 @@ concept exercise is played as written. A wrong dealt answer spends a heart and i
 the review (`app/src/game/session.ts`, `recordAnswer`). Details are under `US-1` to `US-3` in
 `docs/incomplete/unit-stories/DESIGN.md`, and in `HANDOFF.md` step 28.
 
+Pointer, 2026-10-05 (unit stories close-out, board item 25): the other half of that effort meets
+this decision in `US-5` and `US-6`. The optional unit story, opened from the unit header, gives no
+XP, spends no heart, counts for no streak, gates no lesson and stores nothing, so every rule above
+holds with the story in the app (`US-4` to `US-8`; `HANDOFF.md` steps 31 and 33). The amendment
+note at the top of this decision still reads "not yet built, awaiting GATE 2". That wording was
+true when it was written and is not true since the build of 2026-10-05; the "As built (unit
+stories phase 1)" paragraph above is the current statement. It was checked against
+`app/src/game/dealt-slots.ts`, `app/src/game/session.ts` and
+`app/src/components/boss/boss-session.ts` on 2026-10-05 and matches them.
+
 ### D9. Mascot roles
 
 Proposed 2026-10-05, recommended. Answer: accepted, 2026-10-05 (the GATE 2 reply
@@ -451,6 +461,12 @@ for (option 1C): a fish is a weak player and a shark a strong one, so beating th
 beating the unit test. Against: three characters to keep in step. All three have the same six
 poses (row 4), so the mascot component does not change with the cast. The alternative is one
 guide, the squid (approved in Round 5, row 8), in every role.
+
+Pointer, 2026-10-05 (unit stories close-out, board item 25): the fish is also the host of the unit
+story, in the pose each slide names, and the voice is the warm one of `D10`
+(`docs/incomplete/unit-stories/DESIGN.md`, `US-7`). The story adds no role and no art. It is built
+as `app/src/screens/story-screen.tsx` and `app/src/content/stories/hands.ts` (`HANDOFF.md` steps
+31 and 33).
 
 ### D10. The voice of the copy
 
