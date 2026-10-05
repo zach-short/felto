@@ -76,7 +76,7 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 | 56 | Rive: rig the chest in four tiers: a wiggle, a tap shake, an upgrade flash and the opening | `HELD` until item 48 is `DONE` | Sonnet 5 (Zach's choice) | G | item 48 | a new Rive file in Zach's account; `app/assets/rive/chest.riv` (new, exported from that file only) |
 | 57 | Play the rigs in the app: one mascot player, a chest player, static fallbacks | `HELD` until items 30 to 32, 51 and 53 to 56 are `DONE` | Opus 5.5 | F | items 30 to 32 (31 owns `path-greeting.tsx`, 32 owns `mascot.tsx`), 51 and 53 to 56 | `app/src/art/` (the Rive players, their pure modes and tests, `flop-rive.tsx`, `rive-boundary.test.ts`), `app/src/components/exercise/exercise-view.tsx`, `app/src/components/lesson/lesson-finish.tsx`, `app/src/components/boss/boss-finish.tsx`, `app/src/components/chest/`, `app/src/screens/chest-screen.tsx`, `app/src/components/path/path-greeting.tsx`, `app/src/screens/dev-art-screen.tsx`, `app/src/config/dials.ts` (its own lines in the block `// game-feel second pass`), `docs/conventions-typescript.md` (rule U6), `CLAUDE.md` (the `.riv` rule) |
 | 58 | Web app: an Expo web build of the app at felto.app, and the marketing site moved to download.felto.app | `HELD` until Zach answers the five questions in the prompt (the domain first) and items 34 and 49 are `DONE` | Opus 5.5 | R | Zach's answers; items 34 and 49 (they own `app/package.json` and `app/bun.lock`) | `app/package.json`, `app/bun.lock`, `app/app.json`, `app/metro.config.js`, `app/wrangler.jsonc` (new), new `*.web.ts` and `*.web.tsx` files beside the native ones in `app/src/storage/`, `app/src/feedback/`, `app/src/art/` (the Rive file only), `app/src/components/profile/` and `app/src/reminder/`, `app/src/components/app-tabs.tsx` if the web tabs need a branch, `site/src/config.ts`, `site/wrangler.jsonc`, `docs/incomplete/app/DESIGN.md` (one new decision), `docs/README.md`, `HANDOFF.md`, `CLAUDE.md` (the web build command) |
-| 59 | Merge the second game-feel pass branches into `main` and reconcile the docs | `OPEN` | Opus 5.5 | F | Zach's commits of items 50, 51 and 52 part A on their branches | `CLAUDE.md`, `.personal-config.json`, `docs/conventions-typescript.md`, `docs/conventions-python.md`, `docs/README.md`, `HANDOFF.md` (code map and one step), `app/src/components/screen.tsx` (one stale comment) |
+| 59 | Merge the second game-feel pass branches into `main` and reconcile the docs | `OPEN` | Opus 5.5 | F | nothing (items 50, 51 and 52 part A committed on their branches, 2026-10-05) | `CLAUDE.md`, `.personal-config.json`, `docs/conventions-typescript.md`, `docs/conventions-python.md`, `docs/README.md`, `HANDOFF.md` (code map and one step), `app/src/components/screen.tsx` (one stale comment) |
 
 **Do not paste a prompt marked DONE**: a fresh session would build it again.
 
@@ -2818,7 +2818,7 @@ You are picking up felto, a poker-training app. Read, in order: `HANDOFF.md` (En
 
 ### 59. Merge the second game-feel pass branches into `main` and reconcile the docs
 
-**Model: Opus 5.5. Lane F. Waits on Zach's commits of items 50, 51 and 52 part A on their branches.**
+**Model: Opus 5.5. Lane F. Waits on nothing.**
 Work in the main checkout; this item merges branches and edits documents only.
 
 You are picking up felto, a poker-learning game: Python generators in `tools/` and an Expo app in
@@ -2835,11 +2835,9 @@ set order, with the gate line, the standards' versions and the counts made true 
 
 **What is fixed.** Do not relitigate.
 - Branches, all from `052de2f`: item 46 kit `worktree-agent-a113bef444d717832` (`bbf90f0`, step 43);
-  item 50 chest rule `worktree-agent-a7d0eee158bfab62d` (fast-forwarded to `bbf90f0`, then Zach's
-  commit; steps 44 and 48); item 51 lesson host `worktree-agent-a9b65efcaaac22bd3` (on `bbf90f0`,
-  then Zach's commit; steps 45 and 49); item 47 sounds `worktree-agent-a43d507c710a61f30`
+  item 50 chest rule `worktree-agent-a7d0eee158bfab62d` (`f38a414`, on top of `bbf90f0`; steps 44 and 48); item 51 lesson host `worktree-agent-a9b65efcaaac22bd3` (`603a3e7`, on top of `bbf90f0`; steps 45 and 49); item 47 sounds `worktree-agent-a43d507c710a61f30`
   (`e1d98cd`, step 40); item 49 Lottie `worktree-agent-a4b7cbb935881e166` (`afe9997`, step 46);
-  item 52 part A tab bar `worktree-agent-aafed130ed08384c8` (Zach's commit, step 47).
+  item 52 part A tab bar `worktree-agent-aafed130ed08384c8` (`7929559`, step 47).
 - Item 48's branch `worktree-agent-a803079eced2bf02e` (`b565143`) is **not** merged: Zach did not
   approve the look (step 42), and the redraw continues on that branch.
 - Known clashes: `docs/conventions-python.md` is 1.2.2 in `main` (step 41) and a different 1.2.2 on
