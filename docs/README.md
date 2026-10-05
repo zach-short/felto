@@ -32,7 +32,7 @@ Efforts in progress live in `docs/incomplete/<effort>/`. Their files change with
 | `PASSOFF.md` | The board: what is next, one standalone prompt per item | Yes | 2026-10-05 |
 | `CLAUDE.md` | The router and hazard list every session loads | Yes | 2026-10-05 |
 | `docs/AGENT-PRACTICES.md` | The process standard: how work is scoped, sized, routed, recorded and closed | Yes | 2026-10-05 |
-| `docs/conventions-python.md` | The code standard for every `.py` file (`tools/`), version 1.2.1 | Yes | 2026-10-05 |
+| `docs/conventions-python.md` | The code standard for every `.py` file (`tools/`), version 1.2.2 | Yes | 2026-10-05 |
 | `docs/conventions-typescript.md` | The code standard for every `.ts` and `.tsx` file under `app/`, version 1.1.0: 21 rules, registry Z1 to Z4, a Known gaps list, real felto examples | Yes | 2026-10-05 |
 | `docs/README.md` | This index | Yes | 2026-10-05 |
 

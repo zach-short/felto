@@ -105,11 +105,11 @@ open assets/gallery.html
 
 - A generator that exits 0 and prints its `wrote ...` line proves only that files were written.
   Nothing checks how they look. Each generator prints a count taken from its writes
-  (`tools/build_icons.py:386`, `tools/build_mascots.py:345`, `tools/build_sounds.py:249`), so a
+  (`tools/build_icons.py:386`, `tools/build_mascots.py:345`, `tools/build_sounds.py:296`), so a
   skipped write shows as a short count.
 - The sound generator's run line (12) proves only that twelve WAV files were written, none longer
   than its ceiling: one second for the six of `D15`, 0.6 s for the six of `GF-5`
-  (`tools/build_sounds.py:235-242` stops the run otherwise). An agent cannot hear them: a sound
+  (`tools/build_sounds.py:282-289` stops the run otherwise). An agent cannot hear them: a sound
   is proven only when Zach plays it (`afplay assets/sounds/<name>.wav`) and approves it.
 - `xmllint --noout` proves the SVG is well-formed XML, not that it draws the right shape.
 - The gate rewrites the generated SVGs and WAVs in place. After the first commit, run
