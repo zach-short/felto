@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 
 import { Art } from "@/art/art";
 import type { ArtName } from "@/art/sizes";
-import { Mascot } from "@/art/mascot";
+import { FlopRive } from "@/art/flop-rive";
 import { loganLine } from "@/components/lesson/logan-line";
 import { CAST } from "@/content/cast";
 import { ART_SCALE, RADIUS, SPACE, TYPE } from "@/theme/tokens";
@@ -18,13 +18,15 @@ type LessonFinishProps = {
 };
 
 // DESIGN.md 10.3: the finish is drawn inside the lesson modal, with the fish happy (10.5), the
-// XP the lesson gave and the streak it kept (D8).
+// XP the lesson gave and the streak it kept (D8). Board item 34: the rigged Flop darts around only
+// when every answer was right; otherwise it holds the idle loop. FlopRive draws the static happy
+// pose itself under reduced motion or a failed load.
 export function LessonFinish({ right, size, xp, streak, loganMode }: LessonFinishProps) {
   const { colours } = useTheme();
   const column = useColumnWidth();
   return (
     <View style={styles.finish}>
-      <Mascot character="fish" pose="happy" width={column * ART_SCALE.finishMascot} />
+      <FlopRive perfect={right === size} width={column * ART_SCALE.finishMascot} />
       <Text style={[styles.title, { color: colours.text }]}>Lesson finished!</Text>
       <Text style={[styles.line, { color: colours.textMuted }]}>
         {`${right} of ${size} right. ${CAST.fish} is proud of you.`}
