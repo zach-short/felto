@@ -140,6 +140,11 @@ export const RADIUS = {
 // by exactly that much when pressed
 export const BUTTON_HEIGHT = 52;
 
+// Game feel phase 4 (board item 29): the lesson's progress bar, a rounded track with a fill, drawn
+// the same on both platforms in place of the native pair, and the feedback sheet's top corners
+export const PROGRESS_HEIGHT = 14;
+export const SHEET_RADIUS = 24;
+
 // DESIGN.md 10.1: a chest is drawn faded until its boss is passed
 export const OPACITY = {
   faded: 0.35,

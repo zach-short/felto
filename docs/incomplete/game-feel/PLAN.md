@@ -1,6 +1,6 @@
 # Plan: game feel
 
-Status: `IN FLIGHT` since 2026-10-05, phases 1 to 3 built (board items 26 to 28). The line read "`PLANNED`
+Status: `IN FLIGHT` since 2026-10-05, phases 1 to 4 built (board items 26 to 29). The line read "`PLANNED`
 2026-10-05, awaiting GATE 2" until Zach approved the plan in chat the same day (`PASSOFF.md`, the
 note above item 22). Decisions `GF-1` to `GF-9` are in `DESIGN.md`,
 section 8, and are frozen. This plan is what is built, in what order, by whom, and done when. Read
@@ -52,6 +52,16 @@ a screenshot" and "felt on the phone" are different claims.
 | BD-G18 | Phase 2: the dials `selectHaptic` (`"selection"`) and `pressHaptic` (`"lightImpact"`) name touches of the vocabulary, so a name that is not a touch fails the typecheck where it is passed to `buzz`. `selectHaptic` is read by no code until phase 4 | Write the touch names at the call sites |
 | BD-G19 | Phase 3, 2026-10-05: the 0.6 s ceiling of section 3 lives in `tools/build_sounds.py` as `SHORT_CEILING`, beside `CEILING` (one second, `D15`), with the six `GF-5` names in the tuple `SHORT` (`:60-66`). `checked()` (`:235-242`) stops the run with an error when an effect is longer than its ceiling, so the gate fails before the file is written; a planted 0.65 s `tap` stopped it with exit 1 on 2026-10-05. It is not a dial in `app/src/config/dials.ts`: the generator cannot read that file, no app code needs the number, and the `D15` block there already holds `soundMaxSeconds`, which no code reads (`grep -rn "soundEffects\|soundMaxSeconds" app/src tools`, 2026-10-05) | Move the ceiling to a dial and check the WAV lengths in a vitest test that reads the files |
 | BD-G20 | Phase 3: the press sound reaches `PrimaryButton` the way the press haptic does (BD-G17, BD-G18). The dial `pressSound` (`"tap"`) names an effect of `app/src/art/sounds.ts`, so a wrong name fails the typecheck where it is played; a screen calls `useSound()` (`app/src/feedback/use-sound.ts`), which reads `settings.sound`; the rule is the pure `playThrough(effect, sound, play)` in `app/src/feedback/sound-switch.ts`, with its test, because `effects.ts` imports `expo-audio` and vitest in node cannot load it (the reason of BD-G15). The six moments of `moments.ts` keep their own `if (devices.sound)`, so that file did not change | Inline the setting check at the call sites |
+| BD-G21 | Phase 4, 2026-10-05: every answer-loop motion hook is declarative. `useStepsOn(kind, active, steps, rest, delay)` in `app/src/motion/use-steps-on.ts` plays a pure sequence (`answer-steps.ts`, with its test) each time `active` turns true; `useShake`, `useTilt`, `useFlash` and `useBounce` are thin hooks over it. `useBounce` changed from an imperative `bounce()` to `useBounce(active, delayMs)`; no screen had called it | Give the hooks back an imperative start and call it from effects in the components |
+| BD-G22 | Phase 4: three motion kinds join `press` and `fade` as kept under reduced motion: `lift` (the chosen row), `rise` (the sheet, which the native sheet also did under Reduce Motion) and `fill` (the progress bar). Each hook still asks `motionAllowed`, so listing a kind in `reducedMotionSkips` moves it at once. The heart's drop is asked as a `bounce`, so reduced motion skips it and only the number changes | Add the three to `reducedMotionSkips` and update the test that pins the list |
+| BD-G23 | Phase 4: "the host" that bounces or tilts is the feedback sheet's mascot, which already shows the cheer or sad pose, and it moves after `sheetRiseMs`, once the sheet is up. The thinking host beside the prompt does not move | Move the two hooks onto the mascot in `exercise-view.tsx` |
+| BD-G24 | Phase 4: the custom sheet closes only by its Continue. There is no swipe to close; Android's back button reaches `useHardwareBack` and asks to leave, as the native sheet's close did. `sheetDismissAction` in `session-steps.ts` and `onFeedback` from `useLessonRun` are now read by no code; both stay, because `session-steps.ts` is a guard file whose test must pass untouched | Add a pan gesture that calls `moveOn` on iOS and asks to leave on Android |
+| BD-G25 | Phase 4: the six answer and ending moments give touches of the `GF-3` vocabulary through `buzz` (`use-answer-feedback.ts`), so `haptics.ts` is the one importer of `expo-haptics`: success for a right answer, a finish, a boss pass and a chest; the rigid tap for a wrong answer and a boss fail, because the vocabulary has no error buzz (BD-G17) | Put `Haptics.notificationAsync` back in `use-answer-feedback.ts` for the boss fail only |
+| BD-G26 | Phase 4: the "neutral accent" of Zach's answer is the existing `accent` token. It is the same blue as `unitHands` in light mode (`#2F7BF0`) and nearly so in dark (`#5B9BFF` against `#5A98F5`), so a practice set looks like unit 1 | Add a `chosenNeutral` token with a light and a dark value |
+| BD-G27 | Phase 4: every choice row rests on a raised edge of its border colour (dial `choiceEdge`, 4), as the primary button does; the chosen row's face lifts by `chooseLift` (3) and its border and edge take the colour. The face keeps the surface fill, because no soft tint of the unit colours exists as a token, and the label keeps the text colour, because green and gold on white fail contrast | Add soft unit tokens and fill the chosen face |
+| BD-G28 | Phase 4: `heart_lost` plays from `useLessonRun`, beside the wrong answer's moment, only in a session that costs lives (`costsLives`), through `useSound` and the dial `heartSound`. The tick and `option_select` of a choice play in `lesson-run-view.tsx` through `selectHaptic` and the new dial `selectSound`; the development autoplay chooses without them | Make the heart sound a seventh moment in `use-answer-feedback.ts` |
+| BD-G29 | Phase 4: the progress bar is one file, `lesson-progress.tsx`; the platform pair and its `.d.ts` are deleted. It is a View with `accessibilityRole="progressbar"` and a value in percent, and adds no label, so it adds no copy. Its height is the token `PROGRESS_HEIGHT` (14) | Restore the pair from git |
+| BD-G30 | Phase 4: the sheet is drawn by `LessonFrame`'s new `overlay`, outside the scroll view, edge to edge, with the soft right or wrong colour as its background and top corners of `SHEET_RADIUS` (24). It pads by the safe-area insets itself. While it shows, the frame behind it is hidden from screen readers (`importantForAccessibility` on Android, `accessibilityViewIsModal` on iOS) and the reader's focus moves to its heading (`use-sheet-focus.ts`) | Draw it inside a React Native `Modal` |
 
 ## 2. Phases
 
@@ -190,6 +200,21 @@ stat. A long tail on a tap sound gets tiring in a session.
 
 ### Phase 4: The answer loop
 
+**BUILT 2026-10-05, not committed: worktree `.claude/worktrees/agent-a7d2fdad825b95d3e`, made
+from `main` at `0658776` (board item 29).** Zach answered the two questions of the item on
+2026-10-05: the feedback sheet and the progress bar become custom views of the app's tokens (a dated
+amendment of `D2`, recorded under `GF-2`), and a chosen row takes its unit's colour in a session of
+one unit and the neutral accent in a practice set or the placement check. Build calls BD-G21 to
+BD-G30. Gate: exit 0, run lines 78, 18 and 12, 84 test files and 621 tests (2 files and 13 tests
+new); `git diff --stat -- assets/icons assets/mascots assets/sounds` empty; `lesson-run.test.ts`,
+`session-steps.test.ts` and `session-order.test.ts` unchanged. Seen on the iPhone 17 simulator,
+light and dark: the chosen, right and wrong states and the sheet. Not seen on Android: the
+`Medium_Phone_API_36` copy drew a black screen after its system UI stopped (`Pixel_9` was held by
+another checkout). What this changes for later phases: every motion hook of `src/motion/` is
+declarative (it plays when a flag turns true), the motion kinds `lift`, `rise` and `fill` exist and
+stay under reduced motion, `haptics.ts` is the one importer of `expo-haptics`, and
+`session-colour.ts` gives any later screen a session's unit colour.
+
 Files it owns: `app/src/components/lesson/*`, `app/src/components/exercise/*`,
 `app/src/feedback/*` (after phase 2), `app/src/art/mascot.tsx` only if a prop is added.
 
@@ -325,4 +350,12 @@ unit-stories effort.
 | Reduced motion is respected | Phone setting Reduce Motion on, then a lesson | No bounce, shake or sparkle; colour changes and fades remain |
 | Each new sound is liked | `afplay assets/sounds/<name>.wav`, then in the app | Zach approves each of the six or names a change |
 | Unit colours read in both appearances | Learn tab, all four units, light and dark | Each unit has its colour; none disappears on the dark page |
+| Choosing feels light (phase 4) | Any lesson on the iPhone after a reload, Sound and Haptics on: tap an option, then another | Each tap gives a tick and a light pluck; the chosen row rises and takes the unit's colour (blue in unit 1, green in unit 2) |
+| A right answer feels good (phase 4) | Choose the right option, press Check | The row bounces and flashes green, the rising sound and a soft buzz play, the sheet slides up green and the fish bounces |
+| A wrong answer feels firm (phase 4) | In a lesson, choose a wrong option, press Check | The row shakes, the flat sound and the heart's low pop play with one sharp tap, the heart in the header dips and its count falls by one, the sheet slides up red and the fish tilts |
+| No heart sound where no heart is spent (phase 4) | A review or a practice set, one wrong answer | The shake, the wrong sound and the tap, but no heart pop and no heart drop |
+| A practice set is neutral (phase 4) | Practice tab, any set, choose an option | The chosen row takes the app's blue, not a unit colour |
+| The sheet clears the gesture bar (phase 4) | Android phone or emulator, any answer | The sheet's Continue sits fully above the gesture bar, with its own gap below it |
+| Reduced motion in the loop (phase 4) | Reduce Motion on, a lesson, one right and one wrong answer | No bounce, shake, tilt or heart drop; the colours, the flash, the lift, the rise of the sheet and the fill of the bar remain |
+| A screen reader hears the sheet (phase 4) | VoiceOver or TalkBack on, answer once | Focus moves to "Nice read!" or "So close."; the lesson behind is not read until Continue |
 | The chest and the finish feel rewarding | Finish a lesson, open a chest | Colour fills the screen, XP counts up, a burst plays once and stops |

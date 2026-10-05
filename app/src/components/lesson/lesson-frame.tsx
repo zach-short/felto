@@ -11,12 +11,16 @@ type LessonFrameProps = {
   top?: ReactNode;
   children: ReactNode;
   bottom?: ReactNode;
+  // Drawn over the whole frame, edge to edge, and placed by itself: the feedback sheet
+  overlay?: ReactNode;
+  // True while the overlay holds the screen, so a screen reader reads only the overlay
+  overlayModal?: boolean;
 };
 
 // The lesson is a full-screen modal (DESIGN.md 10.3), so it draws its own frame: the header
 // above, the exercise scrolling in the middle, and the button held at the bottom where a thumb
 // finds it. Same centred column as every screen (BD-27, D17).
-export function LessonFrame({ top, children, bottom }: LessonFrameProps) {
+export function LessonFrame({ top, children, bottom, overlay, overlayModal = false }: LessonFrameProps) {
   const { colours } = useTheme();
   const column = useColumnWidth();
   // The native SafeAreaView measured 0 at the top in some opens of this modal (iPhone 17 Pro
@@ -24,13 +28,20 @@ export function LessonFrame({ top, children, bottom }: LessonFrameProps) {
   const insets = useSafeAreaInsets();
   const edges = { paddingTop: insets.top, paddingBottom: insets.bottom, paddingLeft: insets.left, paddingRight: insets.right };
   return (
-    <View style={[styles.fill, edges, { backgroundColor: colours.page }]}>
-      <StatusBar style="auto" />
-      {top ? <View style={[styles.edge, { width: column }]}>{top}</View> : null}
-      <ScrollView contentContainerStyle={styles.centre}>
-        <View style={{ width: column }}>{children}</View>
-      </ScrollView>
-      {bottom ? <View style={[styles.edge, styles.bottom, { width: column }]}>{bottom}</View> : null}
+    <View style={[styles.fill, { backgroundColor: colours.page }]}>
+      <View
+        style={[styles.fill, edges]}
+        accessibilityElementsHidden={overlayModal}
+        importantForAccessibility={overlayModal ? "no-hide-descendants" : "auto"}
+      >
+        <StatusBar style="auto" />
+        {top ? <View style={[styles.edge, { width: column }]}>{top}</View> : null}
+        <ScrollView contentContainerStyle={styles.centre}>
+          <View style={{ width: column }}>{children}</View>
+        </ScrollView>
+        {bottom ? <View style={[styles.edge, styles.bottom, { width: column }]}>{bottom}</View> : null}
+      </View>
+      {overlay}
     </View>
   );
 }

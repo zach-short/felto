@@ -1,7 +1,6 @@
 import { useRouter } from "expo-router";
 import type { ReactNode } from "react";
-import { useState } from "react";
-import { Alert, Platform, StyleSheet, Text } from "react-native";
+import { Alert, StyleSheet, Text } from "react-native";
 
 import { ExerciseView } from "@/components/exercise/exercise-view";
 import { FeedbackSheet } from "@/components/lesson/feedback-sheet";
@@ -10,7 +9,8 @@ import { LessonClosed } from "@/components/lesson/lesson-closed";
 import { LessonFrame } from "@/components/lesson/lesson-frame";
 import { LessonHeader } from "@/components/lesson/lesson-header";
 import { showsHearts, type Session } from "@/components/lesson/lesson-run";
-import { runCounted, sheetDismissAction } from "@/components/lesson/session-steps";
+import { chosenColour } from "@/components/lesson/session-colour";
+import { runCounted } from "@/components/lesson/session-steps";
 import { useAutoCheck } from "@/components/lesson/use-auto-check";
 import { useDevAutoplay } from "@/components/lesson/use-dev-autoplay";
 import { useHardwareBack } from "@/components/lesson/use-hardware-back";
@@ -43,22 +43,16 @@ type LessonRunViewProps = {
 export function LessonRunView({ session, finish, start = 0, pick = null, autoCheck = false, autoplay = null }: LessonRunViewProps) {
   const router = useRouter();
   const { state } = usePlayer();
-  const { run, exercise, size, feedbackWords, choose, check, moveOn, onFeedback } = useLessonRun(session, start, pick);
+  const { run, exercise, size, feedbackWords, choose, check, moveOn } = useLessonRun(session, start, pick);
   useAutoCheck(autoCheck, check);
   useDevAutoplay(autoplay, run, exercise, { choose, check, moveOn });
   // BD-12: the screen reads the clock once per render and passes it to the rules
   const now = new Date();
   const ended = run.phase === "finished" || run.phase === "out-of-lives";
-  // Hidden while "Leave?" is asked over a feedback sheet that Android's back button closed
-  const [sheetHidden, setSheetHidden] = useState(false);
+  // The feedback sheet is drawn in the frame since board item 29, so Android's back button over it
+  // reaches this handler and asks to leave, as the native sheet's close did (session-steps.ts)
   const leave = () => (ended || run.answered === 0 ? router.back() : confirmLeave(session.kind, () => router.back()));
   useHardwareBack(leave);
-  const sheetDismissed = () => {
-    if (!onFeedback()) return;
-    if (sheetDismissAction(Platform.OS) === "continue") return moveOn();
-    setSheetHidden(true);
-    confirmLeave(session.kind, () => router.back(), () => setSheetHidden(false));
-  };
   const done = run.phase === "finished" ? finishView(run, size, finish, () => router.back()) : null;
   // GF-3 and GF-5: every button of the loop gives the press touch and the press sound as the
   // finger goes down
@@ -66,8 +60,27 @@ export function LessonRunView({ session, finish, start = 0, pick = null, autoChe
   const play = useSound();
   const pressHaptic = () => buzz(DIALS.pressHaptic);
   const pressSound = () => play(DIALS.pressSound);
+  // Game feel phase 4: choosing an option ticks and plays its sound, through the two switches
+  const chooseWithFeel = (choice: number) => {
+    choose(choice);
+    buzz(DIALS.selectHaptic);
+    play(DIALS.selectSound);
+  };
+  const { colours } = useTheme();
+  const sheetShown = run.phase === "feedback";
   return (
     <LessonFrame
+      overlayModal={sheetShown}
+      overlay={
+        <FeedbackSheet
+          shown={sheetShown}
+          right={run.lastRight}
+          answer={feedbackWords.answer}
+          explanation={feedbackWords.explanation}
+          onContinue={moveOn}
+          host={session.host}
+        />
+      }
       top={<LessonHeader done={run.answered / size} lives={showsHearts(session) ? livesAt(state, now) : null} onLeave={leave} />}
       bottom={
         done ? (
@@ -94,19 +107,11 @@ export function LessonRunView({ session, finish, start = 0, pick = null, autoChe
           exercise={exercise}
           choice={run.choice}
           checked={run.phase === "feedback"}
-          onChoose={choose}
+          onChoose={chooseWithFeel}
+          chosenColour={colours[chosenColour(session)]}
           host={session.host}
         />
       )}
-      <FeedbackSheet
-        shown={run.phase === "feedback" && !sheetHidden}
-        right={run.lastRight}
-        answer={feedbackWords.answer}
-        explanation={feedbackWords.explanation}
-        onContinue={moveOn}
-        onDismiss={sheetDismissed}
-        host={session.host}
-      />
     </LessonFrame>
   );
 }

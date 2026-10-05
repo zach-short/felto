@@ -15,13 +15,15 @@ type ExerciseViewProps = {
   choice: number | null;
   checked: boolean;
   onChoose: (index: number) => void;
+  // The colour a chosen row takes (components/lesson/session-colour.ts)
+  chosenColour: string;
   // D9: the fish hosts a lesson, the shark a boss, the squid a review
   host?: CastRole;
 };
 
 // One view for every kind of DESIGN.md 10.4: the guide thinking beside the prompt (10.5), the
 // cards or numbers, and the shared answer choices.
-export function ExerciseView({ exercise, choice, checked, onChoose, host = "fish" }: ExerciseViewProps) {
+export function ExerciseView({ exercise, choice, checked, onChoose, chosenColour, host = "fish" }: ExerciseViewProps) {
   const { colours } = useTheme();
   const column = useColumnWidth();
   return (
@@ -35,6 +37,7 @@ export function ExerciseView({ exercise, choice, checked, onChoose, host = "fish
         labels={optionLabels(exercise)}
         marks={choiceMarks(exercise.options.length, choice, exercise.answer, checked)}
         selected={choiceSelected(exercise.options.length, choice)}
+        chosenColour={chosenColour}
         onChoose={checked ? null : onChoose}
       />
     </View>
