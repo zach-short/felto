@@ -1,9 +1,9 @@
 <!-- personal-config v0.7.0 · 2026-10-04 · config 3b46daed · standard v1.2.0 · adapted -->
 # felto
 
-> **Before writing or editing any code, read the matching code standard in full. No per-language
-> standard exists yet (verified 2026-10-04: `docs/` holds only `AGENT-PRACTICES.md`). Until one
-> does, match the style of the file you edit. Not optional, not conditional on task size.**
+> **Before writing or editing any code, read the matching code standard in full:
+> `docs/conventions-python.md` for every `.py` file. Not optional, not conditional on task size.
+> If you have not read it this session, read it now.**
 
 > **Before scoping, planning or building a feature, read `docs/AGENT-PRACTICES.md`.** It is the
 > process standard. Do not ask how the flow works; it is written down.
@@ -11,7 +11,7 @@
 ## The rules that get broken
 
 - **Never hand-edit an SVG under `assets/icons/` or `assets/mascots/`.** The generators
-  overwrite every one of them on each run (`tools/build_icons.py:17`, `tools/build_mascots.py:16`).
+  overwrite every one of them on each run (`tools/build_icons.py:19`, `tools/build_mascots.py:17`).
   Change the generator, then run it.
 - **Never regenerate, rename or move a file in `assets/higgsfield/`.** They came from a paid,
   non-deterministic external service, and `assets/gallery.html` links all 32 by filename.
@@ -35,8 +35,8 @@
   three HTML pages display them.
 - The assets point at a game about poker: playing cards, chips, a lesson path with locked,
   current and boss nodes, a streak flame, XP, lives, gems and a chest
-  (`tools/build_icons.py:394-412`), and three mascots, fish, squid and shark, each in six poses
-  (`tools/build_mascots.py:379-380`).
+  (`tools/build_icons.py:352-358`), and three mascots, fish, squid and shark, each in six poses
+  (`tools/build_mascots.py:336-337`).
 - The generated SVGs are deterministic. A rebuild in a scratch copy on 2026-10-04 was
   byte-identical to the files on disk (`diff -rq`).
 - The style comes from the approved Higgsfield reference: no outlines, solid fills, a darker
@@ -51,7 +51,7 @@
 | `assets/mascots/{fish,squid,shark}/` | Output of `build_mascots.py` (18 SVGs) | Hand edits |
 | `assets/higgsfield/` | Reference art from Higgsfield (19 PNG, 13 SVG), kept as received | Renamed or regenerated files |
 | `assets/gallery.html`, `assets/*/preview.html` | Pages to view the art in a browser | Anything a script reads |
-| `docs/` | The process standard | Generated assets |
+| `docs/` | The process standard and the Python code standard | Generated assets |
 
 ## Commands
 
@@ -70,8 +70,8 @@ open assets/gallery.html
 **What the gates do not prove.**
 
 - A generator that exits 0 and prints its `wrote ...` line proves only that files were written.
-  Nothing checks how they look. `tools/build_icons.py:411` computes a file count and never
-  prints it.
+  Nothing checks how they look. Each generator prints a count taken from its writes
+  (`tools/build_icons.py:374`, `tools/build_mascots.py:345`), so a skipped write shows as a short count.
 - `xmllint --noout` proves the SVG is well-formed XML, not that it draws the right shape.
 - The gate rewrites the generated SVGs in place. After the first commit, run
   `git diff --stat -- assets/icons assets/mascots` after the gate: any line there is a change

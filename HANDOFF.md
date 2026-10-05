@@ -72,7 +72,7 @@ Zach chose to check the tool before aligning, at GATE 0.
 ## Invariants
 
 - Every SVG under `assets/icons/` and `assets/mascots/` is generator output. A hand edit is lost
-  on the next run (`tools/build_icons.py:17`, `tools/build_mascots.py:16`). Change the generator.
+  on the next run (`tools/build_icons.py:19`, `tools/build_mascots.py:17`). Change the generator.
 - The generators are deterministic: the same source gives byte-identical SVGs. A gate run that
   changes a generated file without a generator change is a bug.
 - `assets/higgsfield/` filenames do not change: `assets/gallery.html` links them by name.
@@ -91,7 +91,7 @@ Zach chose to check the tool before aligning, at GATE 0.
   `eye_l`, `eye_r`, `pupil_l` and `pupil_r` for every character. It now points at the id table
   in rule I3 of `docs/conventions-python.md`, which was measured from the 18 SVGs.
 - **Some numbers reach the art as raw floats**, such as `r="46.800000000000004"` in
-  `assets/icons/chips/chip_stack_red.svg` (from `tools/build_icons.py:159`). The output is still
+  `assets/icons/chips/chip_stack_red.svg` (from `tools/build_icons.py:117`). The output is still
   deterministic. Zach chose on 2026-10-04 to leave these sites, because a fix changes the art
   bytes (rule G3 and its drift register).
 - **A global rule gitignores this ledger, the board and the standard** in every repo
@@ -178,6 +178,12 @@ Gate green, and `git diff --stat -- assets tools` empty. Found, not fixed: `HAND
 never printed, false since step 3); the standard's line 4 names two `.py` files, with the
 2026-10-04 date; the C1 counts of 36 and 21 were not recounted. **Left owed:** those stale lines
 in `HANDOFF.md` and `CLAUDE.md`. The commit is Zach's.
+
+**5. Fix the stale citations in `HANDOFF.md` and `CLAUDE.md`.** Done 2026-10-05, on branch
+`main`, on Sonnet 5.5, closing what step 4 left owed. `HANDOFF.md:75` and `:94` and `CLAUDE.md:14`,
+`:38-39` now cite the current lines. `CLAUDE.md` no longer says the icons count is never printed
+(false since step 3); it cites the two `print` lines. Left as written: the citations inside steps
+2 and 3, which describe the code as it was on 2026-10-04. `git diff --stat -- assets tools` empty.
 
 ## Style rules
 
