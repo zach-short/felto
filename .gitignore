@@ -9,3 +9,4 @@ app/ios/
 app/android/
 app/.expo/
 app/expo-env.d.ts
+.DS_Store
