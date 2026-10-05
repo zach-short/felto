@@ -562,6 +562,8 @@ The file name `FeltoRank.ttf` is a sanctioned divergence from kebab-case (`conve
 
 > **Built 2026-10-05 for the haptics half (board item 27, game-feel phase 2, `HANDOFF.md` step 30).** `settings.haptics` is stored since version 3, with a Haptics switch under Sound effects in Profile, and every buzz passes it (`app/src/feedback/should-buzz.ts`). The six more effects are game-feel phase 3 (board item 28).
 
+> **Built 2026-10-05 for the sound half (board item 28, game-feel phase 3, `HANDOFF.md` step 32).** `tools/build_sounds.py` writes twelve effects: the six above, byte for byte as before, and `tap`, `option_select`, `heart_lost`, `xp_tick`, `reward_claim` and `sparkle`, each under 0.6 s. `tap` plays as Check and Continue are pressed, while Sound is on; the other five wait for the game-feel phases that own their moments. Zach played the six on the Mac on 2026-10-05: "theyre fine ill update them later".
+
 Proposed 2026-10-05, recommended. Answer: accepted by Zach in chat, 2026-10-05 (was: pending).
 
 Six short effects: a right answer, a wrong answer, a finished lesson, a passed boss, a failed

@@ -17,6 +17,7 @@ import { useHardwareBack } from "@/components/lesson/use-hardware-back";
 import { useLessonRun } from "@/components/lesson/use-lesson-run";
 import { DIALS } from "@/config/dials";
 import { useHaptics } from "@/feedback/use-haptics";
+import { useSound } from "@/feedback/use-sound";
 import { livesAt, nextLifeAt } from "@/game/lives";
 import { usePlayer } from "@/storage/use-player";
 import { SPACE, TYPE } from "@/theme/tokens";
@@ -59,23 +60,27 @@ export function LessonRunView({ session, finish, start = 0, pick = null, autoChe
     confirmLeave(session.kind, () => router.back(), () => setSheetHidden(false));
   };
   const done = run.phase === "finished" ? finishView(run, size, finish, () => router.back()) : null;
-  // GF-3: every button of the loop gives the press touch as the finger goes down
+  // GF-3 and GF-5: every button of the loop gives the press touch and the press sound as the
+  // finger goes down
   const buzz = useHaptics();
+  const play = useSound();
   const pressHaptic = () => buzz(DIALS.pressHaptic);
+  const pressSound = () => play(DIALS.pressSound);
   return (
     <LessonFrame
       top={<LessonHeader done={run.answered / size} lives={showsHearts(session) ? livesAt(state, now) : null} onLeave={leave} />}
       bottom={
         done ? (
-          <PrimaryButton label={done.label} onPress={done.onPress} pressHaptic={pressHaptic} />
+          <PrimaryButton label={done.label} onPress={done.onPress} pressHaptic={pressHaptic} pressSound={pressSound} />
         ) : ended ? (
-          <PrimaryButton label="Continue" onPress={() => router.back()} pressHaptic={pressHaptic} />
+          <PrimaryButton label="Continue" onPress={() => router.back()} pressHaptic={pressHaptic} pressSound={pressSound} />
         ) : (
           <PrimaryButton
             label="Check"
             onPress={check}
             disabled={run.choice === null || run.phase !== "answering"}
             pressHaptic={pressHaptic}
+            pressSound={pressSound}
           />
         )
       }

@@ -7,20 +7,23 @@ every `.py` file in the repo. On 2026-10-04 those were `tools/build_icons.py` an
 listed exactly those three, and `find . -name '*.py' -not -path './.git/*'` found no other `.py`
 file in the repo. `tools/common.py` imports only `math` and `os`, and each generator imports it by
 its plain name (`grep -nE '^(import|from)' tools/*.py`, rule M4). Later on 2026-10-05 board item
-17 added a fourth, `tools/build_sounds.py`, the sound generator. It writes six WAV files to
-`assets/sounds/` and imports only `math`, `os`, `struct` and `wave`; it does not import
+17 added a fourth, `tools/build_sounds.py`, the sound generator. It wrote six WAV files to
+`assets/sounds/`, and twelve since board item 28 (game-feel `GF-5`, the same day). It imports only
+`math`, `os`, `struct` and `wave`; it does not import
 `tools/common.py`, because nothing there draws sound. Where a rule below names "the two
 generators" or "both files", it means the two SVG generators; each rule that also binds the sound
 generator says so. Read this file in full before you write or edit Python here.
 
-Version 1.2.0. Written 2026-10-04 on Opus 5.5 for board item 1 (ledger step 2 in `HANDOFF.md`);
+Version 1.2.1. Written 2026-10-04 on Opus 5.5 for board item 1 (ledger step 2 in `HANDOFF.md`);
 revised 2026-10-05 on Sonnet 5.5 for board item 2 (ledger step 3), which moved the shared code
 into `tools/common.py`, for board item 3 (ledger step 4), which reconciled the line citations,
 for board item 4 (ledger step 8), which named `tools/common.py` in the scope sentence, and
 for board item 21 (ledger step 9), which corrected the import bullet under "What the rules rest on",
 and for board item 5 (ledger step 11), which moved the citations that the icon generator change
 shifted, and for board item 17 on Opus 5.5, which brought the sound generator under rules M1,
-G1, G3, G4, W1, W2, H2 and Y4 and named it in the scope sentence.
+G1, G3, G4, W1, W2, H2 and Y4 and named it in the scope sentence, and for board item 28 on
+Opus 5.5, which moved the sound generator citations that its six new effects shifted and set the
+count in W2 and the scope sentence to twelve; no rule changed.
 Zach answered the open questions on 2026-10-04 and took every recommendation. Those answers are
 cited below as "owner, 2026-10-04".
 
@@ -61,7 +64,8 @@ These facts were verified 2026-10-04. A rule that breaks one of them is wrong.
   imported only `math` and `os`.
 - The generators are deterministic. The gate ran with exit 0, and
   `git diff --stat -- assets` was empty afterwards. The sound generator joined on 2026-10-05:
-  two runs, one under `PYTHONHASHSEED=7`, gave the same `shasum` for all six WAV files.
+  two runs, one under `PYTHONHASHSEED=7`, gave the same `shasum` for all six WAV files. Board
+  item 28 repeated the check for all twelve on 2026-10-05, with the same result.
 - Python is 3.14.6 at `/opt/homebrew/bin/python3` (`python3 -c "import sys; print(sys.version)"`).
 - The SVGs go into Rive. The mascot layer ids are the rig contract (`tools/build_mascots.py:7-9`).
 
@@ -73,7 +77,7 @@ These facts were verified 2026-10-04. A rule that breaks one of them is wrong.
 the run command lets a reader rebuild the art without opening `CLAUDE.md`. The word
 "highlight" in the example below is a quote from the source and is kept as written. The sound
 generator's docstring states its sound style the same way, and adds a musical note for each
-effect: its pitches, its timing and its peak (`tools/build_sounds.py:1-30`). An agent cannot hear,
+effect: its pitches, its timing and its peak (`tools/build_sounds.py:1-49`). An agent cannot hear,
 so those notes are the only description of a sound that a reader can check against the code.
 
 Correct, `tools/build_icons.py:2-9`:
@@ -219,9 +223,9 @@ so `72 * 0.65` reaches `assets/icons/chips/chip_stack_red.svg` as `r="46.8000000
 harmless reordering of the arithmetic can then change the last digit and the art bytes with it.
 
 In the sound generator the fixed precision is the 16-bit sample: a float becomes an integer in
-one place only, `to_frames()`, through `round()` (`tools/build_sounds.py:79-83`). A sample can
+one place only, `to_frames()`, through `round()` (`tools/build_sounds.py:111-115`). A sample can
 still move by one if the float arithmetic before it is reordered, or on a platform whose `math.sin`
-or `math.exp` (`tools/build_sounds.py:58`) differs in the last bit, so the byte-identical check holds on this Mac and is not proven elsewhere.
+or `math.exp` (`tools/build_sounds.py:90`) differs in the last bit, so the byte-identical check holds on this Mac and is not proven elsewhere.
 
 Correct, `tools/common.py:28-29`:
 
@@ -261,7 +265,7 @@ and writes `<OUT>/<sub>/<name>.svg`. No other code opens a file for writing. One
 place to count files and one place that keeps output inside `OUT`.
 
 The sound generator has its own `write(name, frames)`, which writes `<OUT>/<name>.wav` through
-the `wave` module and returns 1 (`tools/build_sounds.py:144-151`). It does not use the shared
+the `wave` module and returns 1 (`tools/build_sounds.py:225-232`). It does not use the shared
 `write()`, because that one opens a text file and adds `.svg`. It is the one write path of its
 file, so the rule holds there too.
 
@@ -287,7 +291,7 @@ Incorrect, the inline write that `tools/build_mascots.py` held before 2026-10-05
 ### W2. `main()` prints the number of files it wrote, counted from the writes
 
 *review · [OURS]* The run line is the quick check that no asset went missing. Both
-files comply since 2026-10-05: icons print 78 (76 when ledger step 3 made the fix, 78 since board item 5) and mascots print 18. The sound generator, added by board item 17, prints 6 (`tools/build_sounds.py:158`). The two wrong ways were both
+files comply since 2026-10-05: icons print 78 (76 when ledger step 3 made the fix, 78 since board item 5) and mascots print 18. The sound generator, added by board item 17, prints 12 (6 until board item 28; `tools/build_sounds.py:249`). The two wrong ways were both
 in the repo before then. `tools/build_icons.py` counted with `os.walk` over `OUT`, which also
 counts `assets/icons/preview.html` (77 for 76 SVGs), and never printed it.
 `tools/build_mascots.py` printed a count computed from the tables, so it printed 18 even if a
@@ -621,7 +625,7 @@ def gloss(x, y, rx=16, ry=8, rot=-35, op=0.55):
 2026-10-04. Count from the `def` line to the last line. A function that returns one whole SVG
 (`chip`, `chip_stack`, `card_face`, `card_back`, `node`, the `ui_*` functions, `fish`, `squid`,
 `shark`) is exempt, and so are the helpers nested inside it. In the sound generator a function
-that returns one whole effect (`answer_right` to `chest_open`) is exempt in the same way. The 6 in the policy guides against
+that returns one whole effect (`answer_right` to `sparkle`) is exempt in the same way. The 6 in the policy guides against
 splitting a line or two into a function of its own. The two-line helpers that exist, such as
 `tf` and `ext`, comply. On 2026-10-04 one function broke the 15-line limit: `main` in
 `tools/build_icons.py`, at 19 lines (measured with `ast`). Since 2026-10-05 it is 14, and 15 since board item 5 added one write.
@@ -760,7 +764,7 @@ Incorrect, written for contrast: a split inside an attribute value, with a backs
 
 *review · [OURS]* A banner is a comment of dashes that ends in the family name in capitals, 70
 to 72 characters long (`tools/build_icons.py:33`, `127`, `204`, `290`;
-`tools/build_mascots.py:49`, `152`, `246`; `tools/build_sounds.py:53`, `86`, `143`). In the
+`tools/build_mascots.py:49`, `152`, `246`; `tools/build_sounds.py:85`, `118`, `224`). In the
 sound generator a banner divides the synth helpers, the effects and the output.
 
 Correct, `tools/build_icons.py:33`:

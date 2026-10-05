@@ -101,15 +101,17 @@ answer in place.
   `stroke`, `write`) and the constants `SHADOW`, `CREAM`, `INKL`. Imported by plain name (step 3).
 - `tools/build_icons.py`: writes `assets/icons/{chips,cards,path,ui}/` (78 SVGs).
 - `tools/build_mascots.py`: writes `assets/mascots/{fish,squid,shark}/` (18 SVGs, six poses each).
-- `tools/build_sounds.py`: writes `assets/sounds/` (6 WAV files: `answer_right`, `answer_wrong`,
-  `lesson_finish`, `boss_pass`, `boss_fail`, `chest_open`; 16-bit mono, 44,100 Hz, each under one
-  second). Standard library only (`math`, `os`, `struct`, `wave`); does not import `common` (board
+- `tools/build_sounds.py`: writes `assets/sounds/` (12 WAV files: `answer_right`, `answer_wrong`,
+  `lesson_finish`, `boss_pass`, `boss_fail`, `chest_open`, each under one second, `D15`; and `tap`,
+  `option_select`, `heart_lost`, `xp_tick`, `reward_claim`, `sparkle`, each under 0.6 s, `GF-5`,
+  board item 28; 16-bit mono, 44,100 Hz). It stops the run if an effect is over its ceiling
+  (`checked()`, game-feel `PLAN.md` BD-G19). Standard library only (`math`, `os`, `struct`, `wave`); does not import `common` (board
   item 17, `D15`, BD-23). The app plays them through `expo-audio` (BD-24).
 - `assets/higgsfield/`: the Higgsfield reference art the style was approved from (19 PNG, 13 SVG).
 - `assets/gallery.html`: shows the Higgsfield art; links all 32 files by name.
 - `assets/icons/preview.html`, `assets/mascots/preview.html`: inline SVG snapshots, written by
   no script.
-- `docs/conventions-python.md`: the Python code standard for `tools/`, version 1.2.0 (steps 2 to 4, 8, 9 and 11, and board item 17).
+- `docs/conventions-python.md`: the Python code standard for `tools/`, version 1.2.1 (steps 2 to 4, 8, 9 and 11, and board items 17 and 28).
 - `docs/conventions-typescript.md`: the TypeScript code standard for `app/`, version 1.1.0, 21
   rules, four sanctioned divergences (Z1 to Z4) and a Known gaps list (board item 6, app phase 2;
   U6 widened to sound, item 14; real examples and the registry, item 16).
@@ -165,6 +167,10 @@ answer in place.
   ending buzzes stay `Haptics.notificationAsync` in `use-answer-feedback.ts`, gated in `moments.ts`.
   The lesson loop's `PrimaryButton`s give the dial `pressHaptic` (`lesson-run-view.tsx`,
   `feedback-sheet.tsx`).
+- The press sound (board item 28, `GF-5`): a screen plays one effect through the Sound switch with
+  `useSound()` (`app/src/feedback/use-sound.ts`), which reads `settings.sound`; the rule is the pure
+  `playThrough` in `sound-switch.ts` (game-feel `PLAN.md` BD-G20). The lesson loop's
+  `PrimaryButton`s give the dial `pressSound` (`"tap"`) beside `pressHaptic`.
 - Pure copy helpers (board item 16): `components/lesson/closed-copy.ts` (`OUT_OF_HEARTS`,
   `nextLifeLine`, which formats the time with `formatClockTime`), `components/stat-values.ts`
   (`statLabel`, the singular and plural stat words), `components/path/path-view-model.ts`
@@ -266,6 +272,12 @@ answer in place.
   An app installed in the AVD by another checkout may carry another native worklets version; this
   one had 0.13.0 and stopped on "[Worklets] Mismatch between C++ code version and JavaScript code
   version", so install this checkout's own build into the copy first.
+- **A clean worktree can be removed by a merge session.** On 2026-10-05 about 12:49, while Zach
+  merged `game-feel-2` into `main` (`4b592b9`), the worktrees of the merged lanes were removed,
+  and with them lane F's new `.claude/worktrees/game-feel-3`, made from `game-feel-2` a few
+  minutes earlier and not yet edited, so its branch looked merged. Nothing was lost. `git worktree
+  remove` without `--force` refuses a worktree with changes, so the risk is the time before the
+  first edit: check `git worktree list` before a long step until then (board item 28, step 32).
 
 ## Step log
 
@@ -961,6 +973,73 @@ Runtime entries (game-feel `PLAN.md` section 7, phase 2):
 | The press gives a tap | Haptics on, any lesson: Check, then the sheet's Continue | One light tap as the finger goes down, then the success or error buzz after Check |
 | An old save keeps its progress | Install the new build over the old one | Streak, XP, finished lessons, Sound and the reminder are unchanged; Haptics is on |
 | The words read right | Profile, Settings, light and dark | "Haptics" under "Sound effects"; the footer opens with "Little taps as you answer and press." |
+
+**32. Six sound effects from the generator, and the press sound (board item 28, game-feel phase
+3).** Done 2026-10-05, on branch `game-feel-3` in `.claude/worktrees/game-feel-3`, made from `main`
+at `4b592b9` after Zach merged `game-feel-2`, on Opus 5.5; not committed. Step 28 is lane D's, step
+31 lane E's item 23 (merged into `main` as `06cea5a`), and step 33 lane E's item 24, by its message
+to this session the same day. Zach chose in chat on 2026-10-05, through the question tool: the
+plan's default six (tap, option select, heart lost, XP tick, reward claim, sparkle) and the feel
+line offered for each (quoted in the `As built` note under `GF-5`). `tools/build_sounds.py` has six
+new effect functions (`:165-205`), the pitches G3 and E7, the partial tables `HOLLOW` (odd partials,
+for "hollow") and `PURE`, the ceilings `CEILING` (one second, `D15`) and `SHORT_CEILING` (0.6 s,
+`GF-5`) over the names in `SHORT` (`:60-66`), and `checked()` (`:235-242`), which stops the run when
+an effect is over its ceiling (game-feel `PLAN.md` BD-G19). The six old effect functions and the
+synth helpers are byte for byte as at `HEAD` (compared with `ast`); only `main()` changed, to call
+`checked()`. Run line: 12. A separate `wave` script measured each new file: 16-bit mono at 44,100
+Hz, a zero sample at both ends, sound ending at 0.030 s (`xp_tick`) to 0.480 s (`reward_claim`) in
+files of 0.035 s to 0.5 s, peaks 0.3 to 0.55 as the docstring says, and a strongest frequency near
+the start that matches the docstring's first note (`tap` 302 Hz inside its E4 to C4 glide,
+`option_select` 1318, `heart_lost` 258, `xp_tick` 1568, `reward_claim` 1046, `sparkle` 2638). The
+twelve `shasum`s were the same over two runs, the second under `PYTHONHASHSEED=7`. A planted 0.65 s
+`tap` stopped the generator with exit 1 ("tap runs 0.650 s, over its ceiling of 0.6 s"); the file
+was restored with `cp` and compared with `cmp`. In the app the six are registered in
+`app/src/art/sounds.ts` (`Effect`, `SOUND_SOURCES`); `effects.ts` did not change and now makes
+twelve players. The press sound is the dial `pressSound: "tap"`, played through `useSound()`
+(`app/src/feedback/use-sound.ts`) and the pure `playThrough` (`sound-switch.ts`, three tests in
+`sound-switch.test.ts`), passed beside `pressHaptic` by the four `PrimaryButton`s of the lesson loop
+(BD-G20). Two planted faults failed the gate: `playThrough` ignoring the switch failed "plays nothing
+with Sound off", and a dial of `"tapp"` failed the typecheck at both call sites; both files were
+restored with `cp` and `cmp`. Records: the counts in `CLAUDE.md` (directory map; the run-line note,
+which now names the ceilings) and in the code map here; the moved generator citations in `CLAUDE.md`
+and `docs/conventions-python.md` (1.2.1: M1, G3, W1, W2 with its count, H2, Y4, the scope sentence;
+the version also in `docs/README.md` and the code map here);
+BD-G19, BD-G20 and phase 3's `BUILT` header in the game-feel `PLAN.md`; `As built` under `GF-5`; a
+"Built" line under the `D15` amendment in `docs/incomplete/app/DESIGN.md`; board row 28 `DONE`, row
+29 `OPEN` with its prompt; a Known fact on the removed worktree. Gate: exit 0, run lines 78, 18 and
+12, 71 test files and 534 tests (3 new); `git diff --stat -- assets/icons assets/mascots
+assets/sounds` empty, and `git status` lists the six new WAV files as untracked. **Seen running** on
+the iPhone 17 simulator (iOS 26.5, item 26's development build, JavaScript from this branch through a
+Metro on port 8083 with its own `TMPDIR`) and on a read-only copy of `Pixel_9` on `emulator-5556`
+(this branch's own Android build, installed 13:25): Metro bundled all twelve sound imports for each
+platform, and on each an option was chosen, Check pressed (one answer counted, the sheet rose) and
+the sheet's Continue pressed (the next exercise, Check at rest), with no error in the Metro log or
+the Android log. **Heard by Zach** on the Mac with `afplay`, 2026-10-05: the six new sounds
+(`tap` four times) and all six old ones, `answer_right` to `chest_open`. His verdict,
+in chat: "theyre fine ill update them later". So the six stand as built, and a change to any of
+them is his later item; `tap` stays as built (four test copies of it, louder, higher and longer,
+were written to the session's scratch folder and none was chosen). Not heard on a phone. Findings,
+each `open`: (a) `soundEffects: 6` in the `D15` block of `app/src/config/dials.ts:29` is now wrong
+and still read by no code; the block is outside this item's; (b) the Environment rows here still say
+6 sounds and run lines 78, 18 and 6, and 63 test files and 490 tests (step 29's (e)), left for the
+merge with lanes D and E; (c) `docs/conventions-typescript.md` cites lines that items 27 and 28
+moved: Z5 cites `lesson-run-view.tsx:65-69` and `feedback-sheet.tsx:49` (now `:74-84` and `:54-59`),
+and O2 cites `lesson-run-view.tsx:43` (now `:46`); (d) step 14's `tools/build_sounds.py:6` at 101
+characters is unchanged; (e) on iOS the first tap on a choice row through the simulator tool chose
+nothing, and a second tap with a 0.15 s hold chose it; the cause is unknown; (f) the read-only
+`Pixel_9` started at 12:50 was killed (exit 137) while Gradle built, together with another session's
+`Medium_Phone_API_36`; the cause is unknown, and a second copy ran the check. **Left owed:** Zach presses
+Check on his phone after a reload and hears the tap; the commit, which is Zach's.
+
+Runtime entries (game-feel `PLAN.md` section 7, phase 3):
+
+| Goal | Where | Right answer |
+|---|---|---|
+| Each new sound is liked | On the Mac: `afplay assets/sounds/<name>.wav` for `tap`, `option_select`, `heart_lost`, `xp_tick`, `reward_claim`, `sparkle` | Each matches its feel line in the `GF-5` `As built` note; Zach approves each or names a change. Walked 2026-10-05 on the Mac: "theyre fine ill update them later" |
+| The old six did not change | On the Mac: `afplay` each of `answer_right`, `answer_wrong`, `lesson_finish`, `boss_pass`, `boss_fail`, `chest_open` | Each sounds as it did before 2026-10-05 |
+| A press makes a tap | The iPhone, on a development build made after item 26 (Reanimated), with the JavaScript reloaded from branch `game-feel-3` (this item adds no native code), Sound on, ringer on, any lesson: choose an option, press Check, then the sheet's Continue | A short soft knock as the finger goes down on each, with the light buzz, then the answer sound after Check |
+| Sound off silences the press | Profile, Sound effects off, then a lesson | No tap on Check or Continue; the buzz stays while Haptics is on |
+| The silent switch silences the press | The iPhone's ringer switch on silent, Sound on, a lesson | No tap, as for the other effects (`D15`) |
 
 ## Style rules
 

@@ -66,7 +66,7 @@
 | `tools/` | The SVG generators, the sound generator and their shared module | Generated output |
 | `assets/icons/{cards,chips,path,ui}/` | Output of `build_icons.py` (78 SVGs) | Hand edits |
 | `assets/mascots/{fish,squid,shark}/` | Output of `build_mascots.py` (18 SVGs) | Hand edits |
-| `assets/sounds/` | Output of `build_sounds.py` (6 WAV files, 16-bit mono, 44,100 Hz) | Hand edits, recorded audio |
+| `assets/sounds/` | Output of `build_sounds.py` (12 WAV files, 16-bit mono, 44,100 Hz) | Hand edits, recorded audio |
 | `assets/higgsfield/` | Reference art from Higgsfield (19 PNG, 13 SVG), kept as received | Renamed or regenerated files |
 | `assets/gallery.html`, `assets/*/preview.html` | Pages to view the art in a browser | Anything a script reads |
 | `app/` | The Expo app: config at its root, code in `app/src/` (198 source files, 63 test files), the rank font in `app/assets/fonts/` | A copy of any SVG or WAV; generated `ios/`, `android/`, `.expo/` (gitignored) |
@@ -100,11 +100,12 @@ open assets/gallery.html
 
 - A generator that exits 0 and prints its `wrote ...` line proves only that files were written.
   Nothing checks how they look. Each generator prints a count taken from its writes
-  (`tools/build_icons.py:386`, `tools/build_mascots.py:345`, `tools/build_sounds.py:158`), so a
+  (`tools/build_icons.py:386`, `tools/build_mascots.py:345`, `tools/build_sounds.py:249`), so a
   skipped write shows as a short count.
-- The sound generator's run line (6) proves only that six WAV files were written. An agent cannot
-  hear them: a sound is proven only when Zach plays it (`afplay assets/sounds/<name>.wav`) and
-  approves it.
+- The sound generator's run line (12) proves only that twelve WAV files were written, none longer
+  than its ceiling: one second for the six of `D15`, 0.6 s for the six of `GF-5`
+  (`tools/build_sounds.py:235-242` stops the run otherwise). An agent cannot hear them: a sound
+  is proven only when Zach plays it (`afplay assets/sounds/<name>.wav`) and approves it.
 - `xmllint --noout` proves the SVG is well-formed XML, not that it draws the right shape.
 - The gate rewrites the generated SVGs and WAVs in place. After the first commit, run
   `git diff --stat -- assets/icons assets/mascots assets/sounds` after the gate: any line there
