@@ -20,6 +20,7 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 |---|------|--------|-------|------|----------|---------------|
 | 1 | Write the Python code standard for `tools/` | `DONE: HANDOFF 2` | Opus 5.5 | A | nothing | `docs/conventions-python.md`, `CLAUDE.md` |
 | 2 | Move the shared generator code into one module | `DONE: HANDOFF 3` | Sonnet 5 | A | nothing | `tools/build_icons.py`, `tools/build_mascots.py`, the new shared module in `tools/`, `docs/conventions-python.md` |
+| 3 | Reconcile the line citations in the Python standard | `OPEN` | Sonnet 5 | A | nothing | `docs/conventions-python.md` |
 
 **Do not paste a prompt marked DONE**: a fresh session would build it again.
 
@@ -167,3 +168,56 @@ Hand back: the gate `python3 tools/build_icons.py && python3 tools/build_mascots
 assets/mascots` empty; the two run lines, showing 76 and 18; then the two copyable blocks from
 Part 11, `git add` with the exact files, including the new module, then `git commit` with the
 same files and a short lowercase message.
+
+### 3. Reconcile the line citations in the Python standard
+
+*Opened 2026-10-05, out of board item 2 (ledger step 3): the shared-module move deleted about
+60 lines from the two generators, so most `file:line` citations in `docs/conventions-python.md`
+now point at the wrong line. Step 3 left this owed.*
+
+**Model: Sonnet 5 (Mechanical). Lane A. Waits on nothing.** Work in the main checkout; no
+worktree needed. This item edits one document and no code. If a rule's example no longer
+exists in the code, stop and ask Zach before you change what the rule says.
+
+You are picking up felto, an asset pipeline with no app code. Read `HANDOFF.md` first (step 3 and
+the code map), then `docs/conventions-python.md` in full, then `CLAUDE.md`. Session rules:
+absolute dates only; every claim carries a `file:line` or the command that produced it; ask Zach
+in one batch, in chat, before building on a guess; never run `git commit`, `git push`,
+`git add -A` or `git add .`.
+
+**Why this exists.** The standard cites real code so a reader can check each rule. On
+2026-10-05 `grep -nE 'tools/build_(icons|mascots)\.py:[0-9]' docs/conventions-python.md` found 67
+lines with such a citation, and most were taken before `tools/common.py` existed. A wrong
+citation sends a reader to code that does not show the rule.
+
+**What is fixed.** Do not relitigate these.
+- Rules stay as written. This item moves citations and fixes example text; it adds no rule and
+  changes no rule's meaning. Rule IDs never change.
+- Examples marked "written for contrast", and examples that describe a state "before 2026-10-05",
+  are history and keep no live citation. Do not rewrite them to match current code.
+- Citations into `tools/common.py` use its current lines (`grep -n` it; do not count by hand).
+- The drift register and the sanctioned divergence registry (S1 to S4) cite lines too; they
+  are in scope.
+
+Do these, in order:
+1. **List every citation.** For each, open the cited line range and decide: still correct,
+   moved (find the new range), or gone (the code was deleted or rewritten).
+2. **Fix the moved ones** to the new range, checked by reading the lines, not by offset.
+3. **Report the gone ones to Zach in one batch** before touching them. For each, propose a
+   replacement example from the current code.
+4. **Prove it.** Write a short script in the scratchpad that extracts each live citation and
+   prints its first cited line, then read the output against the rule it supports. A citation
+   that does not show its rule is a failure, even when the line exists.
+5. **Bump the standard to 1.1.1**, delete the sentence in its header that says the citations
+   are stale, and record it: a new ledger step at the next free number, read from
+   `HANDOFF.md`, and set this row to `DONE: HANDOFF <n>`.
+
+Not in scope, whoever asks: any change under `tools/` or `assets/`; adding or retiring a rule;
+the line numbers in `HANDOFF.md` and `CLAUDE.md` (check them, and list any that are wrong, but
+do not fix them here).
+
+Hand back: the gate `python3 tools/build_icons.py && python3 tools/build_mascots.py && xmllint
+--noout assets/icons/*/*.svg assets/mascots/*/*.svg`, green, and `git diff --stat -- assets
+tools` empty; the citation count before and after; the list of "gone" citations and what Zach
+chose; then the two copyable blocks from Part 11, `git add` with the exact files, then
+`git commit` with the same files and a short lowercase message.
