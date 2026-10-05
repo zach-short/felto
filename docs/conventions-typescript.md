@@ -6,7 +6,7 @@ The file extension decides which standard applies: `.py` files follow
 `docs/conventions-python.md`, and `.ts` and `.tsx` files follow this one. Read this file in full
 before you write or edit TypeScript here.
 
-Version 1.1.3. Written 2026-10-05 on Opus 5.5 for board item 6 (app phase 2 in `PLAN.md`), when
+Version 1.1.4. Written 2026-10-05 on Opus 5.5 for board item 6 (app phase 2 in `PLAN.md`), when
 `app/` did not yet exist. Revised 2026-10-05 (1.0.1, board item 14): rule U6 widened from the art
 to the art and the sound, after the audit of item 13 found the WAV imports outside the art
 module; no rule renumbered. Revised 2026-10-05 (1.1.0, board item 16, app phase 12): every
@@ -19,6 +19,8 @@ Revised 2026-10-05 (1.1.3, board item 29, game-feel phase 4): registry entry Z6 
 feedback sheet and progress bar; no rule changed. U3's correct example names the progress bar pair
 `lesson-progress.ios.tsx` and `lesson-progress.android.tsx`, which item 29 deleted, so that example
 no longer resolves; it is kept as written until a later revision picks a new pair.
+Revised 2026-10-05 (1.1.4, board item 46, game feel second pass): registry entry Z7 for the game
+kit of `GF-10`; no rule changed.
 The rules start from two earlier TypeScript standards of Zach's, which hold the same owner policy as felto's `.personal-config.json` and
 which `PLAN.md` BD-17 names. No rule id is copied from either: they use ids such as `F1`, `T1`,
 `L1` and `X1` with other meanings (`PLAN.md`, section 0, row 25). The ids below are felto's own.
@@ -617,6 +619,7 @@ and the owner's agreement.
 | Z4 | N2 (named exports only) | The ambient module declarations `app/src/types/svg.d.ts:13`, `app/src/types/sound.d.ts:5` and `app/src/types/rive.d.ts`, which declare `export default` inside `declare module` | They describe what Metro hands back for an `.svg`, `.wav` or `.riv` import, which is a default export; they define no export of felto's own. |
 | Z5 | `D2` (a native `@expo/ui` control wherever one exists), which U2 and U3 carry into code | `PrimaryButton` in `app/src/components/button/primary-button.tsx`, a React Native `Pressable` drawn the same on iOS and Android, used for Check and Continue (`app/src/components/lesson/lesson-run-view.tsx:65-69`, `feedback-sheet.tsx:49`) | `GF-2` of `docs/incomplete/game-feel/DESIGN.md`, agreed by Zach on 2026-10-05: a native `Button` cannot take a raised edge or a press that sinks it, which every button in the Duolingo references has. Switches, pickers and the time dialog stay native. Because it imports no `@expo/ui`, the button is one file, not a U3 pair (`PLAN.md` BD-G7). |
 | Z6 | `D2`, which U2 and U3 carry into code | The answer feedback sheet `app/src/components/lesson/feedback-sheet.tsx` and the lesson progress bar `app/src/components/lesson/lesson-progress.tsx`, React Native views drawn the same on iOS and Android | The amendment under `GF-2` of `docs/incomplete/game-feel/DESIGN.md`, Zach's answer of 2026-10-05 (board item 29): he wants controls to carry the app's tokens, and the native `@expo/ui` sheet and progress views do not. The sheet now rises on the plan's spring and pads above Android's gesture bar. Its screen-reader behaviour is written by hand (`use-sheet-focus.ts`, `LessonFrame`'s `overlayModal`). Every other native control stays native |
+| Z7 | `D2`, which U2 and U3 carry into code | The game kit in `app/src/components/kit/`: `GameText`, `RollingNumber`, `Bubble`, `Popover`, `Tag`, `Sparkles`, `SparkleBurst`, `GameButton`, `GameSwitch`, `GameSheet`, `GameDialog` and `Scrim`, React Native views drawn the same on iOS and Android, shown together on the development route `/dev/kit` | `GF-10` of `docs/incomplete/game-feel/DESIGN.md`, Zach's answer of 2026-10-05 ("All, with a custom tab bar too"): every native control left is replaced by a piece drawn from the tokens, and this entry supersedes the last sentence of Z5 and of Z6 for each control a later item replaces. What the native pieces gave for free is written by hand, piece by piece: the switch has the `switch` role, its label and its checked state; the sheet, the dialog and the popover are modal for a screen reader, move its focus to their title (`use-sheet-focus.ts`), close on the reader's escape gesture and on Android's back button (`use-back-close.ts`); layered text (`GameText`, `RollingNumber`, `Bubble`) is read once, whole. Text on a tone's face is large text or a pair of `TAG_PAINT` (`app/src/theme/tokens.ts`). No gate checks any of this; each later item that wires a piece into a screen checks it with a screen reader |
 
 ## Known gaps
 
