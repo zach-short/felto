@@ -8,6 +8,7 @@ python3 tools/build_mascots.py
 python3 tools/build_sounds.py
 python3 tools/build_lottie.py
 xmllint --noout assets/icons/*/*.svg assets/mascots/*/*.svg
+python3 -m unittest discover -s solver -p '*_test.py'
 bun run --cwd app typecheck
 bun run --cwd app lint
 bun run --cwd app test

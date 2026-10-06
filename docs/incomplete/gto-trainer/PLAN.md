@@ -60,6 +60,7 @@ before any solver code is written, because the key is the one part nothing can f
 | BD-T18 | Phase 1, 2026-10-05, Zach's answer Q2. The realization bonus goes to the player with the edge: the in-position player when it raised last, otherwise the out-of-position raiser; `c` is one value per pot type for each case (six dials), and the curve is `s = e − c × e × (1 − e)^k` with `k = 2` (`KEY-SPEC.md` 3.2). Phase 3a tunes on four spots (button against big blind, cutoff against button, small blind against big blind, button against small blind), not one; this is the forced change to phase 3a | `k = 1` and one `c` per pot type (the first draft), or RF-3 |
 | BD-T19 | Phase 1, 2026-10-05, Zach's answer Q3. The `sb_vs_bb` row is open 3, 3-bet 9, 4-bet 23, 5-bet all-in; the sources say 2.63 to 3.0 times the open and the big blind is in position (`KEY-SPEC.md` 2.3, 8.3) | 10 and 25, as the first draft had |
 | BD-T16 | Phase 1, 2026-10-05. The solver is Python with numpy. One iteration over the 65-node tree costs about 10 ms on this Mac, so the hour of BD-T3 is reached only past 350,000 iterations (`KEY-SPEC.md` 9). No Rust standard is written | Rust, if phase 3b measures a run above the hour; `docs/conventions-rust.md` first, to the shape of Part 8.1 |
+| BD-T20 | Phase 3a, 2026-10-06, Zach's answer Q5 (`KEY-SPEC.md` 11, third batch). The nine leaf-model dials are frozen provisionally at the best setting inside the ranges of 3.2 (`KEY-SPEC.md` 12: `k` 2, `c` 0.5, 0.4, 0.1 with the edge in position, 0.2, 0, 0.05 with it out of position, `t` 0.1 and 0.25), which lands 13 of the 19 bands the CO, BTN and SB subtrees answer; the six misses are `KEY-SPEC.md` 8.5. No setting of the equity-bent family lands the 3-bet-pot bands (`HANDOFF.md` steps 50 and 51), and the hands those bands describe differ by features, not equity (`KEY-SPEC.md` 4, item 3). Phases 3b and 4 build on the provisional dials and hash; board item 60 scopes and builds RF-3 (a per-class adjustment from hand features, `KEY-SPEC.md` 11 (a)), re-freezes the dials, re-solves and re-exports. This moves RF-3 from BD-T12's reversal (after the phase 4 review) to a planned item, and until item 60 lands the done-when of phase 3b excludes the six bands of 8.5 | Freeze the same setting as final and let the phase 4 review judge the hands (choice (3) of step 51); or hold phase 3b until RF-3 lands (choice (2)) |
 
 ## 2. Phases
 
@@ -131,7 +132,24 @@ broadways, small pairs).
 
 ### Phase 2: Preflop equity table
 
-Status: `PLANNED`.
+**BUILT 2026-10-05** (board item 36, lane H, on Opus 5.5, in worktree
+`.claude/worktrees/gto-equity`, branch `gto-equity` from `main` at `6caba99`, `HANDOFF.md` step 46;
+the commit is Zach's and pending). Built: `solver/equity.py`, the first numpy file (rule M4 of
+`docs/conventions-python.md`, amended to 1.3.0 the same day); `solver/data/equity.json`, one
+file with a `meta` header, the `hands` order, `E` to six decimals and `W` as integers (351,864
+bytes, SHA-256 `bb81c98be345d83fac13797a1a4bafb87f332bebf56d64f21240a83bac31861f`); and
+`solver/equity_test.py`, standard library only. Method: exact enumeration with suit symmetry, the
+2,598,960 boards in 134,459 classes under the 24 suit permutations, with integer counts, so the
+bound is the rounding, 0.0000005 per cell. Zach chose exact enumeration in chat on 2026-10-05.
+Two runs wrote the same bytes (`cmp`). Deviations from the text below: `W` is stored as counts,
+with the denominator 1,624,350 in the header, where `KEY-SPEC.md` 3.3 defines it divided (a note
+in `KEY-SPEC.md` 7.1 says so); the ten Monte Carlo matchups are in the test, and the five of the
+proof are recorded in step 46. What this phase forces on later phases: (1) item 37 reads `E` and
+`W` from that file with `json` and never reruns `equity.py` unless its source changes; (2) the
+solver tests join the whole-repo gate when the solver lands, Zach's answer of 2026-10-05, and item
+37 asks him whether that is phase 3a or 3b; (3) a run of `equity.py` took 260 to 559 seconds while
+other sessions loaded the Mac to a load average of 50 to 440 (step 46), so solver timings taken
+under that load are not the estimate of `KEY-SPEC.md` 9.
 
 1. `solver/equity.py` writes a 169 by 169 matrix of all-in equity between hand classes, from
    exact enumeration with suit symmetry, or from a sampling run with its error bound stated.
@@ -147,7 +165,38 @@ chosen by the reviewer, not the builder, agree with the matrix to the bound.
 
 ### Phase 3a: Solver core, one spot
 
-Status: `PLANNED`.
+**BUILT 2026-10-06** (board item 37, lane H, on Fable 5.1, in worktree
+`.claude/worktrees/gto-equity`, branch `gto-equity`, `HANDOFF.md` steps 50, 51 and 52; the commit
+is Zach's and pending). The header read `IN FLIGHT 2026-10-05` from step 50 to step 52, and the
+paragraph below is that record, kept as written; the freeze is the last sentences. Built and
+green: `solver/config.py` (the game object of `KEY-SPEC.md` 12 and the nine
+dials with their ranges), `solver/cfr.py` (CFR+ over one opener subtree at a time, nodes in the
+key's shape), `solver/best_response.py` (each seat's gain, written apart from the solver) and the
+tests `solver/cfr_test.py` and `solver/best_response_test.py` (hand-worked leaf payoffs, the fold
+payoffs of 2.5, the node ids of 7.2, a toy tree with a known equilibrium). On the CO, BTN and SB
+subtrees every seat's gain is under 0.0002 bb at 1,000 iterations and falls about four-fold per
+doubling, and two runs give the same output. Not done: the freeze. No setting of the nine dials
+inside the ranges of `KEY-SPEC.md` 3.2 lands every band of 8.2 (408 settings tried; two bands are
+missed by all of them and two more never hold together, step 50), so the dials stay at their
+starting values, the hash of section 12
+is unchanged, and question (b) of the item's prompt (which band gives way, or whether the model
+changes) is with Zach. Deviations from the text below: four tuning spots, not one (BD-T18, the
+phase 1 header); the proof is read as every band of 8.2 the three subtrees answer, and the bands do
+not hold. A second round on 2026-10-06 (step 51) tried steeper curves (`k` 3 and 4), wider ranges
+and a symmetric bend: none lands the 3-bet-pot bands, the wider settings land the fold bands only
+by never calling a 3-bet, and the hands the bands describe differ by features, not equity
+(`KEY-SPEC.md` 4, item 3; its fallback RF-3 is a scope decision). The question is re-opened with
+Zach in step 51. What this phase forces on later phases: phase 3b cannot start until the dials are
+frozen, provisionally or finally. Frozen provisionally 2026-10-06 (step 52; BD-T20; Zach's answer
+Q5 in `KEY-SPEC.md` 11): the best setting inside the ranges, `k` 2, `c` 0.5, 0.4, 0.1 with the
+edge in position and 0.2, 0, 0.05 with it out of position, `t` 0.1 and 0.25; 13 of the 19 bands
+the three subtrees answer, the six misses recorded in `KEY-SPEC.md` 8.5 with their values, the
+hash `659cdfd1072b0ea27a0b74737ce6f3a67c63a329ed18595c6f1f8233ffe845a7` in 7.5. Against the
+done-when below: every seat's gain is under 0.005 and falls about four-fold per doubling; the big
+blind defends 63.8 percent against the button (band 50 to 75) and the button opens every pair at
+100 percent, but the button's open frequency is 34.3 against a band of 40 to 48, one of the six
+misses. Phase 3b builds on these dials, and its done-when excludes the six bands of 8.5 until
+board item 60 (RF-3) re-freezes and re-solves.
 
 1. `solver/cfr.py`: CFR+ over the spec's tree for one spot only: the button opens, the big
    blind defends, everyone else has folded.
@@ -167,7 +216,34 @@ That is why the bands in phase 1 are the proof.
 
 ### Phase 3b: Solver, the full tree
 
-Status: `PLANNED`.
+**BUILT 2026-10-06** (board item 38, lane H, on Fable 5.1, in worktree
+`.claude/worktrees/gto-equity`, branch `gto-equity`, `HANDOFF.md` step 53; the commit is Zach's
+and pending). Built: `solve_tree` and the fold chain in `solver/cfr.py` (the five subtrees in
+seat order; `reach`, `hand_reach` and the gains per dealt hand), `tree_gains` in
+`solver/best_response.py` (the same sum with its own chain), seven more band rows, the key writer
+(`render_key`, one write path) and `solver/data/key.json` (608,670 bytes, 65 nodes, the shape of
+`KEY-SPEC.md` 7.1, valid by `solver/validate_key.py`); eight tests from hand-made parts and a cut
+of the real game; the solver tests in the whole-repo gate (`CLAUDE.md`, `docs/AGENT-PRACTICES.md`
+Part 6 and Appendix A, `docs/conventions-python.md` 1.3.1). Against the done-when: 12,000
+iterations in 105 s on a quiet Mac, far under the hour of phase 1; every seat's gain per dealt
+hand at most 0.000003 bb, under 0.005 and falling as the iterations double; two runs
+byte-identical (`cmp`); of the 26 band rows the tree answers, 19 inside, the six of
+`KEY-SPEC.md` 8.5 missed as before, and one new miss, `UTG` folds to a `BB` 3-bet at 41.2
+against 45 to 70, recorded in 8.5 as a finding for Zach (question (c) of the prompt), not tuned
+away. The watch-for: one node is under `reachFloor`, `UTG` facing the big blind's 5-bet; it is
+marked by its `reach` alone, because the schema is frozen (BD-T15). What this phase forces on
+later phases: phase 4 copies `solver/data/key.json` and pins the hash
+`659cdfd1072b0ea27a0b74737ce6f3a67c63a329ed18595c6f1f8233ffe845a7`; the file carries the
+provisional dials and seven known misses until item 60 re-solves; `gtoMistakeCostBb` (0.15) sits
+far above the solver's error (phase 6, watch for). The note that stood here while the phase was
+planned follows.
+
+Note, 2026-10-06 (BD-T20, `HANDOFF.md` step 52): this phase runs on the
+provisional dials of `KEY-SPEC.md` 12 and may not touch them (BD-T12). Its done-when reads
+"every acceptance band of phase 1 holds" as every band of `KEY-SPEC.md` 8.2 except the six
+recorded in 8.5, which belong to board item 60; a seventh miss is a finding for Zach. The solver
+tests join the whole-repo gate in this phase (Zach, 2026-10-05, `KEY-SPEC.md` 11, third batch,
+answer (a)). The prompt is board item 38.
 
 1. Extend to every seat pair and every node of the spec's tree (BD-T4).
 2. Run to the exploitability dial. Record run time and node count.
@@ -182,7 +258,33 @@ lands on one.
 
 ### Phase 4: Key export, validation, containment
 
-Status: `PLANNED`.
+**BUILT 2026-10-06** (board item 39, lane H, on Opus 5.5, in worktree
+`.claude/worktrees/gto-equity`, branch `gto-equity`, `HANDOFF.md` step 54; the commit is Zach's
+and pending). Zach answered the four questions of the prompt in chat on 2026-10-06, every
+recommendation: (a) a JSON import through Metro, which needs no plugin; (b) the containment
+misses pinned in the test; (c) hands named wrong by the Deep review for want of hand features go to
+board item 60 and block nothing, and a fault in the key itself blocks item 41; (d) the dial
+`gtoChartMinOpen` in `app/src/config/dials.ts`, a new block `// gto-trainer`. Built:
+`app/src/gto/data/key.json`, a byte copy of `solver/data/key.json` (608,670 bytes, `cmp`);
+`app/src/gto/key.ts`, the one reader, which checks the file on first read and throws with the node
+and the fault named; `app/src/gto/key.test.ts`, 24 tests (the tree of `KEY-SPEC.md` 2.4 built a
+second way, the real file, nine broken copies each failing with its fault, the byte copy, the dials
+of `KEY-SPEC.md` 9, the containment pin and the import boundary). Against the done-when: the gates
+are green and the load test fails on a table with one hand deleted. The Deep review (`KEY-SPEC.md`
+10, second review) found no fault in the key itself and named many hands as wrong for want of hand
+features, so "finds no wrong strategy" is not met; that is the deviation, and the hands belong to
+item 60 (BD-T20). Step 3: 46 hands of `OPENING_CHART` open less often than 0.5 at their seat's
+open node (UTG 3, HJ 5, CO 12, BTN 18, SB 8; 36 of them suited connectors and gappers, each with
+its frequency and EV in `HANDOFF.md` step 54); recorded and pinned, the chart and the solver
+unchanged. The watch-for: five exercises of unit 3 contradict the key (`preflop-2-10`, CO `22`;
+`preflop-4-05`, CO `87s`; `preflop-4-09`, BTN `64s`; `preflop-5-08`, SB `54s`, each raised by the
+lesson and folded by the key; `preflop-3-05`, UTG `A8o`, folded by the lesson and opened 0.9999 by
+the key), recorded and not rewritten. Step 1's size is section 5, hazard 3. What this phase forces
+on later phases: item 40's bots read `gtoKey()`; item 41 reads `hand_reach` before `strategy`,
+because 2,777 rows at hands the actor never holds carry a uniform strategy; the 5-bet nodes sit at
+indifference (`KEY-SPEC.md` 10, second review, items 1 and 2); item 60's re-export must update the
+pinned list in `key.test.ts`. The status line that stood here while the phase was planned was
+`PLANNED`.
 
 1. Export to `app/src/gto/data/` as JSON in the frozen schema, with the spec hash, and measure
    the size (BD-T8).
@@ -311,7 +413,7 @@ solver dials, which live in `solver/config.py`.
 |---|---|---|
 | `tableSeats`, `stackBigBlinds` | 6, 100 | exist |
 | `gtoExploitabilityBb` | 0.005 | solver stop point; confirmed in phase 3a |
-| `gtoChartMinOpen` | 0.5 | containment test of phase 4 |
+| `gtoChartMinOpen` | 0.5 | containment test of phase 4. In `app/src/config/dials.ts` since 2026-10-06 (board item 39), the first line of the block `// gto-trainer`; `solver/config.py` keeps its copy, `GTO_CHART_MIN_OPEN` |
 | `gtoGoodFrequency` | 0.10 | a mixed action played at least this often is good |
 | `gtoMistakeCostBb` | 0.15 | above the solver error of phase 3b |
 | `gtoBotMixMode` | `sample` | the other mode plays the top action |
@@ -320,9 +422,9 @@ solver dials, which live in `solver/config.py`.
 | `gtoFreeHandsPerDay` | 10 | free allowance |
 | `gtoRequiresUnit` | none | |
 | `gtoOpenSizeBb` | 2.5 (SB 3) | in the spec; the key carries it. Since phase 1 (BD-T13) this row is the `open` column of the sizes table in `KEY-SPEC.md` 2.3, which also fixes the 3-bet, 4-bet and 5-bet sizes |
-| `c_srp`, `c_3bp`, `c_4bp`; `c_srp_oop`, `c_3bp_oop`, `c_4bp_oop` | 0.7, 0.4, 0.2; 0.3, 0.2, 0.1 to start | phase 1 (BD-T12, BD-T18), `solver/config.py`; phase 3a tunes them inside the ranges of `KEY-SPEC.md` 3.2 on four spots and freezes them in the game object |
-| `k` | 2 (1 allowed) | phase 1 (BD-T18), `solver/config.py`; the curve exponent of `KEY-SPEC.md` 3.2 |
-| `t_ip`, `t_sb` | 0.1, 0.25 to start | phase 1 (BD-T17), `solver/config.py`; the flat tax of `KEY-SPEC.md` 3.2, tuned in phase 3a to the flat bands |
+| `c_srp`, `c_3bp`, `c_4bp`; `c_srp_oop`, `c_3bp_oop`, `c_4bp_oop` | 0.7, 0.4, 0.2; 0.3, 0.2, 0.1 to start | phase 1 (BD-T12, BD-T18), `solver/config.py`; phase 3a tunes them inside the ranges of `KEY-SPEC.md` 3.2 on four spots and freezes them in the game object. Frozen provisionally 2026-10-06 (BD-T20): 0.5, 0.4, 0.1; 0.2, 0, 0.05 |
+| `k` | 2 (1 allowed) | phase 1 (BD-T18), `solver/config.py`; the curve exponent of `KEY-SPEC.md` 3.2. Set to 2 by phase 3a (BD-T20, 2026-10-06): at `k` 1 the button folds a small pair |
+| `t_ip`, `t_sb` | 0.1, 0.25 to start | phase 1 (BD-T17), `solver/config.py`; the flat tax of `KEY-SPEC.md` 3.2, tuned in phase 3a to the flat bands. Frozen provisionally 2026-10-06 (BD-T20) at the starting values, which land both flat bands |
 | `reachFloor` | 0.0001 | phase 1, `solver/config.py`; a node reached less often than this is one the grader treats as never reached (`KEY-SPEC.md` 7.1) |
 
 ## 4. Seams reserved, deliberately not built
@@ -340,7 +442,15 @@ solver dials, which live in `solver/config.py`.
 1. **Uncommitted work from another session** (fact 13). Zach commits before a worktree is cut.
 2. **The key and its spec are the product.** A change to `KEY-SPEC.md` after phase 3b means a
    new run; the spec hash makes a stale key fail the load test.
-3. **Bundle size** of the strategy tables is unmeasured until phase 4.
+3. **Bundle size** of the strategy tables is unmeasured until phase 4. *Measured 2026-10-06
+   (phase 4, board item 39, `HANDOFF.md` step 54).* The key is one JSON file of 608,670 bytes
+   (116,007 gzipped). `bunx expo export --platform ios` in a scratch copy of the branch, with its
+   own Metro cache, gave a Hermes bytecode bundle of 4,692,045 bytes with no reader of the key
+   (nothing imports `app/src/gto/key.ts` yet), 4,700,301 with one scratch route that reads it
+   from a stub `{}` key, and 5,398,379 with the real key: the key adds 698,078 bytes (222,168
+   gzipped), and the reader with its route 8,256. The whole is 15.1 percent of the bundle without
+   it. Android was not exported; it uses the same Hermes bytecode. Load time on a phone was not
+   measured.
 4. **`assets/higgsfield/` is frozen** (BD-T10); `assets/gallery.html` links its 32 files by name.
 5. **Parallel lanes** write different folders (`solver/` and `app/src/gto/`); only phase 4 and
    phase 9 touch shared files (`dials.ts`, `migrations.ts`), so those two are serial.

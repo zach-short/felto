@@ -218,6 +218,15 @@ every band without touching them. `k` may be set to 1 or 2 by phase 3a; it repor
 plan's phase 3a named one spot; the four spots are the forced change recorded under phase 1 in
 `PLAN.md`.
 
+*Note, 2026-10-06 (board item 37, `HANDOFF.md` step 52).* Phase 3a could not land every band.
+No setting of the nine dials inside the ranges above lands the 3-bet-pot bands of 8.2, and no
+steeper curve (`k` 3 and 4), no floor on the share, no symmetric bend and no setting past the
+ceilings does either (`HANDOFF.md` steps 50 and 51). The dials are frozen provisionally at the
+best setting inside the ranges (section 12; 8.5 has every band's value; section 11, Q5, has
+Zach's choice), with six bands missed. The sentence above, "each spot must land inside its
+bands", is not met by this model: what those bands describe is section 4, item 3, and board item
+60 (RF-3) amends this section.
+
 What this model cannot do is named in section 4, items 1 and 3. One check a reader may want:
 the share is convex in `e`, so applying it hand class by hand class rather than at the range
 level gives the bent player `c × Var(e)` more than the range-level figure; for the widest ranges
@@ -402,6 +411,13 @@ Field by field:
   holding that class. A grader treats a decision at a node whose `reach` is below the solver
   dial `reachFloor` (section 9, table) as "the solver never gets here": no EV loss is shown.
 
+Note, 2026-10-05 (board item 36, `HANDOFF.md` step 46): phase 2 writes one file,
+`solver/data/equity.json`, which holds both tables of section 3.3, `E` and `W`.
+`equity_table_sha256` is the SHA-256 of that file's bytes, so it names both. The file of
+2026-10-05 hashes to `bb81c98be345d83fac13797a1a4bafb87f332bebf56d64f21240a83bac31861f`, and
+`python3 solver/equity.py` writes the same bytes again. The file stores `W` as integer counts;
+the deal probability of section 3.3 is `W[h][g] / 1,624,350`, the file's `meta.pairs_total`.
+
 ### 7.2 Node ids
 
 A node id is the history of actions that reaches it, written as `SEAT:action` tokens joined by
@@ -448,9 +464,15 @@ The app does not recompute the hash: `app/src/gto/key.ts` holds the expected has
 and refuses a key whose `spec_hash` differs (BD-T2; phase 4). The solver-side validator does
 recompute it, so a key whose `game` object was edited after the solve fails before export.
 
-The hash of the proposed `game` object of section 12, computed 2026-10-05 by `spec_hash` in
-`solver/validate_key.py`, is `fd66084e4602dfb7101d507148e02e406593d9964b10caf877c75a1d440ddce3`.
-It changes when phase 3a freezes the nine leaf-model dials, and the final value is recorded here then.
+The hash of the `game` object of section 12 as proposed on 2026-10-05, computed that day by
+`spec_hash` in `solver/validate_key.py`, was
+`fd66084e4602dfb7101d507148e02e406593d9964b10caf877c75a1d440ddce3`. Phase 3a froze the nine
+leaf-model dials provisionally on 2026-10-06 (section 11, Q5; board item 37, `HANDOFF.md` step
+52), and the hash of the object as it stands in section 12 is
+`659cdfd1072b0ea27a0b74737ce6f3a67c63a329ed18595c6f1f8233ffe845a7`, computed the same day by
+the same function and pinned in `solver/cfr_test.py` (`SPEC_HASH`). Board item 60 (RF-3) changes
+the leaf model and this hash again; phase 4 pins in `app/src/gto/key.ts` whichever value stands
+when it runs, and item 60 re-pins it.
 
 ### 7.6 The validator
 
@@ -470,7 +492,8 @@ each) or `reach`; phase 4's loader does, and the stub grows then.
 Collected 2026-10-05 by two Opus 5.5 researchers, each read-only in its own worktree (both
 worktrees were clean on return), from public pages read that day. A band is a pass or fail line
 for the solve: phase 3a must land the button-against-big-blind spot inside its bands, phase 3b
-the whole tree, and phase 4 reads them again. No hand list and no table from any source was
+the whole tree, and phase 4 reads them again. (Phase 3a's result is 8.5, 2026-10-06: six rows
+missed and frozen as provisional, board item 60.) No hand list and no table from any source was
 copied; only the aggregate percentages below (BD-T1).
 
 ### 8.1 What the sources are, and what none of them is
@@ -574,6 +597,78 @@ pane; `preflopwizard.app` and `gtogecko.com` name no solver and no rake and are 
 loose top of a band. The books named in the plan (Acevedo, Janda, Brokos) were not opened. A
 third pass is possible; nothing above blocks phases 2 and 3a, whose own proof is the
 button-against-big-blind spot, where the bands are widest and best sourced.
+
+### 8.5 The provisional freeze of phase 3a, 2026-10-06
+
+Board item 37 (`HANDOFF.md` steps 50 to 52) tuned the nine dials of 3.2 on the CO, BTN and SB
+subtrees, which answer 19 of the rows above, and froze the best setting inside the ranges as
+provisional (section 11, Q5; `PLAN.md` BD-T20): `k` 2, `c_srp` 0.5, `c_srp_oop` 0.2, `c_3bp`
+0.4, `c_3bp_oop` 0, `c_4bp` 0.1, `c_4bp_oop` 0.05, `t_ip` 0.1, `t_sb` 0.25 (section 12). Solved
+2026-10-06 at 4,000 iterations by `python3 solver/cfr.py`: every seat's gain at most 0.00001 bb
+per hand given the subtree's root, and two runs gave the same output. Each row marked missed is
+a finding for Zach under 8.1, not a number tuned away; the six are the subject of board item 60
+(RF-3), and until it lands the key the app carries misses them.
+
+| Row of 8.2 | Solved | Band | Verdict |
+|---|---|---|---|
+| `CO` opens | 24.3 | 24 to 31 | inside |
+| `BTN` opens | 34.3 | 40 to 48 | missed, provisional |
+| `SB` opens | 50.4 | 38 to 55 | inside |
+| `BB` against `BTN`, defend | 63.8 | 50 to 75 | inside |
+| `BB` against `BTN`, 3-bet | 15.047 | 9 to 15 | missed by 0.047, provisional |
+| `BB` against `BTN`, call | 48.8 | 38 to 62 | inside |
+| `BB` against `CO`, defend | 52.2 | 42 to 68 | inside |
+| `BB` against `CO`, 3-bet | 10.3 | 7 to 13 | inside |
+| `BB` against `SB`, defend | 63.6 | 48 to 70 | inside |
+| `BB` against `SB`, 3-bet | 27.5 | 12 to 20 | missed, provisional |
+| `SB` against `BTN`, 3-bet | 17.5 | 9 to 18 | inside |
+| `SB` against `BTN`, call | 0.0 | 0 to 5 | inside |
+| `BTN` against `CO`, 3-bet | 14.1 | 10 to 17 | inside |
+| `BTN` against `CO`, call | 1.2 | 0 to 10 | inside |
+| `CO` folds to a `BTN` 3-bet | 18.0 | 52 to 72 | missed, provisional |
+| `CO` 4-bets a `BTN` 3-bet | 17.2 | 15 to 28 | inside |
+| `SB` folds to a `BB` 3-bet | 35.2 | 55 to 80 | missed, provisional |
+| `BTN` folds to a `BB` 3-bet | 35.7 | 45 to 70 | missed, provisional |
+| `BB` realizes against `BTN` | 82.8 | 65 to 90 | inside |
+
+The button opens every pair at 100 percent. What the six misses share: each is a rate in a
+3-bet pot, or the button's open rate, which `c_3bp_oop` moves against the button's fold rate;
+no setting inside or outside the ranges, no curve from `k` 1 to 4, no floor and no symmetric
+bend lands them (steps 50 and 51), and the hands they describe differ by features, not by
+equity (section 4, item 3). The rows the UTG and HJ subtrees answer are phase 3b's (board item
+38), which records them here as a dated paragraph.
+
+**The full tree, 2026-10-06 (board item 38, `HANDOFF.md` step 53).** Phase 3b solved all five
+subtrees at 12,000 iterations with the provisional dials above (`python3 solver/cfr.py`, 105 s
+on a quiet Mac, two runs byte-identical by `cmp`). Every seat's best-response gain per dealt hand
+is at most 0.000003 bb at 12,000 iterations (0.000032 at 3,000, 0.000009 at 6,000), under the
+dial 0.005 and falling as the iterations double. The 19 rows above keep their verdicts at 12,000
+iterations; four values move by at most 0.3 from the 4,000-iteration table (`BB` against `CO`
+defends 51.9, `BB` against `SB` defends 63.4, `SB` against `BTN` 3-bets 17.4, `CO` folds to a
+`BTN` 3-bet 18.3). The seven rows the `UTG` and `HJ` subtrees answer:
+
+| Row of 8.2 | Solved | Band | Verdict |
+|---|---|---|---|
+| `UTG` opens | 14.9 | 14 to 21 | inside |
+| `HJ` opens | 18.8 | 18 to 25 | inside |
+| `BB` against `UTG`, defend | 35.1 | 28 to 60 | inside |
+| `BB` against `UTG`, 3-bet | 6.5 | 4 to 10 | inside |
+| `HJ` against `UTG`, call | 1.2 | 0 to 10 | inside |
+| `CO` against `UTG`, call | 1.2 | 0 to 10 | inside |
+| `UTG` folds to a `BB` 3-bet | 41.2 | 45 to 70 | missed, a finding |
+
+The seventh miss is new and is a finding for Zach under 8.1, not a number tuned away: no dial
+moved in phase 3b (BD-T12, BD-T20). It is the mechanism of the five 3-bet-pot misses above, an
+opener that folds too little to a blind's 3-bet (section 4, item 3), and belongs with them to
+board item 60 unless Zach says otherwise (question (c) of item 38's prompt, open in step 53). The
+row "`HJ` or `CO` against `UTG`, call" of 8.2 is measured per seat. One node is reached less
+often than `reachFloor` (0.0001) per dealt hand: `UTG` facing the big blind's all-in 5-bet,
+`UTG:open/HJ:fold/CO:fold/BTN:fold/SB:fold/BB:3bet/UTG:4bet/BB:5bet`, at 0.000088; the schema
+marks it by its `reach` alone (7.1, BD-T15), and the grader shows no EV loss there. The subtrees
+are reached per dealt hand at 1 (`UTG`), 0.8507 (`HJ`), 0.6912 (`CO`), 0.5232 (`BTN`) and 0.3437
+(`SB`), the products of the fold rates of the seats before each opener (3.3). The raw key is
+`solver/data/key.json` (608,670 bytes, 65 nodes, 10,985 strategy rows, the shape of 7.1;
+`python3 solver/validate_key.py solver/data/key.json` prints `valid`), the file phase 4 exports.
 
 ## 9. Feasibility
 
@@ -699,6 +794,115 @@ hand (section 4, item 3); the flat tax is a hand-set number per seat type, not a
 real squeeze (item 1); card removal across folders (item 6); and every band in section 8 comes
 from a raked game.
 
+### Second review, 2026-10-06: the key (board item 39, phase 4)
+
+Done 2026-10-06 by a Fable 5.1 subagent in its own worktree, review only; the harness removed
+that worktree on return, which it does only for one with no changes, and the builder's checkout
+held no file but the builder's own (`git status --short`). It read this file, `solver/data/key.json`
+(12,000 iterations, `spec_hash` `659cdfd1...e845a7`, the provisional dials of section 12) and
+`solver/data/equity.json` by absolute path on branch `gto-equity`, and answered one question: is
+a hand a strong player would call wrong (A) the game of this spec giving that answer, or (B) a
+fault in the key, a number the stated game does not imply? It did not re-judge the seven band
+misses of 8.5.
+
+**Verdict: no fault of class B.** By script over the 65 nodes: the fold EV equals the payoff of
+2.5 at every node (10,985 rows); `totals` match 2.3 at every node; at the 4,178 rows whose
+`hand_reach` is above 0.0001, the strategy puts more than 0.05 only on actions within 0.02 bb of
+the row's best EV; every row sums to 1 within 0.001; each node's `reach` equals the sum of its
+`hand_reach` within 0.0001, and no node is reached more often than its parent. The reviewer also
+recomputed the call EV at all 60 terminal-call leaves from `equity.json` and the formulas of 3.2
+with the dials of 12 (largest difference 0.000055 bb at a flat, 0.000098 at a call of a 3-bet,
+0.00031 at a call of a 4-bet, 0.0024 at a call of a 5-bet, where a few hands at frequencies
+rounded to four places move the weights), and checked `E` (symmetric; `AA` against `KK` 0.8195;
+six Monte Carlo spot checks within 0.5 points). Every hand it names is class A: section 4, item 3
+(the model cannot see suitedness, connectedness or set value) at nearly every node, item 1 (one
+flat tax per seat type) at the flats, and items 4 and 5 (one 4-bet size, an all-in 5-bet) at the
+4-bet and 5-bet nodes. The key is fit for bots and a grader to read in the mechanical sense.
+Section 6's statement covers the open and defend layers, in the reviewer's judgment, but does not
+prepare a player for three patterns a strong player calls absurd within a few hands: the big blind
+3-bets small pairs at 100 percent against the button and the small blind; openers call 3-bets and
+4-bets with small pairs and weak suited aces while they fold offsuit broadways; and at the 5-bet
+nodes the bots fold `QQ`, `JJ` and sometimes `KK` to a shove while they call with `TT`.
+
+**The hands it names, by node.** The action is the key's, at a frequency of 1 unless given; class
+A, item 3, unless marked.
+
+- `root` (UTG opens): opens `A8o`; folds `A5s`, `A4s`, `A3s`, `A2s`, `QTs`, `JTs`, `T9s`, `98s`,
+  `33` and `22`; opens `44` at 0.40.
+- `UTG:fold` (HJ opens): opens `A8o`, `A7o` and `A6o` (0.715); folds `A2s`, `K9s`, `T9s`, `98s`,
+  `87s`, `76s`, `33` and `22`.
+- `UTG:fold/HJ:fold` (CO opens): opens `A6o`, `A5o` and `A4o`; folds `K8s` to `K5s`, `Q8s`,
+  `J9s`, `T9s`, `98s`, `87s`, `76s`, `65s`, `QTo`, `JTo` and `22`.
+- `UTG:fold/HJ:fold/CO:fold` (BTN opens): folds `T8s`, `98s`, `97s`, `87s`, `86s`, `76s`, `75s`,
+  `65s`, `64s`, `54s`, `K3s`, `K2s`, `Q7s` to `Q2s`, `J8s` to `J5s`, `T9o`, `J9o` and `Q8o`, while it
+  opens `K7o`, `K8o` and `Q9o`.
+- `UTG:fold/HJ:fold/CO:fold/BTN:fold` (SB opens): opens `Q5o` and `Q4o`; folds `97s`, `87s`, `86s`,
+  `76s`, `75s`, `65s`, `64s`, `54s`, `T6s`, `98o` and `T8o`.
+- The big blind against a BTN open: 3-bets `33` to `88`, `A9o` and `JTs` (a strong player calls).
+  Against a CO open: 3-bets `55` to `99`; calls `A5s` and `A4s` (a strong player 3-bets a share).
+  Against a UTG open: calls `A2o` to `A8o`, `KTo`, `QTo`, `JTo`, `T9o`, `K5s` and `K6s` (fold);
+  3-bets `88` and `99`. Against an SB open: 3-bets `22` to `66`, `A2o` to `A8o` (26 percent of its
+  3-bet range), `T7s` and `J8s` (call).
+- SB against a BTN open: 3-bets `A8o`, `A9o` and `A7o` (0.27); folds `A2s`, `K9s`, `QTs`, `JTs`,
+  `T9s`, `98s`, `87s` and `76s` (a strong player 3-bets a share of them).
+- BTN against a CO open: flats `A8o` and `A7s` (0.999) and no other hand (A, item 1 and item 3);
+  folds `A5s` (0.926) and `JTs` to `65s`; 3-bets `33`, `44` and `55`. HJ against a UTG open: flats
+  `ATo` alone with `ATs`, the same two hands flat for CO and BTN against UTG, `AJo` (0.80) for SB
+  against UTG and `A9s` for CO and BTN against HJ (item 1); 3-bets `66` to `88`.
+- CO facing a BTN 3-bet: calls `A2s`, `A3s`, `A5s`, `A8o`, `A9o`, `K9s`, `Q9s`, `QTs`, `KJo`, `33`,
+  `44` and `55` (mostly fold).
+- SB facing a BB 3-bet: 4-bets `AJo`, `88`, `77` (0.45) and `KQo` (0.65) (call); calls `A2o`, `A5o`,
+  `22`, `33`, `44`, `KTo`, `QJo` and `98s` (fold).
+- BTN facing a BB 3-bet: 4-bets `TT` and `JJ` (item 4); calls `22` to `55`, `A2s`, `K7s`, `K8s`,
+  `A8o` and `QJo` (fold). BTN facing an SB 3-bet: 4-bets `TT`, `JJ` and `AQo` (item 4); calls `22`
+  to `44`, `A2s`, `A6o`, `A4o`, `K6s` and `K7s` (fold). UTG facing a BB 3-bet is close to a real
+  strategy; no hand named.
+- The calls of a 4-bet (items 4 and 5, and the dials `c_4bp` and `c_4bp_oop`, which no band of 8.2
+  checks): BTN against a CO 4-bet calls `44` to `88`, `A8s` and `KTs`; SB against a BTN 4-bet calls
+  `33` to `99`, `A3s` to `A9s`, `KTs`, `KJo` and `KQo`; BB against a BTN 4-bet calls `33` to `99`,
+  `A4s`, `A5s`, `A7s`, `QJs` and `JTs`; BB against an SB 4-bet calls `22` to `44`, `A9o`, `A5o`,
+  `A4o`, `KTo`, `JTo`, `87s`, `98s`, `T8s` and `J8s`, and shoves `KJs`, `KQs` and `66` (0.50).
+- The 5-bet nodes (items 4 and 5): `QQ` folds 0.89 to 0.91 to the HJ, CO and BTN shoves after a UTG
+  4-bet, with the call EV within 0.001 bb of the fold; `KK` folds 0.664 to the BB's shove after a
+  UTG 4-bet (reach 0.000087, under `reachFloor`) and 0.269 to the SB's; `QQ` folds to every shove
+  after an HJ 4-bet and to the BB's after a CO 4-bet; `JJ` folds to three shoves where `TT` calls
+  0.59 to 0.80. These rows sit at indifference, and `E` holds the real effect of a pair against an
+  overpair (`TT` 0.1925 against `AA`, `JJ` 0.1885, `QQ` 0.1845), so the smaller pair calls.
+
+**What it says a builder must know**, and where each goes under Zach's answer (c) of 2026-10-06
+(a hand of class A goes to board item 60 and blocks nothing; a fault of class B would block item
+41):
+
+1. 2,777 rows at hands the actor never holds at that node (`hand_reach` under 1e-6) carry the
+   uniform strategy, the CFR+ default; their EVs are valid and their frequencies are not. A grader
+   that reads `strategy` there calls every action good (`gtoGoodFrequency`), a 4-bet with `72o`
+   included. Item 41 reads `hand_reach` before `strategy`. Bots never hold those hands.
+2. At the 15 opener-facing-5-bet nodes the folds of `QQ`, `JJ` and `KK` come from EV gaps under
+   0.001 bb, while a player's call there is graded a mistake of 0.38 to 0.52 bb at six nodes, above
+   `gtoMistakeCostBb` (0.15). The reviewer suggests bots that play the best-EV action at those
+   nodes and a grader that treats actions within the solver's noise as equal. Item 40 asks Zach
+   about the bots, item 41 about the grader.
+3. No band of 8.2 covers a 4-bet or 5-bet quantity, and `c_4bp` and `c_4bp_oop` were tuned on
+   nothing. The reviewer recommends a band, or a stated expectation, for the defender's call of a
+   4-bet per row before item 60 is judged done. Item 60, in its GATE 1 batch.
+4. The inversion of section 4, item 3, is the main pattern of the key, so section 6's statement
+   should name it in plain words, or the player concludes the solver is broken. Phase 10 (item 45),
+   copy under R7.
+5. Each flat of HJ, CO, BTN and SB is one or two hands at the fold margin, which a player reads as
+   a tell. Item 40, with item 2.
+
+**Re-checked by the builder against the file**, 2026-10-06, `python3` over `solver/data/key.json`:
+`QQ` at `UTG:open/HJ:3bet/UTG:4bet/HJ:5bet` folds 0.9043 (fold −20.0, call −20.0009); `KK` at the
+BB's 5-bet after UTG's 4-bet folds 0.6636 at reach 0.000087; the big blind against a BTN open
+3-bets `33`, `55`, `88` and `99` and calls `22` (the verdict's "22 to 88" joins its two spots
+against the button and the small blind); `72o` at `UTG:fold/HJ:fold/CO:open/BTN:3bet` has the
+strategy 0.3333 three times and `hand_reach` 0; 6,420 rows have `hand_reach` under 1e-6, and 2,783
+of them are uniform within 0.001 (the reviewer's 2,777 used a tighter test).
+
+`PLAN.md` phase 4's done-when, "the Deep review finds no wrong strategy for the hand classes it
+checks", is not met: the provisional freeze (BD-T20) cannot meet it, and the hands go to item 60.
+Phase 4 is `BUILT` with that deviation recorded under it.
+
 ## 11. Decisions
 
 Three questions were Zach's, asked in one batch in chat on 2026-10-05 after this draft was
@@ -793,11 +997,50 @@ percent. Against: two more hand-set dials, and the opener's EV when flatted fall
 also real. Recommended yes; the alternative was to record finding 1 as a whole-deck
 simplification and ship bots that flat most hands. **Answer: yes.** Section 3.2.
 
+### Third batch, 2026-10-06, after the tuning of phase 3a
+
+Asked in chat on 2026-10-05 (`HANDOFF.md` step 50) and again on 2026-10-06 (step 51), after
+phase 3a's solver was built and no setting of the nine dials inside the ranges of 3.2 landed
+every band of 8.2. Zach answered the first round on 2026-10-05, "all recs": (a) the solver tests
+join the whole-repo gate at phase 3b (board item 38), when the solver writes its output; (b)
+supersede the leaf model (BD-T18) and re-tune, with ranges wider than 3.2 as the fallback. The
+second round (step 51) then found that no shape of the equity-bent family lands the 3-bet-pot
+bands: steeper curves (`k` 3 and 4, `c` up to 1.5), a floor on the share, a symmetric bend and
+ranges past the ceilings of 3.2 were all tried, and the two settings that come closest do so by
+never calling a 3-bet and by folding a small pair on the button. The hands the bands describe
+differ by features, not by equity (section 4, item 3), so answer (b) could not be carried out
+inside the family, and the question was put again with three choices.
+
+**Q5. What to freeze, now that the model cannot land every band.**
+
+- (1) Freeze the best setting inside the ranges as provisional (recommended): `k` 2, `c_srp`
+  0.5, `c_srp_oop` 0.2, `c_3bp` 0.4, `c_3bp_oop` 0, `c_4bp` 0.1, `c_4bp_oop` 0.05, `t_ip` 0.1,
+  `t_sb` 0.25, which lands 13 of the 19 bands the CO, BTN and SB subtrees answer and opens
+  every pair from the button. Record the six misses in section 8.5 marked provisional, let
+  phases 3b and 4 build on it, and open a board item for RF-3 (option (a) of the first batch)
+  whose output re-freezes the dials and re-solves. For: it unblocks the full tree, the key
+  export and the table work; the record says plainly what holds and what does not; the solver
+  re-runs in minutes once the model changes. Against: a key with six known misses exists for a
+  while, and the hash phase 4 pins is replaced when RF-3 lands.
+- (2) Scope RF-3 first and freeze nothing until it lands. For: one freeze and one hash.
+  Against: every later phase waits on a design with hand-set coefficients, the slowest kind of
+  decision this effort has.
+- (3) Freeze the same setting as final and let the phase 4 Deep review judge the hands. For: no
+  new item. Against: it records six bands as met when they are not, which 8.1 forbids.
+
+**Answer: (1)** (Zach, in chat, 2026-10-06: "provisional freeze, open the rf-3 item"). Sections
+3.2, 7.5, 8.5 and 12 carry the freeze; `PLAN.md` BD-T20 records it with its reversal; board
+item 60 is RF-3.
+
 ## 12. The game object
 
 The object the key embeds and hashes (section 7.5). The values are the answers of sections 2 and
 3 as they stand on 2026-10-05; phase 3a replaces the nine leaf-model dials with the frozen ones
-and this section is amended with the date.
+and this section is amended with the date. Amended 2026-10-06 (board item 37, `HANDOFF.md` step
+52): the nine leaf-model dials below are the provisional freeze of section 11, Q5. The starting
+values of 3.2 (`c` 0.7, 0.4, 0.2 with the edge in position; 0.3, 0.2, 0.1 with it out of
+position; `t` 0.1 and 0.25; `k` 2) stay in `RANGES` of `solver/config.py` as the record of where
+the tuning began. Board item 60 (RF-3) amends this object and section 3.2 again.
 
 ```json
 {
@@ -820,8 +1063,8 @@ and this section is amended with the date.
     "kind": "edge_realization",
     "formula": "bent_share = e - c * e * (1 - e)^k; edge_share = 1 - bent_share; a flat by a seat other than BB multiplies both shares by (1 - t)",
     "k": 2,
-    "c_edge_in_position": {"srp": 0.7, "3bp": 0.4, "4bp": 0.2, "all_in": 0},
-    "c_edge_out_of_position": {"srp": 0.3, "3bp": 0.2, "4bp": 0.1, "all_in": 0},
+    "c_edge_in_position": {"srp": 0.5, "3bp": 0.4, "4bp": 0.1, "all_in": 0},
+    "c_edge_out_of_position": {"srp": 0.2, "3bp": 0, "4bp": 0.05, "all_in": 0},
     "flat_tax": {"ip": 0.1, "sb": 0.25, "bb": 0}
   },
   "card_removal": "two_live_hands",

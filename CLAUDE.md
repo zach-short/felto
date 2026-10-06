@@ -39,7 +39,8 @@
   `app/bun.lock` (no manifest at the root), vitest 4.1 in a node environment, `expo lint` with
   `eslint-config-expo/flat` and no formatter. SVG files are components through
   `app/svg-transformer.js` (SVGr, SVGO off). Versions: `app/bun.lock`.
-- No CI. The Python side has no tests and no linter.
+- No CI. The Python side has no linter. `solver/` has `unittest` tests, in the whole-repo gate
+  since board item 38 (2026-10-06); `tools/` has no tests.
 - Rive is the intended animation tool for these assets (`tools/build_icons.py:12`). Flop has a rig,
   played by `rive-react-native` 9.8.5 (`app/package.json`, board item 34).
 - Particle effects are Lottie files from `tools/build_lottie.py`, played by `lottie-react-native`
@@ -87,12 +88,12 @@
 
 ## Commands
 
-The whole-repo gate, also `gateCommand` in `.personal-config.json`: the Python gate, then the
-app gate (typecheck, lint, vitest: 103 test files, 772 tests). Run 2026-10-05 from the repo root
-after the merges of board item 59, each step exit 0:
+The whole-repo gate, also `gateCommand` in `.personal-config.json`: the Python gate, then
+solver tests (`unittest`, 33 tests, board item 38), then the app gate (typecheck, lint, vitest).
+Run 2026-10-06 from the repo root as one command, exit 0:
 
 ```bash
-python3 tools/build_icons.py && python3 tools/build_mascots.py && python3 tools/build_sounds.py && python3 tools/build_lottie.py && xmllint --noout assets/icons/*/*.svg assets/mascots/*/*.svg && bun run --cwd app typecheck && bun run --cwd app lint && bun run --cwd app test
+python3 tools/build_icons.py && python3 tools/build_mascots.py && python3 tools/build_sounds.py && python3 tools/build_lottie.py && xmllint --noout assets/icons/*/*.svg assets/mascots/*/*.svg && python3 -m unittest discover -s solver -p '*_test.py' && bun run --cwd app typecheck && bun run --cwd app lint && bun run --cwd app test
 ```
 
 A fresh checkout runs `bun install --cwd app` first. To build and open the app (a development
@@ -123,6 +124,17 @@ open assets/gallery.html
   1.5 s (`tools/build_lottie.py:485-491` stops the run otherwise). Nothing checks how an effect
   looks or moves: it is proven only by watching it play on `/dev/art`.
 - `xmllint --noout` proves the SVG is well-formed XML, not that it draws the right shape.
+- The solver tests (`python3 -m unittest discover -s solver -p '*_test.py'`, 33 tests, about
+  25 s, most of it the Monte Carlo check of the equity table) prove hand-worked leaf payoffs, the
+  node ids, the spec hash, a toy tree with a known equilibrium, the fold chain on hand-made parts
+  and the key file's shape. They do not prove the acceptance bands of
+  `docs/incomplete/gto-trainer/KEY-SPEC.md` 8.2: those are proven by `python3 solver/cfr.py`
+  (about 105 s on a quiet Mac), which the gate does not run, and recorded in `KEY-SPEC.md` 8.5.
+  The gate does not rewrite `solver/data/key.json` either: after a solver change, run
+  `python3 solver/cfr.py` and read `git diff --stat -- solver/data`; a line there is a change in
+  the key, and it must be one you meant. The suite needs numpy (2.4.3 at
+  `/opt/homebrew/bin/python3`, rule M4 of `docs/conventions-python.md`); the fresh-checkout
+  recipe in `docs/AGENT-PRACTICES.md` Part 6 checks for it.
 - The gate rewrites the generated SVGs, WAVs and Lottie files in place. After the first commit, run
   `git diff --stat -- assets/icons assets/mascots assets/sounds assets/lottie` after the gate: any
   line there is a change in the art, the sound or an effect, and it must be one you meant.
