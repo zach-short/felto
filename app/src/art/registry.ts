@@ -59,6 +59,13 @@ import NodeCurrentBase from "@art/icons/path/node_current_base.svg";
 import NodeLocked from "@art/icons/path/node_locked.svg";
 import NodeReview from "@art/icons/path/node_review.svg";
 import Chest from "@art/icons/ui/chest.svg";
+import ChestLegendary from "@art/icons/ui/chest_legendary.svg";
+import ChestLegendaryOpen from "@art/icons/ui/chest_legendary_open.svg";
+import ChestMythic from "@art/icons/ui/chest_mythic.svg";
+import ChestMythicOpen from "@art/icons/ui/chest_mythic_open.svg";
+import ChestOpen from "@art/icons/ui/chest_open.svg";
+import ChestRare from "@art/icons/ui/chest_rare.svg";
+import ChestRareOpen from "@art/icons/ui/chest_rare_open.svg";
 import Gem from "@art/icons/ui/gem.svg";
 import LivesHeart from "@art/icons/ui/lives_heart.svg";
 import StreakFlame from "@art/icons/ui/streak_flame.svg";
@@ -149,6 +156,13 @@ export const ART: Record<ArtName, typeof CardAClubs> = {
   node_locked: NodeLocked,
   node_review: NodeReview,
   chest: Chest,
+  chest_legendary: ChestLegendary,
+  chest_legendary_open: ChestLegendaryOpen,
+  chest_mythic: ChestMythic,
+  chest_mythic_open: ChestMythicOpen,
+  chest_open: ChestOpen,
+  chest_rare: ChestRare,
+  chest_rare_open: ChestRareOpen,
   gem: Gem,
   lives_heart: LivesHeart,
   streak_flame: StreakFlame,
