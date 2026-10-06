@@ -38,6 +38,7 @@ export function RootStack() {
       </Stack.Protected>
       <Stack.Screen name="dev/fixture/[name]" />
       <Stack.Screen name="dev/art" />
+      <Stack.Screen name="dev/kit" />
       <Stack.Screen name="dev/reminders" />
     </Stack>
   );

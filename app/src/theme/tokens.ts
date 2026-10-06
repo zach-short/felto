@@ -33,7 +33,29 @@ export type ColourName =
   | "momentFinish"
   | "momentChest"
   | "momentBossPass"
-  | "momentBossFail";
+  | "momentBossFail"
+  // Game feel second pass (board item 46, GF-10): the kit's tones, each a face and its raised
+  // edge, the inks that read on a face and on a deep edge, the fill of GameText, a bubble's key
+  // word, the scrim behind a dialog or sheet, the popover's white button and the switch's knob
+  | "toneGold"
+  | "toneGoldEdge"
+  | "toneGreen"
+  | "toneGreenEdge"
+  | "toneBlue"
+  | "toneBlueEdge"
+  | "toneRed"
+  | "toneRedEdge"
+  | "tonePurple"
+  | "tonePurpleEdge"
+  | "inkOnTone"
+  | "inkOnPale"
+  | "inkOnDeep"
+  | "gameTextFill"
+  | "bubbleKey"
+  | "scrim"
+  | "popoverButton"
+  | "popoverButtonEdge"
+  | "switchKnob";
 
 export type Scheme = "light" | "dark";
 
@@ -72,6 +94,31 @@ export const COLOURS: Record<Scheme, Record<ColourName, string>> = {
     momentChest: "#FFC83A", // gold, tools/build_icons.py:39
     momentBossPass: "#8A5BFF", // the boss node's purple, tools/build_icons.py:251
     momentBossFail: "#3A4152", // the black chip, quiet on purpose, tools/build_icons.py:38
+    // The kit's tones are the chip faces and their extrusions (tools/build_icons.py:35-40). Cream
+    // reads on the blue, red and purple faces at 3.7 to 4.1 to 1, which passes only as large text;
+    // the gold and green faces are too pale for it and take the ink of the art's lines
+    toneGold: "#FFC83A", // tools/build_icons.py:39
+    toneGoldEdge: "#C98F00", // tools/build_icons.py:39
+    toneGreen: "#22B573", // tools/build_icons.py:37
+    toneGreenEdge: "#0E7A4B", // tools/build_icons.py:37
+    toneBlue: "#2F7BF0", // tools/build_icons.py:36
+    toneBlueEdge: "#0F47B8", // tools/build_icons.py:36
+    toneRed: "#E8252F", // tools/build_icons.py:35
+    toneRedEdge: "#8E0F1A", // tools/build_icons.py:35
+    tonePurple: "#8A5BFF", // tools/build_icons.py:40
+    tonePurpleEdge: "#4F2FC4", // tools/build_icons.py:40
+    inkOnTone: "#FBF4EA", // CREAM, tools/common.py:9
+    inkOnPale: "#1B1B24", // INKL, tools/common.py:10
+    // Small text needs 4.5 to 1, which cream reaches on the blue, red and purple edges (7.4 to 8.6)
+    inkOnDeep: "#FBF4EA", // CREAM, tools/common.py:9
+    // GF-16: the face of the 3D game text is the art's light glyph colour on every tone
+    gameTextFill: "#FBF4EA", // CREAM, tools/common.py:9
+    // The purple extrusion, 8.3 to 1 on the white surface
+    bubbleKey: "#4F2FC4", // tools/build_icons.py:40
+    scrim: "#1B1B2473", // INKL at 45 percent
+    popoverButton: "#FFFFFF",
+    popoverButtonEdge: "#C9CDE2", // SHADOW, tools/common.py:8
+    switchKnob: "#FFFFFF",
   },
   dark: {
     page: "#141824",
@@ -108,6 +155,29 @@ export const COLOURS: Record<Scheme, Record<ColourName, string>> = {
     momentChest: "#C98F00", // tools/build_icons.py:39
     momentBossPass: "#4F2FC4", // tools/build_icons.py:251
     momentBossFail: "#1B1F2B", // tools/build_icons.py:38
+    // On the dark page a tone's face is its chip's lighter highlight and the edge keeps the deep
+    // extrusion, as the button does; the dark ink reads on every face at 4.7 to 12.9 to 1
+    toneGold: "#FFD968", // tools/build_icons.py:39
+    toneGoldEdge: "#C98F00", // tools/build_icons.py:39
+    toneGreen: "#45CC8F", // tools/build_icons.py:37
+    toneGreenEdge: "#0E7A4B", // tools/build_icons.py:37
+    toneBlue: "#5A98F5", // tools/build_icons.py:36
+    toneBlueEdge: "#0F47B8", // tools/build_icons.py:36
+    toneRed: "#F0414A", // tools/build_icons.py:35
+    toneRedEdge: "#8E0F1A", // tools/build_icons.py:35
+    tonePurple: "#A583FF", // tools/build_icons.py:40
+    tonePurpleEdge: "#4F2FC4", // tools/build_icons.py:40
+    inkOnTone: "#141824",
+    inkOnPale: "#141824",
+    // The edges keep their light values here, so cream reads on them as it does in light mode
+    inkOnDeep: "#FBF4EA", // CREAM, tools/common.py:9
+    gameTextFill: "#FBF4EA", // CREAM, tools/common.py:9
+    // The purple highlight, 5.4 to 1 on the dark surface
+    bubbleKey: "#A583FF", // tools/build_icons.py:40
+    scrim: "#000000A6",
+    popoverButton: "#FFFFFF",
+    popoverButtonEdge: "#C9CDE2", // SHADOW, tools/common.py:8
+    switchKnob: "#FBF4EA", // CREAM, tools/common.py:9
   },
 };
 
@@ -193,3 +263,63 @@ export const TILE_MIN_WIDTH = 64;
 // The stat bar icons stay at least this many points wide, so on a narrow phone their hard
 // shadow keeps a visible offset (PLAN.md phase 8, watch-for).
 export const MIN_STAT_ICON = 24;
+
+// Game feel second pass (board item 46, GF-10 and GF-16): the kit. GameText comes in three sizes,
+// each with the thickness of its outline and the depth of its extrusion below the letters
+export const GAME_TEXT = {
+  small: { size: 28, outline: 3, depth: 3 },
+  medium: { size: 44, outline: 4, depth: 5 },
+  large: { size: 72, outline: 6, depth: 7 },
+} as const;
+
+export type GameSize = keyof typeof GAME_TEXT;
+
+// D14 and registry entry Z3: the bundled Nunito ExtraBold, under the family name in the file
+export const GAME_FONT = "FeltoRank";
+
+// One tone per use of a kit piece (GF-16: gold, green or a unit's colour): its face, its raised
+// edge, the ink that reads on the face, and the colour its words take on a white button. Cream on
+// the blue, red and purple faces is 3.7 to 4.1 to 1 in light mode, so text on a face is large text
+// (TYPE.heading, bold) or it moves to TAG_PAINT. On white, gold and the faces are too pale for
+// words (1.5 to 4.4), so the label is the dark ink for gold and the deep edge for the rest (5.4 to
+// 9.4)
+export type Tone = "gold" | "green" | "blue" | "red" | "purple";
+
+type TonePaint = { face: ColourName; edge: ColourName; ink: ColourName; label: ColourName };
+
+export const TONES: Record<Tone, TonePaint> = {
+  gold: { face: "toneGold", edge: "toneGoldEdge", ink: "inkOnPale", label: "inkOnPale" },
+  green: { face: "toneGreen", edge: "toneGreenEdge", ink: "inkOnPale", label: "toneGreenEdge" },
+  blue: { face: "toneBlue", edge: "toneBlueEdge", ink: "inkOnTone", label: "toneBlueEdge" },
+  red: { face: "toneRed", edge: "toneRedEdge", ink: "inkOnTone", label: "toneRedEdge" },
+  purple: { face: "tonePurple", edge: "tonePurpleEdge", ink: "inkOnTone", label: "tonePurpleEdge" },
+};
+
+// A tag's words are small, so they need 4.5 to 1: gold and green keep their face with the dark ink
+// (6.5 to 13 to 1); blue, red and purple take their deep edge as the face, with cream (7.4 to 8.6)
+export const TAG_PAINT: Record<Tone, { face: ColourName; ink: ColourName }> = {
+  gold: { face: "toneGold", ink: "inkOnPale" },
+  green: { face: "toneGreen", ink: "inkOnPale" },
+  blue: { face: "toneBlueEdge", ink: "inkOnDeep" },
+  red: { face: "toneRedEdge", ink: "inkOnDeep" },
+  purple: { face: "tonePurpleEdge", ink: "inkOnDeep" },
+};
+
+// The kit's sizes, in points: a bubble's border, the side of the square its tail is cut from and
+// the popover's arrow; the raised edge under a popover card and a dialog; the switch's track and knob;
+// the widest a popover card and a dialog grow on a tablet; and a plain rolling number's line
+// height as a share of its font size
+export const KIT = {
+  border: 2,
+  tail: 14,
+  arrow: 16,
+  cardEdge: 4,
+  pillRadius: 999,
+  switchWidth: 56,
+  switchHeight: 32,
+  switchKnob: 24,
+  switchEdge: 3,
+  popoverMaxWidth: 340,
+  dialogMaxWidth: 420,
+  numberLine: 1.25,
+} as const;

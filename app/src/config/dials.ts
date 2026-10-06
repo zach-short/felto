@@ -56,8 +56,10 @@ export const DIALS = {
   particleCount: 24,
   particleMs: 900,
   // GF-8: what the phone's Reduce Motion setting skips. The press and fades stay, because no
-  // screen needs motion to be understood and a press with no answer feels broken
-  reducedMotionSkips: ["bounce", "shake", "tilt", "pulse", "bob", "particles", "swim"],
+  // screen needs motion to be understood and a press with no answer feels broken. Board item 46
+  // adds the kit's flourishes: a number's roll and a bubble's typing (each then shows its end at
+  // once) and a popover's or dialog's spring (it then fades in)
+  reducedMotionSkips: ["bounce", "shake", "tilt", "pulse", "bob", "particles", "swim", "roll", "typing", "pop"],
   // Board item 34: how long the rigged Flop idles before it darts, so the screen's own entrance
   // finishes first
   flopPerfectDelayMs: 300,
@@ -89,6 +91,30 @@ export const DIALS = {
   // The touch and the effect of choosing an option, and the effect of a lost heart (GF-3, GF-5)
   selectSound: "option_select",
   heartSound: "heart_lost",
+
+  // game-feel second pass (board item 46, DESIGN.md GF-10, GF-11, GF-15 to GF-17): the kit's
+  // motion. Proposed values, to be set on the phone. A rolling number turns every digit to its new
+  // value in this time (GF-15)
+  rollMs: 600,
+  // A speech bubble types its line at one character per this many milliseconds (GF-11)
+  typeCharMs: 30,
+  // A popover and a dialog spring in from this share of their size; a ratio under 1 overshoots
+  popFromScale: 0.6,
+  popMs: 360,
+  popDamping: 0.6,
+  // The twinkling stars of a box (GF-17): how many, the largest in points, one twinkle's period,
+  // and the share of its size a star shrinks to as it fades. A burst's stars fly this far from the
+  // middle; their count and time are particleCount and particleMs above
+  sparkleCount: 6,
+  sparkleSize: 16,
+  sparklePeriodMs: 1800,
+  sparkleMinScale: 0.4,
+  burstDistance: 64,
+  // A switch's knob slides across in this time, and a flip gives the touch and the effect of a
+  // choice (GF-3, GF-5)
+  switchSlideMs: 160,
+  switchHaptic: "selection",
+  switchSound: "option_select",
 
   // D17: every screen draws in a centred column at most this wide, in points
   columnMaxWidth: 640,
