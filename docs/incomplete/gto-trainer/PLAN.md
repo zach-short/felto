@@ -164,7 +164,22 @@ chosen by the reviewer, not the builder, agree with the matrix to the bound.
 
 ### Phase 3a: Solver core, one spot
 
-Status: `PLANNED`.
+**IN FLIGHT 2026-10-05** (board item 37, lane H, on Fable 5.1, in worktree
+`.claude/worktrees/gto-equity`, branch `gto-equity`, `HANDOFF.md` step 50; the commit is Zach's
+and pending). Built and green: `solver/config.py` (the game object of `KEY-SPEC.md` 12 and the nine
+dials with their ranges), `solver/cfr.py` (CFR+ over one opener subtree at a time, nodes in the
+key's shape), `solver/best_response.py` (each seat's gain, written apart from the solver) and the
+tests `solver/cfr_test.py` and `solver/best_response_test.py` (hand-worked leaf payoffs, the fold
+payoffs of 2.5, the node ids of 7.2, a toy tree with a known equilibrium). On the CO, BTN and SB
+subtrees every seat's gain is under 0.0002 bb at 1,000 iterations and falls about four-fold per
+doubling, and two runs give the same output. Not done: the freeze. No setting of the nine dials
+inside the ranges of `KEY-SPEC.md` 3.2 lands every band of 8.2 (408 settings tried; two bands are
+missed by all of them and two more never hold together, step 50), so the dials stay at their
+starting values, the hash of section 12
+is unchanged, and question (b) of the item's prompt (which band gives way, or whether the model
+changes) is with Zach. Deviations from the text below: four tuning spots, not one (BD-T18, the
+phase 1 header); the proof is read as every band of 8.2 the three subtrees answer, and the bands do
+not hold. What this phase forces on later phases: phase 3b cannot start until the dials are frozen.
 
 1. `solver/cfr.py`: CFR+ over the spec's tree for one spot only: the button opens, the big
    blind defends, everyone else has folded.

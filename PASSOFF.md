@@ -54,7 +54,7 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 | 34 | Flop in Rive: tune the spike rig, then play it on a perfect finish | `IN FLIGHT` (Phase A done, `HANDOFF 34`; Phase B built on branch `lane-g-flop-rive`, `HANDOFF 36`; the `lesson-finish.tsx` wiring waits on item 29) | Sonnet 5 | G | Zach's yes to Phase B; item 29 for `lesson-finish.tsx` | the Rive file in Zach's account; `app/package.json`, `app/bun.lock`, `app/assets/rive/` (new), `app/src/art/` (a new Rive file only), `app/src/config/dials.ts` (block `// game-feel`), `app/src/components/lesson/lesson-finish.tsx` |
 | 35 | GTO trainer phase 1: game spec, schema and feasibility | `DONE: HANDOFF 41` | Fable 5.1 | H | nothing | `docs/incomplete/gto-trainer/KEY-SPEC.md`, `solver/` (schema validator stub), `docs/conventions-rust.md` only if the estimate calls for Rust |
 | 36 | GTO trainer phase 2: preflop equity table | `DONE: HANDOFF 46` | Opus 5.5 | H | item 35 (`DONE`) | `solver/equity.py`, `solver/equity_test.py`, `solver/data/`, `docs/conventions-python.md` (the M4 amendment for numpy), `.gitignore` (one `__pycache__/` line, Zach's yes 2026-10-05) |
-| 37 | GTO trainer phase 3a: solver core, four tuning spots (one spot until BD-T18) | `OPEN` | Fable 5.1 | H | item 36 (`DONE`) | `solver/cfr.py`, `solver/best_response.py`, `solver/config.py`, new `solver/*_test.py`, `docs/incomplete/gto-trainer/KEY-SPEC.md` sections 7.5 and 12 (the frozen dials and the hash) |
+| 37 | GTO trainer phase 3a: solver core, four tuning spots (one spot until BD-T18) | `IN FLIGHT` (solver, check and tests built, `HANDOFF 50`; the freeze of the dials waits on Zach's answer to question (b), see the status note under the prompt) | Fable 5.1 | H | item 36 (`DONE`); Zach's answer to (b) | `solver/cfr.py`, `solver/best_response.py`, `solver/config.py`, new `solver/*_test.py`, `docs/incomplete/gto-trainer/KEY-SPEC.md` sections 7.5 and 12 (the frozen dials and the hash) |
 | 38 | GTO trainer phase 3b: the full tree and convergence | `HELD` until item 37 is `DONE` | Fable 5.1 | H | item 37 | `solver/`, the raw strategy output |
 | 39 | GTO trainer phase 4: key export, validation and containment | `HELD` until item 38 is `DONE` | Opus 5.5, then a Fable 5.1 review | H | item 38 | `app/src/gto/key.ts`, `app/src/gto/data/` |
 | 40 | GTO trainer phase 5: the hand engine | `HELD` until item 35 is `DONE` | Opus 5.5 | I | item 35 (the schema); a fixture key until item 39 | `app/src/gto/` except `key.ts`, `data/` and `grade.ts` |
@@ -2000,6 +2000,77 @@ Hand back: `python3 -m unittest discover -s solver -p '*_test.py'` green; exploi
 seat at the end of the run and at half the iterations; a table of every band of 8.2 for the
 solved subtrees with the solved value; the frozen dials and the new hash; then the two copyable
 blocks, with `git add -N` first for the new files.
+
+**Status, 2026-10-05 (`HANDOFF.md` step 50).** Steps 1 to 3 are built and green on branch
+`gto-equity`: `solver/config.py`, `solver/cfr.py`, `solver/best_response.py`, `solver/cfr_test.py`
+and `solver/best_response_test.py`. Step 4 stopped before the freeze: 408 settings of the nine dials
+inside the ranges of `KEY-SPEC.md` 3.2 were solved, and none lands every band of 8.2. Two bands
+are missed by all of them (the big blind 3-bets the small blind 22 to 36 percent against a band of
+12 to 20; the small blind folds to a big blind 3-bet at most 54.5 percent against 55 to 80); the
+cutoff's fold rate to a button 3-bet (52 to 72) holds at three settings that each miss seven other
+bands; and the button's open rate (40 to 48) and its fold rate to a big blind 3-bet (45 to 70)
+never hold at the same setting. The best setting inside the
+ranges lands 13 of the 19 bands (`k` 2; step 50 has the table), the best with `c_3bp` and
+`c_3bp_oop` above their ceilings 15, and a scratch prototype of a symmetric bend 14. `config.py`
+therefore holds the starting values and the hash of section 12 is unchanged. Step 5 is done except
+for item 38's prompt. The remainder is the prompt below; it waits on Zach's answer to (b).
+
+### 37, the remainder. Freeze the leaf-model dials on Zach's answer and open item 38
+
+**Model: Fable 5.1. Lane H. Waits on Zach's answer to question (b) of `HANDOFF.md` step 50.**
+Run it in the worktree `.claude/worktrees/gto-equity` (branch `gto-equity`), where item 36 and
+the first part of item 37 live uncommitted or committed by Zach.
+
+You are picking up felto, a poker-training app. Read, in order: `HANDOFF.md` (Environment, Code
+map, then steps 41, 46 and 50), `docs/incomplete/gto-trainer/KEY-SPEC.md` sections 3.2, 7.5, 8 and
+12, `docs/incomplete/gto-trainer/PLAN.md` phase 3a, `docs/AGENT-PRACTICES.md`, then
+`docs/conventions-python.md` in full. Session rules: never run `git commit`, `git push`, `git add -A`
+or `git add .`; print the two copyable blocks at the end (`git add -N` then `git add` the exact
+files you touched, then `git commit` the same files with a short lowercase message, with no
+`Co-Authored-By` line and no "Generated with" line). Talk to Zach in ASD-STE100 Simplified Technical
+English. Documents you write have no em dashes and no contractions.
+
+**Why this exists.** The solver is built and converges; what it converges to depends on nine
+dials that no setting inside the spec's ranges can tune to every band. Step 50 put the choice to
+Zach. This session carries out whichever he chose and nothing else.
+
+**What is fixed.** Read these; do not relitigate them.
+- Everything in item 37's "What is fixed" above still holds. `solver/cfr.py` solves a subtree with
+  `solve(game, opener, E, W, iterations, report)`; `python3 solver/cfr.py` prints the gains and the
+  band table for the CO, BTN and SB subtrees from `GAME` in `solver/config.py`.
+- The three choices step 50 offered Zach, with their band tables: (1) freeze the best setting
+  inside the ranges, 13 of 19 bands, and record the six misses as findings in `KEY-SPEC.md` 8;
+  (2) supersede the ranges of 3.2 for `c_3bp` and `c_3bp_oop` and freeze the best wider setting,
+  15 of 19, with four misses recorded; (3) supersede the leaf model itself (BD-T18), which is a
+  new decision for the spec and a re-tune in the same solver. Zach's answer names one of them, or a
+  fourth; it is recorded in `KEY-SPEC.md` 11 as a dated third batch.
+
+Do these, in order:
+1. **Record the answer** in `KEY-SPEC.md` 11 (a third batch, dated) and, for choice (2) or (3), the
+   supersession in 3.2 and in `PLAN.md` section 1 as a new `BD-T` row with its reversal.
+2. **Re-tune if the model or the ranges changed**: the scratch harness of step 50 is not kept;
+   write the loop again against `cfr.solve` and `cfr.measure`, report `k` 1 and 2, and pick the
+   setting with the most bands inside and the smallest total miss, with the button's pairs opening
+   at 100 percent.
+3. **Freeze.** Write the chosen values into `GAME["leaf_model"]` in `solver/config.py` and into
+   `KEY-SPEC.md` 12, recompute the hash with `spec_hash` in `solver/validate_key.py`, record it in
+   7.5 with the date, update `SPEC_HASH` in `solver/cfr_test.py`, and record every band still
+   missed in `KEY-SPEC.md` 8 as a finding with the solved value and the date.
+4. **Run and record.** `python3 solver/cfr.py` (the gains at a quarter, a half and all of the
+   iterations, the band table), then `python3 -m unittest discover -s solver -p '*_test.py'`.
+5. **Record it.** Append the next free `HANDOFF.md` step, set the plan's phase 3a header to
+   `BUILT` with the date, mark row 37 `DONE: HANDOFF n`, write item 38's prompt (phase 3b: the
+   full tree and convergence, Fable 5.1) below this one, and flip item 38 to `OPEN`.
+
+Ask before building: nothing new; question (a) of item 37 (the gate) may still be open and goes in
+the hand-back if so.
+
+Not in scope, whoever asks: the `UTG` and `HJ` subtrees (item 38); key export (item 39); any file
+under `app/`; any change to sections 2 and 3 beyond the one Zach chose; a rerun of
+`solver/equity.py`.
+
+Hand back: the unittest command green; the band table under the frozen dials; the new hash; then
+the two copyable blocks.
 
 ## Items 46 to 57: the second game-feel pass
 
