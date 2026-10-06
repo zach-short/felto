@@ -23,8 +23,8 @@ export function Screen({ children, top }: ScreenProps) {
     <SafeAreaView style={[styles.fill, { backgroundColor: colours.page }]} edges={["top", "left", "right"]}>
       <StatusBar style="auto" />
       {top ? <View style={[styles.top, { width: columnWidth }]}>{top}</View> : null}
-      {/* The bottom edge is left to the scroll view, so the path scrolls under the native tab
-          bar and its last stop still clears the bar (iOS adjusts the inset itself) */}
+      {/* The bottom edge is left out: on a tab the custom bar sits below the scene and pads the
+          home indicator itself (GameTabBar), and on a full-screen route iOS adjusts the inset */}
       <ScrollView contentContainerStyle={styles.centre} contentInsetAdjustmentBehavior="automatic">
         <View style={{ width: columnWidth }}>{children}</View>
       </ScrollView>

@@ -6,7 +6,7 @@ The file extension decides which standard applies: `.py` files follow
 `docs/conventions-python.md`, and `.ts` and `.tsx` files follow this one. Read this file in full
 before you write or edit TypeScript here.
 
-Version 1.1.4. Written 2026-10-05 on Opus 5.5 for board item 6 (app phase 2 in `PLAN.md`), when
+Version 1.1.5. Written 2026-10-05 on Opus 5.5 for board item 6 (app phase 2 in `PLAN.md`), when
 `app/` did not yet exist. Revised 2026-10-05 (1.0.1, board item 14): rule U6 widened from the art
 to the art and the sound, after the audit of item 13 found the WAV imports outside the art
 module; no rule renumbered. Revised 2026-10-05 (1.1.0, board item 16, app phase 12): every
@@ -21,6 +21,8 @@ feedback sheet and progress bar; no rule changed. U3's correct example names the
 no longer resolves; it is kept as written until a later revision picks a new pair.
 Revised 2026-10-05 (1.1.4, board item 46, game feel second pass): registry entry Z7 for the game
 kit of `GF-10`; no rule changed.
+Revised 2026-10-05 (1.1.5, board item 49, applied at the merge of board item 59): rule U6 covers
+the Lottie files and runtime of `GF-15`; no rule renumbered.
 The rules start from two earlier TypeScript standards of Zach's, which hold the same owner policy as felto's `.personal-config.json` and
 which `PLAN.md` BD-17 names. No rule id is copied from either: they use ids such as `F1`, `T1`,
 `L1` and `X1` with other meanings (`PLAN.md`, section 0, row 25). The ids below are felto's own.
@@ -507,12 +509,12 @@ Incorrect, written for contrast:
 <Text style={{ color: "#38B6F5", fontSize: 17 }}>{gems}</Text>
 ```
 
-### U6. The art, the sound and the Rive file come from the one art module
+### U6. The art, the sound, the Lottie effects and the Rive file come from the one art module
 
 *review · [OURS]* The generated SVG files are the only art (`D5`, `DESIGN.md` section 9), and the
 generated WAV files are the only sound (`D15`). They are imported from `@art/...` (BD-6, BD-7),
-and only `app/src/art/` imports them. The same holds for the rigged Flop: `app/src/art/` alone imports `rive-react-native` and `@rive/flop.riv` (`app/src/art/rive-boundary.test.ts` fails the gate otherwise). Every other file asks the art module for a card, a node,
-an icon, a mascot or a sound by name (`PLAN.md` phase 8, step 2; `app/src/art/registry.ts` for
+and only `app/src/art/` imports them. The same holds for the rigged Flop: `app/src/art/` alone imports `rive-react-native` and `@rive/flop.riv` (`app/src/art/rive-boundary.test.ts` fails the gate otherwise), and for the generated effects: `app/src/art/` alone imports `lottie-react-native` and a file under `@art/lottie/` (`app/src/art/lottie-boundary.test.ts` fails the gate otherwise; `app/src/art/effects.ts` names them). Every other file asks the art module for a card, a node,
+an icon, a mascot, a sound or an effect by name (`PLAN.md` phase 8, step 2; `app/src/art/registry.ts` for
 the SVGs and `app/src/art/sounds.ts` for the WAVs). No SVG is copied under `app/`, and no app
 tool writes or edits a file under `assets/`. An art change the app needs is a change to a generator, under
 `docs/conventions-python.md`.

@@ -106,15 +106,22 @@ answer in place.
   `option_select`, `heart_lost`, `xp_tick`, `reward_claim`, `sparkle`, each under 0.6 s, `GF-5`,
   board item 28; 16-bit mono, 44,100 Hz). It stops the run if an effect is over its ceiling
   (`checked()`, game-feel `PLAN.md` BD-G19). Standard library only (`math`, `os`, `struct`, `wave`); does not import `common` (board
-  item 17, `D15`, BD-23). The app plays them through `expo-audio` (BD-24).
+  item 17, `D15`, BD-23). The app plays them through `expo-audio` (BD-24). Since board item 47
+  (step 40, merged by board item 59 on 2026-10-05) all twelve are chimes in C major (`GF-14`).
+- `tools/build_lottie.py`: writes `assets/lottie/` (6 Lottie JSON files: `burst`, `confetti`,
+  `sparkle_shower`, `gem_fly_up`, `chip_fly_up`, `flame_flicker`, each under 1.5 s, which
+  `checked()` enforces), placed by its own seeded `Lcg`; imports `json`, `math`, `os` and `CREAM`
+  from `common` (board item 49, step 46, `GF-15`).
 - `assets/higgsfield/`: the Higgsfield reference art the style was approved from (19 PNG, 13 SVG).
 - `assets/gallery.html`: shows the Higgsfield art; links all 32 files by name.
 - `assets/icons/preview.html`, `assets/mascots/preview.html`: inline SVG snapshots, written by
   no script.
-- `docs/conventions-python.md`: the Python code standard for `tools/`, version 1.2.2 in `main` since step 41 (the scope paragraph); the unmerged branch of step 40 holds a different 1.2.2 (moved citations), so its merge must take 1.2.3 (steps 2 to 4, 8, 9 and 11, and board items 17 and 28).
-- `docs/conventions-typescript.md`: the TypeScript code standard for `app/`, version 1.1.0, 21
-  rules, four sanctioned divergences (Z1 to Z4) and a Known gaps list (board item 6, app phase 2;
-  U6 widened to sound, item 14; real examples and the registry, item 16).
+- `docs/conventions-python.md`: the Python code standard for `tools/` and `solver/`, version 1.2.4 since the merges of board item 59 on 2026-10-05: 1.2.2 is step 41's scope paragraph, 1.2.3 the sound citations of step 40 (whose branch had called them 1.2.2), 1.2.4 the Lottie generator of step 46 (steps 2 to 4, 8, 9 and 11, and board items 17 and 28 before that).
+- `docs/conventions-typescript.md`: the TypeScript code standard for `app/`, version 1.1.5 since
+  the merges of board item 59 on 2026-10-05, 21 rules, seven sanctioned divergences (Z1 to Z7) and
+  a Known gaps list (board item 6, app phase 2; U6 widened to sound, item 14; real examples and the
+  registry, item 16; U6 widened to Rive, item 34, and to Lottie, item 49; Z5 to Z7, items 26, 29
+  and 46).
 - `app/`: the Expo app (board item 7). `app/svg-transformer.js` turns each SVG into a
   component with SVGO off and swaps the two light-page colours for props (BD-25, map in
   `app/src/art/colour-swap.json`); `app/metro.config.js` reaches `../assets` (BD-7);
@@ -124,9 +131,9 @@ answer in place.
   `app/assets/fonts/FeltoRank.ttf` is the rank font with its licence beside it.
 - `app/src/app/`: the routes (board item 12). `_layout.tsx` renders `RootProviders` (which mounts
   `PlayerProvider` and `ReminderSync`) around `RootStack`; `(tabs)/` holds Learn (`index.tsx`,
-  which is `/`), Practice and Profile in native tabs; `dev/fixture/[name].tsx` is the BD-13
-  fixture link; `dev/art.tsx` is the art check; `dev/reminders.tsx` lists the scheduled
-  reminders. Every route renders one screen from `app/src/screens/`. `app/src/art/` names all 84 SVGs the app draws
+  which is `/`), Practice and Profile under the custom tab bar (board item 52 part A, below); `dev/fixture/[name].tsx` is the BD-13
+  fixture link; `dev/art.tsx` is the art check and plays the six Lottie effects; `dev/kit.tsx` shows the game
+  kit; `dev/reminders.tsx` lists the scheduled reminders. Every route renders one screen from `app/src/screens/`. `app/src/art/` names all 84 SVGs the app draws
   (`sizes.ts` holds the viewBoxes, checked against the files by `sizes.test.ts`; `registry.ts`
   is the only SVG importer) and gives `Art`, `Mascot`, `CardArt` and `PathNodeArt`, which draws
   the progress arc over `node_current_base` (BD-9). `app/src/components/path/` is the Learn path
@@ -140,7 +147,22 @@ answer in place.
   `components/boss/` and `components/review/` build the sessions from `drawBoss` and `reviewSet`;
   `components/chest/` and `components/lives/` are the chest and the sheet;
   `components/path/stop-route.ts` decides where a path tap goes. `app/src/feedback/` plays the
-  effects, every call through `safely.ts`; `app/src/art/sounds.ts` is the only WAV importer. `app/src/art/flop-rive.tsx` (`FlopRive`) is the only importer of `rive-react-native` and of `app/assets/rive/flop.riv` (board item 34, step 36); `flop-mode.ts` holds its pure choice.
+  effects, every call through `safely.ts`; `app/src/art/sounds.ts` is the only WAV importer. `app/src/art/flop-rive.tsx` (`FlopRive`) is the only importer of `rive-react-native` and of `app/assets/rive/flop.riv` (board item 34, step 36); `flop-mode.ts` holds its pure choice. `app/src/art/effect.tsx` (`Effect`) is the only importer of `lottie-react-native` and of `assets/lottie/` (board item 49, step 46; `lottie-boundary.test.ts` fails the gate otherwise); `effects.ts` holds the `EffectName` union and its pure rules.
+- The game kit (board item 46, step 43, `GF-10`, `GF-11`, `GF-16`, `GF-17`): `app/src/components/kit/`
+  holds `GameText`, `RollingNumber`, `Bubble`, `Popover`, `Tag`, `Sparkles`, `SparkleBurst`,
+  `GameButton`, `GameSwitch`, `GameSheet` and `GameDialog`, with their pure parts and tests
+  (registry Z7 of the TypeScript standard). Overlays are plain views over the screen, not React
+  Native `Modal`. Its motion hooks are in `app/src/motion/` (`use-roll`, `use-pop`, `use-slide`,
+  `use-twinkle`, `use-burst`).
+- The tab bar (board item 52 part A, step 47, `GF-18`): `app/src/components/app-tabs.tsx` is the
+  JavaScript `Tabs` of `expo-router/js-tabs` with `tabBar` set to `GameTabBar`
+  (`app/src/components/tab-bar/`: `game-tab-bar.tsx`, `tab-button.tsx`, `tab-items.ts`). The bar
+  sits below the scene and pads the home indicator itself. Its icons are existing art until
+  part B.
+- The lesson host (board item 51, steps 45 and 49, `GF-11`): in `app/src/components/exercise/`,
+  `host-speech.ts` gives the bubble's line and key word, `concept-tag.ts` the "NEW CONCEPT" tag,
+  `exercise-layout.ts` and `use-exercise-density.ts` the split and the density, and
+  `use-talk-bob.ts` the bob while the fish talks.
 - Practice (board item 19, `D21`): the tab is `screens/practice-screen.tsx`; a set is the
   full-screen modal `app/src/app/practice-set.tsx`, the same loop with a `Session` of kind
   `practice`. `components/practice/practice-menu.ts` lists the kinds open and locked and deals
@@ -191,19 +213,22 @@ answer in place.
 - `app/src/game/`: the game rules of `D8`, `D19` to `D21` as pure functions of the state, a
   path outline and the time (board item 8): lives, streak and freeze, sessions and XP, the path
   node states, the seeded boss draw, the review set, the chest, placement, and the named
-  fixtures of BD-13. `PlayerState` is in `player-state.ts`. Since board item 22 (step 28),
+  fixtures of BD-13. Since board item 50 (steps 44 and 48), `chest-tier.ts` draws a chest's tier
+  from the player's `chestSeed` and the unit, `chest-reveal.ts` plans its taps, and `chest.ts`
+  gives `chestTierOf` and `chestPrize` and pays the tier's gems (dials `chestOdds`, `chestGems`). `PlayerState` is in `player-state.ts`. Since board item 22 (step 28),
   `dealt-slots.ts` deals fresh hands into the drill slots of the lessons in `DIALS.dealtLessons`
   and of every boss (`US-1`), and its `isDealtId` keeps a dealt miss out of `missedExercises`
   (`US-2`); the dealers it is handed are `DEALERS` of `app/src/drills/deal.ts`.
 - `app/src/storage/`: the one data module (`D3`, BD-8, board item 8). `player-store.ts` is the
   pure core (load, check, migrate, save, back up); `migrations.ts` holds `STATE_VERSION`;
   `kv-store-adapter.ts` is the only importer of `expo-sqlite`; `player-provider.tsx` and
-  `use-player.ts` give screens the state and its actions. `STATE_VERSION` is 4 in `main` since
+  `use-player.ts` give screens the state and its actions. `STATE_VERSION` is 5 in `main` since
+  the merge commit `c2bfaba` of board item 59 (item 50's `chestSeed`; old-save test
+  `chest-seed-migration.test.ts`; `migrations.ts:6`, read 2026-10-05). It was 4 from
   commit `2208c5e` ("add logan mode setting, off by default"; `migrations.ts:6`, read 2026-10-05).
   This line said 3 until 2026-10-05: true after board item 27, stale after `2208c5e`. It was 3 from
   board item 27 (settings gained `haptics`; old-save test `haptics-migration.test.ts`) and 2 from
-  board item 15 (the reminder; `migrations.test.ts`). The unmerged branch of step 44 raises it to 5
-  (`chestSeed`; old-save test `chest-seed-migration.test.ts`); after that merge it is 5.
+  board item 15 (the reminder; `migrations.test.ts`).
 - Profile and the reminder (board item 15): `app/src/components/profile/` is the Profile form
   (`FieldGroup`, the freeze shop, the settings, reset; the Haptics switch under Sound since board
   item 27); `app/src/reminder/` plans the week of
@@ -231,9 +256,11 @@ answer in place.
   Python with numpy allowed here, by BD-T3 and the scope paragraph of `docs/conventions-python.md`.
   On 2026-10-05 it holds one file, `validate_key.py`, the stdlib-only validator of the key schema
   (`KEY-SPEC.md` 7.6): `python3 solver/validate_key.py <key.json>` exits 0 on a valid key.
-- App size, 2026-10-05 (`find app/src`, board item 16): 198 source `.ts` and `.tsx` files (9,869
-  lines) and 63 test files (3,728 lines); 78 icons, 18 mascots and 6 sounds under `assets/`;
-  `app/src/art/registry.ts` imports 84 of the 96 SVGs (66 icons and all 18 mascots).
+- App size, 2026-10-05 after the merges of board item 59 (`find app/src`): 286 `.ts` and `.tsx`
+  files besides tests (13,763 lines) and 103 test files (5,937 lines); 78 icons, 18 mascots, 12
+  sounds and 6 Lottie files under `assets/`; `app/src/art/registry.ts` imports 84 of the 96 SVGs
+  (66 icons and all 18 mascots). Board item 16 measured 198 files (9,869 lines), 63 test files
+  (3,728 lines) and 6 sounds the same morning.
 
 ## Invariants
 
@@ -1341,6 +1368,8 @@ static pose otherwise (item 34 step 5); Zach commits the branch.
 **48. Gems by chest tier, part B (board item 50, `GF-13`).** Done 2026-10-05 by the same Opus 5.5 builder as step 44, in the same worktree, after `git merge --ff-only` moved its branch from `052de2f` to the kit's `bbf90f0` with no new commit. Committed by Zach as `f38a414` on that branch, parts A and B together, 2026-10-05; not merged. `dials.ts` holds `chestOdds` (55, 30, 12, 3) and `chestGems` (20, 35, 60, 100), the second replacing the single `chestGems: 20`; the comment above the odds carries the `GF-13` purchase condition (app `DESIGN.md:204-205`) and says the values are proposals of 2026-10-05 awaiting Zach. `chest.ts` gains `chestTierOf` and `chestPrize`, and `openChest` pays the tier's gems. Other readers of the old dial changed with it: `fixtures.ts` (the all-done fixture's gems), `fixtures-placed.test.ts`, `chest-moment.ts` and its test, `chest-view.tsx` (a `prize` prop) and `chest-screen.tsx` (passes `chestPrize`), which are item 30's files, edited because the screen would otherwise show 20 for every tier, while item 30 is held, so nothing collides; `out-of-lives-sheet.tsx` and `profile-view-model.ts` read `DIALS.chestGems.common`. New `chest-prize.test.ts` (5 tests), which also pins that the odds sum to 100 and that gems rise with the tier. Gate at load 6.4: exit 0, run lines 78, 18 and 12, 96 test files and 711 tests, assets diff empty; a planted fixed prize failed three tests. Not seen running. **Zach's answers, 2026-10-05:** he kept the odds and gems (the dial comment now says so), and for the line "Beat a boss and its chest holds 20." (two places) he asked for something "more ambiguous": "Beat a boss and claim a reward." The session of step 39 applied both in this worktree (`profile-view-model.ts`, its test, `out-of-lives-sheet.tsx`, `dials.ts`); typecheck and lint clean, the 8 tests of `components/profile` and `components/lives` pass. **Left owed:** the merge (board item 59).
 
 **49. The lesson host speaks in a bubble, part B (board item 51, `GF-11`).** Done 2026-10-05 by the same Opus 5.5 builder as step 45, in the same worktree, after `git merge --ff-only` moved its branch to the kit's `bbf90f0` with no new commit. Committed by Zach as `603a3e7` on that branch, parts A and B together, 2026-10-05; not merged. In `app/src/components/exercise/`: `exercise-view.tsx` draws the fish beside `<Bubble tail="left" onTalking>` with the prompt as the line and the key word between asterisks (tests parse it back with the kit's `parseLine`), the fish bobs while it talks (`use-talk-bob.ts`, on the idle-bob dials, 3 points over 2.4 s, Reanimated only through `src/motion/`), and a `<Tag label="NEW CONCEPT">` sits over the bubble on a concept step that names a term; `choice-list.tsx` takes a density, `exercise-scene.tsx` and `card-row.tsx` a column width (`use-exercise-density.ts` measures the rows). The copy is "NEW CONCEPT", in capitals because the kit's `Tag` keeps the case it is given. Build calls: an asterisk inside a prompt would become U+2217 (none exists); the tag shows when the fish hosts, so the placement check shows it too (the reversal passes the session kind from `lesson-run-view.tsx:106-113`); the bubble is keyed by the exercise id, so a repeated prompt types again. Gate at load about 7: exit 0, run lines 78, 18 and 12, 95 test files and 702 tests; assets diff empty. **Seen running:** the iPhone 17 Pro simulator, light and dark (the tag, a coloured key word, the bubble at full size while it types, an outs step, a checked preflop step with the sheet); the `Pixel_9` emulator in portrait and landscape (the split puts the rows on the right, all on screen); a 375 by 667 point emulator size (on an outs step the first row is cut and the rest scroll; the longest step fits). Screenshots in the scratchpad of the session of step 39, `item51/`; looked at by that session's lead, who notes the host fish is small next to the reference's host. **Not seen:** iOS landscape, Reduce Motion, the boss, review and placement sessions; the bob moving. **Open:** after an Android rotation one frame showed the untyped end of the key word in the text colour (the kit's typing, step 43); in landscape the bubble keeps about one blank line at its foot; in phone landscape the cards sit under the bubble and need a scroll. **Left owed:** the merge (board item 59).
+
+**50. The second game-feel pass merged into `main`, the docs reconciled, both platforms rebuilt (board item 59).** Done 2026-10-05 on Opus 5.5, in the main checkout. Zach ran each merge as `git merge --no-ff --no-commit` and ended it himself, in the board's order: item 46 kit `6a85e6e`, item 50 chest tier rule `c2bfaba`, item 51 lesson host `054fd94`, item 47 chimes `fde0b7d`, item 49 Lottie `5564bed`, then item 52 part A tab bar (staged and gate-green when this step was written; Zach's commit ends it). Before the first merge the branch heads matched the board (`bbf90f0`, `f38a414`, `603a3e7`, `e1d98cd`, `afe9997`, `7929559`) and every worktree was clean. A preview of the whole chain (`git merge-tree` and `git commit-tree` in a throwaway bare clone in this session's scratchpad, never in the repo) found one conflict, the known one. After each merge the index held only that branch's own files (`git diff --cached --name-only` against the branch's own diff), and the whole-repo gate ran green: 92 test files and 679 tests, then 96 and 711, 99 and 734, 99 and 734, 102 and 761, 103 and 772; run lines 78, 18 and 12, and 6 from merge 5; `git diff --stat` of the assets empty every time; the twelve WAVs after merge 4 byte-identical to the branch's. Item 52 part A's generators had never run in its worktree (step 47); they ran here. **The conflict:** `docs/conventions-python.md`, step 41's 1.2.2 against step 40's 1.2.2, resolved as 1.2.3 with both, and every moved sound citation re-read against `tools/build_sounds.py`. **The one red:** the stop hook ran the gate while Zach's `git merge` of item 49 was rewriting `app/package.json`, and vitest read the file empty (one suite, "File is empty"); a race, green on the rerun. **Item 49's owed text (step 46), applied:** `python3 tools/build_lottie.py` joins the gate in `CLAUDE.md`, `gateCommand` in `.personal-config.json` (gitignored), `scripts/gate.sh` and the two copies in `docs/AGENT-PRACTICES.md` (Part 6 and Appendix A; those two and `gate.sh` were outside the row's files, and are the same gate line); `CLAUDE.md` names the generator and the runtime (Stack, Architecture, the `tools/`, `assets/lottie/` and `app/` rows, a gate-limits bullet, `assets/lottie` in the assets diff); `docs/conventions-typescript.md` 1.1.5 (U6 covers Lottie); `docs/conventions-python.md` 1.2.4 (the scope paragraph, M1, G1, G3, G4, W1, W2, H2 and the owner table). **Reconciled:** the counts in `CLAUDE.md` (103 test files and 772 tests; 286 TypeScript files; icons stay 78 until item 48), this file's code map (the Lottie generator, the kit, the tab bar, the lesson host, the Lottie player, the chest tier files, stored version 5 since `c2bfaba`), the two standards' lines in `docs/README.md`, and the stale comment at `app/src/components/screen.tsx:26-27` (the custom bar sits below the scene and pads the home indicator itself, `game-tab-bar.tsx:20`). **Seen running,** on a development build rebuilt from `main` with the merges: the iPhone 17 Pro simulator (light, a fresh player) and the `Medium_Phone_API_36` emulator (dark, a saved player), each showing Learn with the custom tab bar, a lesson step with the host's bubble, `/dev/kit`, and `/dev/art?loop=1` with all six Lottie effects mid-flight; the first sighting of the effects on Android. Screenshots in this session's scratchpad, `item59/`. **Not seen:** sound, haptics, Reduce Motion, VoiceOver and TalkBack, a chest opening by tier, the boss, any motion except as stills. **Two environment faults, fixed in gitignored folders, no repo file changed:** (1) iOS: `pod install` left the release flavor of the prebuilt React core and of four Expo modules (`ExpoModulesCore`, `ExpoFont`, `ExpoFileSystem`, `ExpoModulesWorklets`) in `app/ios/Pods` while their flavor markers said debug, so each build-time swap was skipped. The Debug build first failed to link (`RCTPackagerConnection` missing from `React.xcframework`), and after the React core was swapped it crashed at launch in `ExpoViewProps` (`~/Library/Logs/DiagnosticReports/Felto-2026-10-05-231033.ips`). Fix: the React core's marker written as `Release`, then React Native's own `scripts/replace-rncore-version.js -c Debug`; the four Expo markers written as `release`, so the next build's own swap extracted debug (`ExpoModulesCore` then matched its debug tarball by `shasum`). Likely cause, not proven: a Release build for the phone (`scripts/phone.sh`, whose default is Release) shares `app/ios/Pods` and the CocoaPods cache. (2) Android: CMake caches under `app/node_modules/*/android/{.cxx,build}` and `app/android/app/{.cxx,build}` pointed at a `libworklets.so` folder (`3b5cwe1k`) that no longer existed; removed for `react-native-worklets`, `expo-modules-core`, `react-native-reanimated`, `react-native-screens`, `react-native-gesture-handler` and the app module, and Gradle rebuilt them. **Open, each Zach's or a later item's:** (a) row 34 still says `IN FLIGHT`, though its last edit, `26d4e79` ("play the rigged flop on a perfect lesson finish"), is in `main` and no step records it; (b) `tools/build_lottie.py:486-487` cites `tools/build_sounds.py:235-242`, now `:282-289` after the chimes (not in this item's files); (c) `docs/incomplete/game-feel/DESIGN.md` (the as-built notes of `GF-13` and `GF-14`) and `PLAN.md` still say "not merged"; item 33 owns them; (d) GTO item 44 now needs stored version 6, because 5 is in `main`; (e) item 48's branch `b565143` stays unmerged, as the board says; (f) the iOS flavor fault will come back after the next Release build from this checkout, and "Known facts and quirks" has no line for it yet; (g) a grey gear button floats over the top right of every screen on both platforms and covers the gems count on Learn; it looks like the development client's own tools button, and was not checked; (h) board item 58 was rewritten the same day with Zach's answers and the `felto.app/play` layout. **Left owed:** the commit of the tab bar merge and of this item's doc edits, which are Zach's.
 
 ## Style rules
 

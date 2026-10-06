@@ -20,10 +20,14 @@ governs `tools/` (`docs/incomplete/gto-trainer/PLAN.md`, BD-T3). The validator i
 import numpy; the first file that does so (phase 2 of that plan) must bring a dated amendment to
 M4 that names `solver/` as the one place a third-party import is allowed, and bump this version.
 Rules that speak of "a generator" (M1, M2, G1, W1, W2) do not bind a validator, which generates
-nothing; M3, M4, H2, H3, H4, K1 and Y1 to Y3 bind every `.py` file. Read this file in full before
-you write or edit Python here.
+nothing; M3, M4, H2, H3, H4, K1 and Y1 to Y3 bind every `.py` file. Later on 2026-10-05 board
+item 49 added a fifth file in `tools/`, `tools/build_lottie.py`, the Lottie generator of game-feel
+`GF-15`. It writes six Lottie JSON files to `assets/lottie/` and imports `json`, `math`, `os` and
+`CREAM` from `tools/common.py` (`tools/build_lottie.py:28-32`). Every rule that binds the sound
+generator binds it too; where it does a thing its own way, M1, G1, G3, G4, W1, W2 and H2 say so.
+Read this file in full before you write or edit Python here.
 
-Version 1.2.3. Written 2026-10-04 on Opus 5.5 for board item 1 (ledger step 2 in `HANDOFF.md`);
+Version 1.2.4. Written 2026-10-04 on Opus 5.5 for board item 1 (ledger step 2 in `HANDOFF.md`);
 revised 2026-10-05 on Sonnet 5.5 for board item 2 (ledger step 3), which moved the shared code
 into `tools/common.py`, for board item 3 (ledger step 4), which reconciled the line citations,
 for board item 4 (ledger step 8), which named `tools/common.py` in the scope sentence, and
@@ -39,7 +43,9 @@ on 2026-10-05, at the merge of board item 59, for board item 47 on Opus 5.5 (led
 which moved the sound generator citations in M1, G3, W1, W2 and Y4 that the re-voiced effects
 (game-feel `GF-14`) shifted and added the re-voiced files to the determinism fact; no rule
 changed. Item 47's branch called its change 1.2.2 because it was made beside item 35's, from the
-same 1.2.1.
+same 1.2.1. Version 1.2.4 on 2026-10-05, at the merge of board item 59, for board item 49 (ledger step 46):
+the Lottie generator in the scope paragraph and in M1, G1, G3, G4, W1, W2 and H2, and
+`assets/lottie` in the gate's assets diff; no rule changed.
 Zach answered the open questions on 2026-10-04 and took every recommendation. Those answers are
 cited below as "owner, 2026-10-04".
 
@@ -51,7 +57,7 @@ Every rule has an ID. IDs are never renumbered. A rule that stops applying is ma
 Every rule carries an enforcement tag:
 
 - *gate*: the whole-repo gate, followed by
-  `git diff --stat -- assets/icons assets/mascots assets/sounds`, catches a violation.
+  `git diff --stat -- assets/icons assets/mascots assets/sounds assets/lottie`, catches a violation.
 - *review*: nothing catches a violation. The rule holds only while each session reads it.
 
 Every rule carries a provenance label:
@@ -82,7 +88,9 @@ These facts were verified 2026-10-04. A rule that breaks one of them is wrong.
   `git diff --stat -- assets` was empty afterwards. The sound generator joined on 2026-10-05:
   two runs, one under `PYTHONHASHSEED=7`, gave the same `shasum` for all six WAV files. Board
   item 28 repeated the check for all twelve on 2026-10-05, with the same result, and board item
-  47 repeated it for the twelve re-voiced files the same day, again the same.
+  47 repeated it for the twelve re-voiced files the same day, again the same. The Lottie
+  generator joined the same day: two runs wrote byte-identical files (board item 49, ledger
+  step 46), and the gate of board item 59 left `git diff --stat -- assets/lottie` empty.
 - Python is 3.14.6 at `/opt/homebrew/bin/python3` (`python3 -c "import sys; print(sys.version)"`).
 - The SVGs go into Rive. The mascot layer ids are the rig contract (`tools/build_mascots.py:7-9`).
 
@@ -95,7 +103,9 @@ the run command lets a reader rebuild the art without opening `CLAUDE.md`. The w
 "highlight" in the example below is a quote from the source and is kept as written. The sound
 generator's docstring states its sound style the same way, and adds a musical note for each
 effect: its pitches, its timing and its peak (`tools/build_sounds.py:1-67`). An agent cannot hear,
-so those notes are the only description of a sound that a reader can check against the code.
+so those notes are the only description of a sound that a reader can check against the code. The
+Lottie generator's docstring states its style the same way, says why it leaves out the hard pale
+shadow, and describes each effect: what moves and how long it runs (`tools/build_lottie.py:1-26`).
 
 Correct, `tools/build_icons.py:2-9`:
 
@@ -194,7 +204,10 @@ The `wave` module writes no date into the header, so a WAV file's bytes depend o
 samples. The
 byte-identical rebuild is the only proof that a change touched only what it meant to touch.
 `grep -nE 'set\(|random|time\.|datetime|environ|getenv|argv|listdir|glob|uuid|hash\(|input\(' tools/*.py`
-found nothing on 2026-10-04.
+found nothing on 2026-10-04, and found nothing again on 2026-10-05 with `tools/build_lottie.py` in
+the folder. The Lottie generator places its pieces with `Lcg`, a 32-bit number stream written in
+the file, with one seed per effect in the source (`tools/build_lottie.py:79-90`), so it reads no
+random source in the sense of this rule: the same seeds give the same bytes on every run.
 
 Correct, `tools/build_icons.py:34-35`: the data is in the source.
 
@@ -244,6 +257,10 @@ one place only, `to_frames()`, through `round()` (`tools/build_sounds.py:140-144
 still move by one if the float arithmetic before it is reordered, or on a platform whose `math.sin`,
 `math.exp` or `math.cos` (`tools/build_sounds.py:123`, `207`) differs in the last bit, so the byte-identical check holds on this Mac and is not proven elsewhere.
 
+In the Lottie generator the fixed precision is `num()`, which rounds a calculated number to two
+places, or writes it bare when it is whole, before `json.dumps` writes the file
+(`tools/build_lottie.py:93-97`). Every calculated number reaches the JSON through it.
+
 Correct, `tools/common.py:28-29`:
 
 ```python
@@ -263,8 +280,8 @@ in the drift register.
 ### G4. A change that should not change the art proves it with an empty diff
 
 *gate · [OURS]* A refactor, a move or a rename in a generator runs the gate, then
-`git diff --stat -- assets/icons assets/mascots assets/sounds`. Any line in that output is a
-change in the art or the sound. A change there is allowed only when it was meant. Until
+`git diff --stat -- assets/icons assets/mascots assets/sounds assets/lottie`. Any line in that
+output is a change in the art, the sound or an effect. A change there is allowed only when it was meant. Until
 `assets/sounds/` is committed, compare `shasum assets/sounds/*.wav` before and after the run
 instead, because `git diff` does not see an untracked file.
 
@@ -284,7 +301,9 @@ place to count files and one place that keeps output inside `OUT`.
 The sound generator has its own `write(name, frames)`, which writes `<OUT>/<name>.wav` through
 the `wave` module and returns 1 (`tools/build_sounds.py:272-279`). It does not use the shared
 `write()`, because that one opens a text file and adds `.svg`. It is the one write path of its
-file, so the rule holds there too.
+file, so the rule holds there too. The Lottie generator has its own `write(name, anim)` in the
+same way: it writes `<OUT>/<name>.json` through `json.dumps` and returns 1
+(`tools/build_lottie.py:478-482`).
 
 Correct, `tools/common.py:20-25`. It takes the output folder as its first argument and returns
 1, so `main()` can count (W2):
@@ -308,7 +327,7 @@ Incorrect, the inline write that `tools/build_mascots.py` held before 2026-10-05
 ### W2. `main()` prints the number of files it wrote, counted from the writes
 
 *review · [OURS]* The run line is the quick check that no asset went missing. Both
-files comply since 2026-10-05: icons print 78 (76 when ledger step 3 made the fix, 78 since board item 5) and mascots print 18. The sound generator, added by board item 17, prints 12 (6 until board item 28; `tools/build_sounds.py:296`). The two wrong ways were both
+files comply since 2026-10-05: icons print 78 (76 when ledger step 3 made the fix, 78 since board item 5) and mascots print 18. The sound generator, added by board item 17, prints 12 (6 until board item 28; `tools/build_sounds.py:296`). The Lottie generator, added by board item 49, prints 6 (`tools/build_lottie.py:498`). The two wrong ways were both
 in the repo before then. `tools/build_icons.py` counted with `os.walk` over `OUT`, which also
 counts `assets/icons/preview.html` (77 for 76 SVGs), and never printed it.
 `tools/build_mascots.py` printed a count computed from the tables, so it printed 18 even if a
@@ -642,7 +661,10 @@ def gloss(x, y, rx=16, ry=8, rot=-35, op=0.55):
 2026-10-04. Count from the `def` line to the last line. A function that returns one whole SVG
 (`chip`, `chip_stack`, `card_face`, `card_back`, `node`, the `ui_*` functions, `fish`, `squid`,
 `shark`) is exempt, and so are the helpers nested inside it. In the sound generator a function
-that returns one whole effect (`answer_right` to `sparkle`) is exempt in the same way. The 6 in the policy guides against
+that returns one whole effect (`answer_right` to `sparkle`) is exempt in the same way, and so are the
+five functions of the Lottie generator that return one whole effect: `burst`, `confetti`,
+`sparkle_shower`, `fly_up` and `flame_flicker` (24 to 46 lines, measured with `ast` on
+2026-10-05). The 6 in the policy guides against
 splitting a line or two into a function of its own. The two-line helpers that exist, such as
 `tf` and `ext`, comply. On 2026-10-04 one function broke the 15-line limit: `main` in
 `tools/build_icons.py`, at 19 lines (measured with `ast`). Since 2026-10-05 it is 14, and 15 since board item 5 added one write.
@@ -837,7 +859,7 @@ says how each one applies to the scripts in `tools/` (owner, 2026-10-04).
 | Policy | How it applies here | Rule |
 |---|---|---|
 | Comments explain why only | Why only, plus a legend over a table of positional tuples | K1 |
-| Functions of roughly 6 to 15 lines | Helpers at most 15 lines; a function that returns one whole SVG or one whole sound effect is exempt | H2 |
+| Functions of roughly 6 to 15 lines | Helpers at most 15 lines; a function that returns one whole SVG, one whole sound effect or one whole Lottie effect is exempt | H2 |
 | Strict types | No hints until a type checker runs | H3 |
 | Tokens only for design values | A new colour is named; the existing inline values stay | C1 |
 | Named exports only | Does not apply: a script exports nothing | none |

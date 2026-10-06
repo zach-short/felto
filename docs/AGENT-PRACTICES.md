@@ -658,7 +658,7 @@ git add -N <new-path> && git commit -o <path> <path> -m "..."
   HEAD can look buildable when it is not.
 
 ```bash
-d=$(mktemp -d) && git archive HEAD | tar -x -C "$d" && cd "$d" && command -v python3 >/dev/null && command -v xmllint >/dev/null && command -v bun >/dev/null && bun install --cwd app --frozen-lockfile && python3 tools/build_icons.py && python3 tools/build_mascots.py && python3 tools/build_sounds.py && xmllint --noout assets/icons/*/*.svg assets/mascots/*/*.svg && bun run --cwd app typecheck && bun run --cwd app lint && bun run --cwd app test
+d=$(mktemp -d) && git archive HEAD | tar -x -C "$d" && cd "$d" && command -v python3 >/dev/null && command -v xmllint >/dev/null && command -v bun >/dev/null && bun install --cwd app --frozen-lockfile && python3 tools/build_icons.py && python3 tools/build_mascots.py && python3 tools/build_sounds.py && python3 tools/build_lottie.py && xmllint --noout assets/icons/*/*.svg assets/mascots/*/*.svg && bun run --cwd app typecheck && bun run --cwd app lint && bun run --cwd app test
 ```
 
 - **Shell working directory resets between calls in some harnesses.** A relative-path check can
@@ -1027,7 +1027,7 @@ the same turn, batched. A decision built on a guess is built twice.
 | `Sonnet 5` | The mechanical tier | Set by `personal-config` 2026-10-04 |
 | `2026-08-16` | The date of the measurement Part 5's table carries | `2026-08-16` if you inherit it; the date you re-measured if a tier's model changed |
 | `command -v python3 >/dev/null && command -v xmllint >/dev/null && command -v bun >/dev/null && bun install --cwd app --frozen-lockfile` | Fresh-checkout recipe | Verified 2026-10-04 for `tools/`; the bun part added 2026-10-05, board item 7 (Part 6) |
-| `python3 tools/build_icons.py && python3 tools/build_mascots.py && python3 tools/build_sounds.py && xmllint --noout assets/icons/*/*.svg assets/mascots/*/*.svg && bun run --cwd app typecheck && bun run --cwd app lint && bun run --cwd app test` | Build, for the HEAD-isolation check | Python part run 2026-10-04: exit 0, output byte-identical to the files on disk; app part added 2026-10-05, board item 7; sounds and xmllint steps added 2026-10-05 to match the whole-repo gate in `CLAUDE.md` |
+| `python3 tools/build_icons.py && python3 tools/build_mascots.py && python3 tools/build_sounds.py && python3 tools/build_lottie.py && xmllint --noout assets/icons/*/*.svg assets/mascots/*/*.svg && bun run --cwd app typecheck && bun run --cwd app lint && bun run --cwd app test` | Build, for the HEAD-isolation check | Python part run 2026-10-04: exit 0, output byte-identical to the files on disk; app part added 2026-10-05, board item 7; sounds and xmllint steps added 2026-10-05 to match the whole-repo gate in `CLAUDE.md`; the Lottie step added 2026-10-05 for the same reason (board item 59) |
 
 Gate commands, hazards and the directory map are not placeholders: they are discovered in 0.1
 and written straight into `CLAUDE.md`.

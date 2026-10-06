@@ -31,7 +31,7 @@
 ## Stack
 
 - Python 3, standard library only (`math`, `os`; the sound generator adds `struct` and `wave`,
-  2026-10-05). Verified on Python 3.14.6 at `/opt/homebrew/bin/python3`, 2026-10-04.
+  2026-10-05; the Lottie generator adds `json`, board item 49). Verified on Python 3.14.6 at `/opt/homebrew/bin/python3`, 2026-10-04.
 - `xmllint` (libxml 20913, `/usr/bin/xmllint`) to check SVG well-formedness.
 - The app in `app/` (2026-10-05, board item 7): Expo SDK 57 (`expo` 57.0.26, React Native
   0.86.3, React 19.2.3), expo-router with routes in `app/src/app/`, a development build
@@ -42,20 +42,24 @@
 - No CI. The Python side has no tests and no linter.
 - Rive is the intended animation tool for these assets (`tools/build_icons.py:12`). Flop has a rig,
   played by `rive-react-native` 9.8.5 (`app/package.json`, board item 34).
+- Particle effects are Lottie files from `tools/build_lottie.py`, played by `lottie-react-native`
+  7.3.8 (`app/package.json`, board item 49, game-feel `GF-15`). It is native code, so a
+  development build made before that merge (board item 59) must be rebuilt.
 
 ## Architecture
 
-- The repo is an asset pipeline and an app. Two generators write SVGs, one writes sounds, three
-  HTML pages display the art, and the Expo app in `app/` draws and plays the same files from
+- The repo is an asset pipeline and an app. Two generators write SVGs, one writes sounds, one
+  writes Lottie effects, three HTML pages display the art, and the Expo app in `app/` draws and plays the same files from
   `../assets` through the `@art/*` alias (BD-6, BD-7 in `docs/incomplete/app/PLAN.md`). Only
-  `app/src/art/` imports an SVG or a WAV (rule U6).
-- The app, built 2026-10-05 (board items 7 to 20): three native tabs (Learn, Practice, Profile)
-  and full-screen session routes under `app/src/app/` (lesson, boss, review, chest, practice set,
+  `app/src/art/` imports an SVG, a WAV, a Lottie file or the Rive file (rule U6).
+- The app, built 2026-10-05 (board items 7 to 20): three tabs (Learn, Practice, Profile) under a
+  custom tab bar (`app/src/components/tab-bar/`, board item 52 part A) and full-screen session routes under `app/src/app/` (lesson, boss, review, chest, practice set,
   onboarding with a placement check), each route a thin render of a screen in `app/src/screens/`.
   Pure game rules are in `app/src/game/`, the evaluator in `app/src/cards/`, the four units and
   the preflop chart in `app/src/content/`, the random dealers in `app/src/drills/`, the one data
   module in `app/src/storage/` and the reminder in `app/src/reminder/`. The development routes
-  `/dev/art`, `/dev/fixture/<name>` and `/dev/reminders` also exist. It runs as a development
+  `/dev/art`, `/dev/kit`, `/dev/fixture/<name>` and `/dev/reminders` also exist. The game kit of
+  custom controls is in `app/src/components/kit/` (board item 46). It runs as a development
   build only. `HANDOFF.md` has the code map.
 - The assets point at a game about poker: playing cards, chips, a lesson path with locked,
   current and boss nodes, a streak flame, XP, lives, gems and a chest
@@ -70,24 +74,25 @@
 
 | Path | Belongs here | Does not |
 |---|---|---|
-| `tools/` | The SVG generators, the sound generator and their shared module | Generated output |
+| `tools/` | The SVG generators, the sound generator, the Lottie generator and their shared module | Generated output |
 | `assets/icons/{cards,chips,path,ui}/` | Output of `build_icons.py` (78 SVGs) | Hand edits |
 | `assets/mascots/{fish,squid,shark}/` | Output of `build_mascots.py` (18 SVGs) | Hand edits |
 | `assets/sounds/` | Output of `build_sounds.py` (12 WAV files, 16-bit mono, 44,100 Hz) | Hand edits, recorded audio |
+| `assets/lottie/` | Output of `build_lottie.py` (6 Lottie JSON files, 60 frames a second) | Hand edits, downloaded animations |
 | `assets/higgsfield/` | Reference art from Higgsfield (19 PNG, 13 SVG), kept as received | Renamed or regenerated files |
 | `assets/higgsfield-chest/` | Chest reference art from Higgsfield (22 PNG, 2026-10-05), kept as received | Renamed or regenerated files, anything a script reads |
 | `assets/gallery.html`, `assets/*/preview.html` | Pages to view the art in a browser | Anything a script reads |
-| `app/` | The Expo app: config at its root, code in `app/src/` (198 source files, 63 test files), the rank font in `app/assets/fonts/` | A copy of any SVG or WAV; generated `ios/`, `android/`, `.expo/` (gitignored) |
+| `app/` | The Expo app: config at its root, code in `app/src/` (286 TypeScript files and 103 test files, `find app/src`, 2026-10-05), the rank font in `app/assets/fonts/` | A copy of any SVG, WAV or Lottie file; generated `ios/`, `android/`, `.expo/` (gitignored) |
 | `docs/` | The docs index (`docs/README.md`), the process standard, the Python and TypeScript code standards, and the effort folders `docs/incomplete/app/` (design, plan, runtime pass) and `docs/incomplete/autopilot-2026-10-05/` (that run's record) | Generated assets |
 
 ## Commands
 
 The whole-repo gate, also `gateCommand` in `.personal-config.json`: the Python gate, then the
-app gate (typecheck, lint, vitest: 63 test files, 490 tests). Run 2026-10-05 from the repo root,
-each step exit 0:
+app gate (typecheck, lint, vitest: 103 test files, 772 tests). Run 2026-10-05 from the repo root
+after the merges of board item 59, each step exit 0:
 
 ```bash
-python3 tools/build_icons.py && python3 tools/build_mascots.py && python3 tools/build_sounds.py && xmllint --noout assets/icons/*/*.svg assets/mascots/*/*.svg && bun run --cwd app typecheck && bun run --cwd app lint && bun run --cwd app test
+python3 tools/build_icons.py && python3 tools/build_mascots.py && python3 tools/build_sounds.py && python3 tools/build_lottie.py && xmllint --noout assets/icons/*/*.svg assets/mascots/*/*.svg && bun run --cwd app typecheck && bun run --cwd app lint && bun run --cwd app test
 ```
 
 A fresh checkout runs `bun install --cwd app` first. To build and open the app (a development
@@ -108,16 +113,19 @@ open assets/gallery.html
 
 - A generator that exits 0 and prints its `wrote ...` line proves only that files were written.
   Nothing checks how they look. Each generator prints a count taken from its writes
-  (`tools/build_icons.py:386`, `tools/build_mascots.py:345`, `tools/build_sounds.py:296`), so a
-  skipped write shows as a short count.
+  (`tools/build_icons.py:386`, `tools/build_mascots.py:345`, `tools/build_sounds.py:296`,
+  `tools/build_lottie.py:498`), so a skipped write shows as a short count.
 - The sound generator's run line (12) proves only that twelve WAV files were written, none longer
   than its ceiling: one second for the six of `D15`, 0.6 s for the six of `GF-5`
   (`tools/build_sounds.py:282-289` stops the run otherwise). An agent cannot hear them: a sound
   is proven only when Zach plays it (`afplay assets/sounds/<name>.wav`) and approves it.
+- The Lottie generator's run line (6) proves only that six JSON files were written, each under
+  1.5 s (`tools/build_lottie.py:485-491` stops the run otherwise). Nothing checks how an effect
+  looks or moves: it is proven only by watching it play on `/dev/art`.
 - `xmllint --noout` proves the SVG is well-formed XML, not that it draws the right shape.
-- The gate rewrites the generated SVGs and WAVs in place. After the first commit, run
-  `git diff --stat -- assets/icons assets/mascots assets/sounds` after the gate: any line there
-  is a change in the art or the sound, and it must be one you meant.
+- The gate rewrites the generated SVGs, WAVs and Lottie files in place. After the first commit, run
+  `git diff --stat -- assets/icons assets/mascots assets/sounds assets/lottie` after the gate: any
+  line there is a change in the art, the sound or an effect, and it must be one you meant.
 - A visual change is proven only by looking at it. Render the SVG files themselves, not the
   preview pages.
 - Write `bun run --cwd app <script>`, never `bun --cwd app run <script>`. With bun 1.2.9 the
