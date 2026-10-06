@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 
 import { PATH_OUTLINE } from "@/components/path/path-outline";
-import { DIALS } from "@/config/dials";
 import { openKinds } from "@/drills/open-kinds";
-import { chestState } from "@/game/chest";
+import { chestState, openChest } from "@/game/chest";
 import { fixtureState } from "@/game/fixtures";
 import { pathNodes, unitDone } from "@/game/path";
+import type { PlayerState } from "@/game/player-state";
 
 // The two fixtures phase 16 added (BD-13), on the real outline, so their ids are the content's
 const now = new Date(2026, 9, 5, 12);
@@ -40,7 +40,10 @@ describe("the all-done fixture (D21)", () => {
   it("has every unit done and every chest opened", () => {
     expect(PATH_OUTLINE.units.every((unit) => unitDone(state, unit.id))).toBe(true);
     expect(PATH_OUTLINE.units.every((unit) => chestState(state, unit.id) === "opened")).toBe(true);
-    expect(state.gems).toBe(PATH_OUTLINE.units.length * DIALS.chestGems);
+    // Since GF-13 each chest pays its tier's gems, so the fixture holds what opening every chest
+    // with the real rule pays for its seed
+    const closed: PlayerState = { ...state, gems: 0, openedChests: [] };
+    expect(state.gems).toBe(PATH_OUTLINE.units.reduce((player, unit) => openChest(player, unit.id), closed).gems);
   });
 
   it("has no current stop, and every review open", () => {

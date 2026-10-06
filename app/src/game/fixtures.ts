@@ -1,4 +1,5 @@
 import { DIALS } from "@/config/dials";
+import { chestPrize } from "@/game/chest";
 import { addDays, dayKey } from "@/game/day-key";
 import type { PathOutline } from "@/game/path";
 import { completeOnboarding, finishPlacement } from "@/game/placement";
@@ -35,14 +36,16 @@ function placedState(outline: PathOutline, now: Date): PlayerState {
 }
 
 // A player who played the whole path: every lesson finished, every boss beaten and every chest
-// opened, so every Practice kind is open (D21). XP is as if each lesson and boss had 8 right.
+// opened, so every Practice kind is open (D21). XP is as if each lesson and boss had 8 right, and
+// the gems are what opening each chest paid for this player's seed (GF-13).
 function allDoneState(outline: PathOutline, now: Date): PlayerState {
   const unitIds = outline.units.map((unit) => unit.id);
   const finishedLessons = outline.units.flatMap((unit) => [...unit.lessonIds]);
   const sessions = finishedLessons.length + unitIds.length;
+  const start = unitOneState(outline, now, 0, DIALS.maxLives);
   return {
-    ...unitOneState(outline, now, 0, DIALS.maxLives),
-    gems: unitIds.length * DIALS.chestGems,
+    ...start,
+    gems: unitIds.reduce((sum, unitId) => sum + chestPrize(start, unitId), 0),
     xp: sessions * 8 * DIALS.xpPerRightAnswer,
     finishedLessons,
     passedBosses: unitIds,

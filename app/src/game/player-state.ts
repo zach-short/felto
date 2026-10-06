@@ -18,6 +18,10 @@ export type PlayerState = {
   // Unit ids the placement check marked finished without a boss played (D20)
   placedUnits: string[];
   openedChests: string[];
+  // GF-13 (stored version 5): a whole number from 0 to 2^32 - 1, fixed for this player, from
+  // which each unit's chest tier and its reveal are drawn (chest-tier.ts), so neither changes when
+  // the app is closed and reopened
+  chestSeed: number;
   // Exercises missed in a lesson or a boss and not since answered right in a review (D8)
   missedExercises: string[];
   onboarded: boolean;
@@ -50,6 +54,9 @@ export function freshState(now: Date): PlayerState {
     passedBosses: [],
     placedUnits: [],
     openedChests: [],
+    // The millisecond the player starts, as a 32-bit number: the edge reads the clock (rule B3),
+    // and two players rarely start in the same millisecond
+    chestSeed: now.getTime() >>> 0,
     missedExercises: [],
     onboarded: false,
     placement: "not-taken",

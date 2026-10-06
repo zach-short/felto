@@ -6,7 +6,7 @@ import type { PlayerState } from "@/game/player-state";
 export type ChestMoment = "missing" | "closed" | "ready" | "just-opened" | "opened";
 
 // What the chest modal shows for a unit. `openedHere` is true once this visit's tap has opened
-// it, so the reveal shows "+20 gems" and a later visit shows the empty chest (D8: once per unit).
+// it, so the reveal shows the gems it paid and a later visit shows the empty chest (D8: once per unit).
 export function chestMoment(state: PlayerState, unitId: string, openedHere: boolean): ChestMoment {
   if (!PATH_OUTLINE.units.some((unit) => unit.id === unitId)) return "missing";
   const chest = chestState(state, unitId);

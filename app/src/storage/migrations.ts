@@ -3,7 +3,7 @@ import { isRecord } from "@/storage/check-state";
 // Rule Q2 and docs/AGENT-PRACTICES.md Part 6: the stored value carries a version. A change to
 // the shape of PlayerState raises STATE_VERSION, adds the step from the old version here, and
 // adds a test that loads a saved value of the old shape. Read this number here, never from a doc.
-export const STATE_VERSION = 4;
+export const STATE_VERSION = 5;
 
 // Key n turns a stored player of version n into version n + 1. Each step is written against the
 // old shape as it was stored, so it never imports today's types or defaults.
@@ -31,6 +31,16 @@ export const MIGRATIONS: Record<number, (old: unknown) => unknown> = {
   3: (old) => {
     if (!isRecord(old) || !isRecord(old.settings)) return old;
     return { ...old, settings: { ...old.settings, loganMode: false } };
+  },
+  // Version 5 (game-feel GF-13, board item 50): the player gains the chest seed. A version 4 save
+  // holds no value fixed for the player, so the seed is taken from its lives clock, a millisecond
+  // time, as a 32-bit number. The same stored save always gives the same seed, so a ready chest
+  // keeps its tier until the first save writes the seed down. Written out, not imported, for the
+  // reason above. Every field of version 4 is kept, and a value with no numeric lives clock is
+  // passed on unchanged, so the load backs it up.
+  4: (old) => {
+    if (!isRecord(old) || typeof old.livesClock !== "number") return old;
+    return { ...old, chestSeed: old.livesClock >>> 0 };
   },
 };
 

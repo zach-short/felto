@@ -41,7 +41,7 @@ function freezeLine(full: boolean, canBuy: boolean, gems: number): string {
   if (full) return `You hold ${DIALS.freezeMaxHeld}, the most you can. Each one saves your streak on a missed day.`;
   if (canBuy) return "A freeze saves your streak on a day you miss. It is used by itself.";
   const short = DIALS.freezePriceGems - gems;
-  return `${short} more ${short === 1 ? "gem" : "gems"} to go. Beat a boss and its chest holds ${DIALS.chestGems}.`;
+  return `${short} more ${short === 1 ? "gem" : "gems"} to go. Beat a boss and claim a reward.`;
 }
 
 export function heldLine(held: number): string {

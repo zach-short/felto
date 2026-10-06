@@ -6,6 +6,7 @@ import { ChestView } from "@/components/chest/chest-view";
 import { LessonButton } from "@/components/lesson/lesson-button";
 import { LessonFrame } from "@/components/lesson/lesson-frame";
 import { useAnswerFeedback } from "@/feedback/use-answer-feedback";
+import { chestPrize } from "@/game/chest";
 import { usePlayer } from "@/storage/use-player";
 
 // The chest modal (DESIGN.md 10.3), opened after a boss pass or from a ready chest on the path.
@@ -33,7 +34,7 @@ export function ChestScreen() {
     );
   return (
     <LessonFrame bottom={button}>
-      <ChestView moment={moment} gems={state.gems} />
+      <ChestView moment={moment} gems={state.gems} prize={chestPrize(state, unitId)} />
     </LessonFrame>
   );
 }

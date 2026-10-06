@@ -59,7 +59,7 @@ export function OutOfLivesSheet({ shown, offer, onRefill, onClose }: OutOfLivesS
 
 function refillLine(offer: OutOfLivesOffer): string {
   if (offer.canRefill) return `Or fill all ${DIALS.maxLives} hearts now for ${offer.price} gems.`;
-  return `A refill costs ${offer.price} gems. Beat a boss and its chest holds ${DIALS.chestGems}.`;
+  return `A refill costs ${offer.price} gems. Beat a boss and claim a reward.`;
 }
 
 const styles = StyleSheet.create({

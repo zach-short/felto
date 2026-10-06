@@ -49,9 +49,15 @@ describe("the version 3 migration (GF-3, rule Q2, board item 27)", () => {
 
   it("loads a stored version 2 player with every field kept, extra ones too, and Haptics on", () => {
     const { result } = loadVersion2(VERSION_2_PLAYER);
+    // Since version 5 the save also takes the version 4 step: the chest seed is its lives clock
+    // modulo 2^32 (chest-seed-migration.test.ts)
     expect(result).toEqual({
       status: "loaded",
-      state: { ...VERSION_2_PLAYER, settings: { ...VERSION_2_PLAYER.settings, haptics: true, loganMode: false } },
+      state: {
+        ...VERSION_2_PLAYER,
+        chestSeed: 3_293_604_864,
+        settings: { ...VERSION_2_PLAYER.settings, haptics: true, loganMode: false },
+      },
     });
   });
 

@@ -22,7 +22,7 @@ describe("the Profile view model (PLAN.md phase 11)", () => {
     expect(freezeShop({ ...freshState(now), gems: 10 }, now)).toMatchObject({ held: 0, price: 10, canBuy: true });
     expect(freezeShop({ ...freshState(now), gems: 9 }, now)).toMatchObject({ canBuy: false });
     expect(freezeShop({ ...freshState(now), gems: 9 }, now).line).toBe(
-      "1 more gem to go. Beat a boss and its chest holds 20.",
+      "1 more gem to go. Beat a boss and claim a reward.",
     );
     expect(freezeShop({ ...freshState(now), gems: 0 }, now).line).toMatch(/^10 more gems to go/);
     expect(freezeShop({ ...freshState(now), gems: 50, freezes: 2 }, now)).toMatchObject({ held: 2, canBuy: false });
