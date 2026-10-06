@@ -9,7 +9,11 @@ nowhere else (BD-T2 in PLAN.md).
 RANGES holds, for each of the nine leaf-model dials of KEY-SPEC.md 3.2, its starting value and the
 floor and ceiling phase 3a may tune inside (PLAN.md section 3). The values inside GAME are the
 frozen ones once phase 3a has tuned them; the starting values stay here as the record of where the
-tuning began. The other solver dials of KEY-SPEC.md section 9 follow.
+tuning began. Frozen 2026-10-06 as provisional (board item 37, HANDOFF.md step 52, Zach's choice
+of KEY-SPEC.md 11, third batch): the best setting inside the ranges, which lands 13 of the 19
+bands of KEY-SPEC.md 8.2 and opens every pair from the button; the six misses are KEY-SPEC.md 8.5,
+and board item 60 (RF-3, a per-class adjustment) re-freezes them. The other solver dials of
+KEY-SPEC.md section 9 follow.
 """
 
 GAME = {
@@ -35,8 +39,8 @@ GAME = {
             "other than BB multiplies both shares by (1 - t)"
         ),
         "k": 2,
-        "c_edge_in_position": {"srp": 0.7, "3bp": 0.4, "4bp": 0.2, "all_in": 0},
-        "c_edge_out_of_position": {"srp": 0.3, "3bp": 0.2, "4bp": 0.1, "all_in": 0},
+        "c_edge_in_position": {"srp": 0.5, "3bp": 0.4, "4bp": 0.1, "all_in": 0},
+        "c_edge_out_of_position": {"srp": 0.2, "3bp": 0, "4bp": 0.05, "all_in": 0},
         "flat_tax": {"ip": 0.1, "sb": 0.25, "bb": 0},
     },
     "card_removal": "two_live_hands",

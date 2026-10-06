@@ -1,4 +1,4 @@
-"""Solve the GTO trainer's preflop game with CFR+, one opener subtree at a time.
+"""Solve the GTO trainer's preflop game with CFR+ and write the raw strategy key.
 
 The game is KEY-SPEC.md sections 2 and 3 (docs/incomplete/gto-trainer/), read from GAME in
 config.py and nowhere else: six seats, 100 big blinds, one size at every level, the heads-up-only
@@ -10,13 +10,16 @@ as one range-average number (section 3.3), so the opener's value loses a little 
 blocks the hands that continue, as section 4, item 6, says.
 
 Method: CFR+ (regret matching+, alternating updates by seat, the average strategy weighted by the
-iteration number), over every hand class at once in arrays of 169 rows. The output per node is the
-key's shape (section 7.1): the strategy and the EV per hand and action, the reach, and the reach
-per hand. The reach is conditional on the hand reaching the opener's open decision; phase 3b
-multiplies it by the fold chain of the seats before the opener. best_response.py, written apart
-from this file, measures each seat's gain against the average strategy; main() prints that gain
-at a quarter, a half and all of the iterations for the three subtrees that hold the tuning spots
-of section 3.2, then every band of section 8.2 those subtrees can answer.
+iteration number), over every hand class at once in arrays of 169 rows, one subtree at a time
+(solve). solve_tree runs the five subtrees in seat order and puts every number per dealt hand: a
+subtree's reach is the product of the fold rates of the seats before its opener, read from their
+open nodes, and a seat's gain over the tree is the sum over the subtrees it plays in of that reach
+times its gain there. best_response.py, written apart from this file, measures the gains. main()
+prints them at a quarter, a half and all of ITERATIONS, every band of section 8.2, the nodes
+reached less often than REACH_FLOOR, then writes solver/data/key.json in the shape of section 7.1
+(the strategy and the EV per hand and action, the reach and the reach per hand) through one write
+path. The file's solver.seed is 1 and nothing reads it: the solver has no random source and reads
+no clock, so two runs write the same bytes.
 
 Input: solver/data/equity.json (E and W, written by equity.py), read with json.
 Run: python3 solver/cfr.py
@@ -29,12 +32,13 @@ import os
 import numpy as np
 
 import best_response
-from config import GAME, GTO_EXPLOITABILITY_BB
-from validate_key import HANDS, spec_hash
+from config import GAME, GTO_EXPLOITABILITY_BB, REACH_FLOOR
+from validate_key import HANDS, SCHEMA, spec_hash
 
-DATA = os.path.join(os.path.dirname(__file__), "data", "equity.json")
-ITERATIONS = 4000
-TUNING_OPENERS = ["CO", "BTN", "SB"]
+OUT = os.path.join(os.path.dirname(__file__), "data")
+DATA = os.path.join(OUT, "equity.json")
+DATE = "2026-10-06"
+ITERATIONS = 12000
 SIZE_NAMES = ("open", "3bet", "4bet", "5bet")
 # Legend: node kind -> (its actions, the size each action totals to; None for a fold).
 KINDS = {
@@ -44,10 +48,12 @@ KINDS = {
     "vs4": (["fold", "call", "5bet"], [None, "4bet", "5bet"]),
     "vs5": (["fold", "call"], [None, "5bet"]),
 }
-# Legend: label, measure, its arguments, floor, ceiling: the rows of KEY-SPEC.md 8.2 that the
-# CO, BTN and SB subtrees answer, in percent. Action columns: 1 call, 2 3-bet; at vs3: 0 fold,
-# 2 4-bet. The last row is the realization band of 8.2, also in percent.
+# Legend: label, measure, its arguments, floor, ceiling: every row of KEY-SPEC.md 8.2 the tree
+# answers, in percent. Action columns: 1 call, 2 3-bet; at vs3: 0 fold, 2 4-bet. The row "HJ or
+# CO vs UTG, call" of 8.2 is two rows here, one per seat. The last row is the realization band.
 BANDS = [
+    ("UTG opens", "open", ("UTG",), 14, 21),
+    ("HJ opens", "open", ("HJ",), 18, 25),
     ("CO opens", "open", ("CO",), 24, 31),
     ("BTN opens", "open", ("BTN",), 40, 48),
     ("SB opens", "open", ("SB",), 38, 55),
@@ -56,16 +62,21 @@ BANDS = [
     ("BB vs BTN calls", "defend", ("BTN", "BB", (1,)), 38, 62),
     ("BB vs CO defends", "defend", ("CO", "BB", (1, 2)), 42, 68),
     ("BB vs CO 3-bets", "defend", ("CO", "BB", (2,)), 7, 13),
+    ("BB vs UTG defends", "defend", ("UTG", "BB", (1, 2)), 28, 60),
+    ("BB vs UTG 3-bets", "defend", ("UTG", "BB", (2,)), 4, 10),
     ("BB vs SB defends", "defend", ("SB", "BB", (1, 2)), 48, 70),
     ("BB vs SB 3-bets", "defend", ("SB", "BB", (2,)), 12, 20),
     ("SB vs BTN 3-bets", "defend", ("BTN", "SB", (2,)), 9, 18),
     ("SB vs BTN calls", "defend", ("BTN", "SB", (1,)), 0, 5),
     ("BTN vs CO 3-bets", "defend", ("CO", "BTN", (2,)), 10, 17),
     ("BTN vs CO calls", "defend", ("CO", "BTN", (1,)), 0, 10),
+    ("HJ vs UTG calls", "defend", ("UTG", "HJ", (1,)), 0, 10),
+    ("CO vs UTG calls", "defend", ("UTG", "CO", (1,)), 0, 10),
     ("CO folds to BTN 3-bet", "vs3", ("CO", "BTN", 0), 52, 72),
     ("CO 4-bets BTN 3-bet", "vs3", ("CO", "BTN", 2), 15, 28),
     ("SB folds to BB 3-bet", "vs3", ("SB", "BB", 0), 55, 80),
     ("BTN folds to BB 3-bet", "vs3", ("BTN", "BB", 0), 45, 70),
+    ("UTG folds to BB 3-bet", "vs3", ("UTG", "BB", 0), 45, 70),
     ("BB realizes vs BTN", "realization", ("BTN", "BB"), 65, 90),
 ]
 
@@ -367,6 +378,48 @@ def solve(game, opener, E, W, iterations, report=()):
     return valued(sub), gains
 
 
+def fold_rate(nodes, game, opener, p):
+    """The range-average fold frequency at the opener's open node under the plain deal: the one
+    number a seat's fold enters the reach of the seats behind it as (KEY-SPEC.md 3.3)."""
+    return (p * nodes[node_id(game, opener)]["strategy"][:, 0]).sum()
+
+
+def scaled(part, chain):
+    """A subtree's nodes with reach and hand_reach per dealt hand: the values conditional on the
+    opener's open decision, times the chance that every seat before the opener folds."""
+    for node in part.values():
+        node["reach"] = chain * node["reach"]
+        node["hand_reach"] = chain * node["hand_reach"]
+    return part
+
+
+def tally(totals, gains, chain, seats):
+    """Add a subtree's gains at each iteration count, times its reach, to the seats' totals."""
+    for t, by_seat in gains.items():
+        total = totals.setdefault(t, dict.fromkeys(seats, 0.0))
+        for seat, gain in by_seat.items():
+            total[seat] += chain * gain
+
+
+def chained(parts, game, p):
+    """The solved subtrees, (opener, nodes, gains) in seat order and each conditional on its root,
+    put per dealt hand. Returns (nodes, {iterations: {seat: gain}}, {opener: reach})."""
+    nodes, totals, reach, chain = {}, {}, {}, 1.0
+    for opener, part, gains in parts:
+        nodes.update(scaled(part, chain))
+        reach[opener] = chain
+        tally(totals, gains, chain, game["seats"])
+        chain *= fold_rate(part, game, opener, p)
+    return nodes, totals, reach
+
+
+def solve_tree(game, E, W, iterations, report=()):
+    """Solve every opener's subtree in seat order (the last seat never opens) and return the whole
+    tree per dealt hand, as chained does."""
+    parts = [(o, *solve(game, o, E, W, iterations, report)) for o in game["seats"][:-1]]
+    return chained(parts, game, W.sum(axis=1) / W.sum())
+
+
 def measure(nodes, game, E, W, kind, args):
     """One band's number, in percent: a rate of hands by the plain deal (a published range's
     percentage), a rate of the opening range at a vs3 node, or the realization of 8.2."""
@@ -402,20 +455,75 @@ def band_lines(nodes, game, E, W):
     return lines
 
 
+def number(x, places):
+    """A number at the precision of KEY-SPEC.md 7.4, never written as negative zero."""
+    return format(round(float(x), places) + 0.0, f".{places}f")
+
+
+def rows(table, places):
+    return "[" + ",".join("[" + ",".join(number(x, places) for x in row) + "]" for row in table) + "]"
+
+
+def node_json(node):
+    """One node of KEY-SPEC.md 7.1: frequencies and EVs to four places, the reaches to six."""
+    head = json.dumps({"actor": node["actor"], "actions": node["actions"], "totals": node["totals"]})
+    return (
+        head[:-1] + ', "reach": ' + number(node["reach"], 6)
+        + ', "strategy": ' + rows(node["strategy"], 4) + ', "ev": ' + rows(node["ev"], 4)
+        + ', "hand_reach": [' + ",".join(number(x, 6) for x in node["hand_reach"]) + "]}"
+    )
+
+
+def render_key(nodes, gains, iterations, sha, game=GAME):
+    """The key file of KEY-SPEC.md 7.1 and 7.4, one node per line. seed is 1 and nothing reads
+    it: the solver has no random source."""
+    by_seat = ", ".join(f'"{s}": {number(g, 6)}' for s, g in gains.items())
+    solver = (
+        f'{{"method": "CFR+", "iterations": {iterations}, "exploitability_bb": {{{by_seat}}}, '
+        f'"seed": 1, "date": "{DATE}", "equity_table_sha256": "{sha}"}}'
+    )
+    body = ",\n".join(json.dumps(i) + ": " + node_json(n) for i, n in nodes.items())
+    return (
+        f'{{\n"schema": "{SCHEMA}",\n"spec_hash": "{spec_hash(game)}",\n"game": ' + json.dumps(game)
+        + ',\n"solver": ' + solver + ',\n"hands": ' + json.dumps(HANDS) + ',\n"nodes": {\n' + body + "\n}\n}\n"
+    )
+
+
+def write(name, content):
+    """The one write path (rule W1): <OUT>/<name>.json."""
+    os.makedirs(OUT, exist_ok=True)
+    with open(os.path.join(OUT, name + ".json"), "w") as f:
+        f.write(content)
+    return 1
+
+
+def below_floor(nodes):
+    """The ids of the nodes the grader treats as never reached (KEY-SPEC.md 7.1)."""
+    return [i for i, n in nodes.items() if n["reach"] < REACH_FLOOR]
+
+
+def gain_lines(totals, reach):
+    lines = []
+    for t, seats in totals.items():
+        verdict = "under" if max(seats.values()) <= GTO_EXPLOITABILITY_BB else "OVER"
+        lines.append(f"{t} iterations: " + "  ".join(f"{s} {g:.6f}" for s, g in seats.items()) + f"  ({verdict} {GTO_EXPLOITABILITY_BB})")
+    return lines + ["subtree reach: " + "  ".join(f"{o} {r:.4f}" for o, r in reach.items())]
+
+
 def main():
     E, W, sha = load_equity()
-    nodes, checks = {}, (ITERATIONS // 4, ITERATIONS // 2, ITERATIONS)
-    for opener in TUNING_OPENERS:
-        part, gains = solve(GAME, opener, E, W, ITERATIONS, checks)
-        nodes.update(part)
-        for t, seats in gains.items():
-            worst = max(seats.values())
-            verdict = "under" if worst <= GTO_EXPLOITABILITY_BB else "OVER"
-            print(f"{opener} subtree, {t} iterations: " + "  ".join(f"{s} {g:.5f}" for s, g in seats.items()) + f"  ({verdict} {GTO_EXPLOITABILITY_BB})")
+    checks = (ITERATIONS // 4, ITERATIONS // 2, ITERATIONS)
+    nodes, totals, reach = solve_tree(GAME, E, W, ITERATIONS, checks)
+    gains = best_response.tree_gains(nodes, GAME, E, W)
+    print("\n".join(gain_lines(totals, reach)))
+    print("best response over the tree: " + "  ".join(f"{s} {g:.6f}" for s, g in gains.items()))
     print("\n".join(band_lines(nodes, GAME, E, W)))
     pairs = [i for i, h in enumerate(HANDS) if len(h) == 2]
     print(f"BTN opens its pairs at least {100 * nodes[node_id(GAME, 'BTN')]['strategy'][pairs, 1].min():.1f} percent")
-    print(f"solved {len(nodes)} nodes; spec_hash {spec_hash(GAME)}; equity_table_sha256 {sha}")
+    below = below_floor(nodes)
+    print(f"{len(below)} nodes under REACH_FLOOR {REACH_FLOOR}: " + ", ".join(below))
+    n = write("key", render_key(nodes, gains, ITERATIONS, sha))
+    print(f"wrote {n} file to {os.path.abspath(OUT)}: {len(nodes)} nodes; spec_hash {spec_hash(GAME)}; equity_table_sha256 {sha}")
 
 
 if __name__ == "__main__":

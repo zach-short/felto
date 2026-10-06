@@ -54,9 +54,9 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 | 34 | Flop in Rive: tune the spike rig, then play it on a perfect finish | `IN FLIGHT` (Phase A done, `HANDOFF 34`; Phase B built on branch `lane-g-flop-rive`, `HANDOFF 36`; the `lesson-finish.tsx` wiring waits on item 29) | Sonnet 5 | G | Zach's yes to Phase B; item 29 for `lesson-finish.tsx` | the Rive file in Zach's account; `app/package.json`, `app/bun.lock`, `app/assets/rive/` (new), `app/src/art/` (a new Rive file only), `app/src/config/dials.ts` (block `// game-feel`), `app/src/components/lesson/lesson-finish.tsx` |
 | 35 | GTO trainer phase 1: game spec, schema and feasibility | `DONE: HANDOFF 41` | Fable 5.1 | H | nothing | `docs/incomplete/gto-trainer/KEY-SPEC.md`, `solver/` (schema validator stub), `docs/conventions-rust.md` only if the estimate calls for Rust |
 | 36 | GTO trainer phase 2: preflop equity table | `DONE: HANDOFF 46` | Opus 5.5 | H | item 35 (`DONE`) | `solver/equity.py`, `solver/equity_test.py`, `solver/data/`, `docs/conventions-python.md` (the M4 amendment for numpy), `.gitignore` (one `__pycache__/` line, Zach's yes 2026-10-05) |
-| 37 | GTO trainer phase 3a: solver core, four tuning spots (one spot until BD-T18) | `IN FLIGHT` (solver, check and tests built, `HANDOFF 50`; the freeze of the dials waits on Zach's answer to question (b), see the status note under the prompt) | Fable 5.1 | H | item 36 (`DONE`); Zach's answer to (b) | `solver/cfr.py`, `solver/best_response.py`, `solver/config.py`, new `solver/*_test.py`, `docs/incomplete/gto-trainer/KEY-SPEC.md` sections 7.5 and 12 (the frozen dials and the hash) |
-| 38 | GTO trainer phase 3b: the full tree and convergence | `HELD` until item 37 is `DONE` | Fable 5.1 | H | item 37 | `solver/`, the raw strategy output |
-| 39 | GTO trainer phase 4: key export, validation and containment | `HELD` until item 38 is `DONE` | Opus 5.5, then a Fable 5.1 review | H | item 38 | `app/src/gto/key.ts`, `app/src/gto/data/` |
+| 37 | GTO trainer phase 3a: solver core, four tuning spots (one spot until BD-T18) | `DONE: HANDOFF 52` (the dials frozen provisionally, BD-T20; the six missed bands are `KEY-SPEC.md` 8.5 and item 60's) | Fable 5.1 | H | item 36 (`DONE`); Zach's answer to (b) | `solver/cfr.py`, `solver/best_response.py`, `solver/config.py`, new `solver/*_test.py`, `docs/incomplete/gto-trainer/KEY-SPEC.md` sections 7.5 and 12 (the frozen dials and the hash) |
+| 38 | GTO trainer phase 3b: the full tree, convergence per dealt hand and the raw key file | `DONE: HANDOFF 53` | Fable 5.1 | H | item 37 (`DONE`) | `solver/cfr.py`, `solver/cfr_test.py`, `solver/best_response.py` (the per-dealt-hand gain only), `solver/data/key.json` (new, the raw output), `CLAUDE.md` (Commands: the gate line and its notes), `docs/AGENT-PRACTICES.md` Part 6 and Appendix A (the recipe and the HEAD-isolation line), `docs/conventions-python.md` (M4's paragraph and the scope paragraph), `docs/incomplete/gto-trainer/KEY-SPEC.md` 8.5 (the full-tree verdicts) |
+| 39 | GTO trainer phase 4: key export, validation and containment | `OPEN` | Opus 5.5, then a Fable 5.1 review | H | item 38 (`DONE`) | `app/src/gto/key.ts`, `app/src/gto/data/` (new), `app/src/gto/key.test.ts` (new), `docs/incomplete/gto-trainer/KEY-SPEC.md` section 10 (the second review) |
 | 40 | GTO trainer phase 5: the hand engine | `HELD` until item 35 is `DONE` | Opus 5.5 | I | item 35 (the schema); a fixture key until item 39 | `app/src/gto/` except `key.ts`, `data/` and `grade.ts` |
 | 41 | GTO trainer phase 6: grading and the review model | `HELD` until items 39 and 40 are `DONE` | Opus 5.5, then a Fable 5.1 review of `grade.ts` | I | items 39 and 40 | `app/src/gto/grade.ts`, the review model |
 | 42 | GTO trainer phase 7: the table screen and seats | `HELD` until item 40 is `DONE` | Opus 5.5 | I | item 40 | the table component and screen, `app/src/art/` seat wiring |
@@ -76,6 +76,7 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 | 56 | Rive: rig the chest in four tiers: a wiggle, a tap shake, an upgrade flash and the opening | `HELD` until item 48 is `DONE` | Sonnet 5 (Zach's choice) | G | item 48 | a new Rive file in Zach's account; `app/assets/rive/chest.riv` (new, exported from that file only) |
 | 57 | Play the rigs in the app: one mascot player, a chest player, static fallbacks | `HELD` until items 30 to 32, 51 and 53 to 56 are `DONE` | Opus 5.5 | F | items 30 to 32 (31 owns `path-greeting.tsx`, 32 owns `mascot.tsx`), 51 and 53 to 56 | `app/src/art/` (the Rive players, their pure modes and tests, `flop-rive.tsx`, `rive-boundary.test.ts`), `app/src/components/exercise/exercise-view.tsx`, `app/src/components/lesson/lesson-finish.tsx`, `app/src/components/boss/boss-finish.tsx`, `app/src/components/chest/`, `app/src/screens/chest-screen.tsx`, `app/src/components/path/path-greeting.tsx`, `app/src/screens/dev-art-screen.tsx`, `app/src/config/dials.ts` (its own lines in the block `// game-feel second pass`), `docs/conventions-typescript.md` (rule U6), `CLAUDE.md` (the `.riv` rule) |
 | 58 | Web app: an Expo web build of the app at felto.app, and the marketing site moved to download.felto.app | `HELD` until Zach answers the five questions in the prompt (the domain first) and items 34 and 49 are `DONE` | Opus 5.5 | R | Zach's answers; items 34 and 49 (they own `app/package.json` and `app/bun.lock`) | `app/package.json`, `app/bun.lock`, `app/app.json`, `app/metro.config.js`, `app/wrangler.jsonc` (new), new `*.web.ts` and `*.web.tsx` files beside the native ones in `app/src/storage/`, `app/src/feedback/`, `app/src/art/` (the Rive file only), `app/src/components/profile/` and `app/src/reminder/`, `app/src/components/app-tabs.tsx` if the web tabs need a branch, `site/src/config.ts`, `site/wrangler.jsonc`, `docs/incomplete/app/DESIGN.md` (one new decision), `docs/README.md`, `HANDOFF.md`, `CLAUDE.md` (the web build command) |
+| 60 | GTO trainer: RF-3, a per-class realization adjustment: scope, re-freeze, re-solve, re-export | `HELD` until items 38 and 39 are `DONE` | Fable 5.1 | H | items 38 and 39; Zach's answers to the GATE 1 batch of its step 2 | `solver/config.py`, `solver/cfr.py`, `solver/best_response.py`, `solver/*_test.py`, `solver/tune.py` (new), `solver/data/key.json` (item 38's output), `docs/incomplete/gto-trainer/KEY-SPEC.md` (3.2, 4, 7.5, 8.5, 10, 11, 12 and a new 13), `docs/incomplete/gto-trainer/PLAN.md` (section 1, phases 3a to 4), `docs/README.md` (the `KEY-SPEC.md` line), `app/src/gto/key.ts` (the hash constant only) and `app/src/gto/data/` (through item 39's export) |
 
 **Do not paste a prompt marked DONE**: a fresh session would build it again.
 
@@ -1727,8 +1728,11 @@ short lowercase message.
 The scope is `docs/incomplete/gto-trainer/DESIGN.md` and the plan is
 `docs/incomplete/gto-trainer/PLAN.md`, approved by Zach in chat on 2026-10-05 (GATE 2). One
 phase per item. Per Part 3, each session writes the next item's prompt when it closes, so only
-item 35 has its prompt below. Items 36 to 45 are the plan's phases 2 to 10 and carry the
-status `HELD` until their dependency is `DONE`. Lanes: H (the key), I (the table), J (the art).
+item 35 had its prompt below when this section was opened; items 36 to 38 gained theirs as each
+closed (2026-10-05 and 2026-10-06); item 39 gained its prompt when item 38 closed (2026-10-06).
+Items 40 to 45 are the plan's phases 5 to 10 and carry the status `HELD` until their dependency
+is `DONE`. Lanes: H (the key), I (the table), J (the art).
+Item 60 (RF-3, opened 2026-10-06 out of item 37) joins lane H after items 38 and 39.
 
 ### 35. Write the GTO game spec, freeze the key schema and check the solver is feasible
 
@@ -2085,6 +2089,248 @@ under `app/`; any change to sections 2 and 3 beyond the one Zach chose; a rerun 
 
 Hand back: the unittest command green; the band table under the frozen dials; the new hash; then
 the two copyable blocks.
+
+**Status, 2026-10-06 (`HANDOFF.md` step 52).** Done. Zach chose (1) in chat on 2026-10-06
+("provisional freeze, open the rf-3 item"): the dials are frozen provisionally, the hash is
+`659cdfd1072b0ea27a0b74737ce6f3a67c63a329ed18595c6f1f8233ffe845a7`, the six misses are
+`KEY-SPEC.md` 8.5, and item 60 is RF-3. Row 37 points at step 52. Do not paste this prompt.
+
+### 38. Solve the full tree, prove convergence per dealt hand and write the raw key file
+
+**Model: Fable 5.1. Lane H. Waits on nothing (item 37 is `DONE: HANDOFF 52`).** Run this on
+Fable 5.1; if the session is on another model, do not start: hand the prompt off
+(`~/.claude/rules/model-routing.md`). A solver that converges to the wrong game compiles, passes
+every gate and teaches a wrong play. Run it in the worktree `.claude/worktrees/gto-equity`
+(branch `gto-equity`), where items 36 and 37 live; if that branch has merged into `main`, make a
+worktree of your own from `main` and run the fresh-checkout recipe of `docs/AGENT-PRACTICES.md`
+Part 6 first. Context: tight for the Deep tier; if the budget runs out, land after step 4 (the
+file written, validated and reproduced) and hand steps 5 to 7 off as the remainder.
+
+You are picking up felto, a poker-training app. Read, in order: `HANDOFF.md` (Environment, Code
+map, then steps 46, 50, 51 and 52), `docs/incomplete/gto-trainer/KEY-SPEC.md` sections 2, 3, 7,
+8 (8.2 and 8.5) and 12, `docs/incomplete/gto-trainer/PLAN.md` section 1 (BD-T11 to BD-T20),
+section 3 and phases 3a, 3b and 4, `docs/AGENT-PRACTICES.md`, then `docs/conventions-python.md`
+in full (version 1.3.0: rule M4 lets `solver/` import numpy and nothing else outside the
+standard library). Session rules: never run `git commit`, `git push`, `git add -A` or `git add .`;
+print the two copyable blocks at the end (`git add -N` then `git add` the exact files you
+touched, then `git commit` the same files with a short lowercase message, with no
+`Co-Authored-By` line and no "Generated with" line). Talk to Zach in ASD-STE100 Simplified
+Technical English. Documents you write have no em dashes and no contractions. Ask Zach in chat,
+in one batch, before any decision that is his.
+
+**Why this exists.** The key the app grades against is the strategy of the whole 65-node tree,
+not of the three subtrees phase 3a solved. This item solves every subtree, turns every number
+into one per dealt hand, proves convergence against the independent best-response check, writes
+the strategy and the EV in the key's shape so phase 4 exports without solving again, and proves
+the run reproducible. It builds on the provisional dials of BD-T20: six bands are known misses
+and belong to item 60; a seventh is a finding.
+
+**What is fixed.** Read these; do not relitigate them.
+- The game is `KEY-SPEC.md` sections 2 and 3 with the provisional dials of section 12 (hash
+  `659cdfd1072b0ea27a0b74737ce6f3a67c63a329ed18595c6f1f8233ffe845a7`, 7.5, pinned as
+  `SPEC_HASH` in `solver/cfr_test.py`). No dial moves in this item (BD-T12: phase 3b may not
+  touch them). RF-3 is item 60.
+- `solver/cfr.py` (step 50): `solve(game, opener, E, W, iterations, report)` runs CFR+ on one
+  opener's subtree and returns the key-shaped nodes of 7.1 and the gains at each count in
+  `report`; `valued` gives `reach` and `hand_reach` conditional on the opener's open decision;
+  `node_id`, `pair_of` and `subtree_of` build the tree; `TUNING_OPENERS` is CO, BTN and SB;
+  `BANDS` holds the 19 rows of 8.2 those subtrees answer; `main()` prints the gains at a
+  quarter, a half and all of `ITERATIONS` (4,000), the band table, the button's lowest pair-open
+  rate, the hash and the equity file's hash. The five subtrees partition the 65 decision nodes
+  (step 50 verified it): UTG 21, HJ 17, CO 13, BTN 9, SB 5.
+- A subtree's reach is the product of the range-average fold frequencies of the seats before
+  the opener (`KEY-SPEC.md` 3.3), each read from that seat's open node under the plain deal
+  (`measure` with kind `open` gives the open rate in percent). So UTG's subtree is solved first
+  and the chain runs in seat order. A seat's best-response gain over the whole tree is the sum
+  over the subtrees it plays in of that subtree's reach times its gain there, because the
+  subtrees share no decision.
+- `solver/best_response.py`: `gains(nodes, game, E, W, opener)` per subtree, conditional on its
+  root, with its own leaf arithmetic and tree walk; keep it apart from `cfr.py` (`PLAN.md`
+  phase 3a, step 3).
+- The tests: `python3 -m unittest discover -s solver -p '*_test.py'`, 25 tests at step 52,
+  49 s at a load average of 12; hand-worked leaf cases at the starting values through
+  `starting_game()`, the fold payoffs, the node ids, the hash, a toy tree. Tests are built from
+  hand-worked cases, never from the solver's output.
+- The key shape is 7.1 and 7.4: `schema` `felto-gto-key/1`, `spec_hash`, `game` verbatim from
+  `config.py`, `solver` (`method`, `iterations`, `exploitability_bb` per seat, `seed`, `date`,
+  `equity_table_sha256`), `hands` in `HANDS` order, 65 `nodes` with `actor`, `actions`,
+  `totals`, `reach`, `strategy` (four decimals, rows sum to 1 within 0.001), `ev` (four
+  decimals), `hand_reach` (six decimals). `solver/validate_key.py` refuses the wrong shape and
+  recomputes the hash. The schema is frozen (BD-T15): a new field is a `/2`, so mark nothing
+  with a new field; a node reached less often than `REACH_FLOOR` (0.0001) is "never" to the
+  grader by its `reach` alone (7.1), and this item lists those nodes in the hand-back and the
+  step.
+- Time: one iteration of the full tree is about 10 ms on a quiet Mac (`KEY-SPEC.md` 9); 4,000
+  iterations on three subtrees took 25 s at a load average of 5 (step 50) and 43 s at 19 (step
+  52). Other sessions can slow numpy 10 to 50 times (step 46). The solver reads no clock and no
+  random source (rule G1), so two runs must give the same bytes.
+- Zach's answer (a), 2026-10-05 (`KEY-SPEC.md` 11, third batch): the solver tests join the
+  whole-repo gate at this item. The gate line lives in `CLAUDE.md` (Commands) and in
+  `gateCommand` of `/Users/zachshort/Projects/felto/.personal-config.json`, which is gitignored
+  and exists in the main checkout only (`ls .personal-config.json` in the worktree finds
+  nothing, step 52); `docs/AGENT-PRACTICES.md` Part 6 holds the fresh-checkout recipe and the
+  HEAD-isolation line, and Appendix A repeats both; `docs/conventions-python.md` M4 says the
+  recipe gains a numpy check when a gated file needs one, and its scope paragraph names only
+  `validate_key.py`, `equity.py` and `equity_test.py` (step 50, open (b)).
+- The bands the full tree adds (8.2): `UTG` opens 14 to 21, `HJ` opens 18 to 25, the big blind
+  against `UTG` defends 28 to 60 and 3-bets 4 to 10, `HJ` or `CO` flats a `UTG` open 0 to 10,
+  `UTG` folds to a big blind 3-bet 45 to 70. The 19 rows the three subtrees answer keep the
+  verdicts of 8.5.
+
+Do these, in order:
+1. **Solve the whole tree.** Add to `cfr.py` a function that solves the five subtrees in seat
+   order, computes each subtree's reach from the fold chain, and scales `reach`, `hand_reach`
+   and the gains so every number is per dealt hand; `main()` calls it. Keep `solve` as it is,
+   so the subtree tests hold. Add the six band rows above to `BANDS`.
+2. **Prove convergence.** Report every seat's total gain at a quarter, a half and all of the
+   iterations; each must be at or below `GTO_EXPLOITABILITY_BB` (0.005) and fall as the
+   iterations double (`PLAN.md` phase 3b, done when). Record the run time and the node count.
+3. **Write the raw key file.** `solver/data/key.json` in the shape of 7.1, written by `cfr.py`
+   through one write path (rule W1), with the precision of 7.4 and the hands in `HANDS` order;
+   `solver.seed` is 1 and the docstring says nothing reads it, because the solver has no random
+   source. `python3 solver/validate_key.py solver/data/key.json` must print `valid`. Record
+   its size. List every node whose `reach` is under `REACH_FLOOR`.
+4. **Reproduce it.** Run `python3 solver/cfr.py` twice; `cmp` the two files. Print the full band
+   table, every row of 8.2 the tree answers, with the 8.5 verdicts unchanged and any new miss
+   reported to Zach as a finding, never tuned away (8.1).
+5. **Tests.** From hand-worked cases: the fold chain on the toy (a seat before the opener that
+   folds a known fraction), the per-dealt-hand gain arithmetic, the file's shape through
+   `validate_key.validate`, and the rounding of 7.4 (a row that sums to 1 after rounding).
+6. **The gate.** Add `python3 -m unittest discover -s solver -p '*_test.py'` to the gate line in
+   `CLAUDE.md` Commands and to its notes (the suite proves hand-worked cases and the toy, not the
+   bands), print the one-line `gateCommand` change for Zach to make in `.personal-config.json`
+   in the main checkout, add the numpy check and the solver tests to the recipe and the
+   HEAD-isolation line in `docs/AGENT-PRACTICES.md` Part 6 and Appendix A, and bring
+   `docs/conventions-python.md` to version 1.3.1 (M4's paragraph: the suite needs numpy since
+   step 50 and the recipe checks for it now; the scope paragraph names every file in `solver/`;
+   no rule changed). Run the whole gate from `CLAUDE.md` and record its counts.
+7. **Record it.** Append the next free `HANDOFF.md` step (read this branch and the main
+   checkout for the number: step 50 collided once), update the Environment rows (Solver tests,
+   Whole-repo gate) and the code map, set the plan's phase 3b header to `BUILT` with the date,
+   add the full-tree verdicts to `KEY-SPEC.md` 8.5 as a dated paragraph, mark row 38
+   `DONE: HANDOFF n`, write item 39's prompt (phase 4: key export, validation and containment,
+   Opus 5.5 then a Fable 5.1 review of the key) below this one, and flip item 39 to `OPEN`.
+
+Ask before building: (a) the output file's name and place, `solver/data/key.json` recommended,
+in the full shape of 7.1 so the validator checks it and phase 4 copies it rather than solving
+again; (b) the iteration count: 12,000 recommended, the value 7.1's example shows, if a run
+takes under ten minutes on a quiet Mac, else 4,000 with the table at both counts compared;
+(c) if a new band misses, which gives way. All three are his calls, and any answer may be no.
+
+Not in scope, whoever asks: any dial of section 12; RF-3 (item 60); the six bands of 8.5;
+`app/src/gto/key.ts`, `app/src/gto/data/` and any file under `app/` (item 39); a rerun or an
+edit of `solver/equity.py`; any change to sections 2 and 3 of `KEY-SPEC.md`.
+
+Hand back: the whole-repo gate from `CLAUDE.md`, with the solver tests in it, green with its
+counts; the output of `python3 solver/cfr.py` (the gains at the three counts, the band table,
+the unreachable nodes, the run time); `cmp` of the two runs; `python3 solver/validate_key.py
+solver/data/key.json` printing `valid`; the file's size; then the two copyable blocks, with
+`git add -N solver/data/key.json` first.
+
+**Status, 2026-10-06 (`HANDOFF.md` step 53).** Done. The five subtrees solve at 12,000 iterations
+in 105 s, every seat's gain per dealt hand is at most 0.000003 bb, two runs wrote the same bytes,
+`solver/data/key.json` (608,670 bytes, 65 nodes) is valid, 19 of the 26 band rows are inside, the
+six of `KEY-SPEC.md` 8.5 are missed as before and one new row is missed (`UTG` folds to a `BB`
+3-bet, 41.2 against 45 to 70), a finding for Zach (question (c)). The solver tests are in the gate.
+Row 38 points at step 53. Do not paste this prompt.
+
+### 39. Export the key to the app, validate it on load and check the unit 3 chart against it
+
+**Model: Opus 5.5, then a Fable 5.1 review of the key. Lane H. Waits on nothing (item 38 is
+`DONE: HANDOFF 53`).** Run it in the worktree `.claude/worktrees/gto-equity` (branch
+`gto-equity`), where items 36 to 38 live; if that branch has merged into `main`, make a worktree
+of your own from `main` and run the fresh-checkout recipe of `docs/AGENT-PRACTICES.md` Part 6
+first. It writes under `app/src/gto/` and in `KEY-SPEC.md` section 10 only.
+
+You are picking up felto, a poker-training app. Read, in order: `HANDOFF.md` (Environment, Code
+map, then steps 41, 46, 52 and 53), `docs/incomplete/gto-trainer/KEY-SPEC.md` sections 2.4, 7
+(the schema, the hash, the validator), 8.5 (what the key misses) and 9 (the dials that read the
+key), `docs/incomplete/gto-trainer/PLAN.md` section 1 (BD-T6, BD-T8, BD-T15, BD-T20) and phase 4,
+`docs/AGENT-PRACTICES.md`, then `docs/conventions-typescript.md` in full. Session rules: never run
+`git commit`, `git push`, `git add -A` or `git add .`; print the two copyable blocks at the end
+(`git add -N` then `git add` the exact files you touched, then `git commit` the same files with a
+short lowercase message, with no `Co-Authored-By` line and no "Generated with" line). Talk to
+Zach in ASD-STE100 Simplified Technical English. Documents you write have no em dashes and no
+contractions. Ask Zach in chat, in one batch, before any decision that is his.
+
+**Why this exists.** The solver's raw output exists and validates (step 53). The app cannot read
+it: nothing under `app/` knows the key's shape, and the first reader is the one place every later
+phase (the hand engine's bots, the grader) gets strategy from (BD-T8). A loader that accepts a
+broken key, or a teaching chart that contradicts the key, fails in silence, so this phase
+validates on load and checks the one existing chart against the key before any screen reads it,
+and a cold Deep review judges the hands.
+
+**What is fixed.** Read these; do not relitigate them.
+- The key is `solver/data/key.json` (608,670 bytes, 65 nodes, 10,985 strategy rows, written by
+  `python3 solver/cfr.py` in about 105 s, step 53): the shape of `KEY-SPEC.md` 7.1, `schema`
+  `felto-gto-key/1`, `spec_hash` `659cdfd1072b0ea27a0b74737ce6f3a67c63a329ed18595c6f1f8233ffe845a7`
+  (provisional, BD-T20; item 60 changes it), `hands` in the order of `allHandClasses()`
+  (`app/src/cards/hand-class.ts:16-22`); per node `actor`, `actions`, `totals`, `reach`,
+  `strategy` (169 rows, four decimals, each row sums to 1 within 0.001), `ev` (four decimals, in
+  bb; the `fold` entry is the fold payoff of 2.5) and `hand_reach` (six decimals);
+  `solver.exploitability_bb` per seat (at most 0.000003); `solver.seed` 1, which nothing reads.
+- `reach` and `hand_reach` are per dealt hand. One node is under `reachFloor` (0.0001): `UTG`
+  facing the big blind's 5-bet, `UTG:open/HJ:fold/CO:fold/BTN:fold/SB:fold/BB:3bet/UTG:4bet/BB:5bet`,
+  at 0.000088. The schema marks it by `reach` alone (BD-T15: a new field is a `/2`).
+- The key misses seven bands of `KEY-SPEC.md` 8.2 (8.5): the button opens 34.3 percent against
+  40 to 48, and the openers fold too little to a blind's 3-bet. Item 60 (RF-3) owns them; the
+  Deep review of this phase judges hands and the composition of ranges, not those bands.
+- `app/src/gto/key.ts` is the only importer of the table (BD-T8); the app never runs the solver
+  (BD-T3). The export is a copy of the solver's file under `app/src/gto/data/`, not a new format.
+  The app does not recompute the hash: `key.ts` pins it as a constant (`KEY-SPEC.md` 7.5).
+  `tableSeats` and `stackBigBlinds` (`app/src/config/dials.ts:5-6`) must equal the key's
+  `game.seats.length` and `game.stack_bb` (`KEY-SPEC.md` 9).
+- The unit 3 chart is `OPENING_CHART` in `app/src/content/opening-chart.ts`, hand-written and
+  tighter than solver output (`opening-chart.ts:15-30`); the dial `gtoChartMinOpen` is 0.5
+  (`PLAN.md` section 3; `GTO_CHART_MIN_OPEN` in `solver/config.py`). The plan says a containment
+  failure is a finding for Zach before the chart or the solver is changed (phase 4, step 3).
+- `docs/conventions-typescript.md` governs every new file; tests are vitest
+  (`bun run --cwd app test`); the whole-repo gate is in `CLAUDE.md` and includes the solver tests
+  since step 53. Only `app/src/art/` imports an asset (rule U6); a JSON data file under
+  `app/src/gto/data/` is code, not an asset, and `key.ts` imports it.
+
+Do these, in order:
+1. **Export.** Copy `solver/data/key.json` to `app/src/gto/data/key.json` (the same bytes;
+   `cmp` proves it) and record its size. Measure what it adds to the bundle (BD-T8, `PLAN.md`
+   section 5, hazard 3) and record the number in the plan.
+2. **`app/src/gto/key.ts`.** The types of the key, the loader and the validation: the schema
+   string; the pinned `SPEC_HASH` constant equal to the file's `spec_hash`; the 169 hands in
+   order; 65 nodes with the right actor and actions at each, where the expected ids are built in
+   the test from `KEY-SPEC.md` 2.4 and 7.2 and never read from the file; one strategy row and one
+   EV row per hand; rows summing to 1 within 0.001; `reach` present. A failure throws with the
+   node and the fault named. Nothing else under `app/` imports the file.
+3. **Tests.** The load on the real file; the same loader on fixtures made from it with one hand
+   deleted, one row summing to 1.1, one `ev` removed, one node missing and the hash changed, each
+   failing with its fault; the dials check of `KEY-SPEC.md` 9.
+4. **Containment.** A test: every hand `OPENING_CHART` opens for a seat has an open frequency of
+   at least `gtoChartMinOpen` in the key at that seat's open node. A failure is a finding about
+   the chart or the solver and goes to Zach before either is changed; record which hands and by
+   how much. Known from step 53: `UTG` opens 14.9 percent in the key and the chart opens 11.5, so
+   a chart hand outside the key's range is possible at the margin (`A5s` opens 0.0001 from `UTG`).
+5. **The Deep review.** A Fable 5.1 subagent in its own worktree, review only, with the model
+   passed explicitly: it receives `KEY-SPEC.md`, the key and the bands, and returns a verdict and
+   the hands it believes wrong, by hand class and node. Check its diffstat when it returns.
+   Record the verdict in `KEY-SPEC.md` 10 as a dated second review, with the hands it names.
+6. **Record it.** Append the next free `HANDOFF.md` step (read this branch and the main checkout
+   for the number: steps 46 and 50 collided once), the code map and the Environment row for the
+   gate counts; `PLAN.md` phase 4 `BUILT` and section 5 (the bundle size); mark row 39
+   `DONE: HANDOFF n`; write item 40's prompt (phase 5, the hand engine, Opus 5.5) below this one
+   and flip row 40 to `OPEN`; item 60 waits on 38 and 39, so flip its "Waits on" to Zach's
+   answers alone.
+
+Ask before building: (a) how the key is bundled: a JSON import through Metro (recommended, if a
+600 KB JSON import needs no plugin), else a generated `.ts` module; (b) whether a containment
+failure on the chart is fixed in this item or recorded for the unit 3 lessons (the plan says
+recorded; recommended); (c) if the Deep review names hands as wrong, whether any of them blocks
+phase 5 or goes to item 60. All three are his calls, and any answer may be no.
+
+Not in scope, whoever asks: any change to `solver/`; any dial of `KEY-SPEC.md` 12; RF-3 (item
+60); the hand engine (item 40); grading (item 41); any screen; any change to `OPENING_CHART` or
+the unit 3 lessons.
+
+Hand back: the whole-repo gate from `CLAUDE.md` green with its counts; the load test failing on
+each broken fixture; the containment result hand by hand; the bundle size; the Deep review's
+verdict; then the two copyable blocks, with `git add -N` first for the new files.
 
 ## Items 46 to 57: the second game-feel pass
 
@@ -2997,3 +3243,143 @@ You are picking up felto, a poker-training app. Read, in order: `HANDOFF.md` (En
 **Not in scope, whoever asks.** Rive on web (`@rive-app/react-canvas`); web reminders or push notifications; accounts, sync between browser and phone, or any server for progress; a store release or the App Store link; Android or iOS native changes; any change to game rules, content, art, sound or the generators; a PWA install prompt or offline cache; analytics; redesigning any screen to suit a wide browser window beyond a centred, width-limited column.
 
 **Hand back.** The whole-repo gate from `CLAUDE.md` green and its test counts unchanged except the new tests; `bunx expo export -p web` exits 0 and `app/dist` is gitignored; `git diff --stat -- assets/icons assets/mascots assets/sounds` empty; the "seen" and "not seen" list from step 5; the printed Cloudflare and DNS steps; then the two copyable blocks, with `git add -N` first for new files. Zach plays the web build on his own browser and phone before `felto.app` flips; an agent cannot judge feel.
+
+## Item 60: RF-3, the per-class realization adjustment
+
+*Opened 2026-10-06 out of board item 37 (`HANDOFF.md` steps 50 to 52). Phase 3a found that no
+setting of the equity-bent leaf model of `KEY-SPEC.md` 3.2 lands the 3-bet-pot bands of 8.2 (408
+settings inside the ranges and 460 more outside them, in steeper and in symmetric shapes),
+because the hands those bands describe differ by features, not by equity (`KEY-SPEC.md` 4, item
+3). Zach chose on 2026-10-06 to freeze the dials provisionally (`PLAN.md` BD-T20; `KEY-SPEC.md`
+11, Q5) and to open this item for RF-3, the fallback he named on 2026-10-05 (`KEY-SPEC.md` 11
+(a)). Lane H, after items 38 and 39, because it rewrites the solver's leaf tables, re-solves the
+full tree and re-exports the key those two items build.*
+
+### 60. Scope and build RF-3, a per-class realization adjustment, then re-freeze, re-solve and re-export the key
+
+**Model: Fable 5.1. Lane H. Waits on items 38 and 39 (`DONE`) and on Zach's answers to the batch
+of step 2.** Run this on Fable 5.1; if the session is on another model, do not start: hand the
+prompt off (`~/.claude/rules/model-routing.md`). A wrong leaf model converges, passes every gate
+and teaches a wrong play. Run it in the worktree `.claude/worktrees/gto-equity` if the branch is
+still open, else in a worktree of your own from `main`, with the fresh-checkout recipe of
+`docs/AGENT-PRACTICES.md` Part 6 first. Context: tight for the Deep tier; the source research of
+step 1 goes to an Opus 5.5 researcher subagent in its own worktree, and if the budget runs out
+after step 5, land there and hand step 6 off as the remainder.
+
+You are picking up felto, a poker-training app. Read, in order: `HANDOFF.md` (Environment, Code
+map, then steps 50, 51 and 52 and the steps of items 38 and 39), `docs/incomplete/gto-trainer/KEY-SPEC.md`
+in full (3.2, 4 item 3, 8, 10 findings 4 and 5, 11 and 12 are this item's contract),
+`docs/incomplete/gto-trainer/PLAN.md` section 1 (BD-T12, BD-T18, BD-T20) and phases 3a to 4,
+`docs/AGENT-PRACTICES.md` (Part 2.2, Stages 1 and 2 and GATE 1, governs steps 1 and 2), then
+`docs/conventions-python.md` in full. Session rules: never run `git commit`, `git push`,
+`git add -A` or `git add .`; print the two copyable blocks at the end (`git add -N` then
+`git add` the exact files you touched, then `git commit` the same files with a short lowercase
+message, with no `Co-Authored-By` line and no "Generated with" line). Talk to Zach in ASD-STE100
+Simplified Technical English. Documents you write have no em dashes and no contractions. Ask
+Zach in chat, in one batch, before any decision that is his.
+
+**Why this exists.** The key teaches which hands to 3-bet, call and fold. Under the provisional
+model the big blind 3-bets every offsuit ace and every pair against the small blind, the small
+blind calls that 3-bet with `A2o` to `A9o`, and every opener continues too much against a 3-bet
+(step 51); six bands of 8.2 miss (8.5). A player who knows real ranges sees that first. RF-3
+gives the leaf model the one thing it lacks: that two hands of equal equity realize it
+differently after the flop.
+
+**What is fixed.** Read these; do not relitigate them.
+- The game of `KEY-SPEC.md` 2 and 3 as amended to 2026-10-06, the provisional dials of 12 and
+  their hash in 7.5. The spec changes by dated amendment only (`docs/README.md`): RF-3 is a
+  supersession of 3.2 written under it with the date, a new `BD-T` row in `PLAN.md` section 1
+  with its reversal, and a fourth batch in 11; never an edit of a decision in place (R8).
+- The failure, measured at the provisional dials (steps 50 to 52; `KEY-SPEC.md` 8.5): the
+  button opens 34.3 (band 40 to 48); the big blind 3-bets the button 15.047 (9 to 15) and the
+  small blind 27.5 (12 to 20); the cutoff folds 18.0 of its opens to a button 3-bet (52 to 72);
+  the small blind folds 35.2 to a big blind 3-bet (55 to 80); the button folds 35.7 to a big
+  blind 3-bet (45 to 70). The mechanism (step 50): the pot is conserved, so what the bend takes
+  from a caller's weak hands it gives to the aggressor's hands whatever their strength; `c_3bp`
+  is the one lever on an opener's fold rate, and `c_3bp_oop` moves the button's open rate and
+  its fold rate in opposite directions. The hand-level EVs (step 51), in the big blind against
+  the small blind: `A7o` call +0.07 against 3-bet +0.47; `66` +0.27 against +1.38; `A3o` −0.14
+  against −0.02.
+- What RF-3 is in the spec (11 (a)): RF-2 plus a per-class adjustment from hand features
+  (suited, connected, pair, high card). Its two named costs: hand-written coefficients (the
+  hand-built chart problem of `DESIGN.md` section 1 one level down) and a broken pot
+  conservation. Both are the subject of step 2's options; neither is settled.
+- The hands RF-3 must move (`KEY-SPEC.md` 4, item 3; 10, finding 5): suited connectors,
+  one-gappers and small suited aces come out too tight as calls and as 3-bet bluffs; offsuit
+  broadways and weak offsuit aces too loose, above all as calls out of position; 3-bet bluff
+  selection is inverted.
+- Where the leaf arithmetic lives: `solver/cfr.py` (`bent`, `shares`, `leaf_tables`) and
+  `solver/best_response.py` (`stakes`, `split`, `payoffs`), two copies kept apart on purpose so
+  a bug in one does not hide in the other (`PLAN.md` phase 3a, step 3); both read
+  `GAME["leaf_model"]` from `solver/config.py`; `RANGES` and `DIAL_PATH` name the dials; the
+  hand-worked leaf cases in `solver/cfr_test.py` (`LEAF_CASES`, through `starting_game()`) must
+  still hold at a zero adjustment.
+- The tuning harness of steps 50 and 51 was not kept; `cfr.solve` and `cfr.measure` are the
+  pieces, and `python3 solver/cfr.py` prints the band table. This item keeps its harness.
+- BD-T1: no published range is copied; an aggregate figure with a named source and date may set
+  a coefficient or a band (8.1).
+- The key's consumers: item 39 pins the hash in `app/src/gto/key.ts` and reads
+  `app/src/gto/data/`; its ledger step says how the key is exported and what the containment
+  test of phase 4 checks. A new hash means a re-export and a re-pin.
+
+Do these, in order:
+1. **Ground truth** (Stage 1). One Opus 5.5 researcher subagent, read-only in its own worktree
+   (check its `git status --short` on return): published equity-realization figures by hand
+   feature (suited against offsuit, connected, pairs, ace-high, high-card rank), at the range
+   level or per class, with source and date, from the kind of source 8.1 names; two or more
+   sources per feature, or record the absence as 8.4 does. From item 39's key: the strategy rows
+   at the six missed spots, so the item knows which classes the adjustment must move and by how
+   much. Output: a table (claim, verified state, citation), dated, as the first section of step 2.
+2. **Scope** (Stage 2). Write `KEY-SPEC.md` section 13, "RF-3: options", the spec being the
+   design document of this game. The option space the record already shows, each option with
+   its strongest argument against and a marked recommendation: (i) the shape: an additive
+   per-class term on the bent player's share, a multiplicative factor on it, or a factor on each
+   player's share with renormalization, which keeps the pot conserved at the cost of a bonus to
+   the other player; (ii) the features and their coefficients: pair, suited, connectedness (gap
+   0, 1 and 2), high-card rank, ace-high, one coefficient per pot type or one across pot types;
+   (iii) how the coefficients are set: from the published figures of step 1, or fit to the bands
+   (then they are a fit and the record says so), or a bounded mix; (iv) which pot types: 3-bet
+   pots only, where the failure is, or every pot with chips behind; (v) what done means: the
+   six bands of 8.5 plus the hand-level patterns of 4 item 3, with no band of 8.2 newly missed;
+   (vi) `schema_game`: 2 recommended, because the object's meaning changes, while the key schema
+   stays `felto-gto-key/1` because the app reads only the hash. Then one GATE 1 batch in chat
+   (R6) and wait; record the answers in 11 as a fourth batch, dated.
+3. **Supersede.** Under 3.2, a dated amendment with the formula, the features, the coefficients
+   and who it applies to; under 4 item 3, an "As amended" note saying what RF-3 fixes and what
+   it still cannot; 12 with the new `leaf_model` fields; `PLAN.md` section 1 with BD-T21 and its
+   reversal (the provisional model of BD-T20).
+4. **Build.** `solver/config.py` (the new dials with ranges in `RANGES` and `DIAL_PATH`),
+   `solver/cfr.py` and `solver/best_response.py`, each with its own copy of the new arithmetic;
+   tests from hand-worked cases: one leaf per pot type with the adjustment, worked by hand, and
+   the toy and the old leaf cases unchanged at a zero adjustment.
+5. **Tune and freeze.** A kept harness, `solver/tune.py` (M3 shape, one `main()`, prints a
+   table), over the new coefficients and the nine old dials inside their ranges; pick by most
+   bands inside and smallest total miss, every pair opened from the button, and the hand-level
+   patterns of step 2 (v); report `k` 1 and 2. Freeze into `GAME` and 12, the new hash into 7.5
+   and `SPEC_HASH`, every band's value into 8.5 as a dated paragraph (final, or provisional
+   again with the reason).
+6. **Re-solve and re-export.** `python3 solver/cfr.py` (the full tree, item 38's output file),
+   `validate_key.py` valid, two runs `cmp`; then the export of item 39's step to
+   `app/src/gto/data/`, the hash re-pinned in `app/src/gto/key.ts`, and the app gate (the
+   containment test of phase 4 must still pass).
+7. **Record it.** A Fable 5.1 cold reviewer in its own worktree, one job: the verdict on the
+   amended 3.2 and the hand-level ranges at the six spots, recorded in 10 as a second review.
+   Then the next free `HANDOFF.md` step, BD-T21, the phase headers of 3a, 3b and 4 (a dated
+   "re-solved" note each), the `KEY-SPEC.md` line of `docs/README.md`, and row 60
+   `DONE: HANDOFF n`.
+
+Ask before building: the GATE 1 batch of step 2, where every answer may be no, including "keep
+the provisional freeze as final", which is the first reversal of BD-T20 and closes this item as
+`SETTLED AS NO` with that reason; and, if the frozen model still misses a band, which gives way
+(R9).
+
+Not in scope, whoever asks: a rolled-out postflop model (RF-4); a second size or a limp (M2,
+M3); any band of 8.2; the hand engine, the grader and the screens (lane I); a rerun or an edit
+of `solver/equity.py`; any file under `app/` other than the hash constant in
+`app/src/gto/key.ts` and the exported key in `app/src/gto/data/`.
+
+Hand back: `python3 -m unittest discover -s solver -p '*_test.py'` green with its count; the
+band table under the frozen model, every row; the new hash; `python3 solver/validate_key.py`
+printing `valid` on the raw file and on the exported key; the app gate green; the cold review's
+findings with their status; then the two copyable blocks, with `git add -N` first for
+`solver/tune.py` and any other new file.

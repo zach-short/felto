@@ -25,9 +25,19 @@ imports numpy, and `solver/equity_test.py`, its tests, which import only the sta
 Rules that speak of "a generator" (M1, M2, G1, W1, W2) do not bind a validator, which generates
 nothing; M3, M4, H2, H3, H4, K1 and Y1 to Y3 bind every `.py` file. `solver/equity.py` writes a
 file, so the generator rules bind it, and its docstring states what it computes and the method
-where M1 asks for the art style. Read this file in full before you write or edit Python here.
+where M1 asks for the art style. Board item 37 added five more on 2026-10-05 (ledger step 50):
+`solver/config.py` (the game object of `KEY-SPEC.md` 12 and the solver dials; it imports nothing),
+`solver/cfr.py` (the CFR+ solver; numpy), `solver/best_response.py` (the best-response check,
+written apart from the solver; numpy) and their tests `solver/cfr_test.py` and
+`solver/best_response_test.py` (numpy). Board item 38 made `cfr.py` write `solver/data/key.json`,
+the raw strategy key, on 2026-10-06 (ledger step 53), so the generator rules bind `cfr.py` as they
+bind `equity.py`: its docstring states the game, the method and the run command (M1), it reads no
+clock and no random source (G1), it writes through one path (W1) and prints what it wrote (W2).
+`solver/data/` holds the two files those generators write and nothing else. With those, `solver/`
+holds eight `.py` files, and this paragraph names every one (`ls solver`, 2026-10-06). Read this
+file in full before you write or edit Python here.
 
-Version 1.3.0. Written 2026-10-04 on Opus 5.5 for board item 1 (ledger step 2 in `HANDOFF.md`);
+Version 1.3.1. Written 2026-10-04 on Opus 5.5 for board item 1 (ledger step 2 in `HANDOFF.md`);
 revised 2026-10-05 on Sonnet 5.5 for board item 2 (ledger step 3), which moved the shared code
 into `tools/common.py`, for board item 3 (ledger step 4), which reconciled the line citations,
 for board item 4 (ledger step 8), which named `tools/common.py` in the scope sentence, and
@@ -41,7 +51,10 @@ Fable 5.1 for board item 35 (ledger step 41), which named `solver/validate_key.p
 paragraph and said which rules bind a file that is not a generator; no rule changed. Version
 1.3.0 on 2026-10-05 on Opus 5.5 for board item 36 (ledger step 46), which amended rule M4 so that
 `solver/` may import numpy (BD-T3) and named the two new files in the scope paragraph; a rule
-changed.
+changed. Version 1.3.1 on 2026-10-06 on Fable 5.1 for board item 38 (ledger step 53), which named
+the five files of board item 37 and the key file in the scope paragraph and brought M4's amendment
+up to date (the test suite needs numpy since step 50, and the fresh-checkout recipe checks for it
+since the solver tests joined the whole-repo gate); no rule changed.
 Zach answered the open questions on 2026-10-04 and took every recommendation. Those answers are
 cited below as "owner, 2026-10-04".
 
@@ -194,12 +207,15 @@ numpy documentation sets as the convention (NumPy 2.4 user guide, "NumPy: the ab
 for beginners", "How to import NumPy", read through Context7 on 2026-10-05). numpy is 2.4.3 at `/opt/homebrew/bin/python3`
 (`python3 -c "import numpy; print(numpy.__version__)"`, 2026-10-05). No other third-party module
 is allowed in `solver/`, and none is allowed anywhere else: `tools/` stays standard library only.
-A file in `solver/` that does not need numpy does not import it. `validate_key.py` and
-`equity_test.py` import only the standard library, so the test of the equity table runs on a
-Python with no numpy. The fresh-checkout recipe of `docs/AGENT-PRACTICES.md` Part 6 does not
-check for numpy, because no gated file imports it. Zach chose on 2026-10-05 that the solver tests
-join the whole-repo gate when the solver lands (board item 37 asks him whether that is phase 3a
-or 3b of the plan); the recipe gains a numpy check then, if a gated file needs it.
+A file in `solver/` that does not need numpy does not import it. `validate_key.py`, `config.py`
+and `equity_test.py` import only the standard library, so the test of the equity table alone runs
+on a Python with no numpy; the suite as a whole has needed numpy since board item 37 added
+`cfr_test.py` and `best_response_test.py` (ledger step 50, 2026-10-05). Zach chose on 2026-10-05
+that the solver tests join the whole-repo gate at phase 3b, and board item 38 put them there on
+2026-10-06 (ledger step 53): the gate line in `CLAUDE.md` runs
+`python3 -m unittest discover -s solver -p '*_test.py'` between the SVG check and the app gate,
+and the fresh-checkout recipe of `docs/AGENT-PRACTICES.md` Part 6 checks `python3 -c 'import
+numpy'` before any gate runs, because a gated file now imports it.
 
 Correct, the second example, `solver/equity.py:21-28`: the standard library, then numpy, then
 the sibling module by its plain name.

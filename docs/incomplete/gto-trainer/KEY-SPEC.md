@@ -218,6 +218,15 @@ every band without touching them. `k` may be set to 1 or 2 by phase 3a; it repor
 plan's phase 3a named one spot; the four spots are the forced change recorded under phase 1 in
 `PLAN.md`.
 
+*Note, 2026-10-06 (board item 37, `HANDOFF.md` step 52).* Phase 3a could not land every band.
+No setting of the nine dials inside the ranges above lands the 3-bet-pot bands of 8.2, and no
+steeper curve (`k` 3 and 4), no floor on the share, no symmetric bend and no setting past the
+ceilings does either (`HANDOFF.md` steps 50 and 51). The dials are frozen provisionally at the
+best setting inside the ranges (section 12; 8.5 has every band's value; section 11, Q5, has
+Zach's choice), with six bands missed. The sentence above, "each spot must land inside its
+bands", is not met by this model: what those bands describe is section 4, item 3, and board item
+60 (RF-3) amends this section.
+
 What this model cannot do is named in section 4, items 1 and 3. One check a reader may want:
 the share is convex in `e`, so applying it hand class by hand class rather than at the range
 level gives the bent player `c × Var(e)` more than the range-level figure; for the widest ranges
@@ -455,9 +464,15 @@ The app does not recompute the hash: `app/src/gto/key.ts` holds the expected has
 and refuses a key whose `spec_hash` differs (BD-T2; phase 4). The solver-side validator does
 recompute it, so a key whose `game` object was edited after the solve fails before export.
 
-The hash of the proposed `game` object of section 12, computed 2026-10-05 by `spec_hash` in
-`solver/validate_key.py`, is `fd66084e4602dfb7101d507148e02e406593d9964b10caf877c75a1d440ddce3`.
-It changes when phase 3a freezes the nine leaf-model dials, and the final value is recorded here then.
+The hash of the `game` object of section 12 as proposed on 2026-10-05, computed that day by
+`spec_hash` in `solver/validate_key.py`, was
+`fd66084e4602dfb7101d507148e02e406593d9964b10caf877c75a1d440ddce3`. Phase 3a froze the nine
+leaf-model dials provisionally on 2026-10-06 (section 11, Q5; board item 37, `HANDOFF.md` step
+52), and the hash of the object as it stands in section 12 is
+`659cdfd1072b0ea27a0b74737ce6f3a67c63a329ed18595c6f1f8233ffe845a7`, computed the same day by
+the same function and pinned in `solver/cfr_test.py` (`SPEC_HASH`). Board item 60 (RF-3) changes
+the leaf model and this hash again; phase 4 pins in `app/src/gto/key.ts` whichever value stands
+when it runs, and item 60 re-pins it.
 
 ### 7.6 The validator
 
@@ -477,7 +492,8 @@ each) or `reach`; phase 4's loader does, and the stub grows then.
 Collected 2026-10-05 by two Opus 5.5 researchers, each read-only in its own worktree (both
 worktrees were clean on return), from public pages read that day. A band is a pass or fail line
 for the solve: phase 3a must land the button-against-big-blind spot inside its bands, phase 3b
-the whole tree, and phase 4 reads them again. No hand list and no table from any source was
+the whole tree, and phase 4 reads them again. (Phase 3a's result is 8.5, 2026-10-06: six rows
+missed and frozen as provisional, board item 60.) No hand list and no table from any source was
 copied; only the aggregate percentages below (BD-T1).
 
 ### 8.1 What the sources are, and what none of them is
@@ -581,6 +597,78 @@ pane; `preflopwizard.app` and `gtogecko.com` name no solver and no rake and are 
 loose top of a band. The books named in the plan (Acevedo, Janda, Brokos) were not opened. A
 third pass is possible; nothing above blocks phases 2 and 3a, whose own proof is the
 button-against-big-blind spot, where the bands are widest and best sourced.
+
+### 8.5 The provisional freeze of phase 3a, 2026-10-06
+
+Board item 37 (`HANDOFF.md` steps 50 to 52) tuned the nine dials of 3.2 on the CO, BTN and SB
+subtrees, which answer 19 of the rows above, and froze the best setting inside the ranges as
+provisional (section 11, Q5; `PLAN.md` BD-T20): `k` 2, `c_srp` 0.5, `c_srp_oop` 0.2, `c_3bp`
+0.4, `c_3bp_oop` 0, `c_4bp` 0.1, `c_4bp_oop` 0.05, `t_ip` 0.1, `t_sb` 0.25 (section 12). Solved
+2026-10-06 at 4,000 iterations by `python3 solver/cfr.py`: every seat's gain at most 0.00001 bb
+per hand given the subtree's root, and two runs gave the same output. Each row marked missed is
+a finding for Zach under 8.1, not a number tuned away; the six are the subject of board item 60
+(RF-3), and until it lands the key the app carries misses them.
+
+| Row of 8.2 | Solved | Band | Verdict |
+|---|---|---|---|
+| `CO` opens | 24.3 | 24 to 31 | inside |
+| `BTN` opens | 34.3 | 40 to 48 | missed, provisional |
+| `SB` opens | 50.4 | 38 to 55 | inside |
+| `BB` against `BTN`, defend | 63.8 | 50 to 75 | inside |
+| `BB` against `BTN`, 3-bet | 15.047 | 9 to 15 | missed by 0.047, provisional |
+| `BB` against `BTN`, call | 48.8 | 38 to 62 | inside |
+| `BB` against `CO`, defend | 52.2 | 42 to 68 | inside |
+| `BB` against `CO`, 3-bet | 10.3 | 7 to 13 | inside |
+| `BB` against `SB`, defend | 63.6 | 48 to 70 | inside |
+| `BB` against `SB`, 3-bet | 27.5 | 12 to 20 | missed, provisional |
+| `SB` against `BTN`, 3-bet | 17.5 | 9 to 18 | inside |
+| `SB` against `BTN`, call | 0.0 | 0 to 5 | inside |
+| `BTN` against `CO`, 3-bet | 14.1 | 10 to 17 | inside |
+| `BTN` against `CO`, call | 1.2 | 0 to 10 | inside |
+| `CO` folds to a `BTN` 3-bet | 18.0 | 52 to 72 | missed, provisional |
+| `CO` 4-bets a `BTN` 3-bet | 17.2 | 15 to 28 | inside |
+| `SB` folds to a `BB` 3-bet | 35.2 | 55 to 80 | missed, provisional |
+| `BTN` folds to a `BB` 3-bet | 35.7 | 45 to 70 | missed, provisional |
+| `BB` realizes against `BTN` | 82.8 | 65 to 90 | inside |
+
+The button opens every pair at 100 percent. What the six misses share: each is a rate in a
+3-bet pot, or the button's open rate, which `c_3bp_oop` moves against the button's fold rate;
+no setting inside or outside the ranges, no curve from `k` 1 to 4, no floor and no symmetric
+bend lands them (steps 50 and 51), and the hands they describe differ by features, not by
+equity (section 4, item 3). The rows the UTG and HJ subtrees answer are phase 3b's (board item
+38), which records them here as a dated paragraph.
+
+**The full tree, 2026-10-06 (board item 38, `HANDOFF.md` step 53).** Phase 3b solved all five
+subtrees at 12,000 iterations with the provisional dials above (`python3 solver/cfr.py`, 105 s
+on a quiet Mac, two runs byte-identical by `cmp`). Every seat's best-response gain per dealt hand
+is at most 0.000003 bb at 12,000 iterations (0.000032 at 3,000, 0.000009 at 6,000), under the
+dial 0.005 and falling as the iterations double. The 19 rows above keep their verdicts at 12,000
+iterations; four values move by at most 0.3 from the 4,000-iteration table (`BB` against `CO`
+defends 51.9, `BB` against `SB` defends 63.4, `SB` against `BTN` 3-bets 17.4, `CO` folds to a
+`BTN` 3-bet 18.3). The seven rows the `UTG` and `HJ` subtrees answer:
+
+| Row of 8.2 | Solved | Band | Verdict |
+|---|---|---|---|
+| `UTG` opens | 14.9 | 14 to 21 | inside |
+| `HJ` opens | 18.8 | 18 to 25 | inside |
+| `BB` against `UTG`, defend | 35.1 | 28 to 60 | inside |
+| `BB` against `UTG`, 3-bet | 6.5 | 4 to 10 | inside |
+| `HJ` against `UTG`, call | 1.2 | 0 to 10 | inside |
+| `CO` against `UTG`, call | 1.2 | 0 to 10 | inside |
+| `UTG` folds to a `BB` 3-bet | 41.2 | 45 to 70 | missed, a finding |
+
+The seventh miss is new and is a finding for Zach under 8.1, not a number tuned away: no dial
+moved in phase 3b (BD-T12, BD-T20). It is the mechanism of the five 3-bet-pot misses above, an
+opener that folds too little to a blind's 3-bet (section 4, item 3), and belongs with them to
+board item 60 unless Zach says otherwise (question (c) of item 38's prompt, open in step 53). The
+row "`HJ` or `CO` against `UTG`, call" of 8.2 is measured per seat. One node is reached less
+often than `reachFloor` (0.0001) per dealt hand: `UTG` facing the big blind's all-in 5-bet,
+`UTG:open/HJ:fold/CO:fold/BTN:fold/SB:fold/BB:3bet/UTG:4bet/BB:5bet`, at 0.000088; the schema
+marks it by its `reach` alone (7.1, BD-T15), and the grader shows no EV loss there. The subtrees
+are reached per dealt hand at 1 (`UTG`), 0.8507 (`HJ`), 0.6912 (`CO`), 0.5232 (`BTN`) and 0.3437
+(`SB`), the products of the fold rates of the seats before each opener (3.3). The raw key is
+`solver/data/key.json` (608,670 bytes, 65 nodes, 10,985 strategy rows, the shape of 7.1;
+`python3 solver/validate_key.py solver/data/key.json` prints `valid`), the file phase 4 exports.
 
 ## 9. Feasibility
 
@@ -800,11 +888,50 @@ percent. Against: two more hand-set dials, and the opener's EV when flatted fall
 also real. Recommended yes; the alternative was to record finding 1 as a whole-deck
 simplification and ship bots that flat most hands. **Answer: yes.** Section 3.2.
 
+### Third batch, 2026-10-06, after the tuning of phase 3a
+
+Asked in chat on 2026-10-05 (`HANDOFF.md` step 50) and again on 2026-10-06 (step 51), after
+phase 3a's solver was built and no setting of the nine dials inside the ranges of 3.2 landed
+every band of 8.2. Zach answered the first round on 2026-10-05, "all recs": (a) the solver tests
+join the whole-repo gate at phase 3b (board item 38), when the solver writes its output; (b)
+supersede the leaf model (BD-T18) and re-tune, with ranges wider than 3.2 as the fallback. The
+second round (step 51) then found that no shape of the equity-bent family lands the 3-bet-pot
+bands: steeper curves (`k` 3 and 4, `c` up to 1.5), a floor on the share, a symmetric bend and
+ranges past the ceilings of 3.2 were all tried, and the two settings that come closest do so by
+never calling a 3-bet and by folding a small pair on the button. The hands the bands describe
+differ by features, not by equity (section 4, item 3), so answer (b) could not be carried out
+inside the family, and the question was put again with three choices.
+
+**Q5. What to freeze, now that the model cannot land every band.**
+
+- (1) Freeze the best setting inside the ranges as provisional (recommended): `k` 2, `c_srp`
+  0.5, `c_srp_oop` 0.2, `c_3bp` 0.4, `c_3bp_oop` 0, `c_4bp` 0.1, `c_4bp_oop` 0.05, `t_ip` 0.1,
+  `t_sb` 0.25, which lands 13 of the 19 bands the CO, BTN and SB subtrees answer and opens
+  every pair from the button. Record the six misses in section 8.5 marked provisional, let
+  phases 3b and 4 build on it, and open a board item for RF-3 (option (a) of the first batch)
+  whose output re-freezes the dials and re-solves. For: it unblocks the full tree, the key
+  export and the table work; the record says plainly what holds and what does not; the solver
+  re-runs in minutes once the model changes. Against: a key with six known misses exists for a
+  while, and the hash phase 4 pins is replaced when RF-3 lands.
+- (2) Scope RF-3 first and freeze nothing until it lands. For: one freeze and one hash.
+  Against: every later phase waits on a design with hand-set coefficients, the slowest kind of
+  decision this effort has.
+- (3) Freeze the same setting as final and let the phase 4 Deep review judge the hands. For: no
+  new item. Against: it records six bands as met when they are not, which 8.1 forbids.
+
+**Answer: (1)** (Zach, in chat, 2026-10-06: "provisional freeze, open the rf-3 item"). Sections
+3.2, 7.5, 8.5 and 12 carry the freeze; `PLAN.md` BD-T20 records it with its reversal; board
+item 60 is RF-3.
+
 ## 12. The game object
 
 The object the key embeds and hashes (section 7.5). The values are the answers of sections 2 and
 3 as they stand on 2026-10-05; phase 3a replaces the nine leaf-model dials with the frozen ones
-and this section is amended with the date.
+and this section is amended with the date. Amended 2026-10-06 (board item 37, `HANDOFF.md` step
+52): the nine leaf-model dials below are the provisional freeze of section 11, Q5. The starting
+values of 3.2 (`c` 0.7, 0.4, 0.2 with the edge in position; 0.3, 0.2, 0.1 with it out of
+position; `t` 0.1 and 0.25; `k` 2) stay in `RANGES` of `solver/config.py` as the record of where
+the tuning began. Board item 60 (RF-3) amends this object and section 3.2 again.
 
 ```json
 {
@@ -827,8 +954,8 @@ and this section is amended with the date.
     "kind": "edge_realization",
     "formula": "bent_share = e - c * e * (1 - e)^k; edge_share = 1 - bent_share; a flat by a seat other than BB multiplies both shares by (1 - t)",
     "k": 2,
-    "c_edge_in_position": {"srp": 0.7, "3bp": 0.4, "4bp": 0.2, "all_in": 0},
-    "c_edge_out_of_position": {"srp": 0.3, "3bp": 0.2, "4bp": 0.1, "all_in": 0},
+    "c_edge_in_position": {"srp": 0.5, "3bp": 0.4, "4bp": 0.1, "all_in": 0},
+    "c_edge_out_of_position": {"srp": 0.2, "3bp": 0, "4bp": 0.05, "all_in": 0},
     "flat_tax": {"ip": 0.1, "sb": 0.25, "bb": 0}
   },
   "card_removal": "two_live_hands",

@@ -4,8 +4,9 @@ For one opener's subtree (KEY-SPEC.md 2.2) and a strategy in the key's shape (se
 from node id to a node with "strategy" rows), a seat's best response is the most it can win, in
 big blinds per hand, when every other seat plays the strategy and it plays what it likes at its
 own nodes; its gain is that less what the strategy itself wins it. Every seat's gain at or under
-the dial GTO_EXPLOITABILITY_BB is the stop rule of phases 3a and 3b. The numbers are conditional
-on the hand reaching the opener's open decision, which is the stricter reading.
+the dial GTO_EXPLOITABILITY_BB is the stop rule of phases 3a and 3b. The numbers of gains() are
+conditional on the hand reaching the opener's open decision, which is the stricter reading;
+tree_gains() puts them per dealt hand over the whole tree, with its own fold chain.
 
 This file is written apart from cfr.py on purpose (PLAN.md phase 3a, step 3): it builds the leaf
 payoffs and the node ids its own way from GAME and the equity table, and walks one seat's nodes
@@ -173,4 +174,18 @@ def gains(nodes, game, E, W, opener):
     out = {opener: opener_gain(nodes, game, E, P, opener)}
     for defender, r in zip(behind, R):
         out[defender] = defender_gain(nodes, game, E, P, r, opener, defender)
+    return out
+
+
+def tree_gains(nodes, game, E, W):
+    """{seat: gain in big blinds per dealt hand} over the whole tree: every opener's subtree,
+    weighted by the chance that each seat before the opener folds, read from their open nodes."""
+    P = W / W.sum()
+    p = P.sum(axis=1)
+    seats = game["seats"]
+    out, chain = dict.fromkeys(seats, 0.0), 1.0
+    for opener in seats[:-1]:
+        for seat, gain in gains(nodes, game, E, W, opener).items():
+            out[seat] += chain * gain
+        chain *= (p * strategy(nodes, ids(game, opener, seats[-1])[0])[:, 0]).sum()
     return out
