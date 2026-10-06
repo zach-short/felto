@@ -23,7 +23,7 @@ Rules that speak of "a generator" (M1, M2, G1, W1, W2) do not bind a validator, 
 nothing; M3, M4, H2, H3, H4, K1 and Y1 to Y3 bind every `.py` file. Read this file in full before
 you write or edit Python here.
 
-Version 1.2.2. Written 2026-10-04 on Opus 5.5 for board item 1 (ledger step 2 in `HANDOFF.md`);
+Version 1.2.3. Written 2026-10-04 on Opus 5.5 for board item 1 (ledger step 2 in `HANDOFF.md`);
 revised 2026-10-05 on Sonnet 5.5 for board item 2 (ledger step 3), which moved the shared code
 into `tools/common.py`, for board item 3 (ledger step 4), which reconciled the line citations,
 for board item 4 (ledger step 8), which named `tools/common.py` in the scope sentence, and
@@ -34,7 +34,12 @@ G1, G3, G4, W1, W2, H2 and Y4 and named it in the scope sentence, and for board 
 Opus 5.5, which moved the sound generator citations that its six new effects shifted and set the
 count in W2 and the scope sentence to twelve; no rule changed. Version 1.2.2 on 2026-10-05 on
 Fable 5.1 for board item 35 (ledger step 41), which named `solver/validate_key.py` in the scope
-paragraph and said which rules bind a file that is not a generator; no rule changed.
+paragraph and said which rules bind a file that is not a generator; no rule changed. Version 1.2.3
+on 2026-10-05, at the merge of board item 59, for board item 47 on Opus 5.5 (ledger step 40),
+which moved the sound generator citations in M1, G3, W1, W2 and Y4 that the re-voiced effects
+(game-feel `GF-14`) shifted and added the re-voiced files to the determinism fact; no rule
+changed. Item 47's branch called its change 1.2.2 because it was made beside item 35's, from the
+same 1.2.1.
 Zach answered the open questions on 2026-10-04 and took every recommendation. Those answers are
 cited below as "owner, 2026-10-04".
 
@@ -76,7 +81,8 @@ These facts were verified 2026-10-04. A rule that breaks one of them is wrong.
 - The generators are deterministic. The gate ran with exit 0, and
   `git diff --stat -- assets` was empty afterwards. The sound generator joined on 2026-10-05:
   two runs, one under `PYTHONHASHSEED=7`, gave the same `shasum` for all six WAV files. Board
-  item 28 repeated the check for all twelve on 2026-10-05, with the same result.
+  item 28 repeated the check for all twelve on 2026-10-05, with the same result, and board item
+  47 repeated it for the twelve re-voiced files the same day, again the same.
 - Python is 3.14.6 at `/opt/homebrew/bin/python3` (`python3 -c "import sys; print(sys.version)"`).
 - The SVGs go into Rive. The mascot layer ids are the rig contract (`tools/build_mascots.py:7-9`).
 
@@ -88,7 +94,7 @@ These facts were verified 2026-10-04. A rule that breaks one of them is wrong.
 the run command lets a reader rebuild the art without opening `CLAUDE.md`. The word
 "highlight" in the example below is a quote from the source and is kept as written. The sound
 generator's docstring states its sound style the same way, and adds a musical note for each
-effect: its pitches, its timing and its peak (`tools/build_sounds.py:1-49`). An agent cannot hear,
+effect: its pitches, its timing and its peak (`tools/build_sounds.py:1-67`). An agent cannot hear,
 so those notes are the only description of a sound that a reader can check against the code.
 
 Correct, `tools/build_icons.py:2-9`:
@@ -234,9 +240,9 @@ so `72 * 0.65` reaches `assets/icons/chips/chip_stack_red.svg` as `r="46.8000000
 harmless reordering of the arithmetic can then change the last digit and the art bytes with it.
 
 In the sound generator the fixed precision is the 16-bit sample: a float becomes an integer in
-one place only, `to_frames()`, through `round()` (`tools/build_sounds.py:111-115`). A sample can
-still move by one if the float arithmetic before it is reordered, or on a platform whose `math.sin`
-or `math.exp` (`tools/build_sounds.py:90`) differs in the last bit, so the byte-identical check holds on this Mac and is not proven elsewhere.
+one place only, `to_frames()`, through `round()` (`tools/build_sounds.py:140-144`). A sample can
+still move by one if the float arithmetic before it is reordered, or on a platform whose `math.sin`,
+`math.exp` or `math.cos` (`tools/build_sounds.py:123`, `207`) differs in the last bit, so the byte-identical check holds on this Mac and is not proven elsewhere.
 
 Correct, `tools/common.py:28-29`:
 
@@ -276,7 +282,7 @@ and writes `<OUT>/<sub>/<name>.svg`. No other code opens a file for writing. One
 place to count files and one place that keeps output inside `OUT`.
 
 The sound generator has its own `write(name, frames)`, which writes `<OUT>/<name>.wav` through
-the `wave` module and returns 1 (`tools/build_sounds.py:225-232`). It does not use the shared
+the `wave` module and returns 1 (`tools/build_sounds.py:272-279`). It does not use the shared
 `write()`, because that one opens a text file and adds `.svg`. It is the one write path of its
 file, so the rule holds there too.
 
@@ -302,7 +308,7 @@ Incorrect, the inline write that `tools/build_mascots.py` held before 2026-10-05
 ### W2. `main()` prints the number of files it wrote, counted from the writes
 
 *review · [OURS]* The run line is the quick check that no asset went missing. Both
-files comply since 2026-10-05: icons print 78 (76 when ledger step 3 made the fix, 78 since board item 5) and mascots print 18. The sound generator, added by board item 17, prints 12 (6 until board item 28; `tools/build_sounds.py:249`). The two wrong ways were both
+files comply since 2026-10-05: icons print 78 (76 when ledger step 3 made the fix, 78 since board item 5) and mascots print 18. The sound generator, added by board item 17, prints 12 (6 until board item 28; `tools/build_sounds.py:296`). The two wrong ways were both
 in the repo before then. `tools/build_icons.py` counted with `os.walk` over `OUT`, which also
 counts `assets/icons/preview.html` (77 for 76 SVGs), and never printed it.
 `tools/build_mascots.py` printed a count computed from the tables, so it printed 18 even if a
@@ -775,7 +781,7 @@ Incorrect, written for contrast: a split inside an attribute value, with a backs
 
 *review · [OURS]* A banner is a comment of dashes that ends in the family name in capitals, 70
 to 72 characters long (`tools/build_icons.py:33`, `127`, `204`, `290`;
-`tools/build_mascots.py:49`, `152`, `246`; `tools/build_sounds.py:85`, `118`, `224`). In the
+`tools/build_mascots.py:49`, `152`, `246`; `tools/build_sounds.py:108`, `147`, `271`). In the
 sound generator a banner divides the synth helpers, the effects and the output.
 
 Correct, `tools/build_icons.py:33`:
