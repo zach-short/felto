@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# The felto command: one entry point for the scripts in this folder. `felto` alone opens a menu.
+set -euo pipefail
+DIR="$(cd "$(dirname "$0")" && pwd)"
+
+# name|script|args|description
+CMDS=(
+  "sim|sim.sh||build the dev client and open it on the iOS simulator"
+  "phone|phone.sh||release build on the connected iPhone"
+  "phone-debug|phone.sh|debug|debug dev client on the iPhone (needs felto start)"
+  "android|android.sh||build and open on the Android emulator or phone"
+  "start|start.sh||start Metro (add --clear to reset the cache)"
+  "check|check.sh||fast app check: typecheck, lint, test"
+  "gate|gate.sh||the whole-repo gate"
+  "assets|assets.sh||regenerate icons, mascots and sounds"
+  "reset|reset-app.sh||rebuild native projects from app.json"
+)
+
+field() { echo "$1" | cut -d'|' -f"$2"; }
+
+if [[ "${1:-}" == "--complete" ]]; then
+  for c in "${CMDS[@]}"; do echo "$(field "$c" 1):$(field "$c" 4)"; done
+  echo "cd:cd to the felto repo"
+  exit 0
+fi
+
+run() {
+  local name="$1"; shift
+  for c in "${CMDS[@]}"; do
+    if [[ "$(field "$c" 1)" == "$name" ]]; then
+      local extra; extra="$(field "$c" 3)"
+      exec "$DIR/$(field "$c" 2)" $extra "$@"
+    fi
+  done
+  echo "felto: unknown command '$name'" >&2; exit 1
+}
+
+if [[ $# -gt 0 ]]; then run "$@"; fi
+
+echo "felto commands:"
+i=1
+for c in "${CMDS[@]}"; do printf "  %d) %-12s %s\n" "$i" "$(field "$c" 1)" "$(field "$c" 4)"; i=$((i+1)); done
+read -r -p "pick a number: " n
+[[ "$n" =~ ^[0-9]+$ ]] && (( n>=1 && n<=${#CMDS[@]} )) || { echo "no such choice" >&2; exit 1; }
+run "$(field "${CMDS[$((n-1))]}" 1)"
