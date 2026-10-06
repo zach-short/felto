@@ -56,8 +56,8 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 | 36 | GTO trainer phase 2: preflop equity table | `DONE: HANDOFF 46` | Opus 5.5 | H | item 35 (`DONE`) | `solver/equity.py`, `solver/equity_test.py`, `solver/data/`, `docs/conventions-python.md` (the M4 amendment for numpy), `.gitignore` (one `__pycache__/` line, Zach's yes 2026-10-05) |
 | 37 | GTO trainer phase 3a: solver core, four tuning spots (one spot until BD-T18) | `DONE: HANDOFF 52` (the dials frozen provisionally, BD-T20; the six missed bands are `KEY-SPEC.md` 8.5 and item 60's) | Fable 5.1 | H | item 36 (`DONE`); Zach's answer to (b) | `solver/cfr.py`, `solver/best_response.py`, `solver/config.py`, new `solver/*_test.py`, `docs/incomplete/gto-trainer/KEY-SPEC.md` sections 7.5 and 12 (the frozen dials and the hash) |
 | 38 | GTO trainer phase 3b: the full tree, convergence per dealt hand and the raw key file | `DONE: HANDOFF 53` | Fable 5.1 | H | item 37 (`DONE`) | `solver/cfr.py`, `solver/cfr_test.py`, `solver/best_response.py` (the per-dealt-hand gain only), `solver/data/key.json` (new, the raw output), `CLAUDE.md` (Commands: the gate line and its notes), `docs/AGENT-PRACTICES.md` Part 6 and Appendix A (the recipe and the HEAD-isolation line), `docs/conventions-python.md` (M4's paragraph and the scope paragraph), `docs/incomplete/gto-trainer/KEY-SPEC.md` 8.5 (the full-tree verdicts) |
-| 39 | GTO trainer phase 4: key export, validation and containment | `OPEN` | Opus 5.5, then a Fable 5.1 review | H | item 38 (`DONE`) | `app/src/gto/key.ts`, `app/src/gto/data/` (new), `app/src/gto/key.test.ts` (new), `docs/incomplete/gto-trainer/KEY-SPEC.md` section 10 (the second review) |
-| 40 | GTO trainer phase 5: the hand engine | `HELD` until item 35 is `DONE` | Opus 5.5 | I | item 35 (the schema); a fixture key until item 39 | `app/src/gto/` except `key.ts`, `data/` and `grade.ts` |
+| 39 | GTO trainer phase 4: key export, validation and containment | `DONE: HANDOFF 54` | Opus 5.5, then a Fable 5.1 review | H | item 38 (`DONE`) | `app/src/gto/key.ts`, `app/src/gto/data/` (new), `app/src/gto/key.test.ts` (new), `docs/incomplete/gto-trainer/KEY-SPEC.md` section 10 (the second review), `app/src/config/dials.ts` (the new block `// gto-trainer`, Zach's answer (d), 2026-10-06) |
+| 40 | GTO trainer phase 5: the hand engine | `OPEN` | Opus 5.5 | I | item 39 (`DONE`; the key is on branch `gto-equity` until it merges) | `app/src/gto/` except `key.ts`, `key.test.ts`, `data/` and `grade.ts`; `app/src/config/dials.ts` (its own lines in the block `// gto-trainer`) |
 | 41 | GTO trainer phase 6: grading and the review model | `HELD` until items 39 and 40 are `DONE` | Opus 5.5, then a Fable 5.1 review of `grade.ts` | I | items 39 and 40 | `app/src/gto/grade.ts`, the review model |
 | 42 | GTO trainer phase 7: the table screen and seats | `HELD` until item 40 is `DONE` | Opus 5.5 | I | item 40 | the table component and screen, `app/src/art/` seat wiring |
 | 43 | GTO trainer phase 8: three new characters | `HELD` until Zach has run the Higgsfield round | Opus 5.5, with Zach | J | Zach's round | `assets/higgsfield-table/`, `assets/gallery.html`, the art module |
@@ -76,7 +76,7 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 | 56 | Rive: rig the chest in four tiers: a wiggle, a tap shake, an upgrade flash and the opening | `HELD` until item 48 is `DONE` | Sonnet 5 (Zach's choice) | G | item 48 | a new Rive file in Zach's account; `app/assets/rive/chest.riv` (new, exported from that file only) |
 | 57 | Play the rigs in the app: one mascot player, a chest player, static fallbacks | `HELD` until items 30 to 32, 51 and 53 to 56 are `DONE` | Opus 5.5 | F | items 30 to 32 (31 owns `path-greeting.tsx`, 32 owns `mascot.tsx`), 51 and 53 to 56 | `app/src/art/` (the Rive players, their pure modes and tests, `flop-rive.tsx`, `rive-boundary.test.ts`), `app/src/components/exercise/exercise-view.tsx`, `app/src/components/lesson/lesson-finish.tsx`, `app/src/components/boss/boss-finish.tsx`, `app/src/components/chest/`, `app/src/screens/chest-screen.tsx`, `app/src/components/path/path-greeting.tsx`, `app/src/screens/dev-art-screen.tsx`, `app/src/config/dials.ts` (its own lines in the block `// game-feel second pass`), `docs/conventions-typescript.md` (rule U6), `CLAUDE.md` (the `.riv` rule) |
 | 58 | Web app: an Expo web build of the app at felto.app, and the marketing site moved to download.felto.app | `HELD` until Zach answers the five questions in the prompt (the domain first) and items 34 and 49 are `DONE` | Opus 5.5 | R | Zach's answers; items 34 and 49 (they own `app/package.json` and `app/bun.lock`) | `app/package.json`, `app/bun.lock`, `app/app.json`, `app/metro.config.js`, `app/wrangler.jsonc` (new), new `*.web.ts` and `*.web.tsx` files beside the native ones in `app/src/storage/`, `app/src/feedback/`, `app/src/art/` (the Rive file only), `app/src/components/profile/` and `app/src/reminder/`, `app/src/components/app-tabs.tsx` if the web tabs need a branch, `site/src/config.ts`, `site/wrangler.jsonc`, `docs/incomplete/app/DESIGN.md` (one new decision), `docs/README.md`, `HANDOFF.md`, `CLAUDE.md` (the web build command) |
-| 60 | GTO trainer: RF-3, a per-class realization adjustment: scope, re-freeze, re-solve, re-export | `HELD` until items 38 and 39 are `DONE` | Fable 5.1 | H | items 38 and 39; Zach's answers to the GATE 1 batch of its step 2 | `solver/config.py`, `solver/cfr.py`, `solver/best_response.py`, `solver/*_test.py`, `solver/tune.py` (new), `solver/data/key.json` (item 38's output), `docs/incomplete/gto-trainer/KEY-SPEC.md` (3.2, 4, 7.5, 8.5, 10, 11, 12 and a new 13), `docs/incomplete/gto-trainer/PLAN.md` (section 1, phases 3a to 4), `docs/README.md` (the `KEY-SPEC.md` line), `app/src/gto/key.ts` (the hash constant only) and `app/src/gto/data/` (through item 39's export) |
+| 60 | GTO trainer: RF-3, a per-class realization adjustment: scope, re-freeze, re-solve, re-export | `OPEN` | Fable 5.1 | H | Zach's answers to the GATE 1 batch of its step 2 (items 38 and 39 are `DONE`) | `solver/config.py`, `solver/cfr.py`, `solver/best_response.py`, `solver/*_test.py`, `solver/tune.py` (new), `solver/data/key.json` (item 38's output), `docs/incomplete/gto-trainer/KEY-SPEC.md` (3.2, 4, 7.5, 8.5, 10, 11, 12 and a new 13), `docs/incomplete/gto-trainer/PLAN.md` (section 1, phases 3a to 4), `docs/README.md` (the `KEY-SPEC.md` line), `app/src/gto/key.ts` (the hash constant only), `app/src/gto/data/` (through item 39's export) and `app/src/gto/key.test.ts` (the pinned containment list, `HANDOFF.md` step 54) |
 
 **Do not paste a prompt marked DONE**: a fresh session would build it again.
 
@@ -1729,9 +1729,9 @@ The scope is `docs/incomplete/gto-trainer/DESIGN.md` and the plan is
 `docs/incomplete/gto-trainer/PLAN.md`, approved by Zach in chat on 2026-10-05 (GATE 2). One
 phase per item. Per Part 3, each session writes the next item's prompt when it closes, so only
 item 35 had its prompt below when this section was opened; items 36 to 38 gained theirs as each
-closed (2026-10-05 and 2026-10-06); item 39 gained its prompt when item 38 closed (2026-10-06).
-Items 40 to 45 are the plan's phases 5 to 10 and carry the status `HELD` until their dependency
-is `DONE`. Lanes: H (the key), I (the table), J (the art).
+closed (2026-10-05 and 2026-10-06); item 39 gained its prompt when item 38 closed (2026-10-06),
+and item 40 gained its prompt when item 39 closed (2026-10-06). Items 41 to 45 are the plan's
+phases 6 to 10 and carry the status `HELD` until their dependency is `DONE`. Lanes: H (the key), I (the table), J (the art).
 Item 60 (RF-3, opened 2026-10-06 out of item 37) joins lane H after items 38 and 39.
 
 ### 35. Write the GTO game spec, freeze the key schema and check the solver is feasible
@@ -2331,6 +2331,132 @@ the unit 3 lessons.
 Hand back: the whole-repo gate from `CLAUDE.md` green with its counts; the load test failing on
 each broken fixture; the containment result hand by hand; the bundle size; the Deep review's
 verdict; then the two copyable blocks, with `git add -N` first for the new files.
+
+**Status, 2026-10-06 (`HANDOFF.md` step 54).** Done. The key is a byte copy in
+`app/src/gto/data/key.json`; `app/src/gto/key.ts` checks it on first read and 24 tests prove it,
+each broken copy failing with its fault. 46 chart hands open under 0.5 in the key and are pinned in
+`key.test.ts`; five unit 3 exercises contradict the key and are recorded. The key adds 698,078
+bytes to the iOS bundle. The Deep review found no fault in the key itself; every hand it names is a
+model limit and goes to item 60, so nothing blocks items 40 and 41. Its five items for later work
+are routed in `KEY-SPEC.md` 10. Zach answered (a) to (d) with every recommendation. Row 39 points
+at step 54. Do not paste this prompt.
+
+### 40. Build the hand engine: seats, blinds, the action tree, seeded deals, bots that play the key, and the runout
+
+**Model: Opus 5.5. Lane I. Waits on nothing (item 39 is `DONE: HANDOFF 54`).** Work in a
+worktree of your own. If branch `gto-equity` has merged into `main`, make it from `main`;
+otherwise make it from `gto-equity` once Zach has committed item 39, because the key, its reader
+and the `// gto-trainer` dials block live there and nowhere else. Run the fresh-checkout recipe of
+`docs/AGENT-PRACTICES.md` Part 6 first. Lane H (item 60) keeps `.claude/worktrees/gto-equity`;
+do not work in it.
+
+You are picking up felto, a poker-training app. Read, in order: `HANDOFF.md` (Environment, Code
+map, then steps 53 and 54), `docs/incomplete/gto-trainer/KEY-SPEC.md` sections 2 (the game), 5
+(what the heads-up-only rule leaves out), 7.1 to 7.3 (the key's shape) and 9 (the dials that read
+the key), `docs/incomplete/gto-trainer/PLAN.md` section 1 (BD-T4, BD-T5, BD-T7, BD-T8), section 3
+(the dials) and phase 5, `docs/AGENT-PRACTICES.md`, then `docs/conventions-typescript.md` in full.
+Session rules: never run `git commit`, `git push`, `git add -A` or `git add .`; print the two
+copyable blocks at the end (`git add -N` then `git add` the exact files you touched, then
+`git commit` the same files with a short lowercase message, with no `Co-Authored-By` line and no
+"Generated with" line). Talk to Zach in ASD-STE100 Simplified Technical English. Documents you
+write have no em dashes and no contractions. Ask Zach in chat, in one batch, before any decision
+that is his.
+
+**Why this exists.** The trainer is a table: six seats, a dealt hand, five bots and the player.
+Something has to say who sits where, whose turn it is, what is legal, what each bot does, how
+many chips move and who wins. Every later phase drives that engine: the grader (item 41) scores
+the player's decisions in it, the table screen (item 42) draws it, and the session flow (item 44)
+deals from it. A wrong engine offers an illegal action or loses a chip, and the grader then
+scores a hand that could not happen. The engine is pure TypeScript, so its failures are loud in
+tests, which is why this phase is Default tier.
+
+**What is fixed.** Read these; do not relitigate them.
+- The key is read only through `app/src/gto/key.ts` (BD-T8; `key.test.ts` fails if any other
+  file imports `data/key.json`). `gtoKey()` returns the checked key: `nodes` is a `ReadonlyMap`
+  from node id (`KEY-SPEC.md` 7.2, `root` for UTG's first decision) to `GtoNode` (`actor`,
+  `actions`, `totals`, `reach`, `strategy`, `ev`, `handReach`), and every per-hand row follows
+  `gtoKey().hands`, the order of `allHandClasses()` (`app/src/cards/hand-class.ts:16-22`).
+  `treeNodes()` gives the 65 node ids with their actors and actions without the file. `totals` is
+  the actor's total in the pot after each action, in big blinds, `null` for fold
+  (`KEY-SPEC.md` 7.1); with the blinds of 2.1 it is every chip amount the engine moves.
+- The game is `KEY-SPEC.md` 2: six seats in the preflop order `UTG`, `HJ`, `CO`, `BTN`, `SB`, `BB`
+  (`app/src/content/schema.ts`, `Seat` and `OPEN_SEATS`), 100 bb stacks, blinds 0.5 and 1, one
+  size per raise by the rows of 2.3, the 5-bet all-in, no limp, `BB` never opens (a walk pays it
+  0.5), and the heads-up-only rule of 2.2: the first seat that calls or 3-bets is the defender and
+  every seat behind it leaves with no decision.
+- The player is not a bot (`KEY-SPEC.md` 5). Bots behind an opener and a defender fold, which is
+  the solved game. When the player sits behind a bot defender, the table lets the player act; that
+  decision has no node and no grade (BD-T4, "multiway, not scored"). What the bots do if the
+  player then raises into a spot the key does not cover is this item's rule; BD-T4 names a plain
+  fold-or-call rule from the unit 3 chart (`OPENING_CHART`, `app/src/content/opening-chart.ts`) as
+  the default.
+- After the preflop action, a hand with two or more players left runs the board out with no
+  betting and goes to showdown (BD-T5, dial `gtoPostflopMode` = `runout`), through
+  `showdownWinners` (`app/src/cards/showdown.ts:14`).
+- A hand is a seed (BD-T7): the same seed gives the same deal and the same bot choices. Use the
+  house random helpers: `randomFrom`, `pickWeighted` and `childSeed` in `app/src/drills/random.ts`,
+  and `seededRandom` in `app/src/game/seeded-random.ts`. The player's seat is random, so every
+  seat, the blinds too, is dealt (`docs/incomplete/gto-trainer/DESIGN.md` section 2).
+- A bot samples its action from the key's row for its hand class at its node (dial
+  `gtoBotMixMode` = `sample`; the other mode plays the top action, `PLAN.md` section 3). The two
+  dials of this item go in the `// gto-trainer` block of `app/src/config/dials.ts`, which item 39
+  opened with `gtoChartMinOpen`; every dial lives there (BD-14).
+- The key is provisional (BD-T20): it misses seven bands (`KEY-SPEC.md` 8.5), and the Deep review
+  of item 39 (`KEY-SPEC.md` 10, second review) names many hands as wrong, every one for want of
+  hand features or another simplification of `KEY-SPEC.md` 4, and finds no fault in the file
+  itself. The bots play the key as it is, and item 60 replaces the file. Three of the review's
+  items reach the engine: at the 15 opener-facing-5-bet nodes the bots fold `QQ`, `JJ` and
+  sometimes `KK` to a shove on EV gaps under 0.001 bb (item 2); each flat of `HJ`, `CO`, `BTN` and
+  `SB` is one or two hands at the fold margin (item 5); and 2,777 rows at hands the actor never
+  holds carry a uniform strategy (item 1), which a bot never reads, because it never holds those
+  hands. One node is reached less often than `reachFloor` (0.0001): `UTG` facing the big blind's
+  5-bet, reach 0.000088 (`KEY-SPEC.md` 8.5).
+- The engine imports no React, React Native or Expo module, as rule B2 of the TypeScript standard
+  asks of `src/game/`, `src/cards/`, `src/content/` and `src/drills/`: its tests run in vitest in
+  node. Its files are `app/src/gto/` except `key.ts`, `key.test.ts`, `data/` and `grade.ts`.
+
+Do these, in order:
+1. **The table and the walk.** Seats, the button, the blinds, whose turn it is and the legal
+   actions at each point: from the key's node when the history is a node id, from the rule of
+   `KEY-SPEC.md` 5 when it is not. Name each point by the node id where one exists, so the grader
+   can read the key at the player's decisions.
+2. **The deal.** Six hands and a board from one seed, with no card twice.
+3. **The bots.** Each bot reads its row and samples (or plays the top action, by the dial),
+   through the seeded random, so a replay makes the same choices.
+4. **The player's off-tree decisions.** The rule of `KEY-SPEC.md` 5 for a decision with no node,
+   and the bots' answer to it, as Zach answers (a) below. Record it as a `BD-T` in `PLAN.md`
+   section 1 with its reversal.
+5. **The runout and the chips.** The board, the winners through `showdownWinners`, split pots,
+   and every chip from `totals` and the blinds. Chips are conserved in every hand.
+6. **Tests**, in new files beside the code (rule Q1): every action offered is legal; chips are
+   conserved; the same seed replays the same hand; a bot never takes an action whose frequency in
+   its row is 0; and a log of 1,000 seeded hands, with the player in every seat and choosing at
+   random, holds no illegal action and conserves chips in every hand.
+7. **Record it.** The next free `HANDOFF.md` step (read this branch and the main checkout for the
+   number), the code map and the Environment row for the gate counts; `PLAN.md` phase 5 `BUILT`;
+   row 40 `DONE: HANDOFF n`; item 41's prompt below this one (phase 6, grading and the review
+   model, Opus 5.5 with a Fable 5.1 review of `grade.ts`) with row 41 flipped to `OPEN`, since item
+   39 left nothing that blocks it (the status line under item 39). Carry items 1 and 2 of
+   `KEY-SPEC.md` 10, second review, into that prompt: the grader reads `hand_reach` before
+   `strategy`, and Zach decides whether actions within the solver's noise grade as equal.
+
+Ask before building: (a) what the bots do after the player raises into a spot the key does not
+cover (BD-T4's default is fold or call from `OPENING_CHART`; a call when the bot's hand is on the
+chart for its seat is one reading, and the answer may be another); (b) whether a bot at a node
+under `reachFloor` samples as usual or plays the top action; (c) whether the 1,000-hand log is a
+committed fixture or is generated inside the test from the seeds; (d) whether bots play the
+best-EV action where the key's actions sit within the solver's noise, as the second review of
+`KEY-SPEC.md` 10 suggests for the 5-bet nodes (item 2), and whether a bot drops a flat that is one
+margin hand (item 5), or plays the key's frequencies there as everywhere else. All four are his
+calls, and any answer may be no.
+
+Not in scope, whoever asks: any change to `app/src/gto/key.ts`, `key.test.ts`, `data/` or
+`solver/`; grading (item 41); any screen (item 42); stored state and the free allowance (item
+44); any change to `OPENING_CHART` or the unit 3 lessons.
+
+Hand back: the whole-repo gate from `CLAUDE.md` green with its counts; the result of the 1,000
+hand log (illegal actions and chip errors, both 0); the rule of step 4 as built; then the two
+copyable blocks, with `git add -N` first for the new files.
 
 ## Items 46 to 57: the second game-feel pass
 
@@ -3383,3 +3509,17 @@ band table under the frozen model, every row; the new hash; `python3 solver/vali
 printing `valid` on the raw file and on the exported key; the app gate green; the cold review's
 findings with their status; then the two copyable blocks, with `git add -N` first for
 `solver/tune.py` and any other new file.
+
+*Note, 2026-10-06 (board item 39, `HANDOFF.md` step 54), on step 6 and on "Not in scope" above.*
+Phase 4 pins its containment result. On Zach's answer (b) of 2026-10-06, `app/src/gto/key.test.ts`
+asserts the exact list of chart hands the key opens less often than `gtoChartMinOpen` (46 hands at
+the five open nodes, `PINNED_UNDER`), so "the containment test must still pass" now means: read
+the new list, record each hand that joined or left it, and update `PINNED_UNDER` to match, which
+widens this item's `app/` files by that one constant (row 60 names the file). A second test in
+the same file asserts that `app/src/gto/data/key.json` is a byte copy of `solver/data/key.json`,
+so a re-solve that is not re-exported fails the app gate. Item 39's Deep review (`KEY-SPEC.md`
+10, second review) names the hands RF-3 is judged against, and its item 3 belongs in this item's
+GATE 1 batch: no band of 8.2 covers a 4-bet or 5-bet quantity and `c_4bp` and `c_4bp_oop` were
+tuned on nothing, so the reviewer recommends a band, or a stated expectation, for the defender's
+call of a 4-bet per row (it found `33` to `99` and `A3s` to `A9s` calling a 22 bb 4-bet from a
+blind) before this item is judged done.

@@ -258,7 +258,33 @@ lands on one.
 
 ### Phase 4: Key export, validation, containment
 
-Status: `PLANNED`.
+**BUILT 2026-10-06** (board item 39, lane H, on Opus 5.5, in worktree
+`.claude/worktrees/gto-equity`, branch `gto-equity`, `HANDOFF.md` step 54; the commit is Zach's
+and pending). Zach answered the four questions of the prompt in chat on 2026-10-06, every
+recommendation: (a) a JSON import through Metro, which needs no plugin; (b) the containment
+misses pinned in the test; (c) hands named wrong by the Deep review for want of hand features go to
+board item 60 and block nothing, and a fault in the key itself blocks item 41; (d) the dial
+`gtoChartMinOpen` in `app/src/config/dials.ts`, a new block `// gto-trainer`. Built:
+`app/src/gto/data/key.json`, a byte copy of `solver/data/key.json` (608,670 bytes, `cmp`);
+`app/src/gto/key.ts`, the one reader, which checks the file on first read and throws with the node
+and the fault named; `app/src/gto/key.test.ts`, 24 tests (the tree of `KEY-SPEC.md` 2.4 built a
+second way, the real file, nine broken copies each failing with its fault, the byte copy, the dials
+of `KEY-SPEC.md` 9, the containment pin and the import boundary). Against the done-when: the gates
+are green and the load test fails on a table with one hand deleted. The Deep review (`KEY-SPEC.md`
+10, second review) found no fault in the key itself and named many hands as wrong for want of hand
+features, so "finds no wrong strategy" is not met; that is the deviation, and the hands belong to
+item 60 (BD-T20). Step 3: 46 hands of `OPENING_CHART` open less often than 0.5 at their seat's
+open node (UTG 3, HJ 5, CO 12, BTN 18, SB 8; 36 of them suited connectors and gappers, each with
+its frequency and EV in `HANDOFF.md` step 54); recorded and pinned, the chart and the solver
+unchanged. The watch-for: five exercises of unit 3 contradict the key (`preflop-2-10`, CO `22`;
+`preflop-4-05`, CO `87s`; `preflop-4-09`, BTN `64s`; `preflop-5-08`, SB `54s`, each raised by the
+lesson and folded by the key; `preflop-3-05`, UTG `A8o`, folded by the lesson and opened 0.9999 by
+the key), recorded and not rewritten. Step 1's size is section 5, hazard 3. What this phase forces
+on later phases: item 40's bots read `gtoKey()`; item 41 reads `hand_reach` before `strategy`,
+because 2,777 rows at hands the actor never holds carry a uniform strategy; the 5-bet nodes sit at
+indifference (`KEY-SPEC.md` 10, second review, items 1 and 2); item 60's re-export must update the
+pinned list in `key.test.ts`. The status line that stood here while the phase was planned was
+`PLANNED`.
 
 1. Export to `app/src/gto/data/` as JSON in the frozen schema, with the spec hash, and measure
    the size (BD-T8).
@@ -387,7 +413,7 @@ solver dials, which live in `solver/config.py`.
 |---|---|---|
 | `tableSeats`, `stackBigBlinds` | 6, 100 | exist |
 | `gtoExploitabilityBb` | 0.005 | solver stop point; confirmed in phase 3a |
-| `gtoChartMinOpen` | 0.5 | containment test of phase 4 |
+| `gtoChartMinOpen` | 0.5 | containment test of phase 4. In `app/src/config/dials.ts` since 2026-10-06 (board item 39), the first line of the block `// gto-trainer`; `solver/config.py` keeps its copy, `GTO_CHART_MIN_OPEN` |
 | `gtoGoodFrequency` | 0.10 | a mixed action played at least this often is good |
 | `gtoMistakeCostBb` | 0.15 | above the solver error of phase 3b |
 | `gtoBotMixMode` | `sample` | the other mode plays the top action |
@@ -416,7 +442,15 @@ solver dials, which live in `solver/config.py`.
 1. **Uncommitted work from another session** (fact 13). Zach commits before a worktree is cut.
 2. **The key and its spec are the product.** A change to `KEY-SPEC.md` after phase 3b means a
    new run; the spec hash makes a stale key fail the load test.
-3. **Bundle size** of the strategy tables is unmeasured until phase 4.
+3. **Bundle size** of the strategy tables is unmeasured until phase 4. *Measured 2026-10-06
+   (phase 4, board item 39, `HANDOFF.md` step 54).* The key is one JSON file of 608,670 bytes
+   (116,007 gzipped). `bunx expo export --platform ios` in a scratch copy of the branch, with its
+   own Metro cache, gave a Hermes bytecode bundle of 4,692,045 bytes with no reader of the key
+   (nothing imports `app/src/gto/key.ts` yet), 4,700,301 with one scratch route that reads it
+   from a stub `{}` key, and 5,398,379 with the real key: the key adds 698,078 bytes (222,168
+   gzipped), and the reader with its route 8,256. The whole is 15.1 percent of the bundle without
+   it. Android was not exported; it uses the same Hermes bytecode. Load time on a phone was not
+   measured.
 4. **`assets/higgsfield/` is frozen** (BD-T10); `assets/gallery.html` links its 32 files by name.
 5. **Parallel lanes** write different folders (`solver/` and `app/src/gto/`); only phase 4 and
    phase 9 touch shared files (`dials.ts`, `migrations.ts`), so those two are serial.

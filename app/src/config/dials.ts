@@ -114,4 +114,10 @@ export const DIALS = {
   // US-1 and US-3 (docs/incomplete/unit-stories/DESIGN.md): the lessons that deal fresh hands
   // into their drill slots each time they open
   dealtLessons: ["hands-3", "hands-5"],
+
+  // gto-trainer (docs/incomplete/gto-trainer/PLAN.md section 3). The containment line of phase 4:
+  // a hand the unit 3 chart opens for a seat should open at least this often at that seat's open
+  // node in the key (gto/key.test.ts). solver/config.py holds the same number as
+  // GTO_CHART_MIN_OPEN, the solver's copy of the plan's dial
+  gtoChartMinOpen: 0.5,
 } as const;

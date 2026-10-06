@@ -794,6 +794,115 @@ hand (section 4, item 3); the flat tax is a hand-set number per seat type, not a
 real squeeze (item 1); card removal across folders (item 6); and every band in section 8 comes
 from a raked game.
 
+### Second review, 2026-10-06: the key (board item 39, phase 4)
+
+Done 2026-10-06 by a Fable 5.1 subagent in its own worktree, review only; the harness removed
+that worktree on return, which it does only for one with no changes, and the builder's checkout
+held no file but the builder's own (`git status --short`). It read this file, `solver/data/key.json`
+(12,000 iterations, `spec_hash` `659cdfd1...e845a7`, the provisional dials of section 12) and
+`solver/data/equity.json` by absolute path on branch `gto-equity`, and answered one question: is
+a hand a strong player would call wrong (A) the game of this spec giving that answer, or (B) a
+fault in the key, a number the stated game does not imply? It did not re-judge the seven band
+misses of 8.5.
+
+**Verdict: no fault of class B.** By script over the 65 nodes: the fold EV equals the payoff of
+2.5 at every node (10,985 rows); `totals` match 2.3 at every node; at the 4,178 rows whose
+`hand_reach` is above 0.0001, the strategy puts more than 0.05 only on actions within 0.02 bb of
+the row's best EV; every row sums to 1 within 0.001; each node's `reach` equals the sum of its
+`hand_reach` within 0.0001, and no node is reached more often than its parent. The reviewer also
+recomputed the call EV at all 60 terminal-call leaves from `equity.json` and the formulas of 3.2
+with the dials of 12 (largest difference 0.000055 bb at a flat, 0.000098 at a call of a 3-bet,
+0.00031 at a call of a 4-bet, 0.0024 at a call of a 5-bet, where a few hands at frequencies
+rounded to four places move the weights), and checked `E` (symmetric; `AA` against `KK` 0.8195;
+six Monte Carlo spot checks within 0.5 points). Every hand it names is class A: section 4, item 3
+(the model cannot see suitedness, connectedness or set value) at nearly every node, item 1 (one
+flat tax per seat type) at the flats, and items 4 and 5 (one 4-bet size, an all-in 5-bet) at the
+4-bet and 5-bet nodes. The key is fit for bots and a grader to read in the mechanical sense.
+Section 6's statement covers the open and defend layers, in the reviewer's judgment, but does not
+prepare a player for three patterns a strong player calls absurd within a few hands: the big blind
+3-bets small pairs at 100 percent against the button and the small blind; openers call 3-bets and
+4-bets with small pairs and weak suited aces while they fold offsuit broadways; and at the 5-bet
+nodes the bots fold `QQ`, `JJ` and sometimes `KK` to a shove while they call with `TT`.
+
+**The hands it names, by node.** The action is the key's, at a frequency of 1 unless given; class
+A, item 3, unless marked.
+
+- `root` (UTG opens): opens `A8o`; folds `A5s`, `A4s`, `A3s`, `A2s`, `QTs`, `JTs`, `T9s`, `98s`,
+  `33` and `22`; opens `44` at 0.40.
+- `UTG:fold` (HJ opens): opens `A8o`, `A7o` and `A6o` (0.715); folds `A2s`, `K9s`, `T9s`, `98s`,
+  `87s`, `76s`, `33` and `22`.
+- `UTG:fold/HJ:fold` (CO opens): opens `A6o`, `A5o` and `A4o`; folds `K8s` to `K5s`, `Q8s`,
+  `J9s`, `T9s`, `98s`, `87s`, `76s`, `65s`, `QTo`, `JTo` and `22`.
+- `UTG:fold/HJ:fold/CO:fold` (BTN opens): folds `T8s`, `98s`, `97s`, `87s`, `86s`, `76s`, `75s`,
+  `65s`, `64s`, `54s`, `K3s`, `K2s`, `Q7s` to `Q2s`, `J8s` to `J5s`, `T9o`, `J9o` and `Q8o`, while it
+  opens `K7o`, `K8o` and `Q9o`.
+- `UTG:fold/HJ:fold/CO:fold/BTN:fold` (SB opens): opens `Q5o` and `Q4o`; folds `97s`, `87s`, `86s`,
+  `76s`, `75s`, `65s`, `64s`, `54s`, `T6s`, `98o` and `T8o`.
+- The big blind against a BTN open: 3-bets `33` to `88`, `A9o` and `JTs` (a strong player calls).
+  Against a CO open: 3-bets `55` to `99`; calls `A5s` and `A4s` (a strong player 3-bets a share).
+  Against a UTG open: calls `A2o` to `A8o`, `KTo`, `QTo`, `JTo`, `T9o`, `K5s` and `K6s` (fold);
+  3-bets `88` and `99`. Against an SB open: 3-bets `22` to `66`, `A2o` to `A8o` (26 percent of its
+  3-bet range), `T7s` and `J8s` (call).
+- SB against a BTN open: 3-bets `A8o`, `A9o` and `A7o` (0.27); folds `A2s`, `K9s`, `QTs`, `JTs`,
+  `T9s`, `98s`, `87s` and `76s` (a strong player 3-bets a share of them).
+- BTN against a CO open: flats `A8o` and `A7s` (0.999) and no other hand (A, item 1 and item 3);
+  folds `A5s` (0.926) and `JTs` to `65s`; 3-bets `33`, `44` and `55`. HJ against a UTG open: flats
+  `ATo` alone with `ATs`, the same two hands flat for CO and BTN against UTG, `AJo` (0.80) for SB
+  against UTG and `A9s` for CO and BTN against HJ (item 1); 3-bets `66` to `88`.
+- CO facing a BTN 3-bet: calls `A2s`, `A3s`, `A5s`, `A8o`, `A9o`, `K9s`, `Q9s`, `QTs`, `KJo`, `33`,
+  `44` and `55` (mostly fold).
+- SB facing a BB 3-bet: 4-bets `AJo`, `88`, `77` (0.45) and `KQo` (0.65) (call); calls `A2o`, `A5o`,
+  `22`, `33`, `44`, `KTo`, `QJo` and `98s` (fold).
+- BTN facing a BB 3-bet: 4-bets `TT` and `JJ` (item 4); calls `22` to `55`, `A2s`, `K7s`, `K8s`,
+  `A8o` and `QJo` (fold). BTN facing an SB 3-bet: 4-bets `TT`, `JJ` and `AQo` (item 4); calls `22`
+  to `44`, `A2s`, `A6o`, `A4o`, `K6s` and `K7s` (fold). UTG facing a BB 3-bet is close to a real
+  strategy; no hand named.
+- The calls of a 4-bet (items 4 and 5, and the dials `c_4bp` and `c_4bp_oop`, which no band of 8.2
+  checks): BTN against a CO 4-bet calls `44` to `88`, `A8s` and `KTs`; SB against a BTN 4-bet calls
+  `33` to `99`, `A3s` to `A9s`, `KTs`, `KJo` and `KQo`; BB against a BTN 4-bet calls `33` to `99`,
+  `A4s`, `A5s`, `A7s`, `QJs` and `JTs`; BB against an SB 4-bet calls `22` to `44`, `A9o`, `A5o`,
+  `A4o`, `KTo`, `JTo`, `87s`, `98s`, `T8s` and `J8s`, and shoves `KJs`, `KQs` and `66` (0.50).
+- The 5-bet nodes (items 4 and 5): `QQ` folds 0.89 to 0.91 to the HJ, CO and BTN shoves after a UTG
+  4-bet, with the call EV within 0.001 bb of the fold; `KK` folds 0.664 to the BB's shove after a
+  UTG 4-bet (reach 0.000087, under `reachFloor`) and 0.269 to the SB's; `QQ` folds to every shove
+  after an HJ 4-bet and to the BB's after a CO 4-bet; `JJ` folds to three shoves where `TT` calls
+  0.59 to 0.80. These rows sit at indifference, and `E` holds the real effect of a pair against an
+  overpair (`TT` 0.1925 against `AA`, `JJ` 0.1885, `QQ` 0.1845), so the smaller pair calls.
+
+**What it says a builder must know**, and where each goes under Zach's answer (c) of 2026-10-06
+(a hand of class A goes to board item 60 and blocks nothing; a fault of class B would block item
+41):
+
+1. 2,777 rows at hands the actor never holds at that node (`hand_reach` under 1e-6) carry the
+   uniform strategy, the CFR+ default; their EVs are valid and their frequencies are not. A grader
+   that reads `strategy` there calls every action good (`gtoGoodFrequency`), a 4-bet with `72o`
+   included. Item 41 reads `hand_reach` before `strategy`. Bots never hold those hands.
+2. At the 15 opener-facing-5-bet nodes the folds of `QQ`, `JJ` and `KK` come from EV gaps under
+   0.001 bb, while a player's call there is graded a mistake of 0.38 to 0.52 bb at six nodes, above
+   `gtoMistakeCostBb` (0.15). The reviewer suggests bots that play the best-EV action at those
+   nodes and a grader that treats actions within the solver's noise as equal. Item 40 asks Zach
+   about the bots, item 41 about the grader.
+3. No band of 8.2 covers a 4-bet or 5-bet quantity, and `c_4bp` and `c_4bp_oop` were tuned on
+   nothing. The reviewer recommends a band, or a stated expectation, for the defender's call of a
+   4-bet per row before item 60 is judged done. Item 60, in its GATE 1 batch.
+4. The inversion of section 4, item 3, is the main pattern of the key, so section 6's statement
+   should name it in plain words, or the player concludes the solver is broken. Phase 10 (item 45),
+   copy under R7.
+5. Each flat of HJ, CO, BTN and SB is one or two hands at the fold margin, which a player reads as
+   a tell. Item 40, with item 2.
+
+**Re-checked by the builder against the file**, 2026-10-06, `python3` over `solver/data/key.json`:
+`QQ` at `UTG:open/HJ:3bet/UTG:4bet/HJ:5bet` folds 0.9043 (fold −20.0, call −20.0009); `KK` at the
+BB's 5-bet after UTG's 4-bet folds 0.6636 at reach 0.000087; the big blind against a BTN open
+3-bets `33`, `55`, `88` and `99` and calls `22` (the verdict's "22 to 88" joins its two spots
+against the button and the small blind); `72o` at `UTG:fold/HJ:fold/CO:open/BTN:3bet` has the
+strategy 0.3333 three times and `hand_reach` 0; 6,420 rows have `hand_reach` under 1e-6, and 2,783
+of them are uniform within 0.001 (the reviewer's 2,777 used a tighter test).
+
+`PLAN.md` phase 4's done-when, "the Deep review finds no wrong strategy for the hand classes it
+checks", is not met: the provisional freeze (BD-T20) cannot meet it, and the hands go to item 60.
+Phase 4 is `BUILT` with that deviation recorded under it.
+
 ## 11. Decisions
 
 Three questions were Zach's, asked in one batch in chat on 2026-10-05 after this draft was
