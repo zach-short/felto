@@ -2015,9 +2015,19 @@ ranges lands 13 of the 19 bands (`k` 2; step 50 has the table), the best with `c
 therefore holds the starting values and the hash of section 12 is unchanged. Step 5 is done except
 for item 38's prompt. The remainder is the prompt below; it waits on Zach's answer to (b).
 
+**Status, 2026-10-06 (`HANDOFF.md` step 51).** Zach answered on 2026-10-05: (a) the tests join the
+gate at item 38; (b) supersede the leaf model, with the wider ranges as the fallback. The second
+round then found that no shape of the equity-bent model lands the 3-bet-pot bands (steeper curves,
+`k` 3 and 4, 172 more settings; a symmetric bend), and that the wider settings land the fold bands
+only by never calling a 3-bet, with 4-bets of 30 to 35 percent, and fold a small pair on the
+button. The hands the bands describe differ by features, not equity, which is `KEY-SPEC.md` 4,
+item 3, and its fallback RF-3 is a scope decision. Question (b) is re-opened in step 51 with three
+choices and a recommendation; the remainder prompt below runs once Zach answers it, and its step 1
+records that answer.
+
 ### 37, the remainder. Freeze the leaf-model dials on Zach's answer and open item 38
 
-**Model: Fable 5.1. Lane H. Waits on Zach's answer to question (b) of `HANDOFF.md` step 50.**
+**Model: Fable 5.1. Lane H. Waits on Zach's answer to the question of `HANDOFF.md` step 51.**
 Run it in the worktree `.claude/worktrees/gto-equity` (branch `gto-equity`), where item 36 and
 the first part of item 37 live uncommitted or committed by Zach.
 
@@ -2038,12 +2048,16 @@ Zach. This session carries out whichever he chose and nothing else.
 - Everything in item 37's "What is fixed" above still holds. `solver/cfr.py` solves a subtree with
   `solve(game, opener, E, W, iterations, report)`; `python3 solver/cfr.py` prints the gains and the
   band table for the CO, BTN and SB subtrees from `GAME` in `solver/config.py`.
-- The three choices step 50 offered Zach, with their band tables: (1) freeze the best setting
-  inside the ranges, 13 of 19 bands, and record the six misses as findings in `KEY-SPEC.md` 8;
-  (2) supersede the ranges of 3.2 for `c_3bp` and `c_3bp_oop` and freeze the best wider setting,
-  15 of 19, with four misses recorded; (3) supersede the leaf model itself (BD-T18), which is a
-  new decision for the spec and a re-tune in the same solver. Zach's answer names one of them, or a
-  fourth; it is recorded in `KEY-SPEC.md` 11 as a dated third batch.
+- The three choices step 51 offered Zach: (1) freeze step 50's `k` 2 in-range setting as
+  provisional (13 of 19 bands, the button's pairs open), record its six misses in `KEY-SPEC.md` 8
+  marked provisional, let items 38 and 39 build on it, and add a new scoped board item for RF-3
+  (a per-class adjustment from hand features, `KEY-SPEC.md` 11 (a)) whose output re-freezes and
+  re-solves; (2) scope RF-3 first and freeze nothing until it lands; (3) freeze the in-range
+  setting as final and let the phase 4 Deep review judge the hands. Zach's answer names one of
+  them, or a fourth; it is recorded in `KEY-SPEC.md` 11 as a dated third batch, with his answers
+  of 2026-10-05 ((a) item 38; (b) a model change, which step 51 showed the equity-bent family
+  cannot deliver). The wider ranges of step 50's choice (2) are ruled out by step 51: they land
+  the fold bands only by never calling a 3-bet and fold a small pair on the button.
 
 Do these, in order:
 1. **Record the answer** in `KEY-SPEC.md` 11 (a third batch, dated) and, for choice (2) or (3), the

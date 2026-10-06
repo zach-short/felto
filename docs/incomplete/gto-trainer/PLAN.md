@@ -179,7 +179,12 @@ starting values, the hash of section 12
 is unchanged, and question (b) of the item's prompt (which band gives way, or whether the model
 changes) is with Zach. Deviations from the text below: four tuning spots, not one (BD-T18, the
 phase 1 header); the proof is read as every band of 8.2 the three subtrees answer, and the bands do
-not hold. What this phase forces on later phases: phase 3b cannot start until the dials are frozen.
+not hold. A second round on 2026-10-06 (step 51) tried steeper curves (`k` 3 and 4), wider ranges
+and a symmetric bend: none lands the 3-bet-pot bands, the wider settings land the fold bands only
+by never calling a 3-bet, and the hands the bands describe differ by features, not equity
+(`KEY-SPEC.md` 4, item 3; its fallback RF-3 is a scope decision). The question is re-opened with
+Zach in step 51. What this phase forces on later phases: phase 3b cannot start until the dials are
+frozen, provisionally or finally.
 
 1. `solver/cfr.py`: CFR+ over the spec's tree for one spot only: the button opens, the big
    blind defends, everyone else has folded.
