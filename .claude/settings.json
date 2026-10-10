@@ -1,0 +1,20 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          { "type": "command", "command": "\"$CLAUDE_PROJECT_DIR/.claude/hooks/install-cli.sh\"", "timeout": 10 },
+          { "type": "command", "command": "\"$CLAUDE_PROJECT_DIR/.claude/hooks/session-banner.sh\"", "timeout": 5 }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/completion-gate.sh\"", "timeout": 120 }
+        ]
+      }
+    ]
+  }
+}

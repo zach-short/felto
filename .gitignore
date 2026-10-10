@@ -1,4 +1,3 @@
-/.personal-config.json
 /PART0-PROMPT.md
 !HANDOFF.md
 !PASSOFF.md
@@ -11,3 +10,4 @@ app/.expo/
 app/expo-env.d.ts
 .DS_Store
 __pycache__/
+.claude/settings.local.json
