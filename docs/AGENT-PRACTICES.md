@@ -1011,7 +1011,9 @@ the same turn, batched. A decision built on a guess is built twice.
 
 **No drive-by fixes.** Fix what the task is. Note anything else you find and raise it; do not fold it into an unrelated change. An unrelated change hides in the diff, and in its review.
 
-**Commits are the owner’s.** *Never run `git commit` or `git push`.* Several sessions run in one checkout and only the owner knows which uncommitted file belongs to which. When work is ready, run `git status --short`, then print exactly two copyable `bash` blocks, one command each: `git add <the exact files this session touched>` (never `-A`, never `.`) then `git commit <the same files> -m "<short, all lowercase>"`, because naming paths implies `--only` and a bare `git commit` sweeps in whatever another session has staged.
+**Cloud sessions commit and push.** In a cloud session, run the `git add <files>` and `git commit <files> -m "..."` commands below yourself, then `git push`. Never use `-A` or `.`. The rest of this paragraph is the local rule.
+
+**Commits are the owner’s locally.** *In a local session, never run `git commit` or `git push`.* Several sessions run in one checkout and only the owner knows which uncommitted file belongs to which. When work is ready, run `git status --short`, then print exactly two copyable `bash` blocks, one command each: `git add <the exact files this session touched>` (never `-A`, never `.`) then `git commit <the same files> -m "<short, all lowercase>"`, because naming paths implies `--only` and a bare `git commit` sweeps in whatever another session has staged.
 
 
 ---

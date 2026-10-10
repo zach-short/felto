@@ -59,7 +59,9 @@ Spawn one Agent with `model` from the tiers above and `isolation: "worktree"`. I
 item's own prompt in full, then the relay contract below, then these rules:
 
 - Do not edit the ledger (`HANDOFF.md`) or the board (`PASSOFF.md`). Only this session writes them.
-- Do not commit. Leave the change in the worktree, and list every untracked file it adds.
+- In a local session, do not commit: leave the change in the worktree and list every untracked
+  file it adds. In a cloud session, commit it on the worktree's branch with named paths
+  (`git add -N` first for new files), and report the commit hash.
 - Before the first gate, run the fresh-checkout recipe in the repo's working standard, and bring
   the worktree to the base branch with `git merge --ff-only <base>`. A worktree can start from a
   stale base, and its gates then report on old code.

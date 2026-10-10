@@ -41,7 +41,8 @@ move and what will stay, and wait for a yes in chat.
 2. **Each finished folder** — `personal-config archive <slug>`. It lists what cites the
    folder and whether the repo has recorded its final state. A path read at runtime blocks
    the move: repoint it first. Uncommitted changes block it too, and **the commit is the
-   owner's** — post the blocks it prints and stop there for that folder. Once it is committed,
+   owner's locally**: post the blocks it prints and stop there for that folder. In a cloud
+   session, run them yourself and push. Once it is committed,
    `personal-config archive <slug> --move --dry-run`, then again without `--dry-run`.
 
 ## 3 — Repair what pointed at it

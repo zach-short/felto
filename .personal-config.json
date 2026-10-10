@@ -16,7 +16,7 @@
   "answers": {
     "attribution": "none",
     "chatStyle": "ste",
-    "commitPolicy": "print-blocks",
+    "commitPolicy": "agent-commits",
     "configWeight": "full",
     "docsMcp": "Context7 MCP",
     "hooks": "both",

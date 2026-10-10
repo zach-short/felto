@@ -208,8 +208,10 @@ file that holds the row's open findings.
       peak context.
    8. **Not verified**: what no one saw running.
    9. **Warnings**, such as a tool that deletes uncommitted worktrees.
-   10. **Commit blocks**: for each worktree, the two blocks the owner runs, `git -C <worktree>
-      add <files>` and `git -C <worktree> commit <files> -m "..."`, naming the same files.
+   10. **Commit blocks**: in a local session, for each worktree, the two blocks the owner runs,
+      `git -C <worktree> add <files>` and `git -C <worktree> commit <files> -m "..."`, naming
+      the same files. In a cloud session, run those two commands yourself, then `git push` the
+      branch, and list the hashes and branch names instead of blocks.
 3. Write the run's own ledger step at the next free number, read from the file now. It points at
    the rundown.
 4. Where a push notification tool exists, send one line that names the rundown's path.

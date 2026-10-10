@@ -25,8 +25,10 @@
   exported from the Rive file in Zach's account (file 2632317), the only editable source of the
   rig. The repo cannot rebuild it, so a lost or damaged copy is re-exported from that file
   (`HANDOFF.md` step 34), never recreated here. Only `app/src/art/` imports it (rule U6).
-- **Never run `git commit`, `git push`, `git add -A` or `git add .`.** Print the two blocks
-  that Part 11 of the standard describes.
+- **Never run `git add -A` or `git add .`.** Name the exact files. In a cloud session, commit
+  and push yourself: `git add <files>`, `git commit <files> -m "..."` (short, all lowercase),
+  then `git push`. In a local session, `git commit` and `git push` are Zach's: print the two
+  blocks that Part 11 of the standard describes.
 
 ## Stack
 
