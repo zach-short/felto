@@ -1,0 +1,121 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Felto celebrations</title>
+<style>
+  :root { --page: #F4F5FA; --card: #FFFFFF; --text: #1B1B24; --muted: #6B7086; }
+  body.dark { --page: #141824; --card: #1E2433; --text: #F4F6FA; --muted: #9AA0B5; }
+  body { margin: 0; padding: 16px; background: var(--page); color: var(--text); font: 15px -apple-system, Helvetica, Arial, sans-serif; }
+  header { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 16px; }
+  h1 { font-size: 20px; margin: 0 12px 0 0; }
+  button { font: inherit; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--muted); background: var(--card); color: var(--text); cursor: pointer; }
+  .note { color: var(--muted); margin: 0 0 16px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+  .cell { background: var(--card); border-radius: 12px; padding: 8px; }
+  .cell.frames { grid-column: 1 / -1; }
+  .name { font-weight: 700; margin: 4px 4px 0; }
+  .meta { color: var(--muted); font-size: 12px; margin: 0 4px 6px; }
+  .player { width: 100%; aspect-ratio: 1; }
+  .strip { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+  .strip .player { border: 1px dashed var(--muted); border-radius: 6px; }
+</style>
+<body>
+<header>
+  <h1>Celebrations</h1>
+  <button id="mode">Dark page</button>
+  <button id="all">Play all</button>
+  <button id="frames">Show frames</button>
+</header>
+<p class="note">Plays the .lottie files in this folder as the app gets them. Serve the folder over http; a file:// page cannot read them.</p>
+<div class="grid" id="grid"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+<script>
+// A .lottie file is a zip; tools/build_celebrations.py stores its entries without compression
+async function unzip(buf) {
+  const dv = new DataView(buf), files = {};
+  let e = buf.byteLength - 22;
+  while (e >= 0 && dv.getUint32(e, true) !== 0x06054b50) e--;
+  let p = dv.getUint32(e + 16, true);
+  for (let i = 0, n = dv.getUint16(e + 10, true); i < n; i++) {
+    const method = dv.getUint16(p + 10, true), size = dv.getUint32(p + 20, true);
+    const nl = dv.getUint16(p + 28, true), xl = dv.getUint16(p + 30, true), cl = dv.getUint16(p + 32, true);
+    const off = dv.getUint32(p + 42, true);
+    const name = new TextDecoder().decode(new Uint8Array(buf, p + 46, nl));
+    const start = off + 30 + dv.getUint16(off + 26, true) + dv.getUint16(off + 28, true);
+    let data = new Uint8Array(buf, start, size);
+    if (method === 8) data = new Uint8Array(await new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer());
+    files[name] = data;
+    p += 46 + nl + xl + cl;
+  }
+  return files;
+}
+
+async function load(name) {
+  const files = await unzip(await (await fetch(name + ".lottie")).arrayBuffer());
+  const anim = JSON.parse(new TextDecoder().decode(files["animations/" + name + ".json"]));
+  for (const a of anim.assets) {
+    const png = files["images/" + a.p];
+    if (png) Object.assign(a, { u: "", e: 1, p: URL.createObjectURL(new Blob([png], { type: "image/png" })) });
+  }
+  return anim;
+}
+
+function player(el, anim, autoplay) {
+  return lottie.loadAnimation({ container: el, renderer: "svg", loop: false, autoplay, animationData: structuredClone(anim) });
+}
+
+async function names() {
+  const html = await (await fetch("./")).text();
+  return [...html.matchAll(/href="([a-z_]+)\.lottie"/g)].map((m) => m[1]).sort();
+}
+
+const grid = document.getElementById("grid");
+let players = [];
+
+async function showPlayers() {
+  grid.innerHTML = "";
+  players = [];
+  for (const name of await names()) {
+    const anim = await load(name);
+    const cell = document.createElement("div");
+    cell.className = "cell";
+    cell.innerHTML = `<div class="player"></div><p class="name">${name}</p><p class="meta">${((anim.op - anim.ip) / anim.fr).toFixed(2)} s</p>`;
+    grid.append(cell);
+    const p = player(cell.querySelector(".player"), anim, true);
+    cell.onclick = () => p.goToAndPlay(0, true);
+    players.push(p);
+  }
+}
+
+async function showFrames() {
+  grid.innerHTML = "";
+  players = [];
+  for (const name of await names()) {
+    const anim = await load(name);
+    const cell = document.createElement("div");
+    cell.className = "cell frames";
+    cell.innerHTML = `<p class="name">${name}</p><div class="strip"></div>`;
+    grid.append(cell);
+    for (const f of [0.08, 0.2, 0.35, 0.6, 1]) {
+      const el = document.createElement("div");
+      el.className = "player";
+      cell.querySelector(".strip").append(el);
+      const p = player(el, anim, false);
+      p.addEventListener("DOMLoaded", () => p.goToAndStop(Math.round((anim.op - 1) * f), true));
+    }
+  }
+}
+
+document.getElementById("mode").onclick = (ev) => {
+  const dark = document.body.classList.toggle("dark");
+  ev.target.textContent = dark ? "Light page" : "Dark page";
+};
+document.getElementById("all").onclick = () => players.forEach((p) => p.goToAndPlay(0, true));
+document.getElementById("frames").onclick = (ev) => {
+  const frames = ev.target.textContent === "Show frames";
+  ev.target.textContent = frames ? "Show players" : "Show frames";
+  (frames ? showFrames : showPlayers)();
+};
+showPlayers();
+</script>
+</body>

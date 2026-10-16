@@ -78,6 +78,8 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 | 58 | Web app: an Expo web build of the app at `felto.app/play`, opened from a "Get started" choice on the site at `felto.app` (the move of the site to `download.felto.app` superseded 2026-10-05) | `HELD` until item 59 is `DONE` (Zach answered the five questions 2026-10-05) | Opus 5.5 | R | item 59 (it merges items 46, 49 and 52 part A into `main`; item 49 owns `app/package.json` and `app/bun.lock`) | `app/package.json`, `app/bun.lock`, `app/app.json`, `app/metro.config.js`, `app/wrangler.jsonc` (new), new `*.web.ts` and `*.web.tsx` files beside the native ones in `app/src/storage/`, `app/src/feedback/`, `app/src/art/` (the Rive and Lottie players only), `app/src/components/profile/` and `app/src/reminder/`, `app/src/components/app-tabs.tsx` and `app/src/components/tab-bar/` if the web tabs need a branch, `site/src/config.ts`, `site/src/pages/index.astro`, a new `site/src/components/` file for the choice, `docs/incomplete/app/DESIGN.md` (one new decision), `docs/README.md`, `HANDOFF.md`, `CLAUDE.md` (the web build command) |
 | 59 | Merge the second game-feel pass branches into `main` and reconcile the docs | `DONE: HANDOFF 50` | Opus 5.5 | F | nothing (items 50, 51 and 52 part A committed on their branches, 2026-10-05) | `CLAUDE.md`, `.personal-config.json`, `docs/conventions-typescript.md`, `docs/conventions-python.md`, `docs/README.md`, `HANDOFF.md` (code map and one step), `app/src/components/screen.tsx` (one stale comment) |
 | 60 | GTO trainer: RF-3, a per-class realization adjustment: scope, re-freeze, re-solve, re-export | `OPEN` | Fable 5.1 | H | Zach's answers to the GATE 1 batch of its step 2 (items 38 and 39 are `DONE`) | `solver/config.py`, `solver/cfr.py`, `solver/best_response.py`, `solver/*_test.py`, `solver/tune.py` (new), `solver/data/key.json` (item 38's output), `docs/incomplete/gto-trainer/KEY-SPEC.md` (3.2, 4, 7.5, 8.5, 10, 11, 12 and a new 13), `docs/incomplete/gto-trainer/PLAN.md` (section 1, phases 3a to 4), `docs/README.md` (the `KEY-SPEC.md` line), `app/src/gto/key.ts` (the hash constant only), `app/src/gto/data/` (through item 39's export) and `app/src/gto/key.test.ts` (the pinned containment list, `HANDOFF.md` step 54) |
+| 61 | Eighteen celebrations: painted Higgsfield heroes animated by Lottie, with a generator, a preview page and `/dev/art` entries (game-feel `GF-20` to `GF-23`) | `DONE: HANDOFF 55` | Opus 5.5 | S | nothing | `tools/import_celebrations.py` (new), `tools/build_celebrations.py` (new), `tools/build_lottie.py` (the lift of `star`, `dot` and `twinkle` only), `assets/higgsfield-celebrations/` (new, kept as received), `assets/celebrations/` (new: the `.lottie` files, `art/` and `preview.html`), `.claude/launch.json` (new), `app/metro.config.js`, `app/src/types/lottie.d.ts` (new), `app/src/art/celebrations.ts`, `celebration.tsx`, `celebrations.test.ts` and `celebration-files.test.ts` (all new), `app/src/art/lottie-boundary.test.ts`, `app/src/screens/dev-art-screen.tsx` (the Celebrations section only), `docs/conventions-python.md`, `docs/conventions-typescript.md`, `docs/AGENT-PRACTICES.md` and `.personal-config.json` (the gate line only), `CLAUDE.md`, `HANDOFF.md`, `PASSOFF.md`, `docs/incomplete/game-feel/DESIGN.md` (section 10), `docs/incomplete/game-feel/PLAN.md` (section 9), `docs/README.md` (the game-feel lines) |
+| 62 | Scope and wire the celebrations that board item 30 does not own | `OPEN` | Opus 5.5 | S | item 61 committed (it plays the files and the player that item 61 wrote) | To be fixed by its scope step. It must not name a file that items 30 to 32 own |
 
 **Do not paste a prompt marked DONE**: a fresh session would build it again.
 
@@ -93,6 +95,28 @@ out both passes. Lanes K to Q are builders the session of step 39 started, each 
 worktree; lane G is the Rive work, on Sonnet 5 by Zach's choice. Item 46 opens the dials block
 `// game-feel second pass`; items 30, 31, 50 and 57 add their own lines to it only after item
 46 is `DONE`, so no two of them write `app/src/config/dials.ts` at once.*
+
+*Item 61 was opened and built on 2026-10-15 out of Zach's ask in chat the same day: "i want you
+to create a large array of duolingo style celebration animations and art with higgsfield and
+lottie not rive". His answers are decisions `GF-20` to `GF-23` (`docs/incomplete/game-feel/DESIGN.md`
+section 10). It has no prompt: it was built in the session that opened it, and its record is
+`HANDOFF.md` step 55. Lane S is new: lanes A to R were the letters in use on the board
+(2026-10-15). It ran on Opus 5.5, the lead session and its builder subagent.*
+
+*Item 62 was opened on 2026-10-15 out of `GF-23` (`docs/incomplete/game-feel/DESIGN.md` 10.4:
+"the moments item 30 does not own (streak, hearts, gems, daily goal, welcome) get a board item of
+their own"). Board item 30 uses `lesson_complete`, `perfect_lesson`, `boss_beaten`,
+`unit_complete`, `review_done` and `practice_done` on the screens it owns. Item 30's prompt,
+written 2026-10-05, does not name them yet (`grep -n -i celebrat PASSOFF.md` on 2026-10-15, before
+these paragraphs, found the word only in item 30's title, one line about the boss in item 30's
+prompt, and item 34's prompt), so whoever builds item 30 reads this paragraph and `GF-23`. Item 62
+covers the rest: `streak_extended`, `streak_milestone`, `xp_milestone`, `achievement`,
+`royal_flush`, `chip_jackpot`, `all_in_win`, `hot_streak`, `hearts_refilled`, `gems_earned`,
+`daily_goal` and `welcome`. Several have no trigger in the game yet: an achievement, a daily goal,
+an XP milestone and the streak milestone thresholds. So its first step is a scope with Zach's
+calls, asked in one batch before any code (R6). It waits on item 61 being committed, because it
+plays the files and the player that item 61 wrote. Its "Files it owns" are fixed by that scope
+step, and it must not name a file that items 30 to 32 own. No prompt is written for it yet.*
 
 ### 1. Write the Python code standard for the asset generators
 

@@ -17,7 +17,9 @@
 - **Never regenerate, rename or move a file in `assets/higgsfield/`.** They came from a paid,
   non-deterministic external service, and `assets/gallery.html` links all 32 by filename.
   The same holds for `assets/higgsfield-chest/` (22 chest references, 2026-10-05,
-  `docs/incomplete/game-feel/DESIGN.md` section 9.2).
+  `docs/incomplete/game-feel/DESIGN.md` section 9.2) and for `assets/higgsfield-celebrations/`
+  (20 painted celebration heroes and finish tests, 2026-10-15, `DESIGN.md` section 10, `GF-20`):
+  `tools/import_celebrations.py` reads them by name, so a rename breaks it.
 - **Never trust a preview page as a picture of the current SVGs.** `assets/icons/preview.html`
   and `assets/mascots/preview.html` hold inline copies, and no script rebuilds them
   (`grep -n preview tools/*.py` finds nothing, 2026-10-04).
@@ -33,7 +35,12 @@
 ## Stack
 
 - Python 3, standard library only (`math`, `os`; the sound generator adds `struct` and `wave`,
-  2026-10-05; the Lottie generator adds `json`, board item 49). Verified on Python 3.14.6 at `/opt/homebrew/bin/python3`, 2026-10-04.
+  2026-10-05; the Lottie generator adds `json`, board item 49; the celebration importer adds
+  `struct` and `zlib` and the celebration generator `json`, `struct` and `zipfile`, board item 61,
+  `tools/import_celebrations.py:22-25`, `tools/build_celebrations.py:55-59`). Verified on Python
+  3.14.6 at `/opt/homebrew/bin/python3`, 2026-10-04. On 2026-10-15 `python3` is 3.15.0 with no
+  numpy (`python3 -c "import numpy"` fails), so the whole-repo gate as written exits 1 at the
+  solver tests; `python3.14` (3.14.8, numpy 2.4.3) passes it (`HANDOFF.md` Environment, step 55).
 - `xmllint` (libxml 20913, `/usr/bin/xmllint`) to check SVG well-formedness.
 - The app in `app/` (2026-10-05, board item 7): Expo SDK 57 (`expo` 57.0.26, React Native
   0.86.3, React 19.2.3), expo-router with routes in `app/src/app/`, a development build
@@ -48,13 +55,19 @@
 - Particle effects are Lottie files from `tools/build_lottie.py`, played by `lottie-react-native`
   7.3.8 (`app/package.json`, board item 49, game-feel `GF-15`). It is native code, so a
   development build made before that merge (board item 59) must be rebuilt.
+- Celebrations are dotLottie files from `tools/build_celebrations.py`, built around painted
+  Higgsfield heroes that `tools/import_celebrations.py` shrinks, and played by the same
+  `lottie-react-native` (board item 61, game-feel `GF-20` to `GF-23`). `lottie` is in Metro's
+  `assetExts` (`app/metro.config.js`).
 
 ## Architecture
 
 - The repo is an asset pipeline and an app. Two generators write SVGs, one writes sounds, one
-  writes Lottie effects, three HTML pages display the art, and the Expo app in `app/` draws and plays the same files from
-  `../assets` through the `@art/*` alias (BD-6, BD-7 in `docs/incomplete/app/PLAN.md`). Only
-  `app/src/art/` imports an SVG, a WAV, a Lottie file or the Rive file (rule U6).
+  writes Lottie effects, one writes the celebrations around painted Higgsfield art that an import
+  tool shrinks first, four HTML pages display the art, and the Expo app in `app/` draws and plays
+  the same files from `../assets` through the `@art/*` alias (BD-6, BD-7 in
+  `docs/incomplete/app/PLAN.md`). Only `app/src/art/` imports an SVG, a WAV, a Lottie file, a
+  celebration or the Rive file (rule U6).
 - The app, built 2026-10-05 (board items 7 to 20): three tabs (Learn, Practice, Profile) under a
   custom tab bar (`app/src/components/tab-bar/`, board item 52 part A) and full-screen session routes under `app/src/app/` (lesson, boss, review, chest, practice set,
   onboarding with a placement check), each route a thin render of a screen in `app/src/screens/`.
@@ -77,25 +90,29 @@
 
 | Path | Belongs here | Does not |
 |---|---|---|
-| `tools/` | The SVG generators, the sound generator, the Lottie generator and their shared module | Generated output |
+| `tools/` | The SVG generators, the sound generator, the Lottie generator, the celebration generator, the celebration import tool and their shared module | Generated output |
 | `assets/icons/{cards,chips,path,ui}/` | Output of `build_icons.py` (85 SVGs) | Hand edits |
 | `assets/mascots/{fish,squid,shark}/` | Output of `build_mascots.py` (18 SVGs) | Hand edits |
 | `assets/sounds/` | Output of `build_sounds.py` (12 WAV files, 16-bit mono, 44,100 Hz) | Hand edits, recorded audio |
 | `assets/lottie/` | Output of `build_lottie.py` (6 Lottie JSON files, 60 frames a second) | Hand edits, downloaded animations |
 | `assets/higgsfield/` | Reference art from Higgsfield (19 PNG, 13 SVG), kept as received | Renamed or regenerated files |
 | `assets/higgsfield-chest/` | Chest reference art from Higgsfield (22 PNG, 2026-10-05), kept as received | Renamed or regenerated files, anything a script reads |
+| `assets/higgsfield-celebrations/` | Celebration hero art from Higgsfield (20 PNG, 1024 by 1024, 2026-10-15), kept as received | Renamed, moved or regenerated files, anything a script writes (`tools/import_celebrations.py` reads them) |
+| `assets/celebrations/` | Output of `build_celebrations.py` (18 `.lottie` files) and, in `art/`, of `import_celebrations.py` (18 PNG); `preview.html`, which plays the real files | Hand edits, downloaded animations |
 | `assets/gallery.html`, `assets/*/preview.html` | Pages to view the art in a browser | Anything a script reads |
-| `app/` | The Expo app: config at its root, code in `app/src/` (286 TypeScript files and 103 test files, `find app/src`, 2026-10-05), the rank font in `app/assets/fonts/` | A copy of any SVG, WAV or Lottie file; generated `ios/`, `android/`, `.expo/` (gitignored) |
+| `app/` | The Expo app: config at its root, code in `app/src/` (286 TypeScript files and 103 test files, `find app/src`, 2026-10-05), the rank font in `app/assets/fonts/` | A copy of any SVG, WAV, Lottie or celebration file; generated `ios/`, `android/`, `.expo/` (gitignored) |
 | `docs/` | The docs index (`docs/README.md`), the process standard, the Python and TypeScript code standards, and the effort folders `docs/incomplete/app/` (design, plan, runtime pass) and `docs/incomplete/autopilot-2026-10-05/` (that run's record) | Generated assets |
 
 ## Commands
 
 The whole-repo gate, also `gateCommand` in `.personal-config.json`: the Python gate, then
 solver tests (`unittest`, 33 tests, board item 38), then the app gate (typecheck, lint, vitest).
-Run 2026-10-06 from the repo root as one command, exit 0:
+Run 2026-10-06 from the repo root as one command, exit 0. On 2026-10-15 it exits 1 with `python3`
+as it is on this Mac (3.15.0, no numpy), and exits 0 with `python3.14` in its place
+(`HANDOFF.md` Environment, step 55):
 
 ```bash
-python3 tools/build_icons.py && python3 tools/build_mascots.py && python3 tools/build_sounds.py && python3 tools/build_lottie.py && xmllint --noout assets/icons/*/*.svg assets/mascots/*/*.svg && python3 -m unittest discover -s solver -p '*_test.py' && bun run --cwd app typecheck && bun run --cwd app lint && bun run --cwd app test
+python3 tools/build_icons.py && python3 tools/build_mascots.py && python3 tools/build_sounds.py && python3 tools/build_lottie.py && python3 tools/build_celebrations.py && xmllint --noout assets/icons/*/*.svg assets/mascots/*/*.svg && python3 -m unittest discover -s solver -p '*_test.py' && bun run --cwd app typecheck && bun run --cwd app lint && bun run --cwd app test
 ```
 
 A fresh checkout runs `bun install --cwd app` first. To build and open the app (a development
@@ -112,19 +129,33 @@ To view the art, open a page in a browser:
 open assets/gallery.html
 ```
 
+To watch the celebrations, serve the `assets` folder, because the page reads the `.lottie` files
+over http and a `file://` page cannot. Then open `http://localhost:8781/celebrations/preview.html`.
+The server `art` in `.claude/launch.json` runs the same command:
+
+```bash
+python3 -m http.server 8781 --directory assets
+```
+
 **What the gates do not prove.**
 
 - A generator that exits 0 and prints its `wrote ...` line proves only that files were written.
   Nothing checks how they look. Each generator prints a count taken from its writes
   (`tools/build_icons.py:673`, `tools/build_mascots.py:345`, `tools/build_sounds.py:296`,
-  `tools/build_lottie.py:498`), so a skipped write shows as a short count.
+  `tools/build_lottie.py:503`, `tools/build_celebrations.py:604`), so a skipped write shows as a
+  short count.
 - The sound generator's run line (12) proves only that twelve WAV files were written, none longer
   than its ceiling: one second for the six of `D15`, 0.6 s for the six of `GF-5`
   (`tools/build_sounds.py:282-289` stops the run otherwise). An agent cannot hear them: a sound
   is proven only when Zach plays it (`afplay assets/sounds/<name>.wav`) and approves it.
 - The Lottie generator's run line (6) proves only that six JSON files were written, each under
-  1.5 s (`tools/build_lottie.py:485-491` stops the run otherwise). Nothing checks how an effect
+  1.5 s (`tools/build_lottie.py:490-496` stops the run otherwise). Nothing checks how an effect
   looks or moves: it is proven only by watching it play on `/dev/art`.
+- The celebration generator's run line (18) proves only that eighteen `.lottie` archives were
+  written, each under 2.5 s (`tools/build_celebrations.py:567-573` stops the run otherwise).
+  `app/src/art/celebration-files.test.ts` checks their shape, not how they look or move: a
+  celebration is proven only by watching it play on `/dev/art`. The gate does not run
+  `tools/import_celebrations.py`, which shrinks the painted art into `assets/celebrations/art/`.
 - `xmllint --noout` proves the SVG is well-formed XML, not that it draws the right shape.
 - The solver tests (`python3 -m unittest discover -s solver -p '*_test.py'`, 33 tests, about
   25 s, most of it the Monte Carlo check of the equity table) prove hand-worked leaf payoffs, the
@@ -138,8 +169,9 @@ open assets/gallery.html
   `/opt/homebrew/bin/python3`, rule M4 of `docs/conventions-python.md`); the fresh-checkout
   recipe in `docs/AGENT-PRACTICES.md` Part 6 checks for it.
 - The gate rewrites the generated SVGs, WAVs and Lottie files in place. After the first commit, run
-  `git diff --stat -- assets/icons assets/mascots assets/sounds assets/lottie` after the gate: any
-  line there is a change in the art, the sound or an effect, and it must be one you meant.
+  `git diff --stat -- assets/icons assets/mascots assets/sounds assets/lottie assets/celebrations`
+  after the gate: any line there is a change in the art, the sound, an effect or a celebration,
+  and it must be one you meant.
 - A visual change is proven only by looking at it. Render the SVG files themselves, not the
   preview pages.
 - Write `bun run --cwd app <script>`, never `bun --cwd app run <script>`. With bun 1.2.9 the

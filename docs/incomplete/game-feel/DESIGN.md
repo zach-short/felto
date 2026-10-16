@@ -653,3 +653,132 @@ load, and only `app/src/art/` imports the runtime and the files (rule U6).
 Everything in "Rules that survive unchanged" of section 8, except where `GF-10` to `GF-19` name an
 amendment: hearts, XP, lives timing, streak and the boss rules of `D8` stay; only the chest rule
 changes. No art outside the generators, and `assets/higgsfield/` is never touched.
+
+## 10. Third pass: celebrations, opened 2026-10-15
+
+Status: `RATIFIED` 2026-10-15, from Zach's answers in chat the same day. Sections 1 to 9 are kept as
+written. This section adds decisions `GF-20` to `GF-23`; each names what it amends or supersedes.
+Board item 61 builds it.
+
+### 10.1 The ask, in Zach's words
+
+One message on 2026-10-15: "i want you to create a large array of duolingo style celebration
+animations and art with higgsfield and lottie not rive".
+
+### 10.2 What was checked first, 2026-10-15
+
+| # | Fact | Source |
+|---|---|---|
+| 1 | Six Lottie effects exist, and only the art check page plays them | `ls assets/lottie`; `grep -rn '@/art/effect"' app/src` finds only `app/src/screens/dev-art-screen.tsx:7` |
+| 2 | Every effect ends under 1.5 s, checked when written and by a test | `tools/build_lottie.py:37`, `:485-491`; `app/src/art/lottie-files.test.ts` (`CEILING_S`) |
+| 3 | The finish, boss and chest screens belong to board item 30, which is `HELD` | `PASSOFF.md` row 30 |
+| 4 | Lottie plays art embedded in a file, as a base64 image asset or as a PNG inside a `.lottie` archive | Context7, `/lottiefiles/lottie-docs` (image assets) and `/lottie-react-native/lottie-react-native` (`.lottie` source through `require`, with `lottie` in Metro's `assetExts`) |
+| 5 | Metro already bundles one binary art format as an asset, the Rive file | `app/metro.config.js` (`assetExts`, `riv`) |
+| 6 | One Higgsfield image, `gpt_image_2_5`, quality high, 1k, transparent background, costs 1.5 credits; the balance was 797.75 | Higgsfield `generate_image` with `get_cost`, and `balance`, 2026-10-15 |
+
+### 10.3 Answers
+
+Asked in chat through the question tool on 2026-10-15, with a recommendation on each. Every answer
+was the recommendation.
+
+| Ask | Answer |
+|---|---|
+| How the Higgsfield art reaches the app | Painted art inside Lottie: Higgsfield paints each hero piece on a transparent background, and the Lottie generator embeds it and animates it with vector particles around it |
+| Which celebrations | All four groups: session finishes; streaks and milestones; poker moments; small rewards |
+| How long one plays | Under 2.5 s, then it holds its last pose |
+| Wiring | Files and a preview now; the screens later, through board item 30 |
+| Which finish (asked second, after a test of one pose in three finishes, kept as received in `assets/higgsfield-celebrations/style-a-extruded.png`, `style-b-glossy.png` and `style-c-cel.png`) | A, extruded flat: the icon style of the seventh Higgsfield round, so the painted heroes match the SVG icons and mascots beside them |
+
+### 10.4 Decisions
+
+#### GF-20. Celebrations are painted Higgsfield art, animated by Lottie
+
+Decided 2026-10-15 (Zach). Each celebration is a Lottie animation whose hero (a mascot pose, a
+trophy, a badge) is a PNG painted by Higgsfield on a transparent background. The generator places
+the PNG as an image layer and moves it (a pop, a jump, a squash, a wobble), and draws the rays,
+confetti and sparkles around it as vector shapes. Supersedes, for celebration art only, the
+sentence "No art outside the generators" of 9.5 and the defense of `GF-15` that art is made by code
+in this repo. The icons, the mascot SVGs and the six effects of `GF-15` keep that rule. Defense: Zach
+asked for Higgsfield art by name, and his verdict on the chest drawn in code (9.2: "the actual
+texture is the issue") says flat vector art misses the look he wants. Against: the painted files
+cannot be rebuilt (Higgsfield is paid and gives a different picture each time), so they are kept
+as received like `assets/higgsfield-chest/`; the files are larger than vector ones; and a painted
+mascot can drift from the generated SVG mascot of the same name, which each prompt limits by using
+the Higgsfield art the SVGs came from as its reference.
+
+*As built, 2026-10-15 (board item 61, `HANDOFF.md` step 55):* two tools carry the painted art.
+`tools/import_celebrations.py` reads the 18 paintings of its `ART` table from
+`assets/higgsfield-celebrations/`, crops each to its alpha box, shrinks it to 512 px on the longer
+side (`LONG_SIDE`, `tools/import_celebrations.py:31`) and writes `assets/celebrations/art/<name>.png`.
+It is outside the gate because the decode is pure Python: one run took 2 min 38 s of wall time on
+2026-10-15, so it runs by hand when new art arrives and its output is committed. 512 px is what
+the hero needs, because it fills about 70% of a 400 px animation drawn at most a phone's column wide
+at 3x (`tools/import_celebrations.py:28-30`), without carrying the painting's full 1024 px into every
+file. `tools/build_celebrations.py`, in the gate, packs each celebration as a dotLottie archive,
+`assets/celebrations/<name>.lottie` (161 to 372 KB each), that holds the animation and the PNG, so
+the player loads one asset. The hero is an image layer under a null parent that fits its longer
+side to 70% of the canvas (`HERO_SHARE`, `tools/build_celebrations.py:99`), so the hero's own scale
+keyframes are the motion alone and end at 100, and the held pose shows the painting at full size.
+The derived PNGs keep no chunk but IHDR, IDAT and IEND, so they drop the metadata chunks that the
+Higgsfield files carry. The app gives the player `{ uri: Image.resolveAssetSource(n).uri }`
+(`app/src/art/celebration.tsx:73`). The lead session's note is that this matches the library's own
+path in a development build and would differ in a release Android build; none exists (`D13`), so
+that is a caveat for the day one does. Reading the paintings departs from the code standard's rule
+that a generator reads no input: `docs/conventions-python.md` 1.4.0 amends rule G1 to allow these
+two reads and no other.
+
+#### GF-21. Four groups of celebrations
+
+Decided 2026-10-15 (Zach). Session finishes (lesson complete, perfect lesson, boss beaten, review and
+practice done, unit complete); streaks and milestones (streak extended, streak milestone, XP
+milestone, achievement); poker moments (royal flush, chip jackpot, all-in win, a hot streak of right
+answers); small rewards (hearts refilled, gems earned, daily goal met, welcome aboard). Numbers such
+as the streak count are not painted: the screen draws them over the celebration with `GameText`
+(`GF-16`), because a file holds a fixed picture (the reason `GF-15` gives for the rolling number).
+
+#### GF-22. A celebration ends under 2.5 s, on a held pose
+
+Decided 2026-10-15 (Zach). A celebration plays once in under 2.5 s and stops on its last frame, so
+the hero stays on the screen. Amends the 1.5 s ceiling of board item 49 for celebrations only; the
+six effects keep it.
+
+*As built, 2026-10-15 (board item 61, `HANDOFF.md` step 55):* every celebration runs 2.40 s, 144
+frames at 60 fps (`tools/build_celebrations.py:97`), under the 2.5 s ceiling that `checked()`
+enforces (lines 94 and 567-573). The slowest hero settles by frame 96, which leaves the particles
+time to clear before the held pose (comment, lines 95-96). The held pose is the hero at scale 100
+and rotation 0, the rays still showing, every particle gone (lines 9-11). Under reduced motion
+`celebrationMode` returns `end` (`app/src/art/celebrations.ts:49`) and the player draws the held
+last frame (`app/src/art/celebration.tsx:84`, `progress={mode === "end" ? 1 : undefined}`), so the
+hero still shows with no movement; `onEnd` is called at once (line 68), so a caller that waits on it
+moves on; a file that fails to load draws nothing.
+
+#### GF-23. Files and a preview in this pass; the screens later
+
+Decided 2026-10-15 (Zach). Board item 61 makes the art, the Lottie files, a page to watch them and
+their entries on `/dev/art`. Putting them on the finish, boss and chest screens is board item 30's
+work; the moments item 30 does not own (streak, hearts, gems, daily goal, welcome) get a board item
+of their own.
+
+*As built, 2026-10-15 (board item 61, `HANDOFF.md` step 55):* the files, the preview and the
+`/dev/art` entries are made, and no screen plays a celebration yet. `/dev/art` has a "Celebrations"
+section with each celebration at column width and a Replay under it
+(`app/src/screens/dev-art-screen.tsx:67-71`). `assets/celebrations/preview.html` plays the real
+`.lottie` files with lottie-web 5.12.2 from cdnjs, on a light page or a dark one, and has a
+frame-strip view at 8, 20, 35, 60 and 100% of the frames. It reads the folder listing
+(`assets/celebrations/preview.html:68`), so it cannot go stale. Serve it with the server `art` of
+`.claude/launch.json` (`python3 -m http.server 8781 --directory assets`) and open
+`http://localhost:8781/celebrations/preview.html`. Seen on 2026-10-15: all 18 played in the browser
+through `preview.html`, with the frame strips at 8, 20, 35, 60 and 100% checked on the light page and
+the players on the dark page; on the iOS simulator (iPhone 17 Pro, development build,
+`felto://dev/art`) the files load and each shows its hero held at the end. Not seen: a celebration
+in motion on the phone, Android at all, and reduced motion on a device (the entries are in
+`PLAN.md` 9.1). **Finding, open for Zach:** the rays, a light tint at about 35% opacity, look dull
+and khaki on the dark page (`#141824`, `app/src/theme/tokens.ts:124`), on the simulator and in
+the browser. Board item 30 uses six of the 18 on the screens it owns and board item 62 covers the
+other twelve (`PASSOFF.md`, rows 30 and 62).
+
+### 10.5 Rules that survive unchanged
+
+Everything in 9.5, except the sentence `GF-20` supersedes for celebration art. `assets/higgsfield/` and
+`assets/higgsfield-chest/` are never touched, and the six effects of `GF-15` keep their generator,
+their ceiling and their vector-only art.

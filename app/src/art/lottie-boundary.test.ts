@@ -3,10 +3,11 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
 const SRC = fileURLToPath(new URL("..", import.meta.url));
-const LOTTIE = /(from|import|require\()\s*["'](lottie-react-native|@art\/lottie\/)/;
+const LOTTIE = /(from|import|require\()\s*["'](lottie-react-native|@art\/lottie\/|@art\/celebrations\/)/;
 
-// Rule U6, widened to Lottie by board item 49: only app/src/art/ imports the runtime or a file under
-// assets/lottie/, so a swap of either stays inside that folder. This test turns the rule into a gate.
+// Rule U6, widened to Lottie by board item 49 and to the celebrations by board item 61: only
+// app/src/art/ imports the runtime, a file under assets/lottie/ or a file under assets/celebrations/,
+// so a swap of any of them stays inside that folder. This test turns the rule into a gate.
 describe("the Lottie boundary", () => {
   it("keeps every import of the Lottie runtime and files inside src/art", () => {
     const sources = readdirSync(SRC, { recursive: true, encoding: "utf8" }).filter((file) => /\.tsx?$/.test(file));
@@ -16,5 +17,10 @@ describe("the Lottie boundary", () => {
 
   it("finds the art module's own import, so the scan is reading the right folder", () => {
     expect(LOTTIE.test(readFileSync(`${SRC}/art/effect.tsx`, "utf8"))).toBe(true);
+    expect(LOTTIE.test(readFileSync(`${SRC}/art/celebration.tsx`, "utf8"))).toBe(true);
+  });
+
+  it("catches a celebration file imported outside src/art", () => {
+    expect(LOTTIE.test('import welcome from "@art/celebrations/welcome.lottie";')).toBe(true);
   });
 });

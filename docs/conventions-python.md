@@ -39,9 +39,20 @@ Later on 2026-10-05 board item 49 added `tools/build_lottie.py`, the Lottie gene
 `GF-15`. It writes six Lottie JSON files to `assets/lottie/` and imports `json`, `math`, `os` and
 `CREAM` from `tools/common.py` (`tools/build_lottie.py:28-32`). Every rule that binds the sound
 generator binds it too; where it does a thing its own way, M1, G1, G3, G4, W1, W2 and H2 say so.
+On 2026-10-15 board item 61 added two more, for the celebrations of game-feel `GF-20` to `GF-23`.
+`tools/import_celebrations.py` decodes the painted Higgsfield PNGs in
+`assets/higgsfield-celebrations/`, crops and shrinks them, and writes 18 PNGs to
+`assets/celebrations/art/`; it imports only `math`, `os`, `struct` and `zlib`, and it is not in the
+gate, because a pure-Python decode of 18 paintings takes minutes. `tools/build_celebrations.py`
+writes 18 dotLottie archives to `assets/celebrations/` and is in the gate; it imports `json`,
+`math`, `os`, `struct` and `zipfile`, the Lottie helpers from `tools/build_lottie.py` and `CREAM`
+from `tools/common.py`, each sibling by its plain name (M4). Both write files, so the generator
+rules bind both, with the one exception G1's amendment of 1.4.0 makes for their input; M1, G4,
+W1, W2 and H2 say how each applies. With those, `tools/` holds seven `.py` files (`ls tools`,
+2026-10-15).
 Read this file in full before you write or edit Python here.
 
-Version 1.3.2. Written 2026-10-04 on Opus 5.5 for board item 1 (ledger step 2 in `HANDOFF.md`);
+Version 1.4.0. Written 2026-10-04 on Opus 5.5 for board item 1 (ledger step 2 in `HANDOFF.md`);
 revised 2026-10-05 on Sonnet 5.5 for board item 2 (ledger step 3), which moved the shared code
 into `tools/common.py`, for board item 3 (ledger step 4), which reconciled the line citations,
 for board item 4 (ledger step 8), which named `tools/common.py` in the scope sentence, and
@@ -66,6 +77,11 @@ changed. Version 1.3.1 on 2026-10-06 on Fable 5.1 for board item 38 (ledger step
 the five files of board item 37 and the key file in the scope paragraph and brought M4's amendment
 up to date; no rule changed. Version 1.3.2 on 2026-10-06, at the merge of `gto-equity` into `main`: the
 Lottie edits of 1.2.4 and the solver edits of 1.3.1 kept together; no rule changed.
+Version 1.4.0 on 2026-10-15 on Opus 5.5 for board item 61, which amended rule G1 so that the two
+celebration tools may read the painted art (`GF-20`), named them in the scope paragraph, said how
+M1, G4, W1, W2 and H2 apply to them, added `assets/celebrations` to the gate's assets diff, and
+moved the Lottie generator citations that the lift of `star`, `dot` and `twinkle` to module level
+shifted; a rule changed.
 Zach answered the open questions on 2026-10-04 and took every recommendation. Those answers are
 cited below as "owner, 2026-10-04".
 
@@ -77,7 +93,8 @@ Every rule has an ID. IDs are never renumbered. A rule that stops applying is ma
 Every rule carries an enforcement tag:
 
 - *gate*: the whole-repo gate, followed by
-  `git diff --stat -- assets/icons assets/mascots assets/sounds assets/lottie`, catches a violation.
+  `git diff --stat -- assets/icons assets/mascots assets/sounds assets/lottie assets/celebrations`,
+  catches a violation.
 - *review*: nothing catches a violation. The rule holds only while each session reads it.
 
 Every rule carries a provenance label:
@@ -110,7 +127,10 @@ These facts were verified 2026-10-04. A rule that breaks one of them is wrong.
   item 28 repeated the check for all twelve on 2026-10-05, with the same result, and board item
   47 repeated it for the twelve re-voiced files the same day, again the same. The Lottie
   generator joined the same day: two runs wrote byte-identical files (board item 49, ledger
-  step 46), and the gate of board item 59 left `git diff --stat -- assets/lottie` empty.
+  step 46), and the gate of board item 59 left `git diff --stat -- assets/lottie` empty. The two
+  celebration tools joined on 2026-10-15 (board item 61): two runs of `import_celebrations.py`
+  wrote the same `shasum` for all 18 PNGs, and three runs of `build_celebrations.py`, one under
+  `PYTHONHASHSEED=7`, wrote the same `shasum` for all 18 archives.
 - Python is 3.14.6 at `/opt/homebrew/bin/python3` (`python3 -c "import sys; print(sys.version)"`).
 - The SVGs go into Rive. The mascot layer ids are the rig contract (`tools/build_mascots.py:7-9`).
 
@@ -126,6 +146,11 @@ effect: its pitches, its timing and its peak (`tools/build_sounds.py:1-67`). An 
 so those notes are the only description of a sound that a reader can check against the code. The
 Lottie generator's docstring states its style the same way, says why it leaves out the hard pale
 shadow, and describes each effect: what moves and how long it runs (`tools/build_lottie.py:1-26`).
+The two celebration tools state the style of the painted art, finish A, extruded flat (`GF-20`).
+`tools/import_celebrations.py:1-21` paints nothing, so its docstring says what it does to each
+painting, which PNGs it refuses and why it is not in the gate. `tools/build_celebrations.py:1-54`
+describes the layers back to front and each of the 18 celebrations: the hero's motion, its
+particles and its ray colour.
 
 Correct, `tools/build_icons.py:2-9`:
 
@@ -261,6 +286,8 @@ found nothing on 2026-10-04, and found nothing again on 2026-10-05 with `tools/b
 the folder. The Lottie generator places its pieces with `Lcg`, a 32-bit number stream written in
 the file, with one seed per effect in the source (`tools/build_lottie.py:79-90`), so it reads no
 random source in the sense of this rule: the same seeds give the same bytes on every run.
+`tools/build_celebrations.py` uses the same `Lcg`, one seed per celebration, 6101 to 6118. The
+grep above found nothing on 2026-10-15 with the two celebration tools in the folder.
 
 Correct, `tools/build_icons.py:34-35`: the data is in the source.
 
@@ -275,6 +302,18 @@ Incorrect, written for contrast:
 import random
 rot = random.uniform(-40, -30)
 ```
+
+*Amended 2026-10-15, version 1.4.0, board item 61.* Two tools may read an input file, and only
+these two reads are allowed. `tools/import_celebrations.py` reads the PNGs that its table names in
+`assets/higgsfield-celebrations/`, and never writes there. `tools/build_celebrations.py` reads the
+PNGs that its table names in `assets/celebrations/art/`: their IHDR width and height, and their
+bytes, which it copies whole into each archive. The reason is `GF-20` of
+`docs/incomplete/game-feel/DESIGN.md`: a celebration's hero is painted art from Higgsfield, which
+cannot be rebuilt from source, so the painting is an input. Every other value still comes from
+the source, so the rule's purpose holds: the import tool's output depends only on its source and
+the paintings, kept as received, and the generator's output depends only on its source and the
+committed PNGs. Each tool reads its files from its table, never from a directory listing (G2).
+No other tool reads an input file.
 
 ### G2. Iterate only over ordered collections
 
@@ -333,10 +372,13 @@ in the drift register.
 ### G4. A change that should not change the art proves it with an empty diff
 
 *gate · [OURS]* A refactor, a move or a rename in a generator runs the gate, then
-`git diff --stat -- assets/icons assets/mascots assets/sounds assets/lottie`. Any line in that
-output is a change in the art, the sound or an effect. A change there is allowed only when it was meant. Until
-`assets/sounds/` is committed, compare `shasum assets/sounds/*.wav` before and after the run
-instead, because `git diff` does not see an untracked file.
+`git diff --stat -- assets/icons assets/mascots assets/sounds assets/lottie assets/celebrations`.
+Any line in that output is a change in the art, the sound, an effect or a celebration. A change
+there is allowed only when it was meant. Until `assets/sounds/` is committed, compare
+`shasum assets/sounds/*.wav` before and after the run instead, because `git diff` does not see an
+untracked file; the same holds for `shasum assets/celebrations/*.lottie` until
+`assets/celebrations/` is committed. `tools/import_celebrations.py` is not in the gate, so a
+change to it is proven by running it and comparing `shasum assets/celebrations/art/*.png`.
 
 Correct: the gate on 2026-10-04, followed by an empty `git diff --stat -- assets`.
 
@@ -356,7 +398,11 @@ the `wave` module and returns 1 (`tools/build_sounds.py:272-279`). It does not u
 `write()`, because that one opens a text file and adds `.svg`. It is the one write path of its
 file, so the rule holds there too. The Lottie generator has its own `write(name, anim)` in the
 same way: it writes `<OUT>/<name>.json` through `json.dumps` and returns 1
-(`tools/build_lottie.py:478-482`).
+(`tools/build_lottie.py:483-487`).
+The two celebration tools each have one write path of their own, which returns 1: the import
+tool's `write(name, png)` writes `<OUT>/<name>.png` in binary (`tools/import_celebrations.py:230-234`),
+and the generator's `write(name, anim)` writes `<OUT>/<name>.lottie` through `zipfile`, every
+entry stored with a fixed date, system and mode from `entry()` (`tools/build_celebrations.py:585-596`).
 
 Correct, `tools/common.py:20-25`. It takes the output folder as its first argument and returns
 1, so `main()` can count (W2):
@@ -380,7 +426,7 @@ Incorrect, the inline write that `tools/build_mascots.py` held before 2026-10-05
 ### W2. `main()` prints the number of files it wrote, counted from the writes
 
 *review · [OURS]* The run line is the quick check that no asset went missing. Both
-files comply since 2026-10-05: icons print 78 (76 when ledger step 3 made the fix, 78 since board item 5) and mascots print 18. The sound generator, added by board item 17, prints 12 (6 until board item 28; `tools/build_sounds.py:296`). The Lottie generator, added by board item 49, prints 6 (`tools/build_lottie.py:498`). The two wrong ways were both
+files comply since 2026-10-05: icons print 78 (76 when ledger step 3 made the fix, 78 since board item 5) and mascots print 18. The sound generator, added by board item 17, prints 12 (6 until board item 28; `tools/build_sounds.py:296`). The Lottie generator, added by board item 49, prints 6 (`tools/build_lottie.py:503`). The two celebration tools, added by board item 61, print 18 each (`tools/import_celebrations.py:241`, `tools/build_celebrations.py:604`). The two wrong ways were both
 in the repo before then. `tools/build_icons.py` counted with `os.walk` over `OUT`, which also
 counts `assets/icons/preview.html` (77 for 76 SVGs), and never printed it.
 `tools/build_mascots.py` printed a count computed from the tables, so it printed 18 even if a
@@ -717,7 +763,12 @@ def gloss(x, y, rx=16, ry=8, rot=-35, op=0.55):
 that returns one whole effect (`answer_right` to `sparkle`) is exempt in the same way, and so are the
 five functions of the Lottie generator that return one whole effect: `burst`, `confetti`,
 `sparkle_shower`, `fly_up` and `flame_flicker` (24 to 46 lines, measured with `ast` on
-2026-10-05). The 6 in the policy guides against
+2026-10-05; 18 to 38 since board item 61 lifted `star`, `dot` and `twinkle` to module level,
+2026-10-15). In `tools/build_celebrations.py` the 18 functions that return one whole celebration
+(`lesson_complete` to `welcome`) are exempt in the same way; its motion presets (`jump`, `drop`,
+`pop`, `beat`, `flip`, `swing`, `rise`, `bob`, `wobble`) and its particle helpers are module-level
+helpers and keep the limit. No function in either celebration tool runs past 15 lines (measured
+with `ast` on 2026-10-15). The 6 in the policy guides against
 splitting a line or two into a function of its own. The two-line helpers that exist, such as
 `tf` and `ext`, comply. On 2026-10-04 one function broke the 15-line limit: `main` in
 `tools/build_icons.py`, at 19 lines (measured with `ast`). Since 2026-10-05 it is 14, and 15 since board item 5 added one write.
@@ -912,7 +963,7 @@ says how each one applies to the scripts in `tools/` (owner, 2026-10-04).
 | Policy | How it applies here | Rule |
 |---|---|---|
 | Comments explain why only | Why only, plus a legend over a table of positional tuples | K1 |
-| Functions of roughly 6 to 15 lines | Helpers at most 15 lines; a function that returns one whole SVG, one whole sound effect or one whole Lottie effect is exempt | H2 |
+| Functions of roughly 6 to 15 lines | Helpers at most 15 lines; a function that returns one whole SVG, one whole sound effect, one whole Lottie effect or one whole celebration is exempt | H2 |
 | Strict types | No hints until a type checker runs | H3 |
 | Tokens only for design values | A new colour is named; the existing inline values stay | C1 |
 | Named exports only | Does not apply: a script exports nothing | none |

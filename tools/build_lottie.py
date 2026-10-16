@@ -280,27 +280,38 @@ def chip(r, face, dark, light):
     return o
 
 
+# Rule H4: star, dot and twinkle sit at module level because tools/build_celebrations.py draws
+# them too (board item 61)
+def star(r, face, dark):
+    # The path node's star: five points, the inner radius 15/34 of the outer (tools/build_icons.py:205)
+    pts = []
+    for i in range(10):
+        rr = r if i % 2 == 0 else r * 15 / 34
+        a = -math.pi / 2 + i * math.pi / 5
+        pts.append((rr * math.cos(a), rr * math.sin(a)))
+    return solid(bezier(pts), face, dark, r * 0.16, r * 0.2, rounding=r * 0.24) + [
+        gloss(-r * 0.22, -r * 0.3, r * 0.2, r * 0.1, -35, 60)
+    ]
+
+
+def dot(r, face, dark):
+    return solid(ellipse(2 * r, 2 * r), face, dark, r * 0.16, r * 0.2) + [
+        gloss(-r * 0.3, -r * 0.35, r * 0.3, r * 0.16, -35, 60)
+    ]
+
+
+def twinkle(r, face, dark):
+    # Four tips joined by curves that bow toward the centre, the usual twinkle shape
+    tips = [(0, -r), (r, 0), (0, r), (-r, 0)]
+    pull = [(-x * 0.62, -y * 0.62) for x, y in tips]
+    return solid(bezier(tips, pull, pull), face, dark, r * 0.12, r * 0.16) + [gloss(0, 0, r * 0.18, r * 0.18, 0, 80)]
+
+
 # -------------------------------------------------------------- BURST
 def burst():
     size, centre, end = 400, (200, 200), 48
     seed = Lcg(4901)
     dots = ["red", "blue", "green", "purple"]
-
-    def star(r, face, dark):
-        # The path node's star: five points, the inner radius 15/34 of the outer (tools/build_icons.py:205)
-        pts = []
-        for i in range(10):
-            rr = r if i % 2 == 0 else r * 15 / 34
-            a = -math.pi / 2 + i * math.pi / 5
-            pts.append((rr * math.cos(a), rr * math.sin(a)))
-        return solid(bezier(pts), face, dark, r * 0.16, r * 0.2, rounding=r * 0.24) + [
-            gloss(-r * 0.22, -r * 0.3, r * 0.2, r * 0.1, -35, 60)
-        ]
-
-    def dot(r, face, dark):
-        return solid(ellipse(2 * r, 2 * r), face, dark, r * 0.16, r * 0.2) + [
-            gloss(-r * 0.3, -r * 0.35, r * 0.3, r * 0.16, -35, 60)
-        ]
 
     def towards(a, reach):
         return (centre[0] + reach * math.cos(a), centre[1] + reach * math.sin(a), 0)
@@ -367,12 +378,6 @@ def sparkle_shower():
     size, end = 300, 72
     seed = Lcg(4903)
     tints = [CHIPS["gold"][:2], (CREAM, CHIPS["gold"][1]), (GEM_LIGHT, GEM_FACE)]
-
-    def twinkle(r, face, dark):
-        # Four tips joined by curves that bow toward the centre, the usual twinkle shape
-        tips = [(0, -r), (r, 0), (0, r), (-r, 0)]
-        pull = [(-x * 0.62, -y * 0.62) for x, y in tips]
-        return solid(bezier(tips, pull, pull), face, dark, r * 0.12, r * 0.16) + [gloss(0, 0, r * 0.18, r * 0.18, 0, 80)]
 
     def sparkle(k):
         # One star in each cell of a four-by-three grid, so the shower covers the box evenly

@@ -15,6 +15,8 @@ config.resolver.sourceExts = [...config.resolver.sourceExts, "svg"];
 // regenerated SVG; the module path lets those files resolve react-native-svg from app/.
 // Board item 34: the rigged Flop is a binary `.riv`, bundled as an asset.
 config.resolver.assetExts = [...config.resolver.assetExts, "riv"];
+// Board item 61: a celebration is a dotLottie archive, a zip that lottie-react-native loads as an asset.
+config.resolver.assetExts = [...config.resolver.assetExts, "lottie"];
 
 config.watchFolders = [...config.watchFolders, artRoot];
 config.resolver.nodeModulesPaths = [path.resolve(__dirname, "node_modules")];

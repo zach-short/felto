@@ -4,9 +4,12 @@ import { Button, Host } from "@expo/ui";
 import { useLocalSearchParams } from "expo-router";
 
 import { Art } from "@/art/art";
+import { Celebration } from "@/art/celebration";
+import { CELEBRATION_NAMES, type CelebrationName } from "@/art/celebrations";
 import { Effect } from "@/art/effect";
 import { EFFECT_NAMES, type EffectName } from "@/art/effects";
 import { FlopRive } from "@/art/flop-rive";
+import { GameButton, QUIET_BUTTON } from "@/components/kit/game-button";
 import { Screen } from "@/components/screen";
 import { StatBar } from "@/components/stat-bar";
 import { ART_SCALE, RADIUS, SPACE, TYPE } from "@/theme/tokens";
@@ -61,7 +64,27 @@ export function DevArtScreen() {
         {/* The button does nothing: the check is that a native control draws. */}
         <Button label="Native button" onPress={() => undefined} />
       </Host>
+      {/* Board item 61: the celebrations of GF-21, each at column width with its own replay */}
+      <Text style={[styles.heading, { color: colours.text }]}>Celebrations</Text>
+      {CELEBRATION_NAMES.map((name) => (
+        <CelebrationCell key={name} name={name} width={column} />
+      ))}
     </Screen>
+  );
+}
+
+function CelebrationCell({ name, width }: { name: CelebrationName; width: number }) {
+  const { colours } = useTheme();
+  const [plays, setPlays] = useState(0);
+  return (
+    <View style={[styles.cell, styles.celebration, { width, backgroundColor: colours.surface }]}>
+      {/* A new key mounts a fresh player, which starts the celebration from its first frame */}
+      <Celebration key={plays} name={name} width={width} />
+      <Text style={[styles.caption, { color: colours.textMuted }]}>{name}</Text>
+      <View style={styles.replayWide}>
+        <GameButton label="Replay" paint={QUIET_BUTTON} onPress={() => setPlays(plays + 1)} />
+      </View>
+    </View>
   );
 }
 
@@ -88,6 +111,9 @@ const styles = StyleSheet.create({
   cell: { borderRadius: RADIUS.md, alignItems: "center", paddingBottom: SPACE.sm },
   caption: { fontSize: TYPE.caption, marginVertical: SPACE.xs },
   replay: { alignSelf: "center" },
+  heading: { fontSize: TYPE.heading, fontWeight: "700", marginTop: SPACE.lg, marginBottom: SPACE.sm },
+  celebration: { marginBottom: SPACE.md },
+  replayWide: { alignSelf: "stretch", paddingHorizontal: SPACE.md },
   row: {
     flexDirection: "row",
     alignItems: "center",

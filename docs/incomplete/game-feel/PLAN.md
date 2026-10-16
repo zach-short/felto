@@ -457,3 +457,39 @@ he sets the dials.
 | No native control is left (item 32) | Profile (every switch, the reminder time, reset), leave a lesson, run out of hearts | Every control is drawn in the tokens; switches read their state to a screen reader; Android's back closes a sheet or dialog |
 | The rigs talk and fall back (items 53 to 57) | A lesson, a review and a boss; then Reduce Motion on | Each host's mouth moves while its bubble types and stops when it ends; with Reduce Motion on, every mascot and the chest are still poses |
 | The chest condition holds (`GF-13`) | Before anything that leads to gems or chests can be bought | Zach has reopened `GF-13`; a random chest that can be bought is not shipped without his answer |
+
+## 9. Third pass, 2026-10-15
+
+Zach asked on 2026-10-15 for a large array of Duolingo-style celebration animations and art made
+with Higgsfield and Lottie, not Rive (`DESIGN.md` 10.1). His answers are decisions `GF-20` to
+`GF-23` (`DESIGN.md` 10.3 and 10.4). Board item 61 made the painted art, the 18 Lottie files, a
+preview page and the `/dev/art` entries (`HANDOFF.md` step 55). Board item 62 scopes and wires the
+twelve celebrations that board item 30 does not own. Items 61 and 62 sit outside the phases of
+section 2, which stay as written.
+
+### 9.1 Runtime entries for the third pass
+
+All three are `open` on 2026-10-15: the session that built the files saw them play in
+`assets/celebrations/preview.html` and held at their last pose on the iOS simulator
+(`HANDOFF.md` step 55), and Zach has not walked these.
+
+- (a) Goal: each celebration plays once in about 2.4 s and holds its hero.
+- (a) Where: the iOS simulator and the Android emulator at `/dev/art` (`felto://dev/art`), the
+  Celebrations section, with Replay under each of the 18.
+- (a) Right answer: the rays grow and turn, the hero moves as `GF-20` and the list in the
+  docstring of `tools/build_celebrations.py` (lines 21 to 42) say, the particles are gone at the
+  end, and the hero ends upright at full size.
+
+- (b) Goal: the painted art reads on the light page and the dark page.
+- (b) Where: `/dev/art` on both platforms in both appearances (`xcrun simctl ui <id> appearance dark`,
+  `adb shell cmd uimode night yes`, `HANDOFF.md` Environment), and `preview.html` with its Dark
+  page button (`http://localhost:8781/celebrations/preview.html`).
+- (b) Right answer: no white box and no fringe around a hero in any of these views. Note how the
+  rays look on the dark page: they were dull and khaki on 2026-10-15 (the `As built` note under
+  `GF-23` in `DESIGN.md`), and what to do about it is Zach's call.
+
+- (c) Goal: under reduced motion each celebration shows its hero still, at its last pose.
+- (c) Where: a phone or the iOS simulator with Settings, Accessibility, Motion, Reduce Motion on,
+  then `/dev/art`, the Celebrations section.
+- (c) Right answer: all 18 show the hero at its last pose with the rays in place, with no movement
+  and no particles (`GF-8` and `GF-22`, `celebrationMode` in `app/src/art/celebrations.ts:49`).
