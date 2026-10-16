@@ -52,7 +52,7 @@ W1, W2 and H2 say how each applies. With those, `tools/` holds seven `.py` files
 2026-10-15).
 Read this file in full before you write or edit Python here.
 
-Version 1.4.0. Written 2026-10-04 on Opus 5.5 for board item 1 (ledger step 2 in `HANDOFF.md`);
+Version 1.4.1. Written 2026-10-04 on Opus 5.5 for board item 1 (ledger step 2 in `HANDOFF.md`);
 revised 2026-10-05 on Sonnet 5.5 for board item 2 (ledger step 3), which moved the shared code
 into `tools/common.py`, for board item 3 (ledger step 4), which reconciled the line citations,
 for board item 4 (ledger step 8), which named `tools/common.py` in the scope sentence, and
@@ -82,6 +82,9 @@ celebration tools may read the painted art (`GF-20`), named them in the scope pa
 M1, G4, W1, W2 and H2 apply to them, added `assets/celebrations` to the gate's assets diff, and
 moved the Lottie generator citations that the lift of `star`, `dot` and `twinkle` to module level
 shifted; a rule changed.
+Version 1.4.1 on 2026-10-15 on Opus 5.5 (ledger step 56), which recorded that `python3` is
+Python 3.15.0 with numpy 2.5.4 since that day, in "What the rules rest on" and in M4, and added
+the rebuild under 3.15.0 to the determinism fact; no rule changed.
 Zach answered the open questions on 2026-10-04 and took every recommendation. Those answers are
 cited below as "owner, 2026-10-04".
 
@@ -130,8 +133,13 @@ These facts were verified 2026-10-04. A rule that breaks one of them is wrong.
   step 46), and the gate of board item 59 left `git diff --stat -- assets/lottie` empty. The two
   celebration tools joined on 2026-10-15 (board item 61): two runs of `import_celebrations.py`
   wrote the same `shasum` for all 18 PNGs, and three runs of `build_celebrations.py`, one under
-  `PYTHONHASHSEED=7`, wrote the same `shasum` for all 18 archives.
-- Python is 3.14.6 at `/opt/homebrew/bin/python3` (`python3 -c "import sys; print(sys.version)"`).
+  `PYTHONHASHSEED=7`, wrote the same `shasum` for all 18 archives. On 2026-10-15, after the
+  Python change in the next fact, the five generators and `tools/import_celebrations.py` run
+  under Python 3.15.0 in a scratch copy of `HEAD` wrote files byte-identical to `assets/`
+  (`diff -rq`, ledger step 56).
+- Python was 3.14.6 at `/opt/homebrew/bin/python3` on 2026-10-04. Since 2026-10-15 it is 3.15.0
+  there: Homebrew moved the link that day (`ls -la /opt/homebrew/bin/python3`, dated 15:22).
+  Both read with `python3 -c "import sys; print(sys.version)"`.
 - The SVGs go into Rive. The mascot layer ids are the rig contract (`tools/build_mascots.py:7-9`).
 
 ## Module shape
@@ -245,8 +253,10 @@ library. The reason is BD-T3 in `docs/incomplete/gto-trainer/PLAN.md`: the solve
 arithmetic at a speed the standard library cannot reach, and it is a development tool whose
 output is committed, so the app never runs it. Import it as `import numpy as np`, the alias the
 numpy documentation sets as the convention (NumPy 2.4 user guide, "NumPy: the absolute basics
-for beginners", "How to import NumPy", read through Context7 on 2026-10-05). numpy is 2.4.3 at `/opt/homebrew/bin/python3`
-(`python3 -c "import numpy; print(numpy.__version__)"`, 2026-10-05). No other third-party module
+for beginners", "How to import NumPy", read through Context7 on 2026-10-05). numpy was 2.4.3 at
+`/opt/homebrew/bin/python3` (Python 3.14.6) on 2026-10-05. Since 2026-10-15 it is 2.5.4 there
+(Python 3.15.0), installed that day as a pip wheel, because 2.4.3 has no wheel for 3.15 (ledger
+step 56). Both read with `python3 -c "import numpy; print(numpy.__version__)"`. No other third-party module
 is allowed in `solver/`, and none is allowed anywhere else: `tools/` stays standard library only.
 A file in `solver/` that does not need numpy does not import it. `validate_key.py`, `config.py`
 and `equity_test.py` import only the standard library, so the test of the equity table alone runs

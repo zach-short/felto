@@ -38,9 +38,12 @@
   2026-10-05; the Lottie generator adds `json`, board item 49; the celebration importer adds
   `struct` and `zlib` and the celebration generator `json`, `struct` and `zipfile`, board item 61,
   `tools/import_celebrations.py:22-25`, `tools/build_celebrations.py:55-59`). Verified on Python
-  3.14.6 at `/opt/homebrew/bin/python3`, 2026-10-04. On 2026-10-15 `python3` is 3.15.0 with no
-  numpy (`python3 -c "import numpy"` fails), so the whole-repo gate as written exits 1 at the
-  solver tests; `python3.14` (3.14.8, numpy 2.4.3) passes it (`HANDOFF.md` Environment, step 55).
+  3.14.6 at `/opt/homebrew/bin/python3`, 2026-10-04. Since 2026-10-15 `python3` is 3.15.0:
+  Homebrew moved the link that day (`ls -la /opt/homebrew/bin/python3`, dated 15:22). It had no
+  numpy at first, so the whole-repo gate as written exited 1 at the solver tests, and step 55 ran
+  it with `python3.14` (3.14.8, numpy 2.4.3) in its place. Later that day numpy 2.5.4 was
+  installed for 3.15.0 as a pip wheel (numpy 2.4.3 has no wheel for 3.15), and the gate passes
+  as written with `python3` (`HANDOFF.md` step 56).
 - `xmllint` (libxml 20913, `/usr/bin/xmllint`) to check SVG well-formedness.
 - The app in `app/` (2026-10-05, board item 7): Expo SDK 57 (`expo` 57.0.26, React Native
   0.86.3, React 19.2.3), expo-router with routes in `app/src/app/`, a development build
@@ -107,9 +110,10 @@
 
 The whole-repo gate, also `gateCommand` in `.personal-config.json`: the Python gate, then
 solver tests (`unittest`, 33 tests, board item 38), then the app gate (typecheck, lint, vitest).
-Run 2026-10-06 from the repo root as one command, exit 0. On 2026-10-15 it exits 1 with `python3`
-as it is on this Mac (3.15.0, no numpy), and exits 0 with `python3.14` in its place
-(`HANDOFF.md` Environment, step 55):
+Run 2026-10-06 from the repo root as one command, exit 0. Earlier on 2026-10-15 it exited 1 with
+`python3` 3.15.0 before numpy was installed for it, and exited 0 with `python3.14` in its place
+(`HANDOFF.md` step 55). Run 2026-10-15 as written, with `python3` 3.15.0 and numpy 2.5.4: exit 0
+(`HANDOFF.md` step 56). `scripts/gate.sh` runs the same steps in the same order as this line:
 
 ```bash
 python3 tools/build_icons.py && python3 tools/build_mascots.py && python3 tools/build_sounds.py && python3 tools/build_lottie.py && python3 tools/build_celebrations.py && xmllint --noout assets/icons/*/*.svg assets/mascots/*/*.svg && python3 -m unittest discover -s solver -p '*_test.py' && bun run --cwd app typecheck && bun run --cwd app lint && bun run --cwd app test
@@ -165,9 +169,14 @@ python3 -m http.server 8781 --directory assets
   (about 105 s on a quiet Mac), which the gate does not run, and recorded in `KEY-SPEC.md` 8.5.
   The gate does not rewrite `solver/data/key.json` either: after a solver change, run
   `python3 solver/cfr.py` and read `git diff --stat -- solver/data`; a line there is a change in
-  the key, and it must be one you meant. The suite needs numpy (2.4.3 at
-  `/opt/homebrew/bin/python3`, rule M4 of `docs/conventions-python.md`); the fresh-checkout
-  recipe in `docs/AGENT-PRACTICES.md` Part 6 checks for it.
+  the key, and it must be one you meant. The suite needs numpy (2.5.4 at
+  `/opt/homebrew/bin/python3`, Python 3.15.0, since 2026-10-15; 2.4.3 on Python 3.14 before;
+  rule M4 of `docs/conventions-python.md`); the fresh-checkout recipe in
+  `docs/AGENT-PRACTICES.md` Part 6 checks for it. Step 56 of `HANDOFF.md` did not run
+  `python3 solver/cfr.py` with numpy 2.5.4, because Zach chose on 2026-10-15 not to prove the
+  key byte-identical there. So the first run after a solver change can show a key diff that
+  comes from the new numpy. To tell the two apart, first run `cfr.py` in a scratch copy of the
+  commit before the change, with the same numpy, and compare against that.
 - The gate rewrites the generated SVGs, WAVs and Lottie files in place. After the first commit, run
   `git diff --stat -- assets/icons assets/mascots assets/sounds assets/lottie assets/celebrations`
   after the gate: any line there is a change in the art, the sound, an effect or a celebration,

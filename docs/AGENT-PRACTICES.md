@@ -607,7 +607,10 @@ from `app/bun.lock` before the app gate means anything. The native folders `app/
 no gate reads them. Extended again 2026-10-06 (board item 38, ledger step 53) for the solver: the
 solver tests in `solver/` import numpy and are in the whole-repo gate since that item, so the
 recipe checks that numpy imports (`python3 -c 'import numpy'`; numpy 2.4.3 at
-`/opt/homebrew/bin/python3`, rule M4 of `docs/conventions-python.md`) before any gate is believed. The paragraph below is the 2026-10-04 reasoning for `tools/`. The generators in `tools/` import only
+`/opt/homebrew/bin/python3`, rule M4 of `docs/conventions-python.md`) before any gate is believed.
+On 2026-10-15 Homebrew moved `python3` to Python 3.15.0, which had no numpy, and the recipe failed
+at that check (ledger step 55). numpy 2.5.4 was installed for 3.15.0 the same day as a pip wheel,
+and the recipe as written exits 0 again (ledger step 56). The paragraph below is the 2026-10-04 reasoning for `tools/`. The generators in `tools/` import only
 `math` and `os` (`grep -nE '^(import|from)' tools/*.py`), and there is no package manifest,
 lockfile or env file (`ls -a` at the root). The gitignored files (`.gitignore:1-2` and
 `~/.config/git/ignore:4-6`) are process documents, and no gate reads them. A fresh checkout
@@ -1031,8 +1034,8 @@ the same turn, batched. A decision built on a guess is built twice.
 | `Opus 5.5` | The default tier | Set by `personal-config` 2026-10-04 |
 | `Sonnet 5` | The mechanical tier | Set by `personal-config` 2026-10-04 |
 | `2026-08-16` | The date of the measurement Part 5's table carries | `2026-08-16` if you inherit it; the date you re-measured if a tier's model changed |
-| `command -v python3 >/dev/null && command -v xmllint >/dev/null && command -v bun >/dev/null && python3 -c 'import numpy' && bun install --cwd app --frozen-lockfile` | Fresh-checkout recipe | Verified 2026-10-04 for `tools/`; the bun part added 2026-10-05, board item 7 (Part 6); the numpy check added 2026-10-06, board item 38 (Part 6) |
-| `python3 tools/build_icons.py && python3 tools/build_mascots.py && python3 tools/build_sounds.py && python3 tools/build_lottie.py && python3 tools/build_celebrations.py && xmllint --noout assets/icons/*/*.svg assets/mascots/*/*.svg && python3 -m unittest discover -s solver -p '*_test.py' && bun run --cwd app typecheck && bun run --cwd app lint && bun run --cwd app test` | Build, for the HEAD-isolation check | Python part run 2026-10-04: exit 0, output byte-identical to the files on disk; app part added 2026-10-05, board item 7; sounds and xmllint steps added 2026-10-05 to match the whole-repo gate in `CLAUDE.md`; the solver tests added 2026-10-06 for the same reason (board item 38); the celebration generator added 2026-10-15 for the same reason (board item 61), which needs `assets/celebrations/art/` committed |
+| `command -v python3 >/dev/null && command -v xmllint >/dev/null && command -v bun >/dev/null && python3 -c 'import numpy' && bun install --cwd app --frozen-lockfile` | Fresh-checkout recipe | Verified 2026-10-04 for `tools/`; the bun part added 2026-10-05, board item 7 (Part 6); the numpy check added 2026-10-06, board item 38 (Part 6); run 2026-10-15 with `python3` 3.15.0 and numpy 2.5.4: exit 0 (ledger step 56) |
+| `python3 tools/build_icons.py && python3 tools/build_mascots.py && python3 tools/build_sounds.py && python3 tools/build_lottie.py && python3 tools/build_celebrations.py && xmllint --noout assets/icons/*/*.svg assets/mascots/*/*.svg && python3 -m unittest discover -s solver -p '*_test.py' && bun run --cwd app typecheck && bun run --cwd app lint && bun run --cwd app test` | Build, for the HEAD-isolation check | Python part run 2026-10-04: exit 0, output byte-identical to the files on disk; app part added 2026-10-05, board item 7; sounds and xmllint steps added 2026-10-05 to match the whole-repo gate in `CLAUDE.md`; the solver tests added 2026-10-06 for the same reason (board item 38); the celebration generator added 2026-10-15 for the same reason (board item 61), which needs `assets/celebrations/art/` committed; run 2026-10-15 with `python3` 3.15.0 and numpy 2.5.4: exit 0 (ledger step 56) |
 
 Gate commands, hazards and the directory map are not placeholders: they are discovered in 0.1
 and written straight into `CLAUDE.md`.
