@@ -63,6 +63,9 @@ before any solver code is written, because the key is the one part nothing can f
 | BD-T20 | Phase 3a, 2026-10-06, Zach's answer Q5 (`KEY-SPEC.md` 11, third batch). The nine leaf-model dials are frozen provisionally at the best setting inside the ranges of 3.2 (`KEY-SPEC.md` 12: `k` 2, `c` 0.5, 0.4, 0.1 with the edge in position, 0.2, 0, 0.05 with it out of position, `t` 0.1 and 0.25), which lands 13 of the 19 bands the CO, BTN and SB subtrees answer; the six misses are `KEY-SPEC.md` 8.5. No setting of the equity-bent family lands the 3-bet-pot bands (`HANDOFF.md` steps 50 and 51), and the hands those bands describe differ by features, not equity (`KEY-SPEC.md` 4, item 3). Phases 3b and 4 build on the provisional dials and hash; board item 60 scopes and builds RF-3 (a per-class adjustment from hand features, `KEY-SPEC.md` 11 (a)), re-freezes the dials, re-solves and re-exports. This moves RF-3 from BD-T12's reversal (after the phase 4 review) to a planned item, and until item 60 lands the done-when of phase 3b excludes the six bands of 8.5 | Freeze the same setting as final and let the phase 4 review judge the hands (choice (3) of step 51); or hold phase 3b until RF-3 lands (choice (2)) |
 | BD-T21 | Phase 5, 2026-10-15, Zach's answer (a) of board item 40. The rule of `KEY-SPEC.md` 5 for a decision with no node: the player who sits behind a bot defender acts once, off the tree, with three options: fold, call, or one raise one level up in the pot's own row of 2.3, read from the key's totals (over an open and a call, the defender's 3-bet size; over a 3-bet, the opener's 4-bet size). A fold returns the hand to the key's node, written without the player's fold. After a call or a raise, the opener and then the defender each fold or call, by the unit 3 chart's UTG list (`OPENING_CHART.UTG`, 25 classes): a hand on it calls, at any seat, and every other hand folds. No bot raises there, so the hand then ends and runs out (BD-T5), and its result is marked multiway (BD-T4). `app/src/gto/turn.ts` (`behindTurn`, `raiseOver`, `answerTurn`) and `bots.ts` (`chartAnswer`) | Each bot calls by the chart list for its own seat (the literal reading of BD-T4), or the raise takes another size; both are one function each |
 | BD-T22 | Phase 5, 2026-10-15, Zach's answers (b) and (d) of board item 40. A bot samples its row of the key at every node (dial `gtoBotMixMode` = `sample`): the one node under `reachFloor` (UTG facing the big blind's 5-bet, reach 0.000088) and the 5-bet nodes and one-hand flats that `KEY-SPEC.md` 10, second review, items 2 and 5 name are not special. Measured from the key on 2026-10-15: a bot folds `KK` to a 5-bet about once in 40,000 all-bot hands (fold 0.6636, 0.2691 and 0.0134 at the three nodes where it folds at all); best-EV play would fold `QQ` more often, not less (it folds at 1.0 on EV gaps of 0.455 to 0.471 bb at four nodes, and after a UTG 4-bet its fold leads by under 0.001 bb); and the flats of HJ, CO, BTN and SB come up in 0.75 percent of dealt hands. Item 60 replaces the file | Best-EV play where a node's EVs sit within the solver's noise, or a one-hand flat dropped for its best other action: one branch in `botAction` (`app/src/gto/bots.ts`) |
+| BD-T23 | Phase 6, 2026-10-16, Zach's answer (a) of board item 41. Actions within the solver's noise grade as equal: an action whose EV is within the dial `gtoEqualEvBb` (0.0025 bb) of the row's best is good at any frequency, and its cost is still shown as computed. 0.0025 sits just above the 0.0024 bb by which the second review recomputed the 5-bet call EVs (`KEY-SPEC.md` 10). In the key on 2026-10-16 it turns 44 action choices at a frequency under 0.10 from unlabelled to good, among them UTG's `QQ` call of HJ's 5-bet (0.0957, 0.0009 bb) and UTG's `KJs` 4-bet against HJ's 3-bet (0.077, 0.0007 bb). It does not touch the `QQ` calls of 0.38 to 0.52 bb, which are real EV. `app/src/gto/grade.ts` (`labelOf`) | No band: the dial and its one line in `labelOf` deleted |
+| BD-T24 | Phase 6, 2026-10-16, Zach's answer (b) of board item 41. At a row whose `hand_reach` is under the dial `gtoNeverHeldReach` (1e-6), the actor never holds the hand there and its strategy is the uniform CFR+ default (`KEY-SPEC.md` 10, second review, item 1). The grader hides the row's frequencies (null in the mix), shows each action's EV and the cost, and labels by cost alone: good within `gtoEqualEvBb`, a mistake above `gtoMistakeCostBb`, no label between. `CO`'s `72o` facing `BTN`'s 3-bet: fold good at 0, call a mistake of 1.5546 bb, 4-bet 7.4382 bb. The grade says which way it was read (`basis`, `mix` or `cost`). `app/src/gto/grade.ts` (`gradeRow`) | Show the mix with a note (the frequencies kept, the label still by cost), or no grade at all (one more kind of `Grade`) |
+| BD-T25 | Phase 6, 2026-10-16, Zach's answer (c) of board item 41. Two labels, `good` and `mistake`, and the space between them has none (null): a choice under 0.10 that costs more than `gtoEqualEvBb` and no more than `gtoMistakeCostBb`, 751 choices in the key on 2026-10-16. Good wins over mistake, so an action the solver's mix plays at 0.10 or more is never called a mistake; at reached rows the actor holds that clash occurs 0 times in the key on 2026-10-16 (`app/src/gto/grade.test.ts` checks it). `app/src/gto/grade.ts` (`labelOf`) | A third label for the middle (one more value of `GradeLabel` and one line in `labelOf`), or mistake winning the clash (the order of two lines) |
 
 ## 2. Phases
 
@@ -349,7 +352,17 @@ and conserves chips in every one.
 
 ### Phase 6: Grading and the review model
 
-Status: `PLANNED`.
+Status: `BUILT` 2026-10-16 (board item 41, `HANDOFF.md` step 58), not yet committed. Zach's
+answers (a) to (c) are BD-T23 to BD-T25. `app/src/gto/grade.ts` grades one decision and
+`app/src/gto/review.ts` builds the review of a finished hand, with `grade.test.ts` and
+`review.test.ts`. The Deep review found one defect, fixed before the gate: the cost was a raw
+difference of two four-decimal EVs, so a cost the key writes as 0.0025 computed as
+0.002500000000001279 and fell outside the band; the cost is now rounded to four decimals
+(`KEY-SPEC.md` 7.4). It found no case where an action the solver plays at 0.10 or more is marked
+a mistake, and no meaningless row graded by its frequency. A multiway hand's review holds one
+decision, the player's off the tree, ungraded, and is marked not scored (BD-T4): a seat behind
+the defender has no decision before that one, because it acts after the defender in the first
+round (`app/src/gto/turn.ts`, `behindTurn`).
 
 1. `app/src/gto/grade.ts`: for each player decision, the key's frequency of the chosen action,
    its EV loss against the best action, and a label from the dials (E1).
@@ -442,8 +455,10 @@ solver dials, which live in `solver/config.py`.
 | `tableSeats`, `stackBigBlinds` | 6, 100 | exist |
 | `gtoExploitabilityBb` | 0.005 | solver stop point; confirmed in phase 3a |
 | `gtoChartMinOpen` | 0.5 | containment test of phase 4. In `app/src/config/dials.ts` since 2026-10-06 (board item 39), the first line of the block `// gto-trainer`; `solver/config.py` keeps its copy, `GTO_CHART_MIN_OPEN` |
-| `gtoGoodFrequency` | 0.10 | a mixed action played at least this often is good |
-| `gtoMistakeCostBb` | 0.15 | above the solver error of phase 3b |
+| `gtoGoodFrequency` | 0.10 | a mixed action played at least this often is good. In `app/src/config/dials.ts` since 2026-10-16 (board item 41), read by `app/src/gto/grade.ts` |
+| `gtoMistakeCostBb` | 0.15 | above the solver error of phase 3b. In `app/src/config/dials.ts` since 2026-10-16 (board item 41); the key's recorded exploitability is 0.000001 to 0.000003 bb per seat (`solver/data/key.json`, `solver.exploitability_bb`), far below it |
+| `gtoEqualEvBb` | 0.0025 | BD-T23 (Zach, 2026-10-16): two EVs this close count as equal, so the action is good at any frequency. In `app/src/config/dials.ts` since board item 41 |
+| `gtoNeverHeldReach` | 0.000001 | BD-T24 (Zach, 2026-10-16): below this `hand_reach` the actor never holds the hand at the node, so the grader hides the uniform mix. In `app/src/config/dials.ts` since board item 41 |
 | `gtoBotMixMode` | `sample` | the other mode plays the top action. In `app/src/config/dials.ts` since 2026-10-15 (board item 40), in the block `// gto-trainer`, read by `app/src/gto/bots.ts`; Zach kept `sample` at every node (BD-T22) |
 | `gtoPostflopMode` | `runout` | `scored` arrives with option B2. In `app/src/config/dials.ts` since 2026-10-15 (board item 40); `app/src/gto/result.ts` types it as `"runout"`, so another value stops the typecheck where the postflop work begins |
 | `gtoHandsPerSession` | 10 | |
@@ -453,7 +468,7 @@ solver dials, which live in `solver/config.py`.
 | `c_srp`, `c_3bp`, `c_4bp`; `c_srp_oop`, `c_3bp_oop`, `c_4bp_oop` | 0.7, 0.4, 0.2; 0.3, 0.2, 0.1 to start | phase 1 (BD-T12, BD-T18), `solver/config.py`; phase 3a tunes them inside the ranges of `KEY-SPEC.md` 3.2 on four spots and freezes them in the game object. Frozen provisionally 2026-10-06 (BD-T20): 0.5, 0.4, 0.1; 0.2, 0, 0.05 |
 | `k` | 2 (1 allowed) | phase 1 (BD-T18), `solver/config.py`; the curve exponent of `KEY-SPEC.md` 3.2. Set to 2 by phase 3a (BD-T20, 2026-10-06): at `k` 1 the button folds a small pair |
 | `t_ip`, `t_sb` | 0.1, 0.25 to start | phase 1 (BD-T17), `solver/config.py`; the flat tax of `KEY-SPEC.md` 3.2, tuned in phase 3a to the flat bands. Frozen provisionally 2026-10-06 (BD-T20) at the starting values, which land both flat bands |
-| `reachFloor` | 0.0001 | phase 1, `solver/config.py`; a node reached less often than this is one the grader treats as never reached (`KEY-SPEC.md` 7.1) |
+| `reachFloor` | 0.0001 | phase 1, `solver/config.py`; a node reached less often than this is one the grader treats as never reached (`KEY-SPEC.md` 7.1). The app's copy is in `app/src/config/dials.ts` since 2026-10-16 (board item 41), read by `app/src/gto/grade.ts` |
 
 ## 4. Seams reserved, deliberately not built
 
