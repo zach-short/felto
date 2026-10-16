@@ -9,9 +9,12 @@ import type { Exercise } from "@/content/schema";
 import { DIALS } from "@/config/dials";
 import { useAnswerFeedback } from "@/feedback/use-answer-feedback";
 import { useSound } from "@/feedback/use-sound";
+import { answerMoment, type AnswerMoment } from "@/game/answer-moment";
 import { bossPasses } from "@/game/boss";
 import { livesAt } from "@/game/lives";
 import { usePlayer } from "@/storage/use-player";
+
+type FeedbackWords = { answer: string; explanation: string; moment: AnswerMoment | null };
 
 // Rule O2: the session loop as one hook, for a lesson, a boss, a review, a practice set or the
 // placement check. The order of the loop
@@ -23,20 +26,31 @@ export function useLessonRun(session: Session, start = 0, pick: number | null = 
   const [run, dispatch] = useReducer(runStep, { ...RUN_START, index: start, choice: pick });
   const movedOnFrom = useRef(-1);
   const checkedFor = useRef(-1);
+  // GF-24: every checked answer of this run, right or wrong, for the celebration of an answer
+  const history = useRef<boolean[]>([]);
   // What the sheet says, fixed when Check is pressed, so the sheet keeps its words while it slides
-  // away and the next exercise is already on screen
-  const [feedbackWords, setFeedbackWords] = useState({ answer: "", explanation: "" });
+  // away and the next exercise is already on screen; since board item 62 that includes the moment
+  // it celebrates, if any
+  const [feedbackWords, setFeedbackWords] = useState<FeedbackWords>({ answer: "", explanation: "", moment: null });
   const size = session.exercises.length;
   const exercise = session.exercises[Math.min(run.index, size - 1)];
   const choose = (choice: number) => dispatch({ type: "choose", choice });
   const check = () =>
     performCheck(run, exercise, checkedFor, {
       dispatch,
+      // performCheck records before it shows the words (session-steps.ts), so the history holds this
+      // answer by the time the moment is chosen
       record: (right) => {
+        history.current = [...history.current, right];
         const answer = answerToRecord(session, exercise.id, right);
         if (answer) actions.recordAnswer(answer);
       },
-      showWords: (shown: Exercise) => setFeedbackWords({ answer: answerLabel(shown), explanation: shown.explanation }),
+      showWords: (shown: Exercise) =>
+        setFeedbackWords({
+          answer: answerLabel(shown),
+          explanation: shown.explanation,
+          moment: answerMoment(shown, history.current),
+        }),
       playRight: feedback.right,
       // Game feel phase 4: in a session that costs lives a wrong answer has just spent a heart
       // (D8), so the heart's sound plays with the wrong answer's; it starts a third below it

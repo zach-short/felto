@@ -251,6 +251,10 @@ export const ART_SCALE = {
   // Phase 16: the fish large on the welcome, and each of the cast beside its name
   welcomeMascot: 0.55,
   castMascot: 0.26,
+  // Board item 62 (GF-24): a celebration on the layer over the tabs, and one above the feedback
+  // sheet, where the exercise still shows around it
+  celebration: 0.8,
+  sheetCelebration: 0.5,
 } as const;
 
 // The gap between two cards in a row, and the line around an answer choice

@@ -136,6 +136,13 @@ export const DIALS = {
   practiceXpPerRight: 5,
   practiceSetSize: 10,
 
+  // celebrations (board item 62, game-feel DESIGN.md GF-26, Zach's answer of 2026-10-15): the
+  // streak lengths in days and the totals of XP that play a milestone, and the right answers in a
+  // row that play the hot streak, once in a session (game/celebration-moments.ts, answer-moment.ts)
+  streakMilestones: [3, 7, 14, 30, 50, 100, 365],
+  xpMilestones: [250, 500, 1000, 2500, 5000, 10000],
+  hotStreakRun: 5,
+
   // D20
   placementSize: 10,
   placementPassRight: 8,

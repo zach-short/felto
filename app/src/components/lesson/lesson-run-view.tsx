@@ -77,6 +77,7 @@ export function LessonRunView({ session, finish, start = 0, pick = null, autoChe
           right={run.lastRight}
           answer={feedbackWords.answer}
           explanation={feedbackWords.explanation}
+          moment={feedbackWords.moment}
           onContinue={moveOn}
           host={session.host}
         />

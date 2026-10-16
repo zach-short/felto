@@ -782,3 +782,242 @@ other twelve (`PASSOFF.md`, rows 30 and 62).
 Everything in 9.5, except the sentence `GF-20` supersedes for celebration art. `assets/higgsfield/` and
 `assets/higgsfield-chest/` are never touched, and the six effects of `GF-15` keep their generator,
 their ceiling and their vector-only art.
+
+## 11. Fourth pass: the celebrations on the screens, opened 2026-10-15
+
+Status: `RATIFIED` 2026-10-15, from Zach's answers in chat the same day (11.9), board item 62, on
+Opus 5.5 in the worktree `.claude/worktrees/lucid-shannon-c2bf3e`. Sections 1 to 10 are kept as
+written. Sections 11.1 to 11.8 are the scope of the twelve celebrations that board item 30 does not
+own (`GF-23`), written before the ask and kept as written; 11.9 records the answers and 11.10 the
+decisions `GF-24` to `GF-27`.
+
+### 11.1 The ask
+
+Board item 62 (`PASSOFF.md` row 62 and its paragraph of 2026-10-15, out of `GF-23`): find the
+moment in the app for each of `streak_extended`, `streak_milestone`, `xp_milestone`, `achievement`,
+`royal_flush`, `chip_jackpot`, `all_in_win`, `hot_streak`, `hearts_refilled`, `gems_earned`,
+`daily_goal` and `welcome`, then wire what Zach ratifies through `Celebration`, without a file that
+items 30 to 32 own.
+
+### 11.2 What was checked first, 2026-10-15
+
+| # | Fact | Source |
+|---|---|---|
+| 1 | Item 61 is commit `0caa3ec` on the local `main`; this branch was fast-forwarded to it; 18 `.lottie` files exist | `git log --oneline main -5`; `git merge --ff-only main`; `ls assets/celebrations/*.lottie \| wc -l` |
+| 2 | A streak day is counted in one place: `finishSession` calls `recordFinishDay` for every session played to its end. A first finish starts the streak at 1, and a finish on a new local day adds 1 | `app/src/game/session.ts:56-59`; `app/src/game/streak.ts:20-28` |
+| 3 | No rule exists for a streak or XP milestone, an achievement, a daily goal or a run of right answers | `grep -rn -i -E "achievement\|daily.?goal\|milestone\|hot.?streak\|in a row" app/src` finds only lesson prose and comments |
+| 4 | XP is 10 for each right answer in a lesson, a boss or a review and 5 in practice. One pass of the path (20 lessons and 4 bosses of 10 exercises) gives at most 2,400 XP; reviews and practice give more, and practice has no end | `app/src/config/dials.ts:16-19`, `:136`; `lessonsPerUnit` at `:18` and the four units of `app/src/content/schema.ts` `UnitId` |
+| 5 | Gems are paid in one place, the chest | `app/src/game/chest.ts:26-30`; a grep for gem additions under `app/src` finds only `chest.ts:29` |
+| 6 | A refill is `refillLives`, called only by the out-of-lives screen, which then replaces its route with the lesson, so the path does not show between the refill and the lesson. While `devUnlimitedLives` is true no heart is lost, so the sheet never opens in the current build | `app/src/game/lives.ts:37-43`; `app/src/screens/out-of-lives-screen.tsx:28-34`; `app/src/config/dials.ts:12-15` |
+| 7 | Onboarding ends in `completeOnboarding`, called from the level and placement screens; the root navigator then closes onboarding and opens the tabs | `app/src/game/placement.ts:32-34`; `app/src/screens/level-screen.tsx:23`, `:37`; `app/src/screens/placement-screen.tsx:37`, `:41`; `app/src/components/root-stack.tsx:17-21` |
+| 8 | No written exercise is a royal flush: the one straight flush exercise tops out at 9. The hand-name dealer deals a royal flush at weight 0.25 of 8.5, about 3% of dealt hand-name exercises; they are dealt in practice sets, in lessons `hands-3` and `hands-5`, and in every boss | `app/src/content/units/hands.ts:167-171`; `app/src/drills/hand-name.ts:24-35`; `app/src/config/dials.ts:151`; `HANDOFF.md` code map (`dealt-slots.ts`) |
+| 9 | A call exercise with `cardsToCome` 2 is an all-in call. One is written with "call" as its key, and the odds dealer deals more | `app/src/content/schema.ts:76-85`; `app/src/content/units/odds.ts:544-552`; `app/src/drills/odds.ts:117` |
+| 10 | No pot is won anywhere in the app. The GTO trainer's hand review is planned to show "the winner and the pot" | `docs/incomplete/gto-trainer/PLAN.md` BD-T5 |
+| 11 | Every session is one loop: `useLessonRun` checks an answer, and `LessonRunView` draws the `FeedbackSheet`. The leave dialog that item 32 owns is a separate part of that file | `app/src/components/lesson/use-lesson-run.ts:32-47`; `app/src/components/lesson/lesson-run-view.tsx:75-82` (the sheet) and `:119-141` (the dialog) |
+| 12 | Of the 19 files in `app/src/screens/`, 11 draw a `LessonButton`: item 30 owns `chest-screen.tsx`, and item 32 owns the other ten call sites and `learn-screen.tsx` and `profile-screen.tsx`. Not owned: `out-of-lives-screen.tsx` and the development screens | `grep -rn LessonButton app/src/screens`; `PASSOFF.md` rows 30 and 32 |
+| 13 | `RootProviders` holds what sits above every route, under one `PlayerProvider` | `app/src/components/root-providers.tsx:6-16`; `app/src/app/_layout.tsx:7-13` |
+| 14 | A fixture and a reset make a new player: both build on `freshState`, which takes `chestSeed` from the clock, and no action changes `chestSeed` | `app/src/game/player-state.ts:59`; `app/src/game/fixtures.ts:21-28`; `app/src/game/settings.ts:40-41`; `grep -rn chestSeed app/src` |
+| 15 | The rays are a tint of 45% white at 35% opacity, which reads khaki on the dark page | `tools/build_celebrations.py:104-105`, `:162`; `HANDOFF.md` step 55, open finding (b) |
+
+### 11.3 The twelve
+
+| Celebration | The moment | Trigger in the app | Where it would play | Recommendation |
+|---|---|---|---|---|
+| `streak_extended` | The first session played to its end on a new local day | Yes: `recordFinishDay` (`streak.ts:24`, `:27`) through `finishSession` (`session.ts:59`) | The celebration layer over the tabs, after the session closes | Wire now |
+| `streak_milestone` | The same moment, when the new length is a milestone | The moment exists; the thresholds do not | The layer, in place of `streak_extended` that day | Wire now, thresholds as a dial |
+| `xp_milestone` | Total XP passes a milestone | The moment exists (`session.ts:58-59`); the thresholds do not | The layer | Wire now, thresholds as a dial |
+| `achievement` | None defined | None: no achievement system (fact 3) | None | Park: an achievement system needs its own design, and the list of them would live on Profile, which is item 32's |
+| `royal_flush` | A right answer on a hand-name or showdown exercise whose winning hand is a royal flush | The data exists (`app/src/cards/evaluate.ts:69`); the rule does not | The feedback sheet | Wire now |
+| `chip_jackpot` | Winning a big pot | None (fact 10) | None | Park until the GTO trainer's hand review, which shows the pot |
+| `all_in_win` | A right "call" on an all-in call exercise | The data exists (fact 9); the rule does not | The feedback sheet | Wire now |
+| `hot_streak` | Right answers in a row inside one session | None: the run counts right answers but not a run of them (`app/src/components/lesson/lesson-run.ts:35-42`) | The feedback sheet | Wire now, the run length as a dial |
+| `hearts_refilled` | A refill with gems | Yes: `refillLives` at `out-of-lives-screen.tsx:28-34` | The out-of-lives screen, over the path, before it moves on to the lesson | Wire now; seen only with `devUnlimitedLives` set false for the check |
+| `gems_earned` | Gems paid | Only the chest (fact 5), on item 30's screen | None outside item 30 | Leave it to item 30 for the chest's gem roll |
+| `daily_goal` | Today's XP reaches a goal | None: no XP per day is stored (`app/src/game/player-state.ts:6-30`) | The layer | Park; building it means stored version 6 with a migration (rule Q2) |
+| `welcome` | Onboarding ends | Yes: `completeOnboarding` (fact 7) | The layer, when the path first shows | Wire now |
+
+### 11.4 How the recommended wiring works
+
+Three places play a celebration, and each goes through `Celebration` (rule U6).
+
+1. **The celebration layer, over the tabs.** A host mounted in `RootProviders` compares each new
+   player state with the one before it, through a pure rule in `app/src/game/` that takes the time
+   (rules B2 and B3), and queues what it finds: the streak, an XP milestone, the welcome. It draws
+   the queue one celebration at a time, full screen, with the number in `GameText` (`GF-21`) and a
+   Continue button, and only while a tab route shows, so a moment won in a lesson waits until the
+   lesson closes, as Duolingo shows its streak after the lesson. A state with another `chestSeed`
+   is a fixture or a reset (fact 14), so nothing between the two is celebrated.
+2. **The feedback sheet.** A pure rule picks at most one moment for each checked answer: a royal
+   flush first, then an all-in call, then a run of right answers. The sheet plays it above itself
+   and its heading names it.
+3. **The out-of-lives screen.** After a refill, `hearts_refilled` plays over the path, and the
+   screen moves on to the lesson when it ends or is tapped.
+
+### 11.5 Files item 62 would own, checked against items 30 to 32
+
+New: `app/src/game/celebration-moments.ts` and `app/src/game/answer-moment.ts`, each with its test
+(rule Q1); `app/src/components/celebrate/` (the host, the layer, the queue hook and the copy, with
+the copy's test). Changed: `app/src/components/root-providers.tsx` (mount the host);
+`app/src/components/lesson/use-lesson-run.ts` (the moment at Check);
+`app/src/components/lesson/feedback-sheet.tsx` (draw it); `app/src/screens/out-of-lives-screen.tsx`
+(the refill); `app/src/config/dials.ts` (its own block, `// celebrations`, as items 30, 31 and 40
+each keep their own); `app/src/game/fixtures.ts` (a fixture one finish short of a milestone, for the
+screenshots); and, if the rays are fixed, `tools/build_celebrations.py` and the 18 files it writes.
+The record: `HANDOFF.md`, `PASSOFF.md`, this section, `docs/incomplete/game-feel/PLAN.md` (the
+runtime entries).
+
+None of these is in the "Files it owns" column of items 30 to 32 (`PASSOFF.md:50-52`), with one
+exception: the feedback sheet needs one new prop where `LessonRunView` draws it
+(`lesson-run-view.tsx:75-82`). Item 32 names that file for "the leave dialog only" (`:119-141`), so
+the line is outside its part, but the file is in its column, and that is Zach's call. Without it,
+the three in-session celebrations wait for item 32. A second, smaller collision: registry entry Z2
+of `docs/conventions-typescript.md` lists what `RootProviders` mounts, and item 32 owns that file,
+so the line is left as it is and the gap is recorded in the ledger.
+
+### 11.6 Dials, proposed
+
+| Dial | Proposed | Why |
+|---|---|---|
+| `streakMilestones` | 3, 7, 14, 30, 50, 100, 365 days | An early win at 3, then the Duolingo marks |
+| `xpMilestones` | 250, 500, 1,000, 2,500, 5,000, 10,000 XP | The first lands in the third lesson; 2,500 is about one whole pass of the path (fact 4) |
+| `hotStreakRun` | 5 right in a row, once in a session | Half a lesson; a perfect lesson already ends in `perfect_lesson` |
+
+### 11.7 Hazards this work walks into
+
+- One finish can bring two moments (a streak and an XP milestone). The layer shows them one after
+  another, each with its own Continue, so none hides another.
+- The queue lives in memory. If the app is closed before the path shows, the show is lost; the
+  state was saved by the action, so nothing else is.
+- Item 30 will roll the streak number on the lesson finish, and the layer then shows the streak
+  celebration on the path. Duolingo shows the two in this order.
+- `devUnlimitedLives` (fact 6) hides the refill, so its screenshots need the dial set false on the
+  simulator and put back before the hand-back.
+- A layer that diffs states can fire on a fixture load; the `chestSeed` rule (11.4) is what stops
+  it, and its test must load a fixture over a live state.
+- The rays (fact 15) show in every screenshot of this item, so they are cheaper to fix before the
+  screenshots than after.
+- No celebration has been seen on Android (`HANDOFF.md` step 55).
+
+### 11.8 Open questions, asked in chat on 2026-10-15
+
+(a) Which moments to wire now, and whether item 62 may add the one prop in `lesson-run-view.tsx`.
+(b) The thresholds of 11.6. (c) Whether the rays are fixed first in `tools/build_celebrations.py`.
+(d) The lines each celebration says.
+
+### 11.9 Answers
+
+Asked in chat through the question tool on 2026-10-15, with a recommendation on each. Every answer
+was the recommendation.
+
+| Ask | Answer |
+|---|---|
+| Which celebrations to wire now | The recommended eight: `streak_extended`, `streak_milestone`, `xp_milestone` and `welcome` on a layer over the tabs; `hearts_refilled` on the out-of-lives screen; `royal_flush`, `all_in_win` and `hot_streak` in the feedback sheet, with one new prop line in `lesson-run-view.tsx` outside item 32's leave dialog. `achievement`, `chip_jackpot` (for the GTO hand review) and `daily_goal` are parked; `gems_earned` is left to item 30's chest |
+| The thresholds | As proposed in 11.6: streak 3, 7, 14, 30, 50, 100 and 365 days; XP 250, 500, 1,000, 2,500, 5,000 and 10,000; a hot streak at 5 right in a row, once a session |
+| The rays | Fixed first in `tools/build_celebrations.py`: less white and more opacity, checked on the light and dark pages of `preview.html` before any screen |
+| The lines | Warm, as written (below, in `GF-27`) |
+
+### 11.10 Decisions
+
+#### GF-24. Three places play a celebration, and each moment has one
+
+Decided 2026-10-15 (Zach). Between sessions, a layer over the tabs plays `streak_extended`,
+`streak_milestone`, `xp_milestone` and `welcome`, found by comparing each new player state with the
+one before it through a pure rule that takes the time; it waits until a tab route shows, so a moment
+won in a session plays after the session closes. Inside a session, the feedback sheet plays at most
+one of `royal_flush`, `all_in_win` and `hot_streak` for each checked answer, in that order. The
+out-of-lives screen plays `hearts_refilled` after a refill, before it moves on to the lesson. Amends
+`GF-23`, which named a board item for these moments and no place. Defense: nearly every screen file
+is owned by items 30 to 32 (11.2, fact 12), and the root, the answer loop and the out-of-lives screen
+are the three places a moment can be seen without one of them. Against: the layer is a second way a
+celebration reaches the screen besides a screen's own, so a moment a screen also shows (item 30's
+streak roll) is shown twice, once on the finish and once on the path, in Duolingo's order.
+
+*As built, 2026-10-15 (board item 62, `HANDOFF.md` step 57):* the rule of the layer is
+`stateMoments(before, after, now)` in `app/src/game/celebration-moments.ts`, with its test. The
+streak moment is "the streak's last day is today and was not before": only a finish writes today
+there, and a freeze moves it at most to yesterday, so a freeze plays nothing. A state with another
+`chestSeed` plays nothing, which covers a fixture and a reset. `CelebrationHost`
+(`app/src/components/celebrate/celebration-host.tsx`) is mounted in `RootProviders` after the
+navigator; `useCelebrationQueue` compares states while rendering and keeps the queue in memory; the
+layer shows only while `useSegments()` starts with `(tabs)`. The rule of the sheet is
+`answerMoment(exercise, history)` in `app/src/game/answer-moment.ts`, with its test: a royal flush
+is the key of a hand-name exercise or the hand of a showdown winner, an all-in win is a call with
+two cards to come whose key is to call, and the hot streak is only the answer that first completes
+a run of five, so a session plays it once and a run that a rarer moment completed is not played a
+step late. `useLessonRun` keeps the run's history and puts the moment into `feedbackWords`, so the
+one new line in `lesson-run-view.tsx` is `moment={feedbackWords.moment}` at the `FeedbackSheet` call.
+Two calls the build took, each reversible in one file: (1) the art is drawn in a circle
+(`app/src/components/celebrate/celebration-disc.tsx`), because the rays run to the corners of the
+square canvas and on the screen they stopped in a hard square edge (seen on the iOS simulator,
+2026-10-15); a circle ends them in a round burst. Reversal: render `Celebration` where the disc is.
+(2) After a refill the layer waits for its Continue before it opens the lesson; 11.4 said the screen
+moves on "when it ends or is tapped", but every other layer waits for Continue, so the player reads
+the line in the same way everywhere. Reversal: call `moveOn` from the disc's `onEnd`. The sheet's art
+was first placed at `bottom: "100%"` and overlapped the heading on the iOS simulator, so it is placed
+by its own size, a negative `top`.
+
+#### GF-25. Parked: `achievement`, `chip_jackpot` and `daily_goal`; `gems_earned` is item 30's
+
+Decided 2026-10-15 (Zach). `achievement` waits for an achievement system with a design of its own;
+`chip_jackpot` waits for the GTO trainer's hand review, which shows the pot (`docs/incomplete/gto-trainer/PLAN.md`
+BD-T5); `daily_goal` waits for a reason to store XP by day, which needs stored version 6. `gems_earned`
+has only the chest as a source (11.2, fact 5), so it is item 30's to play at the chest's gem roll if
+it wants it. Defense: each has no moment in the app today, and inventing one would be a new game
+rule chosen by a celebration file. Against: four painted heroes sit unused until then.
+
+#### GF-26. The thresholds are dials
+
+Decided 2026-10-15 (Zach). `streakMilestones` 3, 7, 14, 30, 50, 100, 365; `xpMilestones` 250, 500,
+1,000, 2,500, 5,000, 10,000; `hotStreakRun` 5, once a session. On a milestone day
+`streak_milestone` plays in place of `streak_extended`. When one change passes two XP milestones,
+the higher one plays. Defense: 11.6.
+
+*As built, 2026-10-15 (board item 62):* the block `// celebrations` in `app/src/config/dials.ts`
+holds the three dials. The fixture `streak-eve` (`app/src/game/fixtures.ts`, test
+`fixtures-streak-eve.test.ts`) is one finish short of the 7-day milestone and of 1,000 XP, so the
+layer's two milestones can be seen after one lesson.
+
+#### GF-27. The lines
+
+Decided 2026-10-15 (Zach), the warm register of `D10`. The number is drawn in `GameText` over the
+art (`GF-21`). The layer has one button, Continue.
+
+| Celebration | Title | Line |
+|---|---|---|
+| `streak_extended` | "{n} day streak!" | "You came back. That is how it sticks." |
+| `streak_milestone` | "{n} day streak!" | "{n} days in a row. Flop is proud of you." |
+| `xp_milestone` | "{n} XP!" | "Every right answer got you here." |
+| `welcome` | "Welcome aboard!" | "Flop, Kicker and Ace are glad you sat down." |
+| `hearts_refilled` | "Hearts full!" | "Back to the table." |
+| `hot_streak` | "{n} in a row!" (the sheet's heading, in place of "Nice read!") | none |
+| `royal_flush` | "Royal flush!" (the sheet's heading) | none |
+| `all_in_win` | "All in, and right!" (the sheet's heading) | none |
+
+The fish is named through `CAST` (`app/src/content/cast.ts:11-13`), not written into the string.
+
+*As built, 2026-10-15 (board item 62):* the lines are in
+`app/src/components/celebrate/celebration-copy.ts` (`layerCopy`, `HEARTS_REFILLED`, `sheetHeading`),
+checked word for word by `celebration-copy.test.ts`. A number of four digits or more is written
+with a comma ("1,000 XP!"), built in code, so the title is the same whatever the phone's locale. The
+title is `GameText` at the medium size, or the small one when the medium would run past the column
+("Welcome aboard!" on the iPhone 17 Pro). No sound was added; the layer's Continue gives the press
+touch and sound that every `PrimaryButton` of the loop gives.
+
+#### The rays (an amendment of `GF-20`)
+
+Decided 2026-10-15 (Zach): fixed first, in `tools/build_celebrations.py`, before any screen.
+
+*As built, 2026-10-15 (board item 62):* `RAY_WHITE` 0.25 and `RAY_OPACITY` 65
+(`tools/build_celebrations.py`, the ray constants and their comment), in place of 0.45 and 35. The
+ask proposed "about 15% white, about 55%". Five pairs were built in a scratch copy and compared at
+the held last frame on `#141824` and `#F4F5FA` in lottie-web: 0.45 and 35 (the old rays), 0.15 and
+55, 0 and 45, 0.25 and 65, 0.1 and 75. At 0.15 and 55 the gold still read as mustard on the dark
+page; 0.25 and 65 kept it a light gold there and did not crowd the hero on the light page; 0.1 and 75
+was heavy on the light page. The gate rewrote all 18 archives, byte-identical across two runs, one on
+Python 3.15.0 and one on 3.14.8 under `PYTHONHASHSEED=7`.
+
+### 11.11 Rules that survive unchanged
+
+Everything in 10.5. Items 30 to 32 keep every file in their columns but the one prop line of `GF-24`;
+the six celebrations of item 30 stay item 30's; no game rule of `D8`, `D19` or `GF-13` changes; the
+stored shape does not change, so `STATE_VERSION` stays 5.

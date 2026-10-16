@@ -9,8 +9,9 @@ import { freshState } from "@/game/player-state";
 // BD-13: named player states, so a screenshot or a runtime-pass entry names a fixture and not a
 // hand-made state. Each is built from the outline, so it holds the content's real ids.
 // `fresh` is a first launch, so it opens onboarding (D20); `placed` and `all-done` came with
-// phase 16, so the path after a passed check and an open Practice tab can be seen.
-export const FIXTURE_NAMES = ["fresh", "unit1-mid", "zero-lives", "boss-ready", "placed", "all-done"] as const;
+// phase 16, so the path after a passed check and an open Practice tab can be seen. `streak-eve`
+// came with board item 62, so the celebration layer's milestones can be seen after one lesson.
+export const FIXTURE_NAMES = ["fresh", "unit1-mid", "zero-lives", "boss-ready", "placed", "all-done", "streak-eve"] as const;
 
 export type FixtureName = (typeof FIXTURE_NAMES)[number];
 
@@ -24,6 +25,7 @@ export function fixtureState(name: FixtureName, outline: PathOutline, now: Date)
   if (name === "zero-lives") return unitOneState(outline, now, 3, 0);
   if (name === "placed") return placedState(outline, now);
   if (name === "all-done") return allDoneState(outline, now);
+  if (name === "streak-eve") return streakEveState(outline, now);
   return unitOneState(outline, now, DIALS.lessonsPerUnit, DIALS.maxLives);
 }
 
@@ -51,6 +53,13 @@ function allDoneState(outline: PathOutline, now: Date): PlayerState {
     passedBosses: unitIds,
     openedChests: unitIds,
   };
+}
+
+// GF-26: unit 1 midway, one finish short of the 7-day streak milestone and of 1,000 XP, so the next
+// lesson finished plays both milestones on the path, one after the other
+function streakEveState(outline: PathOutline, now: Date): PlayerState {
+  const mid = unitOneState(outline, now, 3, DIALS.maxLives);
+  return { ...mid, xp: 940, streak: { length: 6, lastDay: addDays(dayKey(now), -1) } };
 }
 
 // A player who finished the first lessons of unit 1 on earlier days: a 4-day streak whose last

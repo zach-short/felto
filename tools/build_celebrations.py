@@ -9,8 +9,8 @@ the reason that file's docstring gives.
 Every celebration is one Lottie animation, 400 by 400 at 60 frames a second, that plays once in
 2.4 s, under its 2.5 s ceiling (GF-22, checked()), and ends on a held pose: the hero at scale 100
 and rotation 0, the rays still showing, every particle gone. Back to front:
-- rays: twelve thin wedges in a light tint of the celebration's colour at 35% opacity, which grow
-  in over 0.3 s and turn 30 degrees over the whole animation.
+- rays: twelve thin wedges in a tint of the celebration's colour, a quarter white, at 65% opacity,
+  which grow in over 0.3 s and turn 30 degrees over the whole animation.
 - the hero: the painted PNG from assets/celebrations/art/ (tools/import_celebrations.py) as an
   image layer. A null parent fits its longer side to 70% of the canvas, so the hero's own scale
   keyframes are the motion alone and end at 100. Its anchor is its centre, or its top edge for
@@ -101,8 +101,12 @@ HERO_SHARE = 0.7
 RAY_COUNT = 12
 RAY_SPAN = 9  # degrees each wedge covers
 RAY_REACH = 290  # past the canvas corners, 283 from the centre
-RAY_WHITE = 0.45  # the share of white in a ray's tint
-RAY_OPACITY = 35
+# A pale tint at a low opacity blends to khaki on the app's dark page (#141824): the rays of board
+# item 61, 45% white at 35%, did. Board item 62 compared five pairs on both pages in lottie-web and
+# kept this one, which stays a light colour on the dark page and does not crowd the hero on the
+# light one (game-feel DESIGN.md, GF-27, the rays)
+RAY_WHITE = 0.25  # the share of white in a ray's tint
+RAY_OPACITY = 65
 RAY_GROW = 18  # 0.3 s
 RAY_TURN = 30
 

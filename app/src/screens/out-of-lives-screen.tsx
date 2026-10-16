@@ -2,6 +2,8 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 
+import { HEARTS_REFILLED } from "@/components/celebrate/celebration-copy";
+import { CelebrationLayer } from "@/components/celebrate/celebration-layer";
 import { outOfLivesOffer } from "@/components/lives/out-of-lives-offer";
 import { OutOfLivesSheet } from "@/components/lives/out-of-lives-sheet";
 import { refilledRoute } from "@/components/path/stop-route";
@@ -25,16 +27,26 @@ export function OutOfLivesScreen() {
     leaving.current = true;
     router.back();
   };
+  // GF-24 (board item 62): a refill closes the sheet and plays hearts_refilled over the path; its
+  // Continue then opens the lesson the player tapped, as the refill did at once before
+  const [refilled, setRefilled] = useState(false);
+  const movedOn = useRef(false);
   const refill = () => {
     if (leaving.current || !actions.refillLives().ok) return;
     leaving.current = true;
+    setRefilled(true);
+  };
+  const moveOn = () => {
+    if (movedOn.current) return;
+    movedOn.current = true;
     const next = refilledRoute(kind, id);
     if (next) router.replace(next);
     else router.back();
   };
   return (
     <View style={styles.fill}>
-      <OutOfLivesSheet shown offer={outOfLivesOffer(state, now)} onRefill={refill} onClose={close} />
+      <OutOfLivesSheet shown={!refilled} offer={outOfLivesOffer(state, now)} onRefill={refill} onClose={close} />
+      {refilled ? <CelebrationLayer name="hearts_refilled" copy={HEARTS_REFILLED} onContinue={moveOn} /> : null}
     </View>
   );
 }

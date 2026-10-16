@@ -79,7 +79,7 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 | 59 | Merge the second game-feel pass branches into `main` and reconcile the docs | `DONE: HANDOFF 50` | Opus 5.5 | F | nothing (items 50, 51 and 52 part A committed on their branches, 2026-10-05) | `CLAUDE.md`, `.personal-config.json`, `docs/conventions-typescript.md`, `docs/conventions-python.md`, `docs/README.md`, `HANDOFF.md` (code map and one step), `app/src/components/screen.tsx` (one stale comment) |
 | 60 | GTO trainer: RF-3, a per-class realization adjustment: scope, re-freeze, re-solve, re-export | `OPEN` | Fable 5.1 | H | Zach's answers to the GATE 1 batch of its step 2 (items 38 and 39 are `DONE`) | `solver/config.py`, `solver/cfr.py`, `solver/best_response.py`, `solver/*_test.py`, `solver/tune.py` (new), `solver/data/key.json` (item 38's output), `docs/incomplete/gto-trainer/KEY-SPEC.md` (3.2, 4, 7.5, 8.5, 10, 11, 12 and a new 13), `docs/incomplete/gto-trainer/PLAN.md` (section 1, phases 3a to 4), `docs/README.md` (the `KEY-SPEC.md` line), `app/src/gto/key.ts` (the hash constant only), `app/src/gto/data/` (through item 39's export) and `app/src/gto/key.test.ts` (the pinned containment list, `HANDOFF.md` step 54) |
 | 61 | Eighteen celebrations: painted Higgsfield heroes animated by Lottie, with a generator, a preview page and `/dev/art` entries (game-feel `GF-20` to `GF-23`) | `DONE: HANDOFF 55` | Opus 5.5 | S | nothing | `tools/import_celebrations.py` (new), `tools/build_celebrations.py` (new), `tools/build_lottie.py` (the lift of `star`, `dot` and `twinkle` only), `assets/higgsfield-celebrations/` (new, kept as received), `assets/celebrations/` (new: the `.lottie` files, `art/` and `preview.html`), `.claude/launch.json` (new), `app/metro.config.js`, `app/src/types/lottie.d.ts` (new), `app/src/art/celebrations.ts`, `celebration.tsx`, `celebrations.test.ts` and `celebration-files.test.ts` (all new), `app/src/art/lottie-boundary.test.ts`, `app/src/screens/dev-art-screen.tsx` (the Celebrations section only), `docs/conventions-python.md`, `docs/conventions-typescript.md`, `docs/AGENT-PRACTICES.md` and `.personal-config.json` (the gate line only), `CLAUDE.md`, `HANDOFF.md`, `PASSOFF.md`, `docs/incomplete/game-feel/DESIGN.md` (section 10), `docs/incomplete/game-feel/PLAN.md` (section 9), `docs/README.md` (the game-feel lines) |
-| 62 | Scope and wire the celebrations that board item 30 does not own | `OPEN` | Opus 5.5 | S | item 61 committed (it plays the files and the player that item 61 wrote) | To be fixed by its scope step. It must not name a file that items 30 to 32 own |
+| 62 | Scope and wire the celebrations that board item 30 does not own (game-feel `GF-24` to `GF-27`) | `DONE: HANDOFF 57` | Opus 5.5 | S | item 61 committed (it plays the files and the player that item 61 wrote) | `app/src/game/celebration-moments.ts`, `app/src/game/answer-moment.ts` and their tests (all new), `app/src/components/celebrate/` (new), `app/src/components/root-providers.tsx`, `app/src/components/lesson/use-lesson-run.ts`, `app/src/components/lesson/feedback-sheet.tsx`, `app/src/components/lesson/lesson-run-view.tsx` (one prop at the `FeedbackSheet` call only, Zach's yes of 2026-10-15; the leave dialog stays item 32's), `app/src/screens/out-of-lives-screen.tsx`, `app/src/config/dials.ts` (its own block `// celebrations`), `app/src/theme/tokens.ts` (two `ART_SCALE` entries), `app/src/game/fixtures.ts` (one new fixture) and `fixtures-streak-eve.test.ts` (new), `tools/build_celebrations.py` (the rays only), `assets/celebrations/*.lottie`, `HANDOFF.md`, `PASSOFF.md`, `docs/incomplete/game-feel/DESIGN.md` (section 11), `docs/incomplete/game-feel/PLAN.md` (the runtime entries) |
 
 **Do not paste a prompt marked DONE**: a fresh session would build it again.
 
@@ -117,6 +117,22 @@ an XP milestone and the streak milestone thresholds. So its first step is a scop
 calls, asked in one batch before any code (R6). It waits on item 61 being committed, because it
 plays the files and the player that item 61 wrote. Its "Files it owns" are fixed by that scope
 step, and it must not name a file that items 30 to 32 own. No prompt is written for it yet.*
+
+*Item 62 was scoped and built on 2026-10-15 (`HANDOFF.md` step 57; `docs/incomplete/game-feel/DESIGN.md`
+section 11, decisions `GF-24` to `GF-27`). Eight of its twelve play: the streak, its milestones, the
+XP milestones and the welcome on a layer over the tabs, the royal flush, the all-in win and the hot
+streak in the feedback sheet, and hearts refilled on the out-of-lives screen. `achievement`,
+`chip_jackpot` and `daily_goal` are parked by Zach (`GF-25`). Three things for the items that come
+after it. Item 30: `gems_earned` is yours to play at the chest's gem roll if you want it (`GF-25`),
+and this paragraph's claim that item 30 uses `review_done` and `practice_done` "on the screens it
+owns" does not match row 30, which does not own `review-finish.tsx` or `practice-finish.tsx`; that
+is Zach's to settle when item 30 is opened. Item 32: `lesson-run-view.tsx` now has one line of item
+62's, `moment={feedbackWords.moment}` at the `FeedbackSheet` call, outside your leave dialog, by
+Zach's yes of 2026-10-15; and when the out-of-lives sheet becomes a `GameSheet`, keep its `shown`
+prop closing it, because `out-of-lives-screen.tsx` hides the sheet with `shown={!refilled}` while
+`hearts_refilled` plays. Registry entry Z2 of `docs/conventions-typescript.md` names what
+`RootProviders` mounts and now misses `CelebrationHost`; that file is item 32's, so the line waits
+for it.*
 
 ### 1. Write the Python code standard for the asset generators
 

@@ -493,3 +493,53 @@ All three are `open` on 2026-10-15: the session that built the files saw them pl
   then `/dev/art`, the Celebrations section.
 - (c) Right answer: all 18 show the hero at its last pose with the rays in place, with no movement
   and no particles (`GF-8` and `GF-22`, `celebrationMode` in `app/src/art/celebrations.ts:49`).
+
+### 9.2 Runtime entries for board item 62
+
+Written 2026-10-15 by board item 62 (`DESIGN.md` 11, `GF-24` to `GF-27`, `HANDOFF.md` step 57).
+Entries (d) to (h) were seen by the session on the iOS simulator in dark mode; which were seen on
+the Android emulator is in step 57. Zach has walked none of them. A development link opens each
+case; `felto://dev/fixture/<name>` loads a fixture first.
+
+- (d) Goal: the first lesson finished on a new day plays the streak on the path after the lesson
+  closes, and a milestone day plays the milestone, then any XP milestone, one after the other.
+- (d) Where: fixture `streak-eve`, then `felto://lesson/hands-4?play=rrrrrrwwww`; on the lesson's
+  finish press Continue. For a plain extension, fixture `unit1-mid` and the same link.
+- (d) Right answer: with `streak-eve`, "7 day streak!" and "7 days in a row. Flop is proud of you."
+  over a round burst of rays, then after Continue "1,000 XP!" and "Every right answer got you
+  here.", then the path. With `unit1-mid`, "5 day streak!" and "You came back. That is how it
+  sticks.", then "250 XP!". Loading a fixture plays nothing.
+
+- (e) Goal: the fifth right answer in a row in a session plays the hot streak in the feedback sheet.
+- (e) Where: `felto://lesson/hands-4?play=rrrr`, then tap Split pot and Check.
+- (e) Right answer: the sheet's heading says "5 in a row!" in place of "Nice read!", and the juggling
+  squid plays in a round burst standing on the sheet's top edge, clear of the heading.
+
+- (f) Goal: a royal flush answered right and an all-in call answered right each play their moment.
+- (f) Where: `felto://practice-set?deal=hand-name&seed=5` (the first hand is a royal flush), tap
+  Royal flush and Check; `felto://practice-set?deal=odds&seed=8` (the first is an all-in call), tap
+  Call and Check.
+- (f) Right answer: "Royal flush!" with the fanned cards, and "All in, and right!" with Flop on the
+  chips, each above the sheet.
+
+- (g) Goal: finishing onboarding plays the welcome when the path first shows.
+- (g) Where: fixture `fresh`, then Nice to meet you, Deal me in, I am new.
+- (g) Right answer: "Welcome aboard!" and "Flop, Kicker and Ace are glad you sat down." over the cast
+  waving, then the path after Continue.
+
+- (h) Goal: a refill with gems plays hearts refilled, then opens the lesson the player tapped.
+- (h) Where: set `devUnlimitedLives` false in `app/src/config/dials.ts` for the check, fixture
+  `zero-lives`, tap the current lesson, Refill for 20 gems. Put the dial back after.
+- (h) Right answer: "Hearts full!" and "Back to the table." with the flexing heart; Continue opens
+  the lesson with 5 hearts.
+
+- (i) Goal: a screen reader can use the layer.
+- (i) Where: VoiceOver on the iOS simulator or a phone, TalkBack on Android, during (d) or (g).
+- (i) Right answer: focus lands on the line and reads the title with it ("7 day streak! 7 days in a
+  row. Flop is proud of you."), stays on the layer, and the escape gesture or Android's back button
+  presses Continue. `open`: not checked by the session.
+
+- (j) Goal: under reduced motion the layer and the sheet show the hero still.
+- (j) Where: Reduce Motion on, then (d) and (e).
+- (j) Right answer: the hero at its last pose, the rays in place, no particles; Continue works.
+  `open`: not checked by the session.
