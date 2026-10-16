@@ -155,4 +155,11 @@ export const DIALS = {
   // node in the key (gto/key.test.ts). solver/config.py holds the same number as
   // GTO_CHART_MIN_OPEN, the solver's copy of the plan's dial
   gtoChartMinOpen: 0.5,
+  // How a bot picks from its row of the key (KEY-SPEC.md 9): "sample" draws an action at its
+  // frequency, "top" plays the most frequent. Zach's answers (b) and (d) of board item 40
+  // (2026-10-15, BD-T22): sample at every node, the one under reachFloor included (gto/bots.ts)
+  gtoBotMixMode: "sample",
+  // BD-T5: after the preflop action the board runs out with no betting and goes to showdown;
+  // "scored" arrives with the flop phase, option B2 (gto/result.ts)
+  gtoPostflopMode: "runout",
 } as const;

@@ -57,9 +57,9 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 | 37 | GTO trainer phase 3a: solver core, four tuning spots (one spot until BD-T18) | `DONE: HANDOFF 52` (the dials frozen provisionally, BD-T20; the six missed bands are `KEY-SPEC.md` 8.5 and item 60's) | Fable 5.1 | H | item 36 (`DONE`); Zach's answer to (b) | `solver/cfr.py`, `solver/best_response.py`, `solver/config.py`, new `solver/*_test.py`, `docs/incomplete/gto-trainer/KEY-SPEC.md` sections 7.5 and 12 (the frozen dials and the hash) |
 | 38 | GTO trainer phase 3b: the full tree, convergence per dealt hand and the raw key file | `DONE: HANDOFF 53` | Fable 5.1 | H | item 37 (`DONE`) | `solver/cfr.py`, `solver/cfr_test.py`, `solver/best_response.py` (the per-dealt-hand gain only), `solver/data/key.json` (new, the raw output), `CLAUDE.md` (Commands: the gate line and its notes), `docs/AGENT-PRACTICES.md` Part 6 and Appendix A (the recipe and the HEAD-isolation line), `docs/conventions-python.md` (M4's paragraph and the scope paragraph), `docs/incomplete/gto-trainer/KEY-SPEC.md` 8.5 (the full-tree verdicts) |
 | 39 | GTO trainer phase 4: key export, validation and containment | `DONE: HANDOFF 54` | Opus 5.5, then a Fable 5.1 review | H | item 38 (`DONE`) | `app/src/gto/key.ts`, `app/src/gto/data/` (new), `app/src/gto/key.test.ts` (new), `docs/incomplete/gto-trainer/KEY-SPEC.md` section 10 (the second review), `app/src/config/dials.ts` (the new block `// gto-trainer`, Zach's answer (d), 2026-10-06) |
-| 40 | GTO trainer phase 5: the hand engine | `OPEN` | Opus 5.5 | I | item 39 (`DONE`; the key is on branch `gto-equity` until it merges) | `app/src/gto/` except `key.ts`, `key.test.ts`, `data/` and `grade.ts`; `app/src/config/dials.ts` (its own lines in the block `// gto-trainer`) |
-| 41 | GTO trainer phase 6: grading and the review model | `HELD` until items 39 and 40 are `DONE` | Opus 5.5, then a Fable 5.1 review of `grade.ts` | I | items 39 and 40 | `app/src/gto/grade.ts`, the review model |
-| 42 | GTO trainer phase 7: the table screen and seats | `HELD` until item 40 is `DONE` | Opus 5.5 | I | item 40 | the table component and screen, `app/src/art/` seat wiring |
+| 40 | GTO trainer phase 5: the hand engine | `DONE: HANDOFF 55` | Opus 5.5 | I | item 39 (`DONE`; the key is on branch `gto-equity` until it merges) | `app/src/gto/` except `key.ts`, `key.test.ts`, `data/` and `grade.ts`; `app/src/config/dials.ts` (its own lines in the block `// gto-trainer`) |
+| 41 | GTO trainer phase 6: grading and the review model | `OPEN` | Opus 5.5, then a Fable 5.1 review of `grade.ts` | I | items 39 and 40 (both `DONE`; item 40 is on branch `gto-engine` until it merges) | `app/src/gto/grade.ts` and the review model (new files under `app/src/gto/`, with their tests); `app/src/config/dials.ts` (its own lines in the block `// gto-trainer`) |
+| 42 | GTO trainer phase 7: the table screen and seats | `HELD` until item 41 is `DONE` (item 40 is `DONE: HANDOFF 55`; lane I runs in order, and item 41's session writes this prompt) | Opus 5.5 | I | item 40 | the table component and screen, `app/src/art/` seat wiring |
 | 43 | GTO trainer phase 8: three new characters | `HELD` until Zach has run the Higgsfield round | Opus 5.5, with Zach | J | Zach's round | `assets/higgsfield-table/`, `assets/gallery.html`, the art module |
 | 44 | GTO trainer phase 9: session flow, stored version 5 and the free allowance (version 6 if item 50 lands first, `HANDOFF 44`) | `HELD` until items 41 and 42 are `DONE` | Opus 5.5 | I | items 41 and 42 | `app/src/storage/migrations.ts`, `app/src/config/dials.ts`, the Practice screen, the session and summary routes |
 | 45 | GTO trainer phase 10: copy, runtime pass and close-out | `HELD` until items 35 to 44 are `DONE` | Sonnet 5 | I | items 35 to 44 | `docs/README.md`, `docs/incomplete/gto-trainer/`, `HANDOFF.md` |
@@ -1731,8 +1731,9 @@ The scope is `docs/incomplete/gto-trainer/DESIGN.md` and the plan is
 phase per item. Per Part 3, each session writes the next item's prompt when it closes, so only
 item 35 had its prompt below when this section was opened; items 36 to 38 gained theirs as each
 closed (2026-10-05 and 2026-10-06); item 39 gained its prompt when item 38 closed (2026-10-06),
-and item 40 gained its prompt when item 39 closed (2026-10-06). Items 41 to 45 are the plan's
-phases 6 to 10 and carry the status `HELD` until their dependency is `DONE`. Lanes: H (the key), I (the table), J (the art).
+and item 40 gained its prompt when item 39 closed (2026-10-06); item 41 gained its prompt when
+item 40 closed (2026-10-15). Items 42 to 45 are the plan's phases 7 to 10 and carry the status
+`HELD` until their dependency is `DONE`. Lanes: H (the key), I (the table), J (the art).
 Item 60 (RF-3, opened 2026-10-06 out of item 37) joins lane H after items 38 and 39.
 
 ### 35. Write the GTO game spec, freeze the key schema and check the solver is feasible
@@ -2458,6 +2459,133 @@ Not in scope, whoever asks: any change to `app/src/gto/key.ts`, `key.test.ts`, `
 Hand back: the whole-repo gate from `CLAUDE.md` green with its counts; the result of the 1,000
 hand log (illegal actions and chip errors, both 0); the rule of step 4 as built; then the two
 copyable blocks, with `git add -N` first for the new files.
+
+**Status, 2026-10-15 (`HANDOFF.md` step 55).** Done, in worktree `.claude/worktrees/gto-engine`,
+branch `gto-engine`, not yet committed. The engine is seven files under `app/src/gto/` with eight
+test files and 46 tests; the whole-repo gate is green (112 test files, 849 tests), and the log of
+1,000 seeded hands holds 0 illegal actions and 0 chip errors. Zach answered (a) to (d) with every
+recommendation: off the tree, bots call with the unit 3 chart's UTG list and fold the rest
+(`PLAN.md` BD-T21); bots sample at every node (BD-T22); the log is played inside its test.
+`python3` on this Mac is 3.15.0 without numpy since 2026-10-15, so the gate ran with `python3`
+pointed at `python3.14` (`HANDOFF.md` Known facts). Row 40 points at step 55. Do not paste this
+prompt.
+
+### 41. Grade the player's decisions against the key, and build the review model of a hand
+
+**Model: Opus 5.5, then a Fable 5.1 review of `grade.ts`. Lane I. Waits on nothing (items 39 and
+40 are `DONE: HANDOFF 54` and `55`).** Work in a worktree of your own. If branch `gto-engine` has
+merged into `main`, make it from `main`; otherwise make it from `gto-engine` once Zach has
+committed item 40, because the engine lives there and nowhere else. Run the fresh-checkout recipe
+of `docs/AGENT-PRACTICES.md` Part 6 first. Until Zach fixes the Python on this Mac, `python3` is
+3.15.0 and imports no numpy (`HANDOFF.md` Known facts): put a link named `python3` to
+`/opt/homebrew/bin/python3.14` in a scratch folder first on `PATH` for the recipe and the gate, and
+say so in the record. Lane H (item 60) keeps `.claude/worktrees/gto-equity`; do not work in it.
+
+You are picking up felto, a poker-training app. Read, in order: `HANDOFF.md` (Environment, Known
+facts, Code map, then steps 54 and 55), `docs/incomplete/gto-trainer/KEY-SPEC.md` sections 2.5
+(the payoffs), 6 (what the app may claim), 7.1 (the key's fields, `hand_reach` and `reachFloor`),
+9 (the dials that read the key) and 10 (the second review, items 1 and 2),
+`docs/incomplete/gto-trainer/DESIGN.md` section 3, option E, and the answers of section 6,
+`docs/incomplete/gto-trainer/PLAN.md` section 1 (BD-T4, BD-T5, BD-T6, BD-T21, BD-T22), section 3
+(the dials) and phase 6, `docs/AGENT-PRACTICES.md`, then `docs/conventions-typescript.md` in full.
+Session rules: never run `git commit`, `git push`, `git add -A` or `git add .`; print the two
+copyable blocks at the end (`git add -N` then `git add` the exact files you touched, then
+`git commit` the same files with a short lowercase message, with no `Co-Authored-By` line and no
+"Generated with" line). Talk to Zach in ASD-STE100 Simplified Technical English. Documents you
+write have no em dashes and no contractions. Ask Zach in chat, in one batch, before any decision
+that is his.
+
+**Why this exists.** The trainer's whole point is the review after each hand: each decision the
+player made, the solver's mix at that spot, and what the choice cost. A grader that reads the
+right table wrongly fails in silence: it calls a correct mixed play a mistake, or praises a 4-bet
+with `72o` because it read a row the key never meant (`KEY-SPEC.md` 10, second review, item 1),
+and every gate stays green. That is why the grader is one short file with a Deep review of its own,
+and why its tests are hand-worked cases, not the key's own output (`PLAN.md` phase 6, step 3).
+
+**What is fixed.** Read these; do not relitigate them.
+- E1 (`DESIGN.md` section 6, answer 4, Zach 2026-10-05): each decision shows the solved mix and
+  what the choice cost in big blinds against the best choice; a choice the solver plays at least
+  `gtoGoodFrequency` (0.10) of the time is good; a cost above `gtoMistakeCostBb` (0.15 bb) is shown
+  as a mistake (`PLAN.md` section 3). Neither dial is in `app/src/config/dials.ts` yet; they go in
+  the block `// gto-trainer`, and so does `reachFloor` (0.0001, `KEY-SPEC.md` 9), because the
+  grader reads it and every dial lives in that file (BD-14).
+- The key is read only through `app/src/gto/key.ts` (BD-T8): `gtoKey().nodes.get(id)` gives a
+  `GtoNode` with `actions`, `totals`, `reach`, `strategy`, `ev` and `handReach`, each per-hand row
+  in the order of `gtoKey().hands`. `ev` is in big blinds, and the `fold` entry is the fold payoff
+  of 2.5. `solver.exploitability_bb` is not exposed (step 54, build-level calls); if the grader
+  needs it, ask Zach before widening `key.ts`, which rows 39 and 60 name.
+- `KEY-SPEC.md` 7.1: a decision at a node whose `reach` is below `reachFloor` is "the solver never
+  gets here": no EV loss is shown. One node is: `UTG` facing the big blind's 5-bet, reach 0.000088.
+- `KEY-SPEC.md` 10, second review, item 1: 2,777 rows at hands the actor never holds at that node
+  (`hand_reach` under 1e-6) carry the uniform strategy, the CFR+ default; their EVs are valid and
+  their frequencies are not. The grader reads `hand_reach` before `strategy`. The player, unlike a
+  bot, can reach such a row: open `72o` from UTG, and UTG's row for `72o` facing a 3-bet is uniform.
+- `KEY-SPEC.md` 10, second review, item 2: at the 15 opener-facing-5-bet nodes the folds of `QQ`,
+  `JJ` and `KK` come from EV gaps under 0.001 bb, while a call there is a mistake of 0.38 to 0.52 bb
+  by EV at six nodes. Zach decides whether actions within the solver's noise grade as equal (ask
+  (a) below). The bots sample there as everywhere (BD-T22).
+- The engine (`HANDOFF.md` step 55, code map): a hand is `Hand` (`hand.ts`), its deal and its
+  `Step`s. A player decision is a step with `actor` `"player"`; its `node` is the key's node id, or
+  null for the one decision the player may take off the tree behind a bot defender (BD-T21). The
+  player's class is `handClass(hand.deal.holes[hand.deal.playerSeat])`. `handResult(hand)`
+  (`result.ts`) gives `live`, `showdown`, `winners`, `pot`, `won`, `net` (chips in tenths of a big
+  blind; `toBigBlinds` in `table.ts`), `multiway` (the player called or raised off the tree: the
+  hand is "multiway, not scored", BD-T4) and `postflop` (`"runout"`, BD-T5: nothing after the flop
+  is scored).
+- `KEY-SPEC.md` 6 (C1): a verdict names the solver ("the solver folds this 70 percent and calls 30
+  percent"), never "the GTO play", and the words "unexploitable", "perfect" and "optimal" never
+  appear. The words themselves are phase 10's (item 45), in variations for Zach (R7): this item
+  builds the model and its labels as data, and writes no copy a screen shows.
+- `app/src/gto/` imports no React, React Native or Expo module (`gto-boundary.test.ts`), so the
+  review model is pure data; a view of it is item 42's. Tests are vitest in node, a new file per
+  feature beside the code (rule Q1).
+
+Do these, in order:
+1. **`app/src/gto/grade.ts`.** For one player step at a node: the frequency of the chosen action
+   in the row, its EV loss against the row's best EV in big blinds, and a label from the dials, as
+   Zach answers (a) to (c). Read the node's `reach` against `reachFloor` and the row's `hand_reach`
+   before `strategy`. A step with no node is not graded; it says why (off the tree, BD-T21).
+2. **The review model**, in a new file beside it: the hand's player decisions in order, each with
+   the node's mix (every action with its frequency and EV), the chosen action, the cost and the
+   label; the hand marked not scored when `multiway`; and the unscored runout (the board, the
+   winners and the pot) from `handResult`.
+3. **Tests**, built from rows written in the test (rule Q3 and `PLAN.md` phase 6, step 3): a
+   correct mixed play (an action at 0.3 whose EV equals the best) is good and costs 0; an action at
+   0 with a cost above 0.15 bb is a mistake; the floor node shows no EV loss; a row with `hand_reach`
+   0 grades as Zach answers (b); a decision off the tree is not graded; and a few real rows of the
+   key, among them the `QQ` call at `UTG:fold/HJ:open/CO:3bet/HJ:4bet/CO:5bet` (EV −20.4552 against
+   −20, `HANDOFF.md` step 55) and a uniform row such as `72o` at
+   `UTG:fold/HJ:fold/CO:open/BTN:3bet`.
+4. **The Deep review.** A Fable 5.1 subagent in its own worktree, review only, with the model passed
+   explicitly: it receives `grade.ts`, its tests, `KEY-SPEC.md` 7.1, 9 and 10, and the dials, and
+   returns a verdict and every case it finds where a correct mixed play is marked a mistake or a
+   meaningless row is graded. Check its diffstat when it returns. Fix what it finds, or take it to
+   Zach if a fix is his call.
+5. **Record it.** The next free `HANDOFF.md` step (read this branch and the main checkout for the
+   number), the code map and the Environment row for the gate counts; `PLAN.md` phase 6 `BUILT` and
+   any `BD-T` the answers make; row 41 `DONE: HANDOFF n`; item 42's prompt below this one (phase 7,
+   the table screen and seats, Opus 5.5; screens proven by screenshots on the iOS simulator and the
+   Android emulator) with row 42 flipped to `OPEN`.
+
+Ask before building: (a) whether actions within the solver's noise grade as equal (item 2 of the
+second review): a band in big blinds under which two actions' EVs count as the same, as a new dial
+in the `// gto-trainer` block (the reviewer recomputed the call EVs within 0.0024 bb), or no band
+and the plain dials alone; (b) what a decision at a row whose `hand_reach` is under 1e-6 shows (item
+1): the EV loss alone with the mix hidden, the mix with a note that the solver never holds the hand
+there, or no grade; (c) the labels: two (good, mistake) with the space between them unlabelled, or
+three (good, a middle label, mistake), and which wins when an action the solver plays at least 0.10
+of the time costs more than 0.15 bb (only a noisy or meaningless row can do it). All three are his
+calls, and any answer may be no.
+
+Not in scope, whoever asks: any change to `app/src/gto/key.ts`, `key.test.ts`, `data/` or
+`solver/`; a change to the engine files of item 40 (`table.ts`, `deal.ts`, `hand.ts`, `turn.ts`,
+`bots.ts`, `play.ts`, `result.ts`), except a defect, raised with Zach first; any screen (item 42);
+stored state and the free allowance (item 44); the words a screen shows (item 45, R7); RF-3 (item
+60).
+
+Hand back: the whole-repo gate from `CLAUDE.md` green with its counts; the hand-worked cases and
+what each proves; the Deep review's verdict and what changed after it; then the two copyable
+blocks, with `git add -N` first for the new files.
 
 ## Items 46 to 57: the second game-feel pass
 

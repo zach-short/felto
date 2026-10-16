@@ -61,6 +61,8 @@ before any solver code is written, because the key is the one part nothing can f
 | BD-T19 | Phase 1, 2026-10-05, Zach's answer Q3. The `sb_vs_bb` row is open 3, 3-bet 9, 4-bet 23, 5-bet all-in; the sources say 2.63 to 3.0 times the open and the big blind is in position (`KEY-SPEC.md` 2.3, 8.3) | 10 and 25, as the first draft had |
 | BD-T16 | Phase 1, 2026-10-05. The solver is Python with numpy. One iteration over the 65-node tree costs about 10 ms on this Mac, so the hour of BD-T3 is reached only past 350,000 iterations (`KEY-SPEC.md` 9). No Rust standard is written | Rust, if phase 3b measures a run above the hour; `docs/conventions-rust.md` first, to the shape of Part 8.1 |
 | BD-T20 | Phase 3a, 2026-10-06, Zach's answer Q5 (`KEY-SPEC.md` 11, third batch). The nine leaf-model dials are frozen provisionally at the best setting inside the ranges of 3.2 (`KEY-SPEC.md` 12: `k` 2, `c` 0.5, 0.4, 0.1 with the edge in position, 0.2, 0, 0.05 with it out of position, `t` 0.1 and 0.25), which lands 13 of the 19 bands the CO, BTN and SB subtrees answer; the six misses are `KEY-SPEC.md` 8.5. No setting of the equity-bent family lands the 3-bet-pot bands (`HANDOFF.md` steps 50 and 51), and the hands those bands describe differ by features, not equity (`KEY-SPEC.md` 4, item 3). Phases 3b and 4 build on the provisional dials and hash; board item 60 scopes and builds RF-3 (a per-class adjustment from hand features, `KEY-SPEC.md` 11 (a)), re-freezes the dials, re-solves and re-exports. This moves RF-3 from BD-T12's reversal (after the phase 4 review) to a planned item, and until item 60 lands the done-when of phase 3b excludes the six bands of 8.5 | Freeze the same setting as final and let the phase 4 review judge the hands (choice (3) of step 51); or hold phase 3b until RF-3 lands (choice (2)) |
+| BD-T21 | Phase 5, 2026-10-15, Zach's answer (a) of board item 40. The rule of `KEY-SPEC.md` 5 for a decision with no node: the player who sits behind a bot defender acts once, off the tree, with three options: fold, call, or one raise one level up in the pot's own row of 2.3, read from the key's totals (over an open and a call, the defender's 3-bet size; over a 3-bet, the opener's 4-bet size). A fold returns the hand to the key's node, written without the player's fold. After a call or a raise, the opener and then the defender each fold or call, by the unit 3 chart's UTG list (`OPENING_CHART.UTG`, 25 classes): a hand on it calls, at any seat, and every other hand folds. No bot raises there, so the hand then ends and runs out (BD-T5), and its result is marked multiway (BD-T4). `app/src/gto/turn.ts` (`behindTurn`, `raiseOver`, `answerTurn`) and `bots.ts` (`chartAnswer`) | Each bot calls by the chart list for its own seat (the literal reading of BD-T4), or the raise takes another size; both are one function each |
+| BD-T22 | Phase 5, 2026-10-15, Zach's answers (b) and (d) of board item 40. A bot samples its row of the key at every node (dial `gtoBotMixMode` = `sample`): the one node under `reachFloor` (UTG facing the big blind's 5-bet, reach 0.000088) and the 5-bet nodes and one-hand flats that `KEY-SPEC.md` 10, second review, items 2 and 5 name are not special. Measured from the key on 2026-10-15: a bot folds `KK` to a 5-bet about once in 40,000 all-bot hands (fold 0.6636, 0.2691 and 0.0134 at the three nodes where it folds at all); best-EV play would fold `QQ` more often, not less (it folds at 1.0 on EV gaps of 0.455 to 0.471 bb at four nodes, and after a UTG 4-bet its fold leads by under 0.001 bb); and the flats of HJ, CO, BTN and SB come up in 0.75 percent of dealt hands. Item 60 replaces the file | Best-EV play where a node's EVs sit within the solver's noise, or a one-hand flat dropped for its best other action: one branch in `botAction` (`app/src/gto/bots.ts`) |
 
 ## 2. Phases
 
@@ -305,7 +307,33 @@ Lessons in unit 3 may now contradict the key. Record them; do not rewrite lesson
 
 ### Phase 5: Hand engine
 
-Status: `PLANNED`.
+**BUILT 2026-10-15** (board item 40, lane I, on Opus 5.5, in worktree
+`.claude/worktrees/gto-engine`, branch `gto-engine` from `main` at `8b5b54d`, `HANDOFF.md` step
+55; the commit is Zach's and pending). Zach answered the four questions of the prompt in chat on
+2026-10-15, every recommendation: (a) a bot facing the player's call or raise off the tree calls
+with a hand on the unit 3 chart's UTG list and folds the rest (BD-T21); (b) and (d) bots sample
+their row at every node, the one under `reachFloor`, the 5-bet nodes and the one-hand flats
+included (BD-T22); (c) the 1,000-hand log is played inside its test from the seeds, not kept as a
+fixture. Built under `app/src/gto/`: `table.ts` (the seats in both orders, chips in tenths of a big
+blind, the blinds), `deal.ts` (the player's seat, six hands and a board from one seed), `hand.ts`
+(a hand is its deal and its steps; the chips in the pot, the live seats, the defender), `turn.ts`
+(whose turn and the legal options: a node of the key where the history is one, the seats behind
+the defender removed by the heads-up rule, the player's decision off the tree and the bots' answer
+to it), `bots.ts` (the key's row, sampled or the top action by the dial; the chart rule off the
+tree), `play.ts` (`act`, `autoStep`, `advance`, `newHand`) and `result.ts` (the runout through
+`showdownWinners`, split pots with the odd chip to the first winner after the flop, every chip
+accounted for); and eight test files, 46 tests. Against the done-when: the gates are green, and
+the log of 1,000 seeded hands (the player in every seat, choosing at random) holds no illegal
+action, offered or taken, and conserves chips in every hand (`hand-log.test.ts`; it checks each
+step against the sizes of `KEY-SPEC.md` 2.3 written out in the test, not against the key's
+totals). Step 2 did not apply: phase 4 had landed, so the engine reads the real key from the
+start. Step 3's "a hand never reaches a node the key marks unreachable": every node a logged hand
+reaches has a `reach` above 0, and no row a key-following bot can hold is the uniform default of
+`KEY-SPEC.md` 10, second review, item 1 (`bots.test.ts`, a walk over the whole key). What this
+phase forces on later phases: the grader reads the player's decisions from `Step.node`, which is
+null off the tree; a multiway hand carries `HandResult.multiway`; chips are tenths of a big blind
+(`toBigBlinds` converts). The status line that stood here while the phase was planned was
+`PLANNED`.
 
 1. `app/src/gto/` holds the pure engine: seats, dealer button, blinds, the action tree, the
    deal from a seed (BD-T7), bot actions sampled from the key (dial `gtoBotMixMode`), and the
@@ -416,8 +444,8 @@ solver dials, which live in `solver/config.py`.
 | `gtoChartMinOpen` | 0.5 | containment test of phase 4. In `app/src/config/dials.ts` since 2026-10-06 (board item 39), the first line of the block `// gto-trainer`; `solver/config.py` keeps its copy, `GTO_CHART_MIN_OPEN` |
 | `gtoGoodFrequency` | 0.10 | a mixed action played at least this often is good |
 | `gtoMistakeCostBb` | 0.15 | above the solver error of phase 3b |
-| `gtoBotMixMode` | `sample` | the other mode plays the top action |
-| `gtoPostflopMode` | `runout` | `scored` arrives with option B2 |
+| `gtoBotMixMode` | `sample` | the other mode plays the top action. In `app/src/config/dials.ts` since 2026-10-15 (board item 40), in the block `// gto-trainer`, read by `app/src/gto/bots.ts`; Zach kept `sample` at every node (BD-T22) |
+| `gtoPostflopMode` | `runout` | `scored` arrives with option B2. In `app/src/config/dials.ts` since 2026-10-15 (board item 40); `app/src/gto/result.ts` types it as `"runout"`, so another value stops the typecheck where the postflop work begins |
 | `gtoHandsPerSession` | 10 | |
 | `gtoFreeHandsPerDay` | 10 | free allowance |
 | `gtoRequiresUnit` | none | |
