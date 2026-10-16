@@ -61,7 +61,7 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 | 41 | GTO trainer phase 6: grading and the review model | `DONE: HANDOFF 58` | Opus 5.5, then a Fable 5.1 review of `grade.ts` | I | items 39 and 40 (both `DONE`; item 40 merged into `main` on 2026-10-15) | `app/src/gto/grade.ts` and the review model (new files under `app/src/gto/`, with their tests); `app/src/config/dials.ts` (its own lines in the block `// gto-trainer`) |
 | 42 | GTO trainer phase 7: the table screen and seats | `DONE: HANDOFF 59` | Opus 5.5 | I | item 40 | the table component and screen, `app/src/art/` seat wiring |
 | 43 | GTO trainer phase 8: three new characters | `HELD` until Zach has run the Higgsfield round | Opus 5.5, with Zach | J | Zach's round | `assets/higgsfield-table/`, `assets/gallery.html`, the art module |
-| 44 | GTO trainer phase 9: session flow, stored version 6 and the free allowance (`STATE_VERSION` is 5 in `main` at `d25fed9`; read it before raising it) | `OPEN` | Opus 5.5 | I | items 41 and 42 (both `DONE`; item 42 is not yet committed, `HANDOFF 59`) | `app/src/storage/migrations.ts` and the stored state, `app/src/config/dials.ts` (its own lines in the block `// gto-trainer`), the Practice screen, the session, review and summary routes and screens, `app/src/components/table/` (only to wire the table into a session) |
+| 44 | GTO trainer phase 9: session flow, stored version 6 and the free allowance | `DONE: HANDOFF 60` | Opus 5.5 | I | items 41 and 42 (both `DONE`) | `app/src/storage/migrations.ts` and the stored state, `app/src/config/dials.ts` (its own lines in the block `// gto-trainer`), the Practice screen, the session, review and summary routes and screens, `app/src/components/table/` (only to wire the table into a session) |
 | 45 | GTO trainer phase 10: copy, runtime pass and close-out | `HELD` until items 35 to 44 are `DONE` | Sonnet 5 | I | items 35 to 44 | `docs/README.md`, `docs/incomplete/gto-trainer/`, `HANDOFF.md` |
 | 46 | Game kit: 3D text, rolling numbers, bubbles, popovers, tags, sparkles, switch, sheet and dialog | `DONE: HANDOFF 43` | Opus 5.5 | K | nothing | `app/src/components/kit/` (new), new hook files in `app/src/motion/`, `app/src/theme/tokens.ts`, `app/src/config/dials.ts` (block `// game-feel second pass`), `app/src/app/dev/kit.tsx`, `app/src/screens/dev-kit-screen.tsx`, `docs/conventions-typescript.md` |
 | 47 | Re-voice all twelve sounds as one family of chimes | `DONE: HANDOFF 40` | Opus 5.5 | L | nothing | `tools/build_sounds.py`, `assets/sounds/` |
@@ -1756,7 +1756,7 @@ phase per item. Per Part 3, each session writes the next item's prompt when it c
 item 35 had its prompt below when this section was opened; items 36 to 38 gained theirs as each
 closed (2026-10-05 and 2026-10-06); item 39 gained its prompt when item 38 closed (2026-10-06),
 and item 40 gained its prompt when item 39 closed (2026-10-06); item 41 gained its prompt when
-item 40 closed (2026-10-15); item 42 gained its prompt when item 41 closed (2026-10-16). Items 43 to 45 are the plan's phases 8 to 10 and carry the status
+item 40 closed (2026-10-15); item 42 gained its prompt when item 41 closed (2026-10-16); item 44 gained its prompt when item 42 closed, and item 45 gained its prompt when item 44 closed (2026-10-16). Items 43 to 45 are the plan's phases 8 to 10 and carry the status
 `HELD` until their dependency is `DONE`. Lanes: H (the key), I (the table), J (the art).
 Item 60 (RF-3, opened 2026-10-06 out of item 37) joins lane H after items 38 and 39.
 
@@ -2790,6 +2790,75 @@ final copy (item 45); RF-3 (item 60).
 Hand back: the whole-repo gate from `CLAUDE.md` green with its counts; the migration test named;
 the screenshots of step 5, each named; what was and was not seen running; then the two copyable
 blocks, with `git add -N` first for the new files.
+
+*Status 2026-10-16: done, `HANDOFF.md` step 60, branch `gto-session`, not yet committed. The prompt
+above is kept as written; it says version 6 and a version 5 save, which is what was built.*
+
+### 45. Write the trainer's copy, its runtime pass and close the GTO trainer effort
+
+**Model: Sonnet 5. Lane I. Waits on items 35 to 44 being `DONE`; item 43 is `HELD` until Zach has
+run the Higgsfield round, so this item stays `HELD` until then.** Work in a worktree of your own
+from a `main` that holds board item 44 (branch `gto-session` until it merges). Run the
+fresh-checkout recipe of `docs/AGENT-PRACTICES.md` Part 6 first.
+
+You are picking up felto, a poker-training app. Read, in order: `HANDOFF.md` (Environment, Known
+facts, Code map, then steps 57 to 60), `docs/incomplete/gto-trainer/PLAN.md` (section 1, BD-T14
+and BD-T26 to BD-T38, then phase 10), `docs/incomplete/gto-trainer/KEY-SPEC.md` section 6,
+`docs/incomplete/app/DESIGN.md` `D10`, then `docs/AGENT-PRACTICES.md` (R7, Part 7, Part 8.2) and
+`docs/conventions-typescript.md` in full. Session rules: never run `git commit`, `git push`, `git
+add -A` or `git add .`; print the two copyable blocks at the end (`git add -N` then `git add` the
+exact files you touched, then `git commit` the same files with a short lowercase message, with no
+`Co-Authored-By` line and no "Generated with" line). Talk to Zach in ASD-STE100 Simplified
+Technical English. Documents you write have no em dashes and no contractions. Ask Zach in chat, in
+one batch, before any decision that is his.
+
+**Why this exists.** The trainer plays and grades hands (items 40 to 44), but its words are a
+stand-in, the claim the app may make is not yet on screen, and no runtime pass tells Zach what only
+a person on a phone can check. This item finishes the effort and moves it out of `incomplete/`.
+
+**What is fixed.** Read these; do not relitigate them.
+- Every word the trainer shows on 2026-10-16 is listed in `HANDOFF.md` step 60 and lives in
+  `app/src/components/gto-session/review-words.ts`, `trainer-start.tsx`,
+  `app/src/screens/gto-session-screen.tsx`, `gto-summary-screen.tsx` and
+  `app/src/components/table/amounts.ts` (the button words of BD-T29). Zach chose the warm register
+  for the session (BD-T35) and the terse one for the buttons (BD-T29).
+- `KEY-SPEC.md` 6: the mode may be called "GTO trainer"; a verdict names the solver, never "GTO";
+  "unexploitable", "perfect" and "optimal" never appear; from every verdict one tap reaches the
+  statement of the game (six seats, 100 big blinds, no ante, no rake, one size at every raise,
+  heads-up pots only, a simplified model of play after the flop). The one tap is not built
+  (`HANDOFF.md` step 60, open (b)).
+- The allowance is a local count a player can reset by deleting the app's data; that is said in
+  code and the ledger, not in copy (`DESIGN.md` hazard 6).
+- Nothing under `app/src/gto/` changes. Words change; the grades and the engine do not.
+
+Do these, in order:
+1. **The copy ask.** For every string of step 60, and for the statement of the game, write two or
+   three variations in the registers of R7 (plain, warm, terse), and ask Zach in one batch which
+   he wants. Include the title "Hand n of 10" when fewer hands are left (step 60, open (a)).
+2. **The words in the code.** Put the chosen words in place, and build the one tap from each
+   verdict to the statement of the game with a kit piece (registry entry Z7). Keep the tests of
+   `review-words.test.ts` true to the new words.
+3. **The runtime pass.** Write `docs/incomplete/gto-trainer/RUNTIME-PASS.md` in the shape of
+   Part 7: what only a person on a phone can check (the session at the table, the review sheet, the
+   summary, the empty allowance and its reset at midnight, VoiceOver and TalkBack on a decision
+   row, Reduce Motion, a fast tap on "Next hand").
+4. **Seen on both platforms.** Screenshots of every screen whose words changed, on the iPhone 17
+   Pro simulator and the `Pixel_9` emulator, light and dark. Read the Known facts entry on the
+   shared simulator first.
+5. **Close out.** `PLAN.md` phase 10 `BUILT`; `docs/README.md` lists every file of the effort with
+   its date; the next free `HANDOFF.md` step; row 45 `DONE: HANDOFF n`. If Zach agrees, move the
+   folder to `~/Projects/archive/felto/gto-trainer/` by Part 7 "Archiving", referrers first.
+
+Ask before building: (a) the words of every string, as variations; (b) where the statement of
+the game opens (a popover from the verdict, or a sheet); (c) whether the folder is archived now or
+after item 60 (RF-3) re-exports the key. All three are his calls, and any answer may be no.
+
+Not in scope, whoever asks: any change under `app/src/gto/`; the table's layout; a paywall, a
+price or a store; the three new characters (item 43); RF-3 (item 60).
+
+Hand back: the whole-repo gate from `CLAUDE.md` green with its counts; the screenshots, each
+named; what was and was not seen running; the runtime entries of step 3 as Block B; then the two
+copyable blocks, with `git add -N` first for the new files.
 
 ## Items 46 to 57: the second game-feel pass
 

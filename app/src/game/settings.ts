@@ -36,7 +36,9 @@ export function isClockTime(hour: number, minute: number): boolean {
 }
 
 // PLAN.md phase 11: reset progress starts the path again but keeps the player's settings, and
-// keeps the welcome seen, so a reset does not walk them through onboarding twice (D20)
+// keeps the welcome seen, so a reset does not walk them through onboarding twice (D20). It keeps
+// the GTO trainer's record too (BD-T37): the trainer is not the path, and a reset that cleared the
+// day's count would be a button that refills the free allowance.
 export function resetProgress(state: PlayerState, now: Date): PlayerState {
-  return { ...freshState(now), onboarded: state.onboarded, settings: state.settings };
+  return { ...freshState(now), onboarded: state.onboarded, settings: state.settings, gto: state.gto };
 }

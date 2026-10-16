@@ -367,3 +367,11 @@ export const TABLE = {
   potChip: 0.065,
   railWidth: 6,
 } as const;
+
+// GTO trainer phase 9 (board item 44): the review sheet over the table scrolls past this share of
+// the window's height, so the felt's board and result stay in view above it; the worst hand's two
+// cards in the summary are this share of the column wide
+export const GTO_SESSION = {
+  reviewMaxHeight: 0.62,
+  summaryCard: 0.16,
+} as const;

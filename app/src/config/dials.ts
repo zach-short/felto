@@ -179,4 +179,14 @@ export const DIALS = {
   // the node, and its row is the uniform CFR+ default. Zach's answer (b) of board item 41
   // (2026-10-16, BD-T24): the grader then hides the mix and labels by EV cost alone
   gtoNeverHeldReach: 0.000001,
+  // PLAN.md phase 9 and section 3 (board item 44): the hands a session deals, and the free
+  // allowance a day (BD-T9), which only handsLeftToday reads (game/gto-allowance.ts)
+  gtoHandsPerSession: 10,
+  gtoFreeHandsPerDay: 10,
+  // A unit id the player must have passed or placed out of before the trainer opens, or null for
+  // none: a serious player who places out should not be gated (PLAN.md phase 9, step 4)
+  gtoRequiresUnit: null,
+  // Hazard 7 of the trainer's DESIGN.md: the stored history keeps only the latest finished
+  // sessions, so the stored value cannot grow without end (board item 44, BD-T36)
+  gtoSessionsKept: 100,
 } as const;

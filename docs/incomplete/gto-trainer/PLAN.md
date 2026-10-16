@@ -72,6 +72,13 @@ before any solver code is written, because the key is the one part nothing can f
 | BD-T29 | Phase 7, 2026-10-16, Zach's answer (d) of board item 42, the terse register of three asked (R7): Fold, Call 2.5, Open 2.5, 3-bet 7.5, 4-bet 22, All in 100. The button names the action the review grades. Item 45 writes the final words. `app/src/components/table/amounts.ts` (`actionLabel`) | The plain register ("Raise to 7.5 BB") or the warm one ("Raise it to 7.5"), as asked: the table `VERBS` |
 | BD-T30 | Phase 7, 2026-10-16, a build call under BD-T29. A raise shows the seat's total after it ("3-bet 7.5" means to 7.5), the way a raise is said; a call shows the chips it adds ("Call 1.5" for the big blind facing an open of 2.5), which is what the player pays | A call showing the seat's total too: one line in `actionLabel` |
 | BD-T31 | Phase 7, 2026-10-16, a build call under step 2 of this phase. While the hand runs, a character that has folded sleeps and the others are happy; once it is over, all three cheer when the player won chips, are sad when the player lost chips and are smug when the player folded for nothing. `app/src/components/table/table-view.ts` (`castPose`) | Other poses, or a character reacting to its own result: one function |
+| BD-T32 | Phase 9, 2026-10-16, Zach's answer (a) of board item 44. The review of a hand opens in a sheet over the table once the hand is over (the kit's `GameSheet`), with the felt's board and result in view above it; "Next hand" closes it and deals the next hand, and on the last hand it reads "See how you did" and opens the summary. A tap on the dimmed table does the same as the button. `app/src/screens/gto-session-screen.tsx`, `app/src/components/gto-session/hand-review.tsx` | One screen per hand between hands, or the review only in the summary: the sheet is one block of the session screen |
+| BD-T33 | Phase 9, 2026-10-16, Zach's answer (b) of board item 44. A hand counts against the day's allowance when it is dealt: the start button counts the first hand and each "Next hand" counts the next, and a refused count ends the session. A session left in the middle keeps the count of every hand it dealt, and only a finished session is stored in the history. `app/src/game/gto-allowance.ts` (`countDealtHand`) | Count a hand when it ends: the call to `dealGtoHand` moves from the deal to `handEnded` |
+| BD-T34 | Phase 9, 2026-10-16, Zach's answer (c) of board item 44. The summary leads with the count of mistakes ("2 mistakes in 18 decisions"), then the total cost in big blinds, then the worst mistake with its hand. A decision counts when `reviewHand` grades it (kind `graded`); an off-tree or unreached decision is not counted. The total cost sums every graded decision, the unlabelled ones too, so it can be more than the mistakes alone. `app/src/game/gto-session.ts` (`sessionRecord`) | Lead with the cost or the worst hand: the order of three sections in `gto-summary-screen.tsx` |
+| BD-T35 | Phase 9, 2026-10-16, Zach's answer (d) of board item 44, the warm register of three asked (R7): "Take a seat", "7 hands left for today", "That's all 10 hands for today. The table opens again tomorrow.", "Nice session!", "Spots to work on", "Chips left on the table", "The one to look at again" (the ask's preview wrote "The one to look again at", a slip in the ask; the build uses the plain word order, and item 45 may say otherwise), and the verdict "The solver folds 70% and calls 30%." The other words the screens needed are written in the same register and listed in `HANDOFF.md` step 60. All are a stand-in for item 45's copy. `app/src/components/gto-session/review-words.ts` | The plain or the terse register, as asked: the strings of one file |
+| BD-T36 | Phase 9, 2026-10-16, a build call under hazard 7 of `DESIGN.md`. The stored history keeps the latest `gtoSessionsKept` (100) finished sessions, about 200 bytes each, so the stored value has a ceiling. `app/src/game/gto-session.ts` (`addSession`) | No ceiling: the dial and one `slice` deleted |
+| BD-T37 | Phase 9, 2026-10-16, a build call. Reset progress (Profile) keeps the trainer's record, the day's count and the history: the trainer is not the path, and a reset that cleared the count would be a button that refills the allowance. `app/src/game/settings.ts` (`resetProgress`) | Clear it with the path: one field of `resetProgress` |
+| BD-T38 | Phase 9, 2026-10-16, a build call under "a screen calls `reviewHand` and never re-derives a grade". The summary reads the latest stored session, and its worst mistake is stored as the hand's seed, the player's actions in it and the decision's place, not as a grade: the summary deals the hand again from those (`replayHand`) and grades it through `reviewHand`. A hand that no longer plays the same way, as after a new key changes what the bots do (board item 60), shows the counts without the hand. `app/src/game/gto-session.ts`, `app/src/screens/gto-summary-screen.tsx` | Store the grade with the session: three more fields, checked on load |
 
 ## 2. Phases
 
@@ -433,7 +440,9 @@ is filed, and a copy is kept outside the repo.
 
 ### Phase 9: Session flow, storage and the free allowance
 
-Status: `PLANNED`.
+Status: `BUILT 2026-10-16`, not yet committed (board item 44, `HANDOFF.md` step 60), in worktree
+`.claude/worktrees/gto-session`, branch `gto-session`, from `main` at `00a854e`. Zach's answers
+are BD-T32 to BD-T35; BD-T36 to BD-T38 are build calls.
 
 1. A session of `gtoHandsPerSession` hands from a start button on the Practice tab, then a
    summary: decisions graded, total EV lost, the worst mistake with its hand.
@@ -449,6 +458,20 @@ screenshot of the empty allowance state.
 
 **Watch for:** the free allowance is a local counter and can be reset by the user (`DESIGN.md`
 hazard 6). Say so in the code comment and the ledger, not in copy.
+
+As built (2026-10-16, step 60): item 2's "stored version 5" is version 6, and the done-when's
+"a version 4 save" is a version 5 save. This plan was written when `STATE_VERSION` was 4; board
+item 50 took version 5 for the chest seed (`app/src/storage/migrations.ts`), so this phase raised
+5 to 6, and `app/src/storage/gto-migration.test.ts` loads a version 5 save. The session is the
+route `/gto-session` (`app/src/screens/gto-session-screen.tsx`) and the summary `/gto-summary`
+(`app/src/screens/gto-summary-screen.tsx`); the start is a block on the Practice tab
+(`app/src/components/gto-session/trainer-start.tsx`). Item 4's dial is `gtoRequiresUnit`, null.
+Seen on the iPhone 17 Pro simulator and the `Pixel_9` emulator, light and dark: the start
+button, a hand's review, the summary and the empty allowance. A fast tap on the review's button
+while the sheet closed dealt a hand over one not yet played, seen on the iPhone simulator; the
+session now moves on only from an open review (`canMoveOn` in
+`app/src/components/gto-session/session-state.ts`), and a run of fast taps after the fix stored
+10 hands for 10 counted.
 
 ### Phase 10: Copy, runtime pass, close-out
 
@@ -480,9 +503,10 @@ solver dials, which live in `solver/config.py`.
 | `gtoNeverHeldReach` | 0.000001 | BD-T24 (Zach, 2026-10-16): below this `hand_reach` the actor never holds the hand at the node, so the grader hides the uniform mix. In `app/src/config/dials.ts` since board item 41 |
 | `gtoBotMixMode` | `sample` | the other mode plays the top action. In `app/src/config/dials.ts` since 2026-10-15 (board item 40), in the block `// gto-trainer`, read by `app/src/gto/bots.ts`; Zach kept `sample` at every node (BD-T22) |
 | `gtoPostflopMode` | `runout` | `scored` arrives with option B2. In `app/src/config/dials.ts` since 2026-10-15 (board item 40); `app/src/gto/result.ts` types it as `"runout"`, so another value stops the typecheck where the postflop work begins |
-| `gtoHandsPerSession` | 10 | |
-| `gtoFreeHandsPerDay` | 10 | free allowance |
-| `gtoRequiresUnit` | none | |
+| `gtoHandsPerSession` | 10 | In `app/src/config/dials.ts` since 2026-10-16 (board item 44), read by `app/src/components/gto-session/session-state.ts` |
+| `gtoFreeHandsPerDay` | 10 | free allowance. In `app/src/config/dials.ts` since 2026-10-16 (board item 44), read only by `handsLeftToday` (`app/src/game/gto-allowance.ts`, BD-T9) |
+| `gtoRequiresUnit` | none | `null` in `app/src/config/dials.ts` since 2026-10-16 (board item 44), read by `trainerOpen` (`app/src/game/gto-allowance.ts`) |
+| `gtoSessionsKept` | 100 | BD-T36 (board item 44, 2026-10-16): the finished sessions the stored history keeps |
 | `gtoOpenSizeBb` | 2.5 (SB 3) | in the spec; the key carries it. Since phase 1 (BD-T13) this row is the `open` column of the sizes table in `KEY-SPEC.md` 2.3, which also fixes the 3-bet, 4-bet and 5-bet sizes |
 | `c_srp`, `c_3bp`, `c_4bp`; `c_srp_oop`, `c_3bp_oop`, `c_4bp_oop` | 0.7, 0.4, 0.2; 0.3, 0.2, 0.1 to start | phase 1 (BD-T12, BD-T18), `solver/config.py`; phase 3a tunes them inside the ranges of `KEY-SPEC.md` 3.2 on four spots and freezes them in the game object. Frozen provisionally 2026-10-06 (BD-T20): 0.5, 0.4, 0.1; 0.2, 0, 0.05 |
 | `k` | 2 (1 allowed) | phase 1 (BD-T18), `solver/config.py`; the curve exponent of `KEY-SPEC.md` 3.2. Set to 2 by phase 3a (BD-T20, 2026-10-06): at `k` 1 the button folds a small pair |

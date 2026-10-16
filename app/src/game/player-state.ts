@@ -1,4 +1,5 @@
 import { DIALS } from "@/config/dials";
+import type { GtoAction } from "@/gto/key";
 
 // Every field is plain JSON (times are epoch milliseconds), because the data module stores this
 // value as one JSON string (BD-8). A change to this shape needs a new stored version and a
@@ -27,7 +28,30 @@ export type PlayerState = {
   onboarded: boolean;
   placement: PlacementResult;
   settings: Settings;
+  // Board item 44 (stored version 6): the GTO trainer's hands dealt today and its finished sessions
+  gto: GtoRecord;
 };
+
+// BD-T9 and BD-T33: day is the local day (dayKey) on which handsToday hands were dealt. The count
+// is a local value that a player can reset by deleting the app's data (trainer DESIGN.md hazard 6),
+// so it is a development-build allowance, not a gate.
+export type GtoRecord = { day: string | null; handsToday: number; sessions: GtoSessionRecord[] };
+
+// A finished session, as the summary shows it (BD-T34). The hands were dealt from firstSeed,
+// firstSeed + 1 and on (BD-T7), so a session can be replayed.
+export type GtoSessionRecord = {
+  day: string;
+  firstSeed: number;
+  hands: number;
+  decisions: number;
+  mistakes: number;
+  costBb: number;
+  worst: GtoWorst | null;
+};
+
+// The worst mistake as the hand's seed and the player's actions in it, so the summary replays the
+// hand and grades it again through reviewHand, and never stores a grade of its own (BD-T38)
+export type GtoWorst = { seed: number; actions: GtoAction[]; decision: number };
 
 export type PlacementResult = "not-taken" | "passed" | "failed";
 
@@ -61,7 +85,12 @@ export function freshState(now: Date): PlayerState {
     onboarded: false,
     placement: "not-taken",
     settings: { sound: true, haptics: true, loganMode: false, reminder: defaultReminder() },
+    gto: freshGtoRecord(),
   };
+}
+
+export function freshGtoRecord(): GtoRecord {
+  return { day: null, handsToday: 0, sessions: [] };
 }
 
 export function withItem(list: readonly string[], item: string): string[] {

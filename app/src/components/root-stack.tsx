@@ -29,6 +29,9 @@ export function RootStack() {
         <Stack.Screen name="chest/[unit]" options={SESSION} />
         {/* Phase 15: a practice set runs the same loop over dealt exercises (D21) */}
         <Stack.Screen name="practice-set" options={SESSION} />
+        {/* GTO trainer phase 9 (board item 44): a session at the table, then its summary */}
+        <Stack.Screen name="gto-session" options={SESSION} />
+        <Stack.Screen name="gto-summary" options={SESSION} />
         {/* Unit stories, US-4: opened like a session, so the iOS swipe-back cannot take a tap
             on the left of the screen, where the story's back zone is (US-6) */}
         <Stack.Screen name="story/[unit]" options={SESSION} />

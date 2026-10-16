@@ -2,6 +2,7 @@ import { StyleSheet, View } from "react-native";
 
 import { CardArt } from "@/art/card-art";
 import { cardCode } from "@/cards/card";
+import type { Hand } from "@/gto/hand";
 import { CARD_GAP, SPACE, TABLE } from "@/theme/tokens";
 
 import { ActionBar } from "./action-bar";
@@ -11,13 +12,14 @@ import { useTableHand } from "./use-table-hand";
 type PokerTableProps = {
   seed: number;
   column: number;
+  onHand?: (hand: Hand) => void;
 };
 
 // The table of the GTO trainer (PLAN.md phase 7): the felt with the six places, the player's two
 // cards below it, large, and the options of the player's turn at the foot. It plays one hand from
-// its seed; the session around it is item 44's.
-export function PokerTable({ seed, column }: PokerTableProps) {
-  const { view, choose } = useTableHand(seed);
+// its seed; the session around it (board item 44) hears of each hand through onHand.
+export function PokerTable({ seed, column, onHand }: PokerTableProps) {
+  const { view, choose } = useTableHand(seed, onHand);
   const player = view.seats[0];
   return (
     <View style={styles.table}>

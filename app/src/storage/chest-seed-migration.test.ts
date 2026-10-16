@@ -55,9 +55,10 @@ describe("the version 5 migration (GF-13, rule Q2, board item 50)", () => {
   });
 
   it("loads a stored version 4 player with every field kept, extra ones too, and a seed from its lives clock", () => {
+    // Since version 6 the save also takes the version 5 step: the GTO trainer's empty record
     expect(loadVersion4(VERSION_4_PLAYER).result).toEqual({
       status: "loaded",
-      state: { ...VERSION_4_PLAYER, chestSeed: VERSION_4_SEED },
+      state: { ...VERSION_4_PLAYER, chestSeed: VERSION_4_SEED, gto: { day: null, handsToday: 0, sessions: [] } },
     });
   });
 

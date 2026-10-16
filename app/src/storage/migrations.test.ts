@@ -41,11 +41,12 @@ describe("the version 2 migration (rule Q2, PLAN.md phase 11)", () => {
     const raw = JSON.stringify({ version: 1, player: VERSION_1_PLAYER });
     const result = loadPlayer(memoryStore({ [PLAYER_KEY]: raw }).store, now);
     // Since version 3 a version 1 save also takes the version 2 step, which turns Haptics on, and
-    // since version 5 the version 4 step, which takes the chest seed from the lives clock
+    // since version 5 the version 4 step, which takes the chest seed from the lives clock, and since
+    // version 6 the version 5 step, which adds the GTO trainer's empty record
     const reminder = { on: true, hour: 19, minute: 0 };
     expect(result).toEqual({
       status: "loaded",
-      state: { ...VERSION_1_PLAYER, chestSeed: 3_293_604_864, settings: { sound: false, reminder, haptics: true, loganMode: false } },
+      state: { ...VERSION_1_PLAYER, chestSeed: 3_293_604_864, settings: { sound: false, reminder, haptics: true, loganMode: false }, gto: { day: null, handsToday: 0, sessions: [] } },
     });
   });
 
