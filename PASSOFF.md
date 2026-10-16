@@ -59,9 +59,9 @@ Lanes run in parallel, each in its own worktree; items inside a lane run in orde
 | 39 | GTO trainer phase 4: key export, validation and containment | `DONE: HANDOFF 54` | Opus 5.5, then a Fable 5.1 review | H | item 38 (`DONE`) | `app/src/gto/key.ts`, `app/src/gto/data/` (new), `app/src/gto/key.test.ts` (new), `docs/incomplete/gto-trainer/KEY-SPEC.md` section 10 (the second review), `app/src/config/dials.ts` (the new block `// gto-trainer`, Zach's answer (d), 2026-10-06) |
 | 40 | GTO trainer phase 5: the hand engine | `DONE: HANDOFF 57` | Opus 5.5 | I | item 39 (`DONE`; the key is on branch `gto-equity` until it merges) | `app/src/gto/` except `key.ts`, `key.test.ts`, `data/` and `grade.ts`; `app/src/config/dials.ts` (its own lines in the block `// gto-trainer`) |
 | 41 | GTO trainer phase 6: grading and the review model | `DONE: HANDOFF 58` | Opus 5.5, then a Fable 5.1 review of `grade.ts` | I | items 39 and 40 (both `DONE`; item 40 merged into `main` on 2026-10-15) | `app/src/gto/grade.ts` and the review model (new files under `app/src/gto/`, with their tests); `app/src/config/dials.ts` (its own lines in the block `// gto-trainer`) |
-| 42 | GTO trainer phase 7: the table screen and seats | `OPEN` | Opus 5.5 | I | items 40 and 41 (both `DONE`; item 41 is not yet committed, `HANDOFF 58`) | the table component and screen (new files under `app/src/components/` and `app/src/screens/`, a development route under `app/src/app/dev/`), `app/src/art/` seat wiring, `app/src/config/dials.ts` and `app/src/theme/tokens.ts` (their own new lines) |
+| 42 | GTO trainer phase 7: the table screen and seats | `DONE: HANDOFF 59` | Opus 5.5 | I | item 40 | the table component and screen, `app/src/art/` seat wiring |
 | 43 | GTO trainer phase 8: three new characters | `HELD` until Zach has run the Higgsfield round | Opus 5.5, with Zach | J | Zach's round | `assets/higgsfield-table/`, `assets/gallery.html`, the art module |
-| 44 | GTO trainer phase 9: session flow, stored version 5 and the free allowance (version 6 if item 50 lands first, `HANDOFF 44`) | `HELD` until items 41 and 42 are `DONE` | Opus 5.5 | I | items 41 and 42 | `app/src/storage/migrations.ts`, `app/src/config/dials.ts`, the Practice screen, the session and summary routes |
+| 44 | GTO trainer phase 9: session flow, stored version 6 and the free allowance (`STATE_VERSION` is 5 in `main` at `d25fed9`; read it before raising it) | `OPEN` | Opus 5.5 | I | items 41 and 42 (both `DONE`; item 42 is not yet committed, `HANDOFF 59`) | `app/src/storage/migrations.ts` and the stored state, `app/src/config/dials.ts` (its own lines in the block `// gto-trainer`), the Practice screen, the session, review and summary routes and screens, `app/src/components/table/` (only to wire the table into a session) |
 | 45 | GTO trainer phase 10: copy, runtime pass and close-out | `HELD` until items 35 to 44 are `DONE` | Sonnet 5 | I | items 35 to 44 | `docs/README.md`, `docs/incomplete/gto-trainer/`, `HANDOFF.md` |
 | 46 | Game kit: 3D text, rolling numbers, bubbles, popovers, tags, sparkles, switch, sheet and dialog | `DONE: HANDOFF 43` | Opus 5.5 | K | nothing | `app/src/components/kit/` (new), new hook files in `app/src/motion/`, `app/src/theme/tokens.ts`, `app/src/config/dials.ts` (block `// game-feel second pass`), `app/src/app/dev/kit.tsx`, `app/src/screens/dev-kit-screen.tsx`, `docs/conventions-typescript.md` |
 | 47 | Re-voice all twelve sounds as one family of chimes | `DONE: HANDOFF 40` | Opus 5.5 | L | nothing | `tools/build_sounds.py`, `assets/sounds/` |
@@ -2698,6 +2698,98 @@ characters (item 43); the final copy (item 45); RF-3 (item 60).
 Hand back: the whole-repo gate from `CLAUDE.md` green with its counts; the screenshots of step 5,
 each named; what was and was not seen running; then the two copyable blocks, with `git add -N`
 first for the new files.
+
+### 44. Play a session at the table: ten hands, a review after each, a summary, and the free allowance
+
+**Model: Opus 5.5. Lane I. Waits on nothing (items 41 and 42 are `DONE: HANDOFF 58` and `59`;
+item 42 is not yet committed, on branch `gto-table` in `.claude/worktrees/gto-table`, so work from
+a checkout that holds it).** Work in a worktree of your own. Run the fresh-checkout recipe of
+`docs/AGENT-PRACTICES.md` Part 6 first.
+
+You are picking up felto, a poker-training app. Read, in order: `HANDOFF.md` (Environment, Known
+facts, Code map, then steps 57 to 59), `docs/incomplete/gto-trainer/DESIGN.md` sections 2 and 6,
+`docs/incomplete/gto-trainer/PLAN.md` section 1 (BD-T4, BD-T5, BD-T7, BD-T9, BD-T14, BD-T23 to
+BD-T31) and phase 9, `docs/incomplete/app/DESIGN.md` `D3` and `D21`, `docs/AGENT-PRACTICES.md`
+(Part 6, "Stored player data and both platforms"), then `docs/conventions-typescript.md` in full.
+Session rules: never run `git commit`, `git push`, `git add -A` or `git add .`; print the two
+copyable blocks at the end (`git add -N` then `git add` the exact files you touched, then `git
+commit` the same files with a short lowercase message, with no `Co-Authored-By` line and no
+"Generated with" line). Talk to Zach in ASD-STE100 Simplified Technical English. Documents you
+write have no em dashes and no contractions. Ask Zach in chat, in one batch, before any decision
+that is his.
+
+**Why this exists.** The table (item 42) plays one hand on a development route, and the review
+model (item 41) grades it, but a player can reach neither. This item makes the trainer a mode: a
+start button on the Practice tab, a session of hands at the table, the review of each hand, a
+summary at the end, and a daily allowance that later becomes the free tier.
+
+**What is fixed.** Read these; do not relitigate them.
+- The table is `PokerTable` in `app/src/components/table/poker-table.tsx`: one hand from a seed,
+  keyed by the seed, with the player's choices taken through `act` and `advance`
+  (`use-table-hand.ts`). Its pure parts are `seat-places.ts`, `amounts.ts` and `table-view.ts`.
+  `/dev/table` (`app/src/screens/dev-table-screen.tsx`) is its development screen, which fills the
+  window so the buttons sit at its foot (BD-T26 to BD-T31, `HANDOFF.md` step 59).
+- `reviewHand(hand)` (`app/src/gto/review.ts`) gives a finished hand's player decisions with their
+  grades (`grade.ts`: mix, frequency, cost in big blinds, `good`, `mistake` or none, and the basis
+  `mix` or `cost`), whether it was scored (BD-T4), and the runout (BD-T5). A screen calls it and
+  never re-derives a grade. No file under `app/src/gto/` changes except for a defect, raised with
+  Zach first.
+- A hand is a seed (BD-T7). A session's hands come from seeds, so a session can be replayed.
+- Stored player state is one value with a `version`, behind `app/src/storage/` (`D3`, rule B4).
+  `STATE_VERSION` is 5 in `main` at `d25fed9` (`app/src/storage/migrations.ts:6`, and 5 in every
+  worktree on 2026-10-16). Read it from the file before you raise it. A raise ships a migration and
+  a test that loads a save of the old shape (rule Q2, `docs/AGENT-PRACTICES.md` Part 6).
+- `handsLeftToday(state, now)` is the one seam of the free tier (BD-T9): the start button calls it,
+  nothing else knows about a tier, and there is no paywall. The day is the local calendar day
+  (`app/src/game/day-key.ts`), and the time is an argument (rule B3).
+- The allowance is a local counter that the player can reset (`DESIGN.md` hazard 6). Say so in a
+  code comment and the ledger, not in copy.
+- The dials `gtoHandsPerSession` (10), `gtoFreeHandsPerDay` (10) and `gtoRequiresUnit` (none) of
+  `PLAN.md` section 3 go into `app/src/config/dials.ts`, block `// gto-trainer`.
+- Every control is from the game kit (`app/src/components/kit/`, registry entry Z7), every colour
+  and size from `app/src/theme/tokens.ts` with a light and a dark value (rule U5), every route a thin
+  render of one `*Screen` (rule U1), and the art only through `app/src/art/` (rule U6).
+- The words a screen shows are item 45's (`KEY-SPEC.md` 6, R7). A label a screen needs before
+  then is asked as variations in the registers of R7. A verdict says "the solver", never "GTO"
+  (BD-T14).
+
+Do these, in order:
+1. **The stored shape first.** The day's hand count and the session history, at the next version,
+   with the migration and a test that loads a save of the current version and keeps every field.
+2. **`handsLeftToday`** with its test beside it: the dial less the hands played on the local day
+   of `now`, never below 0, reset at local midnight, checked on a daylight-saving date.
+3. **The session.** A start button on the Practice tab (`app/src/screens/practice-screen.tsx`)
+   opens a session route; the table plays `gtoHandsPerSession` hands, or fewer when the allowance
+   runs out; after each hand its review (a view of `reviewHand`); at the end a summary: the
+   decisions graded, the total cost in big blinds and the worst mistake with its hand. Each hand
+   counts against the allowance when it is dealt or when it ends: that is question (b).
+4. **The empty allowance.** When `handsLeftToday` is 0 the start button says so in plain words,
+   and a screen that reads state draws its loading, empty and error states (rule U4).
+5. **Seen on both platforms.** Screenshots on the iPhone 17 Pro simulator and the `Pixel_9`
+   emulator, light and dark, of the start button, a hand's review, the summary and the empty
+   allowance. Restart Metro with `--clear` after each edit before trusting a screenshot from a
+   worktree (`HANDOFF.md`, Known facts, step 59).
+6. **Record it.** The next free `HANDOFF.md` step (read every checkout for the number; one
+   worktree holds a step 57 of its own, step 59 says which), the code map; `PLAN.md` phase 9
+   `BUILT`; row 44 `DONE: HANDOFF n`; item 45's prompt below this one (phase 10, copy, runtime
+   pass and close-out, Sonnet 5), with row 45 flipped to `OPEN` once items 35 to 44 are all
+   `DONE` (item 43 waits on Zach's Higgsfield round, so row 45 may stay `HELD`).
+
+Ask before building: (a) where the review of a hand shows: a sheet over the table after each hand,
+or one screen per hand between hands, or only in the summary; (b) whether a hand counts against
+the allowance when it is dealt or when it is finished, and whether a session left in the middle
+keeps its count; (c) what the summary leads with: the total cost, the count of mistakes, or the
+worst hand; (d) the words of the start button, the empty allowance and the summary's headings, as
+variations in the registers of R7. All four are his calls, and any answer may be no.
+
+Not in scope, whoever asks: a paywall, a price or a store (the store-release phase, BD-T9); any
+change under `app/src/gto/` except a defect, raised with Zach first; the table's layout and seats
+(item 42, `DONE`), except to wire it into the session; the three new characters (item 43); the
+final copy (item 45); RF-3 (item 60).
+
+Hand back: the whole-repo gate from `CLAUDE.md` green with its counts; the migration test named;
+the screenshots of step 5, each named; what was and was not seen running; then the two copyable
+blocks, with `git add -N` first for the new files.
 
 ## Items 46 to 57: the second game-feel pass
 

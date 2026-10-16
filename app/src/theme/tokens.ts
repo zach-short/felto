@@ -55,7 +55,11 @@ export type ColourName =
   | "scrim"
   | "popoverButton"
   | "popoverButtonEdge"
-  | "switchKnob";
+  | "switchKnob"
+  // GTO trainer phase 7 (board item 42): the table's felt and its rail, and the ink on the felt
+  | "felt"
+  | "feltRail"
+  | "inkOnFelt";
 
 export type Scheme = "light" | "dark";
 
@@ -119,6 +123,11 @@ export const COLOURS: Record<Scheme, Record<ColourName, string>> = {
     popoverButton: "#FFFFFF",
     popoverButtonEdge: "#C9CDE2", // SHADOW, tools/common.py:8
     switchKnob: "#FFFFFF",
+    // The green chip's extrusion as the felt and a tone below it as the rail, so the table reads
+    // as one more piece of the art; cream reads on the felt at 4.9 to 1
+    felt: "#0E7A4B", // tools/build_icons.py:37
+    feltRail: "#0A5C38",
+    inkOnFelt: "#FBF4EA", // CREAM, tools/common.py:9
   },
   dark: {
     page: "#141824",
@@ -178,6 +187,11 @@ export const COLOURS: Record<Scheme, Record<ColourName, string>> = {
     popoverButton: "#FFFFFF",
     popoverButtonEdge: "#C9CDE2", // SHADOW, tools/common.py:8
     switchKnob: "#FBF4EA", // CREAM, tools/common.py:9
+    // A tone below the light felt, so the table does not light up a dark room; cream reads at 7.2
+    // to 1
+    felt: "#0B5E3A",
+    feltRail: "#073D26",
+    inkOnFelt: "#FBF4EA", // CREAM, tools/common.py:9
   },
 };
 
@@ -322,4 +336,34 @@ export const KIT = {
   popoverMaxWidth: 340,
   dialogMaxWidth: 420,
   numberLine: 1.25,
+} as const;
+
+// GTO trainer phase 7 (board item 42): the table. The felt is an oval this share of the column wide
+// and tall; each place sits at a point given as shares of the felt's width and height, the player's
+// at the bottom and the rest clockwise (components/table/seat-places.ts), and its bet a share of the
+// way from that point to the centre. A seat is this share of the column wide, a hole card on the
+// felt and the board's cards these shares, and the player's own two cards below the felt the last.
+export const TABLE = {
+  feltHeight: 0.98,
+  // The oval sits inside the box by these shares, so the seats on the rail stay inside the column
+  feltInset: { x: "4%", y: "8%" },
+  places: [
+    { x: 0.5, y: 0.9 },
+    { x: 0.14, y: 0.7 },
+    { x: 0.14, y: 0.27 },
+    { x: 0.5, y: 0.13 },
+    { x: 0.86, y: 0.27 },
+    { x: 0.86, y: 0.7 },
+  ],
+  centre: { x: 0.5, y: 0.5 },
+  betShare: 0.55,
+  seatWidth: 0.25,
+  seatMascot: 0.16,
+  boardCard: 0.09,
+  shownCard: 0.09,
+  playerCard: 0.19,
+  marker: 0.05,
+  betChip: 0.045,
+  potChip: 0.065,
+  railWidth: 6,
 } as const;

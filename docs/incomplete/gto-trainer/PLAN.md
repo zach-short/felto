@@ -66,6 +66,12 @@ before any solver code is written, because the key is the one part nothing can f
 | BD-T23 | Phase 6, 2026-10-16, Zach's answer (a) of board item 41. Actions within the solver's noise grade as equal: an action whose EV is within the dial `gtoEqualEvBb` (0.0025 bb) of the row's best is good at any frequency, and its cost is still shown as computed. 0.0025 sits just above the 0.0024 bb by which the second review recomputed the 5-bet call EVs (`KEY-SPEC.md` 10). In the key on 2026-10-16 it turns 44 action choices at a frequency under 0.10 from unlabelled to good, among them UTG's `QQ` call of HJ's 5-bet (0.0957, 0.0009 bb) and UTG's `KJs` 4-bet against HJ's 3-bet (0.077, 0.0007 bb). It does not touch the `QQ` calls of 0.38 to 0.52 bb, which are real EV. `app/src/gto/grade.ts` (`labelOf`) | No band: the dial and its one line in `labelOf` deleted |
 | BD-T24 | Phase 6, 2026-10-16, Zach's answer (b) of board item 41. At a row whose `hand_reach` is under the dial `gtoNeverHeldReach` (1e-6), the actor never holds the hand there and its strategy is the uniform CFR+ default (`KEY-SPEC.md` 10, second review, item 1). The grader hides the row's frequencies (null in the mix), shows each action's EV and the cost, and labels by cost alone: good within `gtoEqualEvBb`, a mistake above `gtoMistakeCostBb`, no label between. `CO`'s `72o` facing `BTN`'s 3-bet: fold good at 0, call a mistake of 1.5546 bb, 4-bet 7.4382 bb. The grade says which way it was read (`basis`, `mix` or `cost`). `app/src/gto/grade.ts` (`gradeRow`) | Show the mix with a note (the frequencies kept, the label still by cost), or no grade at all (one more kind of `Grade`) |
 | BD-T25 | Phase 6, 2026-10-16, Zach's answer (c) of board item 41. Two labels, `good` and `mistake`, and the space between them has none (null): a choice under 0.10 that costs more than `gtoEqualEvBb` and no more than `gtoMistakeCostBb`, 751 choices in the key on 2026-10-16. Good wins over mistake, so an action the solver's mix plays at 0.10 or more is never called a mistake; at reached rows the actor holds that clash occurs 0 times in the key on 2026-10-16 (`app/src/gto/grade.test.ts` checks it). `app/src/gto/grade.ts` (`labelOf`) | A third label for the middle (one more value of `GradeLabel` and one line in `labelOf`), or mistake winning the clash (the order of two lines) |
+| BD-T26 | Phase 7, 2026-10-16, Zach's answer (a) of board item 42. The cast sit across the table at fixed places on the screen: the fish upper left, the shark at the top, the squid upper right; the two places beside the player are stand-ins (a chip stack and a number, 1 and 2) until phase 8. Only the button marker and the position labels move from hand to hand. `app/src/components/table/seat-places.ts` (`occupantAt`) | Each character holds one position (the shark always the big blind, for example) and changes place each hand: one table in `seat-places.ts` |
+| BD-T27 | Phase 7, 2026-10-16, Zach's answer (b) of board item 42. The player's seat is always drawn at the bottom, next to the buttons, and the other five go clockwise around it in the order they act before the flop (`TABLE_SEATS`), as at a real table. `app/src/components/table/seat-places.ts` (`placeOf`, `seatAt`) | Fixed places for UTG to BB, the player wherever the deal puts them: `seatAt` reads the seat from the place alone |
+| BD-T28 | Phase 7, 2026-10-16, Zach's answer (c) of board item 42. Every amount on the table is in big blinds with at most one decimal (the engine's chips are tenths of a big blind), as in the key and the review. `app/src/components/table/amounts.ts` (`formatBb`) | Chips, the engine's own unit: one function |
+| BD-T29 | Phase 7, 2026-10-16, Zach's answer (d) of board item 42, the terse register of three asked (R7): Fold, Call 2.5, Open 2.5, 3-bet 7.5, 4-bet 22, All in 100. The button names the action the review grades. Item 45 writes the final words. `app/src/components/table/amounts.ts` (`actionLabel`) | The plain register ("Raise to 7.5 BB") or the warm one ("Raise it to 7.5"), as asked: the table `VERBS` |
+| BD-T30 | Phase 7, 2026-10-16, a build call under BD-T29. A raise shows the seat's total after it ("3-bet 7.5" means to 7.5), the way a raise is said; a call shows the chips it adds ("Call 1.5" for the big blind facing an open of 2.5), which is what the player pays | A call showing the seat's total too: one line in `actionLabel` |
+| BD-T31 | Phase 7, 2026-10-16, a build call under step 2 of this phase. While the hand runs, a character that has folded sleeps and the others are happy; once it is over, all three cheer when the player won chips, are sad when the player lost chips and are smug when the player folded for nothing. `app/src/components/table/table-view.ts` (`castPose`) | Other poses, or a character reacting to its own result: one function |
 
 ## 2. Phases
 
@@ -380,7 +386,9 @@ marked a mistake.
 
 ### Phase 7: Table screen and seats
 
-Status: `PLANNED`.
+Status: `BUILT 2026-10-16`, not yet committed (board item 42, `HANDOFF.md` step 59), in worktree
+`.claude/worktrees/gto-table`, branch `gto-table`, from `d25fed9`. Zach's answers are BD-T26 to
+BD-T29; BD-T30 and BD-T31 are build calls.
 
 1. A table component in `app/src/components/`: six seats, a button marker, stacks, bets, the
    player's two cards and the action buttons. Fish, squid and shark sit as three of the five
@@ -393,6 +401,17 @@ and dark, of a hand at each street; the table fits the smallest supported phone.
 
 **Watch for:** six seats and the action buttons on a small screen. Check the layout at the
 smallest size before polishing anything.
+
+As built (2026-10-16, step 59): the table is `app/src/components/table/`, drawn on the
+development route `/dev/table` (`felto://dev/table?seed=12`); the session around it stays phase
+9's. Item 1's "the other three seats" is two: the cast take three of the five bot places, so two
+stand-ins remain, as the prompt of item 42 says. Seen on the iPhone 17 Pro simulator and the
+`Pixel_9` emulator, light and dark, at the player's first decision, at a showdown with the board
+and at a pot taken before the flop. The smallest phone was checked on the emulator set to 375 by
+667 points, the iPhone SE's size; an iPhone SE simulator was not reached (no grant for the
+simulator tool), so that shot is open. Done-when's "a hand at each street" is the runout: the
+board shows only at the end of a hand (BD-T5), so the three states above are every street a
+player sees.
 
 ### Phase 8: Three new characters
 

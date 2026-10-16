@@ -40,6 +40,7 @@ export function RootStack() {
       <Stack.Screen name="dev/art" />
       <Stack.Screen name="dev/kit" />
       <Stack.Screen name="dev/reminders" />
+      <Stack.Screen name="dev/table" />
     </Stack>
   );
 }

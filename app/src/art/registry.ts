@@ -58,6 +58,18 @@ import NodeCurrent from "@art/icons/path/node_current.svg";
 import NodeCurrentBase from "@art/icons/path/node_current_base.svg";
 import NodeLocked from "@art/icons/path/node_locked.svg";
 import NodeReview from "@art/icons/path/node_review.svg";
+import ChipBlack from "@art/icons/chips/chip_black.svg";
+import ChipBlue from "@art/icons/chips/chip_blue.svg";
+import ChipGold from "@art/icons/chips/chip_gold.svg";
+import ChipGreen from "@art/icons/chips/chip_green.svg";
+import ChipPurple from "@art/icons/chips/chip_purple.svg";
+import ChipRed from "@art/icons/chips/chip_red.svg";
+import ChipStackBlack from "@art/icons/chips/chip_stack_black.svg";
+import ChipStackBlue from "@art/icons/chips/chip_stack_blue.svg";
+import ChipStackGold from "@art/icons/chips/chip_stack_gold.svg";
+import ChipStackGreen from "@art/icons/chips/chip_stack_green.svg";
+import ChipStackPurple from "@art/icons/chips/chip_stack_purple.svg";
+import ChipStackRed from "@art/icons/chips/chip_stack_red.svg";
 import Chest from "@art/icons/ui/chest.svg";
 import ChestLegendary from "@art/icons/ui/chest_legendary.svg";
 import ChestLegendaryOpen from "@art/icons/ui/chest_legendary_open.svg";
@@ -92,8 +104,8 @@ import SharkThink from "@art/mascots/shark/shark_think.svg";
 import type { ArtName } from "@/art/sizes";
 
 // The only file that imports the generated SVGs (rule U6). Every other file asks for a piece by
-// name through the art module: cards by rank and suit, nodes by state, the UI icons, and the
-// mascots by character and pose (PLAN.md phase 8, step 2).
+// name through the art module: cards by rank and suit, nodes by state, the chips of the table
+// (board item 42), the UI icons, and the mascots by character and pose (PLAN.md phase 8, step 2).
 export const ART: Record<ArtName, typeof CardAClubs> = {
   card_10_clubs: Card10Clubs,
   card_10_diamonds: Card10Diamonds,
@@ -155,6 +167,18 @@ export const ART: Record<ArtName, typeof CardAClubs> = {
   node_current_base: NodeCurrentBase,
   node_locked: NodeLocked,
   node_review: NodeReview,
+  chip_black: ChipBlack,
+  chip_blue: ChipBlue,
+  chip_gold: ChipGold,
+  chip_green: ChipGreen,
+  chip_purple: ChipPurple,
+  chip_red: ChipRed,
+  chip_stack_black: ChipStackBlack,
+  chip_stack_blue: ChipStackBlue,
+  chip_stack_gold: ChipStackGold,
+  chip_stack_green: ChipStackGreen,
+  chip_stack_purple: ChipStackPurple,
+  chip_stack_red: ChipStackRed,
   chest: Chest,
   chest_legendary: ChestLegendary,
   chest_legendary_open: ChestLegendaryOpen,
