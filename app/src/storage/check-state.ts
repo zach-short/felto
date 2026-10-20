@@ -12,6 +12,21 @@ const isPlacement: Check = (v) => v === "not-taken" || v === "passed" || v === "
 const isWholeIn = (low: number, high: number): Check => (v) =>
   typeof v === "number" && Number.isInteger(v) && v >= low && v <= high;
 const isReminder: Check = (v) => hasFields(v, { on: isBoolean, hour: isWholeIn(0, 23), minute: isWholeIn(0, 59) });
+const isCount = isWholeIn(0, Number.MAX_SAFE_INTEGER);
+const GTO_ACTIONS: readonly unknown[] = ["fold", "open", "call", "3bet", "4bet", "5bet"];
+const isActionList: Check = (v) => Array.isArray(v) && v.length > 0 && v.every((item) => GTO_ACTIONS.includes(item));
+const isListOf = (check: Check): Check => (v) => Array.isArray(v) && v.every(check);
+const isWorst: Check = (v) => v === null || hasFields(v, { seed: isCount, actions: isActionList, decision: isCount });
+const isGtoSession: Check = (v) =>
+  hasFields(v, {
+    day: (d) => typeof d === "string" && isDayKeyOrNull(d),
+    firstSeed: isCount,
+    hands: isCount,
+    decisions: isCount,
+    mistakes: isCount,
+    costBb: (c) => typeof c === "number" && Number.isFinite(c) && c >= 0,
+    worst: isWorst,
+  });
 
 export function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -37,6 +52,7 @@ const PLAYER_CHECKS: Record<string, Check> = {
   onboarded: isBoolean,
   placement: isPlacement,
   settings: (v) => hasFields(v, { sound: isBoolean, haptics: isBoolean, loganMode: isBoolean, reminder: isReminder }),
+  gto: (v) => hasFields(v, { day: isDayKeyOrNull, handsToday: isCount, sessions: isListOf(isGtoSession) }),
 };
 
 export function isPlayerState(value: unknown): value is PlayerState {

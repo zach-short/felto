@@ -162,4 +162,38 @@ export const DIALS = {
   // node in the key (gto/key.test.ts). solver/config.py holds the same number as
   // GTO_CHART_MIN_OPEN, the solver's copy of the plan's dial
   gtoChartMinOpen: 0.5,
+  // How a bot picks from its row of the key (KEY-SPEC.md 9): "sample" draws an action at its
+  // frequency, "top" plays the most frequent. Zach's answers (b) and (d) of board item 40
+  // (2026-10-15, BD-T22): sample at every node, the one under reachFloor included (gto/bots.ts)
+  gtoBotMixMode: "sample",
+  // BD-T5: after the preflop action the board runs out with no betting and goes to showdown;
+  // "scored" arrives with the flop phase, option B2 (gto/result.ts)
+  gtoPostflopMode: "runout",
+  // E1 (DESIGN.md section 6, answer 4) and PLAN.md section 3, read by gto/grade.ts: a chosen action
+  // the solver plays at least this often is good, and one that costs more than this in big blinds
+  // against the row's best EV is a mistake. The cost dial sits far above the run's recorded
+  // exploitability, 0.000001 to 0.000003 bb per seat (solver/data/key.json, 2026-10-16)
+  gtoGoodFrequency: 0.1,
+  gtoMistakeCostBb: 0.15,
+  // Zach's answer (a) of board item 41 (2026-10-16, BD-T23): two EVs this close count as equal, so
+  // an action within it of the best is good at any frequency. Just above the 0.0024 bb by which the
+  // second review recomputed the 5-bet call EVs (KEY-SPEC.md 10)
+  gtoEqualEvBb: 0.0025,
+  // KEY-SPEC.md 7.1 and 9: a node reached less often than this is one the solver never gets to, so
+  // the grader shows no EV loss there. The solver's copy is REACH_FLOOR in solver/config.py
+  reachFloor: 0.0001,
+  // KEY-SPEC.md 10, second review, item 1: below this hand_reach the actor never holds the hand at
+  // the node, and its row is the uniform CFR+ default. Zach's answer (b) of board item 41
+  // (2026-10-16, BD-T24): the grader then hides the mix and labels by EV cost alone
+  gtoNeverHeldReach: 0.000001,
+  // PLAN.md phase 9 and section 3 (board item 44): the hands a session deals, and the free
+  // allowance a day (BD-T9), which only handsLeftToday reads (game/gto-allowance.ts)
+  gtoHandsPerSession: 10,
+  gtoFreeHandsPerDay: 10,
+  // A unit id the player must have passed or placed out of before the trainer opens, or null for
+  // none: a serious player who places out should not be gated (PLAN.md phase 9, step 4)
+  gtoRequiresUnit: null,
+  // Hazard 7 of the trainer's DESIGN.md: the stored history keeps only the latest finished
+  // sessions, so the stored value cannot grow without end (board item 44, BD-T36)
+  gtoSessionsKept: 100,
 } as const;

@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 import { ART_BOXES } from "@/art/sizes";
 
 const ASSETS = fileURLToPath(new URL("../../../assets", import.meta.url));
-const FOLDERS = ["icons/cards", "icons/path", "icons/ui", "mascots/fish", "mascots/squid", "mascots/shark"];
+const FOLDERS = ["icons/cards", "icons/path", "icons/chips", "icons/ui", "mascots/fish", "mascots/squid", "mascots/shark"];
 
 function viewBox(folder: string, name: string): number[] {
   const text = readFileSync(`${ASSETS}/${folder}/${name}.svg`, "utf8");

@@ -496,9 +496,9 @@ All three are `open` on 2026-10-15: the session that built the files saw them pl
 
 ### 9.2 Runtime entries for board item 62
 
-Written 2026-10-15 by board item 62 (`DESIGN.md` 11, `GF-24` to `GF-27`, `HANDOFF.md` step 57).
+Written 2026-10-15 by board item 62 (`DESIGN.md` 11, `GF-24` to `GF-27`, `HANDOFF.md` step 61).
 Entries (d) to (h) were seen by the session on the iOS simulator in dark mode; which were seen on
-the Android emulator is in step 57. Zach has walked none of them. A development link opens each
+the Android emulator is in step 61. Zach has walked none of them. A development link opens each
 case; `felto://dev/fixture/<name>` loads a fixture first.
 
 - (d) Goal: the first lesson finished on a new day plays the streak on the path after the lesson

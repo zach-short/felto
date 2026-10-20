@@ -2,6 +2,7 @@ import { useRouter } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 
 import { Mascot } from "@/art/mascot";
+import { TrainerStart } from "@/components/gto-session/trainer-start";
 import { LessonButton } from "@/components/lesson/lesson-button";
 import { PracticeKindRow } from "@/components/practice/practice-kind-row";
 import { practiceIntro, practiceRows } from "@/components/practice/practice-menu";
@@ -16,7 +17,8 @@ import { useTheme } from "@/theme/use-theme";
 // that deals a mixed set of the open kinds. It never reads hearts, so it opens at 0 (D21). Rule U4:
 // no loading state (the provider reads the player before the first frame); the empty state is a
 // player with no kind open, who sees every kind locked with the unit that opens it and no button;
-// the error state is the banner of a save that could not be read, as on Learn.
+// the error state is the banner of a save that could not be read, as on Learn. The GTO trainer's
+// start sits under the set's button (board item 44); it draws its own empty allowance.
 export function PracticeScreen() {
   const router = useRouter();
   const { status, state } = usePlayer();
@@ -37,6 +39,7 @@ export function PracticeScreen() {
           <LessonButton label="Start a set" onPress={() => router.push("/practice-set")} />
         </View>
       ) : null}
+      <TrainerStart />
       <View style={styles.rows}>
         {rows.map((row) => (
           <PracticeKindRow key={row.kind} row={row} />

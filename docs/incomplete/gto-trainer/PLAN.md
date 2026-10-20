@@ -61,6 +61,24 @@ before any solver code is written, because the key is the one part nothing can f
 | BD-T19 | Phase 1, 2026-10-05, Zach's answer Q3. The `sb_vs_bb` row is open 3, 3-bet 9, 4-bet 23, 5-bet all-in; the sources say 2.63 to 3.0 times the open and the big blind is in position (`KEY-SPEC.md` 2.3, 8.3) | 10 and 25, as the first draft had |
 | BD-T16 | Phase 1, 2026-10-05. The solver is Python with numpy. One iteration over the 65-node tree costs about 10 ms on this Mac, so the hour of BD-T3 is reached only past 350,000 iterations (`KEY-SPEC.md` 9). No Rust standard is written | Rust, if phase 3b measures a run above the hour; `docs/conventions-rust.md` first, to the shape of Part 8.1 |
 | BD-T20 | Phase 3a, 2026-10-06, Zach's answer Q5 (`KEY-SPEC.md` 11, third batch). The nine leaf-model dials are frozen provisionally at the best setting inside the ranges of 3.2 (`KEY-SPEC.md` 12: `k` 2, `c` 0.5, 0.4, 0.1 with the edge in position, 0.2, 0, 0.05 with it out of position, `t` 0.1 and 0.25), which lands 13 of the 19 bands the CO, BTN and SB subtrees answer; the six misses are `KEY-SPEC.md` 8.5. No setting of the equity-bent family lands the 3-bet-pot bands (`HANDOFF.md` steps 50 and 51), and the hands those bands describe differ by features, not equity (`KEY-SPEC.md` 4, item 3). Phases 3b and 4 build on the provisional dials and hash; board item 60 scopes and builds RF-3 (a per-class adjustment from hand features, `KEY-SPEC.md` 11 (a)), re-freezes the dials, re-solves and re-exports. This moves RF-3 from BD-T12's reversal (after the phase 4 review) to a planned item, and until item 60 lands the done-when of phase 3b excludes the six bands of 8.5 | Freeze the same setting as final and let the phase 4 review judge the hands (choice (3) of step 51); or hold phase 3b until RF-3 lands (choice (2)) |
+| BD-T21 | Phase 5, 2026-10-15, Zach's answer (a) of board item 40. The rule of `KEY-SPEC.md` 5 for a decision with no node: the player who sits behind a bot defender acts once, off the tree, with three options: fold, call, or one raise one level up in the pot's own row of 2.3, read from the key's totals (over an open and a call, the defender's 3-bet size; over a 3-bet, the opener's 4-bet size). A fold returns the hand to the key's node, written without the player's fold. After a call or a raise, the opener and then the defender each fold or call, by the unit 3 chart's UTG list (`OPENING_CHART.UTG`, 25 classes): a hand on it calls, at any seat, and every other hand folds. No bot raises there, so the hand then ends and runs out (BD-T5), and its result is marked multiway (BD-T4). `app/src/gto/turn.ts` (`behindTurn`, `raiseOver`, `answerTurn`) and `bots.ts` (`chartAnswer`) | Each bot calls by the chart list for its own seat (the literal reading of BD-T4), or the raise takes another size; both are one function each |
+| BD-T22 | Phase 5, 2026-10-15, Zach's answers (b) and (d) of board item 40. A bot samples its row of the key at every node (dial `gtoBotMixMode` = `sample`): the one node under `reachFloor` (UTG facing the big blind's 5-bet, reach 0.000088) and the 5-bet nodes and one-hand flats that `KEY-SPEC.md` 10, second review, items 2 and 5 name are not special. Measured from the key on 2026-10-15: a bot folds `KK` to a 5-bet about once in 40,000 all-bot hands (fold 0.6636, 0.2691 and 0.0134 at the three nodes where it folds at all); best-EV play would fold `QQ` more often, not less (it folds at 1.0 on EV gaps of 0.455 to 0.471 bb at four nodes, and after a UTG 4-bet its fold leads by under 0.001 bb); and the flats of HJ, CO, BTN and SB come up in 0.75 percent of dealt hands. Item 60 replaces the file | Best-EV play where a node's EVs sit within the solver's noise, or a one-hand flat dropped for its best other action: one branch in `botAction` (`app/src/gto/bots.ts`) |
+| BD-T23 | Phase 6, 2026-10-16, Zach's answer (a) of board item 41. Actions within the solver's noise grade as equal: an action whose EV is within the dial `gtoEqualEvBb` (0.0025 bb) of the row's best is good at any frequency, and its cost is still shown as computed. 0.0025 sits just above the 0.0024 bb by which the second review recomputed the 5-bet call EVs (`KEY-SPEC.md` 10). In the key on 2026-10-16 it turns 44 action choices at a frequency under 0.10 from unlabelled to good, among them UTG's `QQ` call of HJ's 5-bet (0.0957, 0.0009 bb) and UTG's `KJs` 4-bet against HJ's 3-bet (0.077, 0.0007 bb). It does not touch the `QQ` calls of 0.38 to 0.52 bb, which are real EV. `app/src/gto/grade.ts` (`labelOf`) | No band: the dial and its one line in `labelOf` deleted |
+| BD-T24 | Phase 6, 2026-10-16, Zach's answer (b) of board item 41. At a row whose `hand_reach` is under the dial `gtoNeverHeldReach` (1e-6), the actor never holds the hand there and its strategy is the uniform CFR+ default (`KEY-SPEC.md` 10, second review, item 1). The grader hides the row's frequencies (null in the mix), shows each action's EV and the cost, and labels by cost alone: good within `gtoEqualEvBb`, a mistake above `gtoMistakeCostBb`, no label between. `CO`'s `72o` facing `BTN`'s 3-bet: fold good at 0, call a mistake of 1.5546 bb, 4-bet 7.4382 bb. The grade says which way it was read (`basis`, `mix` or `cost`). `app/src/gto/grade.ts` (`gradeRow`) | Show the mix with a note (the frequencies kept, the label still by cost), or no grade at all (one more kind of `Grade`) |
+| BD-T25 | Phase 6, 2026-10-16, Zach's answer (c) of board item 41. Two labels, `good` and `mistake`, and the space between them has none (null): a choice under 0.10 that costs more than `gtoEqualEvBb` and no more than `gtoMistakeCostBb`, 751 choices in the key on 2026-10-16. Good wins over mistake, so an action the solver's mix plays at 0.10 or more is never called a mistake; at reached rows the actor holds that clash occurs 0 times in the key on 2026-10-16 (`app/src/gto/grade.test.ts` checks it). `app/src/gto/grade.ts` (`labelOf`) | A third label for the middle (one more value of `GradeLabel` and one line in `labelOf`), or mistake winning the clash (the order of two lines) |
+| BD-T26 | Phase 7, 2026-10-16, Zach's answer (a) of board item 42. The cast sit across the table at fixed places on the screen: the fish upper left, the shark at the top, the squid upper right; the two places beside the player are stand-ins (a chip stack and a number, 1 and 2) until phase 8. Only the button marker and the position labels move from hand to hand. `app/src/components/table/seat-places.ts` (`occupantAt`) | Each character holds one position (the shark always the big blind, for example) and changes place each hand: one table in `seat-places.ts` |
+| BD-T27 | Phase 7, 2026-10-16, Zach's answer (b) of board item 42. The player's seat is always drawn at the bottom, next to the buttons, and the other five go clockwise around it in the order they act before the flop (`TABLE_SEATS`), as at a real table. `app/src/components/table/seat-places.ts` (`placeOf`, `seatAt`) | Fixed places for UTG to BB, the player wherever the deal puts them: `seatAt` reads the seat from the place alone |
+| BD-T28 | Phase 7, 2026-10-16, Zach's answer (c) of board item 42. Every amount on the table is in big blinds with at most one decimal (the engine's chips are tenths of a big blind), as in the key and the review. `app/src/components/table/amounts.ts` (`formatBb`) | Chips, the engine's own unit: one function |
+| BD-T29 | Phase 7, 2026-10-16, Zach's answer (d) of board item 42, the terse register of three asked (R7): Fold, Call 2.5, Open 2.5, 3-bet 7.5, 4-bet 22, All in 100. The button names the action the review grades. Item 45 writes the final words. `app/src/components/table/amounts.ts` (`actionLabel`) | The plain register ("Raise to 7.5 BB") or the warm one ("Raise it to 7.5"), as asked: the table `VERBS` |
+| BD-T30 | Phase 7, 2026-10-16, a build call under BD-T29. A raise shows the seat's total after it ("3-bet 7.5" means to 7.5), the way a raise is said; a call shows the chips it adds ("Call 1.5" for the big blind facing an open of 2.5), which is what the player pays | A call showing the seat's total too: one line in `actionLabel` |
+| BD-T31 | Phase 7, 2026-10-16, a build call under step 2 of this phase. While the hand runs, a character that has folded sleeps and the others are happy; once it is over, all three cheer when the player won chips, are sad when the player lost chips and are smug when the player folded for nothing. `app/src/components/table/table-view.ts` (`castPose`) | Other poses, or a character reacting to its own result: one function |
+| BD-T32 | Phase 9, 2026-10-16, Zach's answer (a) of board item 44. The review of a hand opens in a sheet over the table once the hand is over (the kit's `GameSheet`), with the felt's board and result in view above it; "Next hand" closes it and deals the next hand, and on the last hand it reads "See how you did" and opens the summary. A tap on the dimmed table does the same as the button. `app/src/screens/gto-session-screen.tsx`, `app/src/components/gto-session/hand-review.tsx` | One screen per hand between hands, or the review only in the summary: the sheet is one block of the session screen |
+| BD-T33 | Phase 9, 2026-10-16, Zach's answer (b) of board item 44. A hand counts against the day's allowance when it is dealt: the start button counts the first hand and each "Next hand" counts the next, and a refused count ends the session. A session left in the middle keeps the count of every hand it dealt, and only a finished session is stored in the history. `app/src/game/gto-allowance.ts` (`countDealtHand`) | Count a hand when it ends: the call to `dealGtoHand` moves from the deal to `handEnded` |
+| BD-T34 | Phase 9, 2026-10-16, Zach's answer (c) of board item 44. The summary leads with the count of mistakes ("2 mistakes in 18 decisions"), then the total cost in big blinds, then the worst mistake with its hand. A decision counts when `reviewHand` grades it (kind `graded`); an off-tree or unreached decision is not counted. The total cost sums every graded decision, the unlabelled ones too, so it can be more than the mistakes alone. `app/src/game/gto-session.ts` (`sessionRecord`) | Lead with the cost or the worst hand: the order of three sections in `gto-summary-screen.tsx` |
+| BD-T35 | Phase 9, 2026-10-16, Zach's answer (d) of board item 44, the warm register of three asked (R7): "Take a seat", "7 hands left for today", "That's all 10 hands for today. The table opens again tomorrow.", "Nice session!", "Spots to work on", "Chips left on the table", "The one to look at again" (the ask's preview wrote "The one to look again at", a slip in the ask; the build uses the plain word order, and item 45 may say otherwise), and the verdict "The solver folds 70% and calls 30%." The other words the screens needed are written in the same register and listed in `HANDOFF.md` step 60. All are a stand-in for item 45's copy. `app/src/components/gto-session/review-words.ts` | The plain or the terse register, as asked: the strings of one file |
+| BD-T36 | Phase 9, 2026-10-16, a build call under hazard 7 of `DESIGN.md`. The stored history keeps the latest `gtoSessionsKept` (100) finished sessions, about 200 bytes each, so the stored value has a ceiling. `app/src/game/gto-session.ts` (`addSession`) | No ceiling: the dial and one `slice` deleted |
+| BD-T37 | Phase 9, 2026-10-16, a build call. Reset progress (Profile) keeps the trainer's record, the day's count and the history: the trainer is not the path, and a reset that cleared the count would be a button that refills the allowance. `app/src/game/settings.ts` (`resetProgress`) | Clear it with the path: one field of `resetProgress` |
+| BD-T38 | Phase 9, 2026-10-16, a build call under "a screen calls `reviewHand` and never re-derives a grade". The summary reads the latest stored session, and its worst mistake is stored as the hand's seed, the player's actions in it and the decision's place, not as a grade: the summary deals the hand again from those (`replayHand`) and grades it through `reviewHand`. A hand that no longer plays the same way, as after a new key changes what the bots do (board item 60), shows the counts without the hand. `app/src/game/gto-session.ts`, `app/src/screens/gto-summary-screen.tsx` | Store the grade with the session: three more fields, checked on load |
 
 ## 2. Phases
 
@@ -305,7 +323,33 @@ Lessons in unit 3 may now contradict the key. Record them; do not rewrite lesson
 
 ### Phase 5: Hand engine
 
-Status: `PLANNED`.
+**BUILT 2026-10-15** (board item 40, lane I, on Opus 5.5, in worktree
+`.claude/worktrees/gto-engine`, branch `gto-engine` from `main` at `8b5b54d`, `HANDOFF.md` step
+57, numbered 55 on the branch; commit `f192897`, merged into `main` on 2026-10-15). Zach answered the four questions of the prompt in chat on
+2026-10-15, every recommendation: (a) a bot facing the player's call or raise off the tree calls
+with a hand on the unit 3 chart's UTG list and folds the rest (BD-T21); (b) and (d) bots sample
+their row at every node, the one under `reachFloor`, the 5-bet nodes and the one-hand flats
+included (BD-T22); (c) the 1,000-hand log is played inside its test from the seeds, not kept as a
+fixture. Built under `app/src/gto/`: `table.ts` (the seats in both orders, chips in tenths of a big
+blind, the blinds), `deal.ts` (the player's seat, six hands and a board from one seed), `hand.ts`
+(a hand is its deal and its steps; the chips in the pot, the live seats, the defender), `turn.ts`
+(whose turn and the legal options: a node of the key where the history is one, the seats behind
+the defender removed by the heads-up rule, the player's decision off the tree and the bots' answer
+to it), `bots.ts` (the key's row, sampled or the top action by the dial; the chart rule off the
+tree), `play.ts` (`act`, `autoStep`, `advance`, `newHand`) and `result.ts` (the runout through
+`showdownWinners`, split pots with the odd chip to the first winner after the flop, every chip
+accounted for); and eight test files, 46 tests. Against the done-when: the gates are green, and
+the log of 1,000 seeded hands (the player in every seat, choosing at random) holds no illegal
+action, offered or taken, and conserves chips in every hand (`hand-log.test.ts`; it checks each
+step against the sizes of `KEY-SPEC.md` 2.3 written out in the test, not against the key's
+totals). Step 2 did not apply: phase 4 had landed, so the engine reads the real key from the
+start. Step 3's "a hand never reaches a node the key marks unreachable": every node a logged hand
+reaches has a `reach` above 0, and no row a key-following bot can hold is the uniform default of
+`KEY-SPEC.md` 10, second review, item 1 (`bots.test.ts`, a walk over the whole key). What this
+phase forces on later phases: the grader reads the player's decisions from `Step.node`, which is
+null off the tree; a multiway hand carries `HandResult.multiway`; chips are tenths of a big blind
+(`toBigBlinds` converts). The status line that stood here while the phase was planned was
+`PLANNED`.
 
 1. `app/src/gto/` holds the pure engine: seats, dealer button, blinds, the action tree, the
    deal from a seed (BD-T7), bot actions sampled from the key (dial `gtoBotMixMode`), and the
@@ -321,7 +365,17 @@ and conserves chips in every one.
 
 ### Phase 6: Grading and the review model
 
-Status: `PLANNED`.
+Status: `BUILT` 2026-10-16 (board item 41, `HANDOFF.md` step 58), not yet committed. Zach's
+answers (a) to (c) are BD-T23 to BD-T25. `app/src/gto/grade.ts` grades one decision and
+`app/src/gto/review.ts` builds the review of a finished hand, with `grade.test.ts` and
+`review.test.ts`. The Deep review found one defect, fixed before the gate: the cost was a raw
+difference of two four-decimal EVs, so a cost the key writes as 0.0025 computed as
+0.002500000000001279 and fell outside the band; the cost is now rounded to four decimals
+(`KEY-SPEC.md` 7.4). It found no case where an action the solver plays at 0.10 or more is marked
+a mistake, and no meaningless row graded by its frequency. A multiway hand's review holds one
+decision, the player's off the tree, ungraded, and is marked not scored (BD-T4): a seat behind
+the defender has no decision before that one, because it acts after the defender in the first
+round (`app/src/gto/turn.ts`, `behindTurn`).
 
 1. `app/src/gto/grade.ts`: for each player decision, the key's frequency of the chosen action,
    its EV loss against the best action, and a label from the dials (E1).
@@ -339,7 +393,9 @@ marked a mistake.
 
 ### Phase 7: Table screen and seats
 
-Status: `PLANNED`.
+Status: `BUILT 2026-10-16`, not yet committed (board item 42, `HANDOFF.md` step 59), in worktree
+`.claude/worktrees/gto-table`, branch `gto-table`, from `d25fed9`. Zach's answers are BD-T26 to
+BD-T29; BD-T30 and BD-T31 are build calls.
 
 1. A table component in `app/src/components/`: six seats, a button marker, stacks, bets, the
    player's two cards and the action buttons. Fish, squid and shark sit as three of the five
@@ -352,6 +408,17 @@ and dark, of a hand at each street; the table fits the smallest supported phone.
 
 **Watch for:** six seats and the action buttons on a small screen. Check the layout at the
 smallest size before polishing anything.
+
+As built (2026-10-16, step 59): the table is `app/src/components/table/`, drawn on the
+development route `/dev/table` (`felto://dev/table?seed=12`); the session around it stays phase
+9's. Item 1's "the other three seats" is two: the cast take three of the five bot places, so two
+stand-ins remain, as the prompt of item 42 says. Seen on the iPhone 17 Pro simulator and the
+`Pixel_9` emulator, light and dark, at the player's first decision, at a showdown with the board
+and at a pot taken before the flop. The smallest phone was checked on the emulator set to 375 by
+667 points, the iPhone SE's size; an iPhone SE simulator was not reached (no grant for the
+simulator tool), so that shot is open. Done-when's "a hand at each street" is the runout: the
+board shows only at the end of a hand (BD-T5), so the three states above are every street a
+player sees.
 
 ### Phase 8: Three new characters
 
@@ -373,7 +440,9 @@ is filed, and a copy is kept outside the repo.
 
 ### Phase 9: Session flow, storage and the free allowance
 
-Status: `PLANNED`.
+Status: `BUILT 2026-10-16`, not yet committed (board item 44, `HANDOFF.md` step 60), in worktree
+`.claude/worktrees/gto-session`, branch `gto-session`, from `main` at `00a854e`. Zach's answers
+are BD-T32 to BD-T35; BD-T36 to BD-T38 are build calls.
 
 1. A session of `gtoHandsPerSession` hands from a start button on the Practice tab, then a
    summary: decisions graded, total EV lost, the worst mistake with its hand.
@@ -389,6 +458,20 @@ screenshot of the empty allowance state.
 
 **Watch for:** the free allowance is a local counter and can be reset by the user (`DESIGN.md`
 hazard 6). Say so in the code comment and the ledger, not in copy.
+
+As built (2026-10-16, step 60): item 2's "stored version 5" is version 6, and the done-when's
+"a version 4 save" is a version 5 save. This plan was written when `STATE_VERSION` was 4; board
+item 50 took version 5 for the chest seed (`app/src/storage/migrations.ts`), so this phase raised
+5 to 6, and `app/src/storage/gto-migration.test.ts` loads a version 5 save. The session is the
+route `/gto-session` (`app/src/screens/gto-session-screen.tsx`) and the summary `/gto-summary`
+(`app/src/screens/gto-summary-screen.tsx`); the start is a block on the Practice tab
+(`app/src/components/gto-session/trainer-start.tsx`). Item 4's dial is `gtoRequiresUnit`, null.
+Seen on the iPhone 17 Pro simulator and the `Pixel_9` emulator, light and dark: the start
+button, a hand's review, the summary and the empty allowance. A fast tap on the review's button
+while the sheet closed dealt a hand over one not yet played, seen on the iPhone simulator; the
+session now moves on only from an open review (`canMoveOn` in
+`app/src/components/gto-session/session-state.ts`), and a run of fast taps after the fix stored
+10 hands for 10 counted.
 
 ### Phase 10: Copy, runtime pass, close-out
 
@@ -414,18 +497,21 @@ solver dials, which live in `solver/config.py`.
 | `tableSeats`, `stackBigBlinds` | 6, 100 | exist |
 | `gtoExploitabilityBb` | 0.005 | solver stop point; confirmed in phase 3a |
 | `gtoChartMinOpen` | 0.5 | containment test of phase 4. In `app/src/config/dials.ts` since 2026-10-06 (board item 39), the first line of the block `// gto-trainer`; `solver/config.py` keeps its copy, `GTO_CHART_MIN_OPEN` |
-| `gtoGoodFrequency` | 0.10 | a mixed action played at least this often is good |
-| `gtoMistakeCostBb` | 0.15 | above the solver error of phase 3b |
-| `gtoBotMixMode` | `sample` | the other mode plays the top action |
-| `gtoPostflopMode` | `runout` | `scored` arrives with option B2 |
-| `gtoHandsPerSession` | 10 | |
-| `gtoFreeHandsPerDay` | 10 | free allowance |
-| `gtoRequiresUnit` | none | |
+| `gtoGoodFrequency` | 0.10 | a mixed action played at least this often is good. In `app/src/config/dials.ts` since 2026-10-16 (board item 41), read by `app/src/gto/grade.ts` |
+| `gtoMistakeCostBb` | 0.15 | above the solver error of phase 3b. In `app/src/config/dials.ts` since 2026-10-16 (board item 41); the key's recorded exploitability is 0.000001 to 0.000003 bb per seat (`solver/data/key.json`, `solver.exploitability_bb`), far below it |
+| `gtoEqualEvBb` | 0.0025 | BD-T23 (Zach, 2026-10-16): two EVs this close count as equal, so the action is good at any frequency. In `app/src/config/dials.ts` since board item 41 |
+| `gtoNeverHeldReach` | 0.000001 | BD-T24 (Zach, 2026-10-16): below this `hand_reach` the actor never holds the hand at the node, so the grader hides the uniform mix. In `app/src/config/dials.ts` since board item 41 |
+| `gtoBotMixMode` | `sample` | the other mode plays the top action. In `app/src/config/dials.ts` since 2026-10-15 (board item 40), in the block `// gto-trainer`, read by `app/src/gto/bots.ts`; Zach kept `sample` at every node (BD-T22) |
+| `gtoPostflopMode` | `runout` | `scored` arrives with option B2. In `app/src/config/dials.ts` since 2026-10-15 (board item 40); `app/src/gto/result.ts` types it as `"runout"`, so another value stops the typecheck where the postflop work begins |
+| `gtoHandsPerSession` | 10 | In `app/src/config/dials.ts` since 2026-10-16 (board item 44), read by `app/src/components/gto-session/session-state.ts` |
+| `gtoFreeHandsPerDay` | 10 | free allowance. In `app/src/config/dials.ts` since 2026-10-16 (board item 44), read only by `handsLeftToday` (`app/src/game/gto-allowance.ts`, BD-T9) |
+| `gtoRequiresUnit` | none | `null` in `app/src/config/dials.ts` since 2026-10-16 (board item 44), read by `trainerOpen` (`app/src/game/gto-allowance.ts`) |
+| `gtoSessionsKept` | 100 | BD-T36 (board item 44, 2026-10-16): the finished sessions the stored history keeps |
 | `gtoOpenSizeBb` | 2.5 (SB 3) | in the spec; the key carries it. Since phase 1 (BD-T13) this row is the `open` column of the sizes table in `KEY-SPEC.md` 2.3, which also fixes the 3-bet, 4-bet and 5-bet sizes |
 | `c_srp`, `c_3bp`, `c_4bp`; `c_srp_oop`, `c_3bp_oop`, `c_4bp_oop` | 0.7, 0.4, 0.2; 0.3, 0.2, 0.1 to start | phase 1 (BD-T12, BD-T18), `solver/config.py`; phase 3a tunes them inside the ranges of `KEY-SPEC.md` 3.2 on four spots and freezes them in the game object. Frozen provisionally 2026-10-06 (BD-T20): 0.5, 0.4, 0.1; 0.2, 0, 0.05 |
 | `k` | 2 (1 allowed) | phase 1 (BD-T18), `solver/config.py`; the curve exponent of `KEY-SPEC.md` 3.2. Set to 2 by phase 3a (BD-T20, 2026-10-06): at `k` 1 the button folds a small pair |
 | `t_ip`, `t_sb` | 0.1, 0.25 to start | phase 1 (BD-T17), `solver/config.py`; the flat tax of `KEY-SPEC.md` 3.2, tuned in phase 3a to the flat bands. Frozen provisionally 2026-10-06 (BD-T20) at the starting values, which land both flat bands |
-| `reachFloor` | 0.0001 | phase 1, `solver/config.py`; a node reached less often than this is one the grader treats as never reached (`KEY-SPEC.md` 7.1) |
+| `reachFloor` | 0.0001 | phase 1, `solver/config.py`; a node reached less often than this is one the grader treats as never reached (`KEY-SPEC.md` 7.1). The app's copy is in `app/src/config/dials.ts` since 2026-10-16 (board item 41), read by `app/src/gto/grade.ts` |
 
 ## 4. Seams reserved, deliberately not built
 

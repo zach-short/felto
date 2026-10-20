@@ -2,11 +2,13 @@ import { openChest } from "@/game/chest";
 import type { FixtureName } from "@/game/fixtures";
 import { fixtureState } from "@/game/fixtures";
 import { buyFreeze } from "@/game/freeze";
+import { countDealtHand } from "@/game/gto-allowance";
+import { addSession } from "@/game/gto-session";
 import { refillLives } from "@/game/lives";
 import type { PathOutline } from "@/game/path";
 import type { PlacementRun } from "@/game/placement";
 import { completeOnboarding, finishPlacement } from "@/game/placement";
-import type { PlayerState } from "@/game/player-state";
+import type { GtoSessionRecord, PlayerState } from "@/game/player-state";
 import type { Answer, SessionResult } from "@/game/session";
 import { finishSession, recordAnswer } from "@/game/session";
 import { resetProgress, setHaptics, setLoganMode, setReminderOn, setReminderTime, setSound } from "@/game/settings";
@@ -61,6 +63,10 @@ export function playerActions(
     loadFixture: (name: FixtureName, outline: PathOutline) =>
       apply((_, now) => fixtureState(name, outline, now)),
     refillLives: () => commit(refillLives),
+    // Board item 44: the start button and each next hand of the GTO trainer count the hand they
+    // deal, and are refused once the day's allowance is spent (BD-T9, BD-T33)
+    dealGtoHand: () => commit(countDealtHand),
+    finishGtoSession: (record: GtoSessionRecord) => apply((s) => addSession(s, record)),
     buyFreeze: () => commit(buyFreeze),
   };
 }

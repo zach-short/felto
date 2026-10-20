@@ -932,7 +932,7 @@ are the three places a moment can be seen without one of them. Against: the laye
 celebration reaches the screen besides a screen's own, so a moment a screen also shows (item 30's
 streak roll) is shown twice, once on the finish and once on the path, in Duolingo's order.
 
-*As built, 2026-10-15 (board item 62, `HANDOFF.md` step 57):* the rule of the layer is
+*As built, 2026-10-15 (board item 62, `HANDOFF.md` step 61):* the rule of the layer is
 `stateMoments(before, after, now)` in `app/src/game/celebration-moments.ts`, with its test. The
 streak moment is "the streak's last day is today and was not before": only a finish writes today
 there, and a freeze moves it at most to yesterday, so a freeze plays nothing. A state with another
