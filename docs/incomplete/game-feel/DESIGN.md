@@ -592,6 +592,18 @@ tap that opens, so a legendary chest shows gold before the lid lifts. The tier i
 a per-player `chestSeed` (stored version 5) and the unit, fixed from the player's start, so a change
 of the odds dial also changes a ready chest that is not yet opened. Not merged.
 
+*As built, the art, 2026-10-20 (board item 48, `HANDOFF.md` step 62):* Zach chose the soft 3D
+finish of `assets/higgsfield-chest/texture-8-soft3d.png` (in chat, 2026-10-20, of four offered:
+soft 3D, matte, glossy, premium; grain, paper and gouache were not offered, because they need a noise
+filter that the app's SVG library is not known to draw). The chest keeps the projection, the named
+parts and the eight files of step 42 and takes a new finish. It is the one icon with shading: each
+material is three tones (light, base, deep), and a face takes the tone that its angle to one light
+gives; the curved lid is cut into 30 strips, each lit by its own normal, and the flat faces carry
+gradients over their own bounding boxes. Outer corners are rounded by an own-colour edge. The hard
+pale shadow stays, so the dark-mode swap of BD-25 still finds it. Seen in `qlmanage` renders of the
+eight files in light and dark and at 48 points, and on the iPhone 17 Pro simulator in light and dark
+(the common chest, faded, on the chest screen).
+
 #### GF-14. All twelve sounds are re-voiced as one family of pleasant chimes
 
 Decided 2026-10-05 (Zach: the recommendation). Keeps the twelve names, files and ceilings of `D15`

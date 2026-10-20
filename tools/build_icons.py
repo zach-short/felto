@@ -3,7 +3,8 @@
 
 Style (from the approved Higgsfield reference): no outlines, solid fills,
 a thick darker extrusion offset down-right, a hard pale shadow behind it,
-and one small gloss highlight.
+and one small gloss highlight. The chests are the one exception: they are
+shaded soft 3D, after assets/higgsfield-chest/texture-8-soft3d.png (GF-13).
 
 Outputs to assets/icons/{chips,cards,path,ui}.
 Run: python3 tools/build_icons.py
@@ -369,11 +370,17 @@ UI_ICONS = {
 
 # --------------------------------------------------------------- CHESTS
 # The chest in four tiers (GF-13), drawn after the Higgsfield references in
-# assets/higgsfield-chest/. A point is (x along the front, y up, z back), and
+# assets/higgsfield-chest/, in the soft 3D finish of texture-8-soft3d.png
+# (Zach, 2026-10-20). A point is (x along the front, y up, z back), and
 # depth draws up and to the right, so the right side and the lid's top show
 # and the hard shadow still falls down and to the right. Each part is a named
 # group so the Rive rig can move it. The open canvas shares the closed one's
 # origin and bottom edge, so drawn at one scale the two swap in place.
+#
+# The chest is the one icon with shading. Each material is three tones, and a
+# face takes the tone that its angle to one light gives. The curved lid is cut
+# into strips, each lit by its own normal, so its curve needs no gradient; a
+# flat face carries a gradient over its own bounding box.
 CHEST_FRONT = 118
 CHEST_HEIGHT = 92
 CHEST_DEPTH = 110
@@ -386,28 +393,45 @@ CHEST_WALL = 7
 CHEST_SWING = 104
 CHEST_ORIGIN = (16, 186)
 CHEST_STEPS = 18
+CHEST_STRIPS = 30
 CHEST_SIZE = (236, 204)
 CHEST_OPEN_SIZE = (268, 260)
+# the front planks, bottom to top; the gaps between them are the grooves
+CHEST_PLANKS = [(0, 21), (24, 45), (48, 72)]
+# toward the light (up, a little left, toward the viewer) and toward the viewer, the one
+# direction cpt() draws as a point
+CHEST_LIGHT = (-0.2, 0.9, -0.4)
+CHEST_EYE = (0.6, 0.236, -1)
+# light to tone: the front at 0.1, the right side at -0.6, the top at 0.68
+CHEST_GAIN, CHEST_BIAS = 1.17, -0.37
+# the lid's strips spread their tones wider than a flat face, so its curve reads round
+CHEST_CURVE = 1.35
+# the width of the light bevel on a band's lit edge and of the soft shade beside a band
+CHEST_BEVEL, CHEST_SHADE_W = 3, 9
+# the own-colour edge that rounds the outer corners of the bands, the rim and the lid
+CHEST_ROUND = 6
 # the lock plate's corners around its centre
 LOCK_PLATE = [(-11, -19), (11, -19), (17, -13), (17, 13), (11, 19), (-11, 19), (-17, 13), (-17, -13)]
 GOLD, GOLD_DARK, GOLD_LIGHT = CHIPS["gold"]
 STUD, STUD_SHADE = "#F7FAFF", "#C3CDE4"
-WOOD = {"body": "#D2601C", "lid": "#DE6D26", "groove": "#A4420F", "side": "#7A2D09", "inside": "#4A1A05"}
-GOLD_BANDS = {"band": GOLD, "band_dark": GOLD_DARK, "band_light": GOLD_LIGHT, "plate": GOLD_LIGHT, "plate_dark": GOLD_DARK}
+# each material as tones: light, base, deep
+GOLD_TONES = ("#FFE88F", GOLD, "#B07A00")
 CHEST_TIERS = {
-    "chest": {**WOOD, **GOLD_BANDS, "glow": "#FFE58A", "lock": "keyhole", "studs": False},
+    "chest": {
+        "wood": ("#E69A4A", "#C97A32", "#7A4318"), "metal": GOLD_TONES,
+        "inside": "#4A2408", "glow": "#FFE58A", "lock": "keyhole", "studs": False,
+    },
     "chest_rare": {
-        "body": "#2F7BF0", "lid": "#3D88F5", "groove": "#1C5FCF", "side": "#0F47B8", "inside": "#0A2A6B",
-        **GOLD_BANDS, "glow": "#BFE3FF", "lock": "keyhole", "studs": False,
+        "wood": ("#7DB4FF", "#2F7BF0", "#0D3A9C"), "metal": GOLD_TONES,
+        "inside": "#0A2A6B", "glow": "#BFE3FF", "lock": "keyhole", "studs": False,
     },
     "chest_mythic": {
-        "body": "#E8252F", "lid": "#EE3540", "groove": "#B8121D", "side": "#8E0F1A", "inside": "#4D070D",
-        **GOLD_BANDS, "glow": "#FFD9B8", "lock": GEM_WHITE, "studs": False,
+        "wood": ("#FF7A82", "#E8252F", "#7A0B15"), "metal": GOLD_TONES,
+        "inside": "#4D070D", "glow": "#FFD9B8", "lock": GEM_WHITE, "studs": False,
     },
     "chest_legendary": {
-        "body": GOLD, "lid": "#FFD65A", "groove": "#E8A50E", "side": "#C96A00", "inside": "#6E3300",
-        "band": "#FA9214", "band_dark": "#D05A00", "band_light": "#FFB04A", "plate": "#FFD65A",
-        "plate_dark": "#D05A00", "glow": "#FFF1A6", "lock": GEM_RED, "studs": True,
+        "wood": ("#FFF0A8", "#FFD24A", "#C98F00"), "metal": ("#FFC163", "#FA9214", "#B84E00"),
+        "inside": "#6E3300", "glow": "#FFF1A6", "lock": GEM_RED, "studs": True,
     },
 }
 # what each tier holds when open, in canvas units: kind, x, y, scale, turn
@@ -435,6 +459,68 @@ CHEST_SPARKLES = [(208, 28, 11), (224, 150, 8)]
 CHEST_OPEN_SPARKLES = [(28, 4, 11), (60, -30, 8), (14, 52, 7), (240, 150, 10)]
 
 
+def unit(v):
+    m = math.sqrt(sum(c * c for c in v))
+    return tuple(c / m for c in v)
+
+
+def dot(a, b):
+    return sum(p * q for p, q in zip(unit(a), unit(b)))
+
+
+def lit(normal):
+    return CHEST_GAIN * dot(normal, CHEST_LIGHT) + CHEST_BIAS
+
+
+def tone(tones, k):
+    """The material's base moved toward its light tone (k up to 1) or its deep tone (k down to -1)."""
+    light, base, deep = tones
+    k = max(-1.0, min(1.0, k))
+    a, b = (base, light) if k >= 0 else (base, deep)
+    rgb = [round(int(a[i:i + 2], 16) + (int(b[i:i + 2], 16) - int(a[i:i + 2], 16)) * abs(k)) for i in (1, 3, 5)]
+    return "#" + "".join(f"{c:02X}" for c in rgb)
+
+
+CHEST_FRONT_K = CHEST_GAIN * dot((0, 0, -1), CHEST_LIGHT) + CHEST_BIAS
+
+
+def chest_palette(tier):
+    """The flat tone of each part, from its material and the angle of the face it is on."""
+    front, side, top = lit((0, 0, -1)), lit((1, 0, 0)), lit((0, 1, 0))
+    wood, metal = tier["wood"], tier["metal"]
+    return {
+        **tier, "body": tone(wood, front), "side": tone(wood, side), "groove": tone(wood, front - 0.85),
+        "band": tone(metal, front), "band_dark": tone(metal, side), "band_light": tone(metal, top),
+        "plate_dark": tone(metal, side - 0.2), "bevel": tone(metal, front + 0.95),
+    }
+
+
+def gradient(gid, stops, x2=0, y2=1):
+    """A linear gradient over a shape's bounding box; stops are (colour, opacity), evenly spaced."""
+    s = "".join(
+        f'<stop offset="{i / (len(stops) - 1):.2f}" stop-color="{c}"' + (f' stop-opacity="{op}"' if op != 1 else "") + "/>"
+        for i, (c, op) in enumerate(stops)
+    )
+    return f'<linearGradient id="{gid}" x1="0" y1="0" x2="{x2}" y2="{y2}">{s}</linearGradient>'
+
+
+def chest_defs(pal):
+    """The gradients of the flat faces, each over its own bounding box: lighter where the face
+    turns toward the light, as on the rounded planks and bands of the reference."""
+    front, side = lit((0, 0, -1)), lit((1, 0, 0))
+    wood, metal, deep = pal["wood"], pal["metal"], pal["wood"][2]
+    ramp = lambda tones, ks: [(tone(tones, k), 1) for k in ks]
+    o = [gradient("woodFill", ramp(wood, (front + 0.4, front, front - 0.35)))]
+    o.append(gradient("woodSideFill", ramp(wood, (side + 0.25, side - 0.2)), 1, 0))
+    o.append(gradient("bandFill", ramp(metal, (front + 0.75, front + 0.15, front - 0.4)), 1, 0))
+    o.append(gradient("bandSideFill", ramp(metal, (side + 0.2, side - 0.2)), 1, 0))
+    o.append(gradient("rimFill", ramp(metal, (front + 0.7, front, front - 0.45))))
+    o += [gradient("shadeFill", [(deep, ".45"), (deep, "0")], 1, 0), gradient("shadeBackFill", [(deep, "0"), (deep, ".45")], 1, 0)]
+    o.append(f'<radialGradient id="plateFill" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="{tone(metal, 0.95)}"/>')
+    o.append(f'<stop offset="1" stop-color="{tone(metal, front - 0.2)}"/></radialGradient>')
+    return f'<defs>{"".join(o)}</defs>'
+
+
 def cpt(x, y, z):
     ox, oy = CHEST_ORIGIN
     return (ox + x + CHEST_KX * z, oy - y - CHEST_KY * z)
@@ -444,8 +530,18 @@ def quad(*corners):
     return [cpt(*c) for c in corners]
 
 
-def shape(pts, fill):
-    return f'<path d="M{" L".join(f"{a:.1f} {b:.1f}" for a, b in pts)}Z" fill="{fill}"/>'
+def shape(pts, fill, r=0):
+    """A filled polygon; r > 0 adds an own-colour edge of that width, which rounds its corners."""
+    edge = f' stroke="{fill}" stroke-width="{r}" stroke-linejoin="round"' if r else ""
+    return f'<path d="M{" L".join(f"{a:.1f} {b:.1f}" for a, b in pts)}Z" fill="{fill}"{edge}/>'
+
+
+def strip(pts, fill):
+    """A shape whose own-colour edge closes the hairline seam between two strips."""
+    return (
+        f'<path d="M{" L".join(f"{a:.1f} {b:.1f}" for a, b in pts)}Z" fill="{fill}" '
+        f'stroke="{fill}" stroke-width=".8" stroke-linejoin="round"/>'
+    )
 
 
 def hull(pts):
@@ -464,56 +560,91 @@ def hull(pts):
     return chain(pts) + chain(pts[::-1])
 
 
+def swung(y, z, swing):
+    c, s = math.cos(math.radians(swing)), math.sin(math.radians(swing))
+    return (y * c - z * s, y * s + z * c)
+
+
 def lid_point(a, grow=0, lift=0, swing=0):
     """(y, z) of the lid's curve at angle a (0 at the front edge, pi at the hinge), grown by
     grow, its ends raised by lift, and swung back by swing degrees about the hinge."""
     half = CHEST_DEPTH / 2
-    dz = half - (half + grow) * math.cos(a) - CHEST_DEPTH
-    dy = lift + (CHEST_RISE + grow - lift) * math.sin(a)
-    c, s = math.cos(math.radians(swing)), math.sin(math.radians(swing))
-    return (CHEST_HEIGHT - dz * s + dy * c, CHEST_DEPTH + dz * c + dy * s)
+    dy, dz = swung(lift + (CHEST_RISE + grow - lift) * math.sin(a), half - (half + grow) * math.cos(a) - CHEST_DEPTH, swing)
+    return (CHEST_HEIGHT + dy, CHEST_DEPTH + dz)
 
 
-def lid_section(grow=0, lift=0, swing=0):
-    return [lid_point(math.pi * i / CHEST_STEPS, grow, lift, swing) for i in range(CHEST_STEPS + 1)]
+def lid_normal(a, swing=0):
+    """The outward normal of the lid's curve at angle a, an ellipse with radii half the depth and the rise."""
+    ny, nz = swung(math.sin(a) / CHEST_RISE, -math.cos(a) / (CHEST_DEPTH / 2), swing)
+    return (0, ny, nz)
+
+
+def lid_section(grow=0, lift=0, swing=0, steps=CHEST_STEPS):
+    return [lid_point(math.pi * i / steps, grow, lift, swing) for i in range(steps + 1)]
+
+
+def lid_strips(x0, x1, grow, tones, swing):
+    """The strips of one lid slab that face the viewer, back to front, each lit by its normal."""
+    sec = lid_section(grow, 0, swing, CHEST_STRIPS)
+    o = []
+    for i in range(CHEST_STRIPS, 0, -1):
+        n = lid_normal(math.pi * (i - 0.5) / CHEST_STRIPS, swing)
+        if dot(n, CHEST_EYE) > 0:
+            p, q = sec[i - 1], sec[i]
+            k = CHEST_FRONT_K + (lit(n) - CHEST_FRONT_K) * CHEST_CURVE
+            o.append(strip([cpt(x0, *p), cpt(x1, *p), cpt(x1, *q), cpt(x0, *q)], tone(tones, k)))
+    return "".join(o)
 
 
 def chest_lid(pal, swing):
     """Three slabs, left to right, so each covers the one before it. The two end slabs are the
-    bands, grown by their thickness; the right one frames the inset end panel."""
+    bands, grown by their thickness; the right one frames the inset end panel. A slab's flat
+    outline goes under its strips, so no strip edge shows the page through."""
     w, b, t = CHEST_FRONT, CHEST_BAND, CHEST_BAND_T
-    slabs = [(0, b, t, "band", "band_dark"), (b, w - b, 0, "lid", "side"), (w - b, w, t, "band", "band_dark")]
+    slabs = [(0, b, t, "metal", "band_dark"), (b, w - b, 0, "wood", "side"), (w - b, w, t, "metal", "band_dark")]
     o = []
-    for x0, x1, grow, face, end in slabs:
+    for x0, x1, grow, material, end in slabs:
         sec = lid_section(grow, 0, swing)
-        o.append(shape(hull([cpt(x0, *p) for p in sec] + [cpt(x1, *p) for p in sec]), pal[face]))
+        o.append(shape(hull([cpt(x0, *p) for p in sec] + [cpt(x1, *p) for p in sec]), pal[end], CHEST_ROUND))
+        o.append(lid_strips(x0, x1, grow, pal[material], swing))
         o.append(shape([cpt(x1, *p) for p in sec], pal[end]))
-    o.append(shape([cpt(w, *p) for p in lid_section(-10, 8, swing)], pal["side"]))
+    o.append(shape([cpt(w, *p) for p in lid_section(-10, 8, swing)], "url(#woodSideFill)"))
+    return "".join(o)
+
+
+def chest_uprights(pal):
+    """The two upright bands with their lit bevel and their depth, after a soft shade on the
+    wood where it meets each one, as in the reference."""
+    w, h, b, t = CHEST_FRONT, CHEST_HEIGHT, CHEST_BAND, CHEST_BAND_T
+    o = []
+    for x0, x1, fill in ((b, b + CHEST_SHADE_W, "shadeFill"), (w - b - CHEST_SHADE_W, w - b, "shadeBackFill")):
+        o.append(shape(quad((x0, 0, 0), (x1, 0, 0), (x1, h, 0), (x0, h, 0)), f"url(#{fill})"))
+    for x in (0, w - b):
+        o.append(shape(quad((x, 0, -t), (x + b, 0, -t), (x + b, h, -t), (x, h, -t)), "url(#bandFill)", CHEST_ROUND))
+        o.append(shape(quad((x, 0, -t), (x + CHEST_BEVEL, 0, -t), (x + CHEST_BEVEL, h, -t), (x, h, -t)), pal["bevel"]))
+        o.append(shape(quad((x + b, 0, -t), (x + b, 0, 0), (x + b, h, 0), (x + b, h, -t)), pal["band_dark"], CHEST_ROUND))
     return "".join(o)
 
 
 def chest_box(pal):
-    """The right side goes first, so the front and its upright bands cover its near edge."""
-    w, h, d, b, t = CHEST_FRONT, CHEST_HEIGHT, CHEST_DEPTH, CHEST_BAND, CHEST_BAND_T
+    """The right side goes first, so the front and its upright bands cover its near edge. The
+    front is the groove tone with the planks laid over it, so the gaps are the grooves."""
+    w, h, d, b = CHEST_FRONT, CHEST_HEIGHT, CHEST_DEPTH, CHEST_BAND
     top = h - CHEST_RIM - 7
-    o = [shape(quad((w, 0, 0), (w, h, 0), (w, h, d), (w, 0, d)), pal["band_dark"])]
-    o.append(shape(quad((w, 9, b), (w, top, b), (w, top, d - 10), (w, 9, d - 10)), pal["side"]))
-    o.append(shape(quad((0, 0, 0), (w, 0, 0), (w, h, 0), (0, h, 0)), pal["body"]))
-    for y in (22, 46):
-        o.append(shape(quad((b, y, 0), (w - b, y, 0), (w - b, y + 3, 0), (b, y + 3, 0)), pal["groove"]))
-    for x in (0, w - b):
-        o.append(shape(quad((x, 0, -t), (x + b, 0, -t), (x + b, h, -t), (x, h, -t)), pal["band"]))
-        o.append(shape(quad((x + b, 0, -t), (x + b, 0, 0), (x + b, h, 0), (x + b, h, -t)), pal["band_dark"]))
-    return "".join(o)
+    o = [shape(quad((w, 0, 0), (w, h, 0), (w, h, d), (w, 0, d)), "url(#bandSideFill)", CHEST_ROUND)]
+    o.append(shape(quad((w, 9, b), (w, top, b), (w, top, d - 10), (w, 9, d - 10)), "url(#woodSideFill)"))
+    o.append(shape(quad((0, 0, 0), (w, 0, 0), (w, h, 0), (0, h, 0)), pal["groove"]))
+    o += [shape(quad((0, y0, 0), (w, y0, 0), (w, y1, 0), (0, y1, 0)), "url(#woodFill)") for y0, y1 in CHEST_PLANKS]
+    return "".join(o) + chest_uprights(pal)
 
 
 def chest_rim(pal):
     """The rim stands proud of the upright bands, as in the reference, so it sits nearer than they do."""
     w, h, z = CHEST_FRONT, CHEST_HEIGHT, -CHEST_BAND_T - 2
     lo = h - CHEST_RIM
-    o = [shape(quad((0, lo, z), (w, lo, z), (w, h, z), (0, h, z)), pal["band"])]
-    o.append(shape(quad((0, lo, z), (w, lo, z), (w, lo + 5, z), (0, lo + 5, z)), pal["band_dark"]))
-    o.append(shape(quad((w, lo, z), (w, lo, 0), (w, h, 0), (w, h, z)), pal["band_dark"]))
+    o = [shape(quad((0, lo, z), (w, lo, z), (w, h, z), (0, h, z)), "url(#rimFill)", CHEST_ROUND)]
+    o.append(shape(quad((0, h - CHEST_BEVEL, z), (w, h - CHEST_BEVEL, z), (w, h, z), (0, h, z)), pal["bevel"]))
+    o.append(shape(quad((w, lo, z), (w, lo, 0), (w, h, 0), (w, h, z)), pal["band_dark"], CHEST_ROUND))
     return "".join(o)
 
 
@@ -521,8 +652,8 @@ def chest_lock(pal):
     """The plate takes the one-step darker copy of a face detail, not a full extrusion."""
     cx, cy = cpt(CHEST_FRONT / 2, CHEST_HEIGHT - CHEST_RIM / 2, -CHEST_BAND_T - 6)
     d = "M" + " L".join(f"{cx + a:.1f} {cy + b:.1f}" for a, b in LOCK_PLATE) + "Z"
-    sil = lambda f, x, y: f'<path {tf(x, y)} d="{d}" fill="{f}"/>'
-    o = [ext(sil, pal["plate_dark"], 3, 4, 4), sil(pal["plate"], 0, 0)]
+    sil = lambda f, x, y: f'<path {tf(x, y)} d="{d}" fill="{f}" stroke="{f}" stroke-width="4" stroke-linejoin="round"/>'
+    o = [ext(sil, pal["plate_dark"], 3, 4, 4), sil("url(#plateFill)", 0, 0)]
     if pal["lock"] == "keyhole":
         o.append(f'<circle cx="{cx:.1f}" cy="{cy - 4:.1f}" r="5" fill="{pal["inside"]}"/>')
         o.append(shape([(cx - 3, cy - 2), (cx + 3, cy - 2), (cx + 5, cy + 10), (cx - 5, cy + 10)], pal["inside"]))
@@ -571,7 +702,9 @@ def chest_shadow(swing):
     box = hull(quad((0, 0, -t), (w, 0, -t), (w, 0, d), (w, h, d), (w, h, -t), (0, h, -t)))
     lid = hull([cpt(0, *p) for p in sec] + [cpt(w, *p) for p in sec])
     paths = [f'M{" L".join(f"{a:.1f} {b:.1f}" for a, b in pts)}Z' for pts in (box, lid)]
-    sil = lambda f, x, y: "".join(f'<path {tf(x, y)} d="{p}" fill="{f}"/>' for p in paths)
+    sil = lambda f, x, y: "".join(
+        f'<path {tf(x, y)} d="{p}" fill="{f}" stroke="{f}" stroke-width="{CHEST_ROUND}" stroke-linejoin="round"/>' for p in paths
+    )
     return f'<g id="shadow">{ext(sil, SHADOW, 16, 12, 10)}</g>'
 
 
@@ -581,11 +714,12 @@ def chest(name):
         o = []
         for a in (0.55, 1.1, 1.62):
             p, q = lid_point(a), lid_point(a + 0.07)
-            o.append(shape([cpt(x0, *p), cpt(x1, *p), cpt(x1, *q), cpt(x0, *q)], pal["groove"]))
+            fill = tone(pal["wood"], lit(lid_normal(a + 0.035)) - 0.8)
+            o.append(shape([cpt(x0, *p), cpt(x1, *p), cpt(x1, *q), cpt(x0, *q)], fill))
         return "".join(o)
 
-    pal = CHEST_TIERS[name]
-    o = [chest_shadow(0), f'<g id="box">{chest_box(pal)}</g>']
+    pal = chest_palette(CHEST_TIERS[name])
+    o = [chest_defs(pal), chest_shadow(0), f'<g id="box">{chest_box(pal)}</g>']
     o.append(f'<g id="lid">{chest_lid(pal, 0)}{lid_grooves()}</g>')
     o.append(f'<g id="rim">{chest_rim(pal)}</g>')
     o.append(chest_lock(pal))
@@ -593,7 +727,7 @@ def chest(name):
         o.append(chest_studs(0))
         o.append(sparkles(CHEST_SPARKLES))
     gx, gy = cpt(CHEST_BAND + 22, *lid_point(1.2))
-    o.append(gloss(round(gx), round(gy), 14, 5, -8, 0.5))
+    o.append(gloss(round(gx), round(gy), 16, 6, -8, 0.45))
     return svg(*CHEST_SIZE, "\n".join(o))
 
 
@@ -602,7 +736,7 @@ def chest_open(name):
 
     def lid_inside():
         o = []
-        for x0, x1, grow, fill in ((0, w, CHEST_BAND_T, "band_dark"), (b, w - b, 0, "lid"), (b + 3, w - b - 3, -7, "inside")):
+        for x0, x1, grow, fill in ((0, w, CHEST_BAND_T, "band_dark"), (b, w - b, 0, "side"), (b + 3, w - b - 3, -7, "inside")):
             p, q = lid_point(0, grow, 0, CHEST_SWING), lid_point(math.pi, grow, 0, CHEST_SWING)
             o.append(shape([cpt(x0, *p), cpt(x1, *p), cpt(x1, *q), cpt(x0, *q)], pal[fill]))
         return "".join(o)
@@ -636,13 +770,13 @@ def chest_open(name):
             for kind, x, y, s, turn in items
         )
 
-    pal, cw, ch = CHEST_TIERS[name], *CHEST_OPEN_SIZE
+    pal, cw, ch = chest_palette(CHEST_TIERS[name]), *CHEST_OPEN_SIZE
     gx, gy = cpt(w / 2, h + 18, d * 0.6)
     glow = "".join(
         f'<ellipse cx="{gx:.1f}" cy="{gy:.1f}" rx="{rx}" ry="{ry}" fill="{pal["glow"]}" opacity="{op}"/>'
         for rx, ry, op in ((80, 62, ".22"), (58, 46, ".28"), (36, 29, ".4"))
     )
-    o = [chest_shadow(CHEST_SWING)]
+    o = [chest_defs(pal), chest_shadow(CHEST_SWING)]
     o.append(f'<g id="lid">{chest_lid(pal, CHEST_SWING)}{lid_inside()}</g>')
     o.append(f'<g id="glow">{glow}</g>')
     o.append(f'<g id="loot">{box_top()}{loot(CHEST_LOOT[name])}</g>')
