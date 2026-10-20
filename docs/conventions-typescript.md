@@ -6,7 +6,7 @@ The file extension decides which standard applies: `.py` files follow
 `docs/conventions-python.md`, and `.ts` and `.tsx` files follow this one. Read this file in full
 before you write or edit TypeScript here.
 
-Version 1.1.6. Written 2026-10-05 on Opus 5.5 for board item 6 (app phase 2 in `PLAN.md`), when
+Version 1.1.7. Written 2026-10-05 on Opus 5.5 for board item 6 (app phase 2 in `PLAN.md`), when
 `app/` did not yet exist. Revised 2026-10-05 (1.0.1, board item 14): rule U6 widened from the art
 to the art and the sound, after the audit of item 13 found the WAV imports outside the art
 module; no rule renumbered. Revised 2026-10-05 (1.1.0, board item 16, app phase 12): every
@@ -25,6 +25,8 @@ Revised 2026-10-05 (1.1.5, board item 49, applied at the merge of board item 59)
 the Lottie files and runtime of `GF-15`; no rule renumbered.
 Revised 2026-10-15 (1.1.6, board item 61): rule U6 covers the celebrations of `GF-20` and their
 `.lottie` files, and entry Z4 covers `app/src/types/lottie.d.ts`; no rule renumbered.
+Revised 2026-10-20 (1.1.7, board item 52): registry entry Z8 for the tab bar of `GF-18`; no rule
+changed.
 The rules start from two earlier TypeScript standards of Zach's, which hold the same owner policy as felto's `.personal-config.json` and
 which `PLAN.md` BD-17 names. No rule id is copied from either: they use ids such as `F1`, `T1`,
 `L1` and `X1` with other meanings (`PLAN.md`, section 0, row 25). The ids below are felto's own.
@@ -624,6 +626,7 @@ and the owner's agreement.
 | Z5 | `D2` (a native `@expo/ui` control wherever one exists), which U2 and U3 carry into code | `PrimaryButton` in `app/src/components/button/primary-button.tsx`, a React Native `Pressable` drawn the same on iOS and Android, used for Check and Continue (`app/src/components/lesson/lesson-run-view.tsx:65-69`, `feedback-sheet.tsx:49`) | `GF-2` of `docs/incomplete/game-feel/DESIGN.md`, agreed by Zach on 2026-10-05: a native `Button` cannot take a raised edge or a press that sinks it, which every button in the Duolingo references has. Switches, pickers and the time dialog stay native. Because it imports no `@expo/ui`, the button is one file, not a U3 pair (`PLAN.md` BD-G7). |
 | Z6 | `D2`, which U2 and U3 carry into code | The answer feedback sheet `app/src/components/lesson/feedback-sheet.tsx` and the lesson progress bar `app/src/components/lesson/lesson-progress.tsx`, React Native views drawn the same on iOS and Android | The amendment under `GF-2` of `docs/incomplete/game-feel/DESIGN.md`, Zach's answer of 2026-10-05 (board item 29): he wants controls to carry the app's tokens, and the native `@expo/ui` sheet and progress views do not. The sheet now rises on the plan's spring and pads above Android's gesture bar. Its screen-reader behaviour is written by hand (`use-sheet-focus.ts`, `LessonFrame`'s `overlayModal`). Every other native control stays native |
 | Z7 | `D2`, which U2 and U3 carry into code | The game kit in `app/src/components/kit/`: `GameText`, `RollingNumber`, `Bubble`, `Popover`, `Tag`, `Sparkles`, `SparkleBurst`, `GameButton`, `GameSwitch`, `GameSheet`, `GameDialog` and `Scrim`, React Native views drawn the same on iOS and Android, shown together on the development route `/dev/kit` | `GF-10` of `docs/incomplete/game-feel/DESIGN.md`, Zach's answer of 2026-10-05 ("All, with a custom tab bar too"): every native control left is replaced by a piece drawn from the tokens, and this entry supersedes the last sentence of Z5 and of Z6 for each control a later item replaces. What the native pieces gave for free is written by hand, piece by piece: the switch has the `switch` role, its label and its checked state; the sheet, the dialog and the popover are modal for a screen reader, move its focus to their title (`use-sheet-focus.ts`), close on the reader's escape gesture and on Android's back button (`use-back-close.ts`); layered text (`GameText`, `RollingNumber`, `Bubble`) is read once, whole. Text on a tone's face is large text or a pair of `TAG_PAINT` (`app/src/theme/tokens.ts`). No gate checks any of this; each later item that wires a piece into a screen checks it with a screen reader |
+| Z8 | `D2` (native tabs), which U2 and U3 carry into code | The tab bar `GameTabBar` in `app/src/components/tab-bar/` (`game-tab-bar.tsx`, `tab-button.tsx`, `tab-items.ts`), set as the `tabBar` of the JavaScript `Tabs` of `expo-router/js-tabs` in `app/src/components/app-tabs.tsx`, drawn the same on iOS and Android | `GF-18` of `docs/incomplete/game-feel/DESIGN.md`, part of Zach's answer to `GF-10` of 2026-10-05 ("with a custom tab bar too"): `NativeTabs` cannot take a raised selected tab or the game's icons. What the native bar gave for free is written by hand: the press events React Navigation's own bar sends (`tabPress`, `tabLongPress`), the bottom inset, Android's back to the first tab (`backBehavior="initialRoute"`), and the screen-reader role, `tab` on Android and a button spoken as "Learn, tab, 1 of 3" on iOS (`tabSpeech`), as React Navigation does. Its icons are generated art from the art module (U6). No gate checks the reader behaviour |
 
 ## Known gaps
 

@@ -94,7 +94,7 @@
 | Path | Belongs here | Does not |
 |---|---|---|
 | `tools/` | The SVG generators, the sound generator, the Lottie generator, the celebration generator, the celebration import tool and their shared module | Generated output |
-| `assets/icons/{cards,chips,path,ui}/` | Output of `build_icons.py` (85 SVGs) | Hand edits |
+| `assets/icons/{cards,chips,path,ui}/` | Output of `build_icons.py` (88 SVGs) | Hand edits |
 | `assets/mascots/{fish,squid,shark}/` | Output of `build_mascots.py` (18 SVGs) | Hand edits |
 | `assets/sounds/` | Output of `build_sounds.py` (12 WAV files, 16-bit mono, 44,100 Hz) | Hand edits, recorded audio |
 | `assets/lottie/` | Output of `build_lottie.py` (6 Lottie JSON files, 60 frames a second) | Hand edits, downloaded animations |

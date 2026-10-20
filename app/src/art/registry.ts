@@ -82,6 +82,9 @@ import Gem from "@art/icons/ui/gem.svg";
 import LivesHeart from "@art/icons/ui/lives_heart.svg";
 import StreakFlame from "@art/icons/ui/streak_flame.svg";
 import StreakFreeze from "@art/icons/ui/streak_freeze.svg";
+import TabLearn from "@art/icons/ui/tab_learn.svg";
+import TabPractice from "@art/icons/ui/tab_practice.svg";
+import TabProfile from "@art/icons/ui/tab_profile.svg";
 import XpBolt from "@art/icons/ui/xp_bolt.svg";
 import FishCheer from "@art/mascots/fish/fish_cheer.svg";
 import FishHappy from "@art/mascots/fish/fish_happy.svg";
@@ -191,6 +194,9 @@ export const ART: Record<ArtName, typeof CardAClubs> = {
   lives_heart: LivesHeart,
   streak_flame: StreakFlame,
   streak_freeze: StreakFreeze,
+  tab_learn: TabLearn,
+  tab_practice: TabPractice,
+  tab_profile: TabProfile,
   xp_bolt: XpBolt,
   fish_cheer: FishCheer,
   fish_happy: FishHappy,

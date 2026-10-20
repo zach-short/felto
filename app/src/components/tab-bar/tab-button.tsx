@@ -7,7 +7,7 @@ import { useHaptics } from "@/feedback/use-haptics";
 import { useSound } from "@/feedback/use-sound";
 import { MotionView } from "@/motion/motion-view";
 import { usePressScale } from "@/motion/use-press-scale";
-import { ART_SCALE, CHOICE_BORDER, MIN_STAT_ICON, RADIUS, SPACE, TYPE } from "@/theme/tokens";
+import { ART_SCALE, CHOICE_BORDER, MIN_TAB_ICON, RADIUS, SPACE, TYPE } from "@/theme/tokens";
 import { useColumnWidth } from "@/theme/use-column-width";
 import { useTheme } from "@/theme/use-theme";
 
@@ -37,9 +37,7 @@ export function TabButton({ item, index, count, selected, onPress, onLongPress }
     buzz(DIALS.pressHaptic);
     play(DIALS.pressSound);
   };
-  // Part A of board item 52 sizes the icon square as the stat bar sizes its icons; part B gives it
-  // a token
-  const side = Math.max(MIN_STAT_ICON, column * ART_SCALE.statIcon);
+  const side = Math.max(MIN_TAB_ICON, column * ART_SCALE.tabIcon);
   const face = selected
     ? { borderColor: colours.accent, backgroundColor: colours.surface }
     : { borderColor: colours.page, backgroundColor: colours.page };

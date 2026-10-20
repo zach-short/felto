@@ -359,12 +359,69 @@ def ui_gem():
     return svg(200, 190, "\n".join(o))
 
 
+# The tab bar's three icons (GF-18, board item 52). Each keeps its colour on both tab states,
+# as in the reference photo, because the bar frames the selected tab instead of recolouring it.
+GREEN, GREEN_DARK, _ = CHIPS["green"]
+PURPLE, PURPLE_DARK, PURPLE_LIGHT = CHIPS["purple"]
+PAGE_LINE = "#C9D3E6"
+BOOK = "M100 44 C78 28 48 22 16 28 V142 C48 136 78 142 100 158 C122 142 152 136 184 142 V28 C152 22 122 28 100 44 Z"
+BOOK_PAGES = [
+    "M94 52 C76 40 52 36 28 39 V130 C52 127 76 132 94 144 Z",
+    "M106 52 C124 40 148 36 172 39 V130 C148 127 124 132 106 144 Z",
+]
+BUST = "M100 10 A36 36 0 1 1 99.9 10 Z M34 160 C34 114 64 94 100 94 C136 94 166 114 166 160 Z"
+TAB_CARD = (72, 136)
+
+
+def ui_tab_learn():
+    sil = lambda f, x, y: f'<path {tf(x, y)} d="{BOOK}" fill="{f}" stroke="{f}" stroke-width="8" stroke-linejoin="round"/>'
+    o = [solid(sil, GREEN, GREEN_DARK, 9, 12)]
+    o += [f'<path d="{d}" fill="{CREAM}"/>' for d in BOOK_PAGES]
+    for x0, x1 in ((40, 82), (118, 160)):
+        o += [stroke(f"M{x0} {y} H{x1}", 6, PAGE_LINE) for y in (66, 88, 110)]
+    o.append(gloss(22, 86, 3, 18, 0, 0.5))
+    # wider than the other icons, because the book's shadow reaches past 200
+    return svg(210, 190, "\n".join(o))
+
+
+# Two cards fanned from one point at their foot. The chip stack is the precedent for an icon of
+# several pieces: each card's shadow is drawn before either card, so the front card's shadow
+# never falls on the back card.
+def ui_tab_practice():
+    w, h = TAB_CARD
+
+    def card(turn):
+        # the offset moves the card on the page before it turns, so its depth falls down and right
+        return lambda f, x, y: (
+            f'<rect x="{-w / 2:.0f}" y="{-h}" width="{w}" height="{h}" rx="12" fill="{f}" '
+            f'transform="translate({90 + x:.2f} {158 + y:.2f}) rotate({turn})"/>'
+        )
+
+    back, front = card(-16), card(12)
+    o = [f'<g id="shadow">{ext(back, SHADOW, 19, 23, 10)}{ext(front, SHADOW, 19, 23, 10)}</g>']
+    o += [ext(back, "#0F47B8", 9, 12), back("#2F7BF0", 0, 0), ext(front, CARD_DEPTH, 9, 12), front(CREAM, 0, 0)]
+    o.append(f'<g transform="translate(90 158) rotate(12)">{suit_shape("hearts", RED, 0.75, 0, -h / 2)}</g>')
+    o.append(gloss(124, 40, 11, 5, 30, 0.7))
+    return svg(200, 190, "\n".join(o))
+
+
+def ui_tab_profile():
+    sil = lambda f, x, y: f'<path {tf(x, y)} d="{BUST}" fill="{f}" stroke="{f}" stroke-width="6" stroke-linejoin="round"/>'
+    o = [solid(sil, PURPLE, PURPLE_DARK, 9, 12)]
+    o.append(f'<circle cx="100" cy="46" r="22" fill="{PURPLE_LIGHT}" opacity=".45"/>')
+    o.append(gloss(84, 28, 12, 6, -30, 0.6))
+    return svg(200, 190, "\n".join(o))
+
+
 UI_ICONS = {
     "streak_flame": ui_flame,
     "streak_freeze": ui_freeze,
     "xp_bolt": ui_bolt,
     "lives_heart": ui_heart,
     "gem": ui_gem,
+    "tab_learn": ui_tab_learn,
+    "tab_practice": ui_tab_practice,
+    "tab_profile": ui_tab_profile,
 }
 
 

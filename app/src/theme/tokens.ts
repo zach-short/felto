@@ -249,6 +249,9 @@ export const ART_SCALE = {
   pathMascot: 0.3,
   chest: 0.11,
   statIcon: 0.075,
+  // Board item 52 (GF-18): the square each tab icon draws in, a little larger than a stat icon
+  // because the tab icon is the tab's main mark
+  tabIcon: 0.085,
   // Phase 9: the lesson. A card is at most this share of the column; a row of five shrinks to fit.
   lessonCard: 0.2,
   lessonMascot: 0.2,
@@ -281,6 +284,10 @@ export const TILE_MIN_WIDTH = 64;
 // The stat bar icons stay at least this many points wide, so on a narrow phone their hard
 // shadow keeps a visible offset (PLAN.md phase 8, watch-for).
 export const MIN_STAT_ICON = 24;
+
+// The tab icons stay at least this many points wide, for the same reason, and so a finger finds
+// them on a narrow phone (board item 52)
+export const MIN_TAB_ICON = 28;
 
 // Game feel second pass (board item 46, GF-10 and GF-16): the kit. GameText comes in three sizes,
 // each with the thickness of its outline and the depth of its extrusion below the letters

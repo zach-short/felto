@@ -9,14 +9,12 @@ export type TabItem = {
   art: ArtName;
 };
 
-// GF-18: the three tabs, in the order the bar draws them (DESIGN.md 10.3 and D21 of the app).
-// Board item 52, part A, draws art the registry already has: the path node for the path, the card
-// back the Practice tab already shows, and the XP bolt for the player's own numbers. Part B swaps
-// each name for a tab icon drawn by tools/build_icons.py.
+// GF-18: the three tabs, in the order the bar draws them (DESIGN.md 10.3 and D21 of the app), each
+// with its icon from tools/build_icons.py (board item 52, part B)
 export const TAB_ITEMS: readonly TabItem[] = [
-  { route: "index", label: "Learn", art: "node_available" },
-  { route: "practice", label: "Practice", art: "card_back" },
-  { route: "profile", label: "Profile", art: "xp_bolt" },
+  { route: "index", label: "Learn", art: "tab_learn" },
+  { route: "practice", label: "Practice", art: "tab_practice" },
+  { route: "profile", label: "Profile", art: "tab_profile" },
 ];
 
 export function tabItemFor(route: string): TabItem | undefined {

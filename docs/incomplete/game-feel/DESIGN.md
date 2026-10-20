@@ -651,6 +651,11 @@ Decided 2026-10-05 (Zach). A tab bar in the style of the photos: coloured icons,
 state, drawn from the tokens. The tab icons come from `tools/build_icons.py`. Part of `GF-10`,
 named apart because it replaces `NativeTabs` and the iOS 26 glass look.
 
+*As built, 2026-10-20 (board item 52, `HANDOFF.md` steps 47 and 63):* the JavaScript `Tabs` of
+`expo-router/js-tabs` with the app's own bar. The selected tab is raised and framed in the accent;
+the three icons, an open book, two fanned cards and a head and shoulders, keep their colour on both
+states, as in the photo.
+
 #### GF-19. Rive rigs for every mascot and the chest, built by Zach's sessions
 
 Decided 2026-10-05 (message 2: "write more passoff items for rive animations and i will have them
