@@ -37,7 +37,7 @@ export interface GtoKey {
 const SCHEMA = "felto-gto-key/1";
 // KEY-SPEC.md 7.5: the app does not recompute the hash; it pins the one the solver wrote. This is
 // the provisional freeze of BD-T20 (2026-10-06), and board item 60 re-pins it after RF-3.
-export const SPEC_HASH = "659cdfd1072b0ea27a0b74737ce6f3a67c63a329ed18595c6f1f8233ffe845a7";
+export const SPEC_HASH = "ef9007126f5d63461e6fd0a44cf83f87cba41b5b8bbb5ce21e6797ed6d742681";
 // Three frequencies written to four decimals can miss 1 by 0.00015 (KEY-SPEC.md 7.4); this leaves
 // room for that and nothing else, the tolerance of solver/validate_key.py.
 const SUM_TOLERANCE = 0.001;

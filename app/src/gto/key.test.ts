@@ -162,19 +162,23 @@ describe("a broken key", () => {
 
 // PLAN.md phase 4, step 3: every hand the unit 3 chart opens for a seat should open at least
 // gtoChartMinOpen at that seat's open node. On 2026-10-06 (board item 39) the provisional key of
-// BD-T20 opened the 46 hands below less often. Zach chose to pin them here and to change neither
-// the chart nor the solver, so a new miss or a cured one fails this test, and board item 60's
-// re-export updates the list. Most are suited connectors and gappers, the hands KEY-SPEC.md 4,
-// item 3, says the leaf model undervalues; each hand's frequency is in HANDOFF.md, step 54.
+// BD-T20 opened 46 chart hands less often. Zach chose to pin them here and to change neither
+// the chart nor the solver, so a new miss or a cured one fails this test. Board item 60's
+// re-export (2026-11-05, RF-3, KEY-SPEC.md 8.5) cured eight of them (22, T9s and QTo at CO;
+// 98s and J9o at BTN; T7s, 97s and 87s at SB) and added four (KTs at UTG; A5s and QTs at HJ;
+// Q9s at CO), so the 42 hands below are the misses of that key. Most are suited connectors and
+// gappers, the hands KEY-SPEC.md 4, item 3, says the leaf model undervalues; the four new ones
+// are high-card suited hands. Each hand's frequency under the 2026-10-06 key is in HANDOFF.md,
+// step 54.
 const PINNED_UNDER: Record<OpenSeat, readonly HandClass[]> = {
-  UTG: ["QTs", "JTs", "T9s"],
-  HJ: ["K9s", "Q9s", "J9s", "T9s", "98s"],
-  CO: ["22", "K8s", "J9s", "T9s", "T8s", "98s", "97s", "87s", "76s", "65s", "QTo", "JTo"],
+  UTG: ["KTs", "QTs", "JTs", "T9s"],
+  HJ: ["A5s", "K9s", "QTs", "Q9s", "J9s", "T9s", "98s"],
+  CO: ["K8s", "Q9s", "J9s", "T8s", "98s", "97s", "87s", "76s", "65s", "JTo"],
   BTN: [
-    "Q7s", "Q6s", "J8s", "J7s", "T8s", "T7s", "98s", "97s", "96s", "87s", "86s", "76s", "75s", "65s",
-    "64s", "54s", "J9o", "T9o",
+    "Q7s", "Q6s", "J8s", "J7s", "T8s", "T7s", "97s", "96s", "87s", "86s", "76s", "75s", "65s", "64s",
+    "54s", "T9o",
   ],
-  SB: ["T7s", "97s", "87s", "86s", "76s", "75s", "65s", "54s"],
+  SB: ["86s", "76s", "75s", "65s", "54s"],
 };
 
 function openNode(seat: OpenSeat): GtoNode {

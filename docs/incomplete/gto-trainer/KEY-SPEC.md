@@ -234,6 +234,38 @@ the share is convex in `e`, so applying it hand class by hand class rather than 
 level gives the bent player `c × Var(e)` more than the range-level figure; for the widest ranges
 that is under 0.03 bb (section 10, finding 8), and nothing corrects for it.
 
+**Amended 2026-11-05 (board item 60, RF-3; Zach's answers in section 11, fourth batch; the
+options in section 13).** The bent share `s` above is no longer the share paid. Each hand class
+`h` has a playability score
+
+    z(h) = a_pair × pair(h) + a_suited × suited(h) + a_connected × connected(h) + a_ace_high × ace_high(h) + a_high_card × high_card(h)
+
+where `pair` is 1 for a pair, `suited` 1 for a suited non-pair, `connected` 1, 0.5 or 0.25 for a
+non-pair whose ranks are 0, 1 or 2 apart (the ace counts high only, so `A5s` is not connected),
+`ace_high` 1 for a non-pair whose higher card is an ace, and `high_card` is (the higher card's
+rank − 10) / 4 with the ace 14, so `AKo` scores +1 and `22` scores −2 on that feature; every
+other feature is 0. The five coefficients are in log-odds units and frozen in section 12. At a
+leaf with chips behind, with `R = exp(z(h_bent) − z(h_edge))`, the bent player's share is
+
+    s' = s × R / (s × R + 1 − s)
+
+and the edge holder's share is `1 − s'`: the odds of the bent player's share are multiplied by
+`R`, so two hands of the same class are unchanged against each other, a share of 0 or 1 stays
+where it is, the pot is conserved at every matchup, and every coefficient at 0 gives the model
+above exactly. The flat tax then applies to both shares as before, and the all-in leaf (3.1) is
+not adjusted. The adjustment applies at every leaf with chips behind: `srp`, `3bp` and `4bp`
+(section 13.3 (iv-b)). Worked example, from the hand-worked case of `solver/cfr_test.py`: `SB`
+calls a `BB` 3-bet to 9 at 40 percent equity, `c_3bp` 0.4, `k` 2, so `s` = 0.3424 and `SB`
+keeps 6.163 of 18; with `z(h_bent) − z(h_edge)` = −0.3, `R` = 0.7408, `s'` = 0.2784 and `SB`
+keeps 5.010, a cut of 1.153 bb. The coefficients are a fit to the bands of 8.2 under the bounds
+and the signs of section 13.4, not a measurement: section 13.1 found no published realization
+figure by hand feature from a named solver (13.3 (iii-c)). Both `solver/cfr.py` (`features`,
+`scores`, `shift`, `adjusted`, `shares`) and `solver/best_response.py` (`playability`,
+`odds_shift`, `split`) carry their own copy of this arithmetic. The tuning paragraph above now
+reads over fourteen dials, the nine of this section and the five coefficients, tuned together by
+`solver/tune.py` (section 13.4) and frozen in section 12; the result is the dated paragraph of
+8.5.
+
 ### 3.3 Hand classes, equity and card removal
 
 A hand class is one of the 169 two-card classes the app already uses: `AA` for a pair, `AKs`
@@ -295,6 +327,17 @@ cold review of section 10 set the sizes.
    blockers and raw equity, so offsuit aces (`A8o` to `A2o`) and offsuit broadways become the
    bluffs and suited wheel aces become calls or folds, the opposite of real play, by 5 to 8
    percent of a range per spot (section 10, finding 5). RF-3 in section 11 is the named fallback.
+   *As amended 2026-11-05 (board item 60, RF-3).* The model now sees five features of the hand
+   (3.2 as amended): pair, suited, connectedness, ace-high and the higher card's rank, each with
+   one coefficient across every pot type. What it fixes is what those features can carry: a
+   suited connector and an offsuit broadway of equal equity now take different shares, and both
+   players' hands count, so a 3-bettor's weak offsuit ace loses as well as a caller's. What it
+   still cannot do: the coefficients are a fit to the bands of 8.2 (13.3 (iii-c)), not a
+   measurement, because no published figure by feature exists (13.1); the features are five
+   fixed shapes, so two hands with the same features (`K9s` and `K2s`, `A9o` and `A2o`) still
+   differ only by equity; a feature's weight is the same in a single raised pot and a 3-bet pot
+   (13.3 (ii-a)), where real realization is nearer to equity; and the hands 8.5 records as still
+   outside their bands after the freeze, if any, are this item's findings.
 4. **One size at every level** (section 2.3). Without a smaller 3-bet or 4-bet, the hands that
    real strategies use as a 4-bet bluff (`A5s`, `A4s`, `KJs` and the like) and the hands that
    call a 4-bet (`JJ`, `TT`, `AQs`, `AKo`) move with the chosen 4-bet size: a larger 4-bet
@@ -474,7 +517,14 @@ leaf-model dials provisionally on 2026-10-06 (section 11, Q5; board item 37, `HA
 `659cdfd1072b0ea27a0b74737ce6f3a67c63a329ed18595c6f1f8233ffe845a7`, computed the same day by
 the same function and pinned in `solver/cfr_test.py` (`SPEC_HASH`). Board item 60 (RF-3) changes
 the leaf model and this hash again; phase 4 pins in `app/src/gto/key.ts` whichever value stands
-when it runs, and item 60 re-pins it.
+when it runs, and item 60 re-pins it. Board item 60 re-froze the object on 2026-11-05 (section 12
+as amended; 8.5, the dated paragraph of 2026-11-05), and the hash of the object as it stands is
+`ef9007126f5d63461e6fd0a44cf83f87cba41b5b8bbb5ce21e6797ed6d742681`, computed that day by the
+same function and pinned in `solver/cfr_test.py` (`SPEC_HASH`) and in `app/src/gto/key.ts`
+(`SPEC_HASH`). The hash of the object with `schema_game` 2, the `class_adjustment` fields and
+every dial at its 2026-10-06 value, which stood while the item was built and before the freeze,
+was `9520e77db0235971b225fbeff34a8bf865f9c43f2688b56dd999319917ddd295`; no key was exported
+under it.
 
 ### 7.6 The validator
 
@@ -671,6 +721,84 @@ are reached per dealt hand at 1 (`UTG`), 0.8507 (`HJ`), 0.6912 (`CO`), 0.5232 (`
 (`SB`), the products of the fold rates of the seats before each opener (3.3). The raw key is
 `solver/data/key.json` (608,670 bytes, 65 nodes, 10,985 strategy rows, the shape of 7.1;
 `python3 solver/validate_key.py solver/data/key.json` prints `valid`), the file phase 4 exports.
+
+**The RF-3 re-freeze, 2026-11-05 (board item 60, `PLAN.md` BD-T39).** The leaf model gained the
+class adjustment of 3.2 as amended, and `solver/tune.py` re-tuned the nine dials of 3.2 together
+with the five coefficients inside the ranges of 3.2 and 13.4 (two runs, 13.4 as amended). The
+pick, by the rule of 13.4 (rows inside, then total miss, then the button's pairs, then the
+patterns), is `k` 2, `c_srp` 0.5, `c_srp_oop` 0.125, `c_3bp` 0.45, `c_3bp_oop` 0, `c_4bp` 0.3,
+`c_4bp_oop` 0.2, `t_ip` 0.5, `t_sb` 0.5, `a_pair` 0.3, `a_suited` 0, `a_connected` 0.15,
+`a_ace_high` 0, `a_high_card` 0 (section 12; hash in 7.5). It is frozen as provisional again, not
+final: it lands 21 of the 26 rows of 8.2 against 19 before, and the five it misses are findings
+for Zach under 8.1, not numbers tuned away. Solved by `python3 solver/cfr.py` at 12,000 iterations
+over the five subtrees, 105 s; two runs byte-identical by `cmp`; every seat's best-response gain
+per dealt hand at most 0.000003 bb (0.000040 at 3,000, 0.000011 at 6,000). The button opens every
+pair at 100 percent. The same one node is under `reachFloor`, at the same place as above. Every
+row, at 12,000 iterations:
+
+| Row of 8.2 | 2026-10-06 | 2026-11-05 | Band | Verdict |
+|---|---|---|---|---|
+| `UTG` opens | 14.9 | 15.1 | 14 to 21 | inside |
+| `HJ` opens | 18.8 | 18.7 | 18 to 25 | inside |
+| `CO` opens | 24.3 | 24.6 | 24 to 31 | inside |
+| `BTN` opens | 34.3 | 35.5 | 40 to 48 | missed, provisional |
+| `SB` opens | 50.4 | 51.6 | 38 to 55 | inside |
+| `BB` against `BTN`, defend | 63.8 | 59.6 | 50 to 75 | inside |
+| `BB` against `BTN`, 3-bet | 15.047 | 13.8 | 9 to 15 | inside, was missed |
+| `BB` against `BTN`, call | 48.8 | 45.8 | 38 to 62 | inside |
+| `BB` against `CO`, defend | 51.9 | 46.9 | 42 to 68 | inside |
+| `BB` against `CO`, 3-bet | 10.3 | 10.0 | 7 to 13 | inside |
+| `BB` against `UTG`, defend | 35.1 | 26.6 | 28 to 60 | missed, new, provisional |
+| `BB` against `UTG`, 3-bet | 6.5 | 6.2 | 4 to 10 | inside |
+| `BB` against `SB`, defend | 63.4 | 68.6 | 48 to 70 | inside |
+| `BB` against `SB`, 3-bet | 27.5 | 25.8 | 12 to 20 | missed, provisional |
+| `SB` against `BTN`, 3-bet | 17.4 | 17.2 | 9 to 18 | inside |
+| `SB` against `BTN`, call | 0.0 | 0.0 | 0 to 5 | inside |
+| `BTN` against `CO`, 3-bet | 14.1 | 14.4 | 10 to 17 | inside |
+| `BTN` against `CO`, call | 1.2 | 0.0 | 0 to 10 | inside |
+| `HJ` against `UTG`, call | 1.2 | 0.0 | 0 to 10 | inside |
+| `CO` against `UTG`, call | 1.2 | 0.0 | 0 to 10 | inside |
+| `CO` folds to a `BTN` 3-bet | 18.3 | 33.9 | 52 to 72 | missed, provisional |
+| `CO` 4-bets a `BTN` 3-bet | 17.2 | 21.2 | 15 to 28 | inside |
+| `SB` folds to a `BB` 3-bet | 35.2 | 43.4 | 55 to 80 | missed, provisional |
+| `BTN` folds to a `BB` 3-bet | 35.7 | 45.1 | 45 to 70 | inside, was missed |
+| `UTG` folds to a `BB` 3-bet | 41.2 | 46.4 | 45 to 70 | inside, was missed |
+| `BB` realizes against `BTN` | 82.8 | 82.0 | 65 to 90 | inside |
+
+Of the seven rows item 60 set out to land, three are inside (`BB` against `BTN` 3-bets, `BTN`
+folds, `UTG` folds) and four stay missed; `BB` against `UTG` defends is newly missed, by 1.4,
+so BD-T39's done-when is not met and the freeze stays provisional. What the five misses share
+is what 8.5 found on 2026-10-06: each is a rate in a 3-bet pot or the button's open rate, and
+the two fold rates moved 16 and 8 points toward their bands without reaching them. The dials
+that moved most: `t_ip` and `t_sb` from 0.1 and 0.25 to the ceiling 0.5 of their ranges, which
+is what made the three flat rows 0.0 and the three fold rates rise; `c_4bp` and `c_4bp_oop` to
+their ceilings 0.3 and 0.2; `a_pair` to 0.3, `a_connected` to 0.15; `a_suited`, `a_ace_high`
+and `a_high_card` stayed at 0, so of the features section 4, item 3, names, suitedness and the
+weak ace moved nothing in this fit. Five of the fourteen dials sit at a ceiling, a finding for
+the ranges, which are Zach's.
+
+The hand-level patterns of 13.3 (v), at the pick's 500-iteration screening (`solver/tune.py`
+prints them; `cfr.py` does not): P1 met in both spots (`A2s`-`A5s` 3-bet more than `A2o`-`A9o`
+against `BTN` and against `SB`); P2 met for `CO` against a `BTN` 3-bet, not met for `SB` against
+a `BB` 3-bet; P3 not met (the button opens the gap-0 suited connectors less often than
+`A2o`-`A9o`); P4 met in three of five spots, not met for `CO` against a `BTN` 3-bet and `BTN`
+against a `CO` 4-bet. The 4-bet expectation of 13.3 (v) (b), fold 35 to 60 and call 20 to 45,
+no verdict: `BTN` against a `CO` 4-bet folds 28.3, calls 53.1; `SB` against a `BTN` 4-bet folds
+26.5, calls 55.6; `BB` against a `BTN` 4-bet folds 27.3, calls 55.4; `BB` against an `SB` 4-bet
+folds 31.9, calls 48.7. Every 4-bet is called more and folded to less than the one source
+expects, as 13.1 Part C found of the 2026-10-06 key.
+
+`k` 1 and 2, as 3.2 asks. The best `k` 1 setting of the two runs (`c_srp` 0.25, `c_3bp` 0.6,
+`c_4bp` 0.3, `c_srp_oop` 0.125, `c_3bp_oop` 0, `c_4bp_oop` 0.2, `t_ip` 0, `t_sb` 0.312, `a_pair`
+0.6, `a_suited` 0, `a_connected` 0.3, `a_ace_high` 0, `a_high_card` 0.15; 13.4 as amended) was
+solved once at 12,000 iterations for the comparison: 19 rows inside, total miss 15.0 points.
+It brings `CO` folds to 51.0, `SB` folds to 53.5 and `BTN` opens to 37.4, and the 4-bet rows
+near the expectation (`BTN` against `CO` folds 39.0 and calls 34.0 at the screening), but it
+misses `CO` 4-bets at 30.0, `BB` against `CO` defends at 41.2 and `BB` against `UTG` defends at
+27.9, and it has `a_pair`, `c_3bp` and `c_4bp` at their ceilings. The pick rule puts rows inside
+first, so `k` 2 stands; the `k` 1 setting is the one to start from if Zach widens the ranges.
+The raw key is `solver/data/key.json` (609,882 bytes, 65 nodes, `python3 solver/validate_key.py
+solver/data/key.json` prints `valid`), copied byte for byte to `app/src/gto/data/key.json`.
 
 ## 9. Feasibility
 
@@ -1034,6 +1162,33 @@ inside the family, and the question was put again with three choices.
 3.2, 7.5, 8.5 and 12 carry the freeze; `PLAN.md` BD-T20 records it with its reversal; board
 item 60 is RF-3.
 
+### Fourth batch, 2026-11-05, the GATE 1 batch of RF-3 (board item 60)
+
+Asked in one batch in chat on 2026-11-05 after section 13 was written (13.6 has each question
+with its options, the argument against each and the recommendation). Zach answered the same day
+in chat: every recommendation.
+
+- **Q1. Build RF-3, or keep the provisional freeze as final?** Answer: build it. The alternative,
+  the first reversal of BD-T20, was declined.
+- **Q2. The shape.** Answer: (i-c), the renormalized two-sided factor in log-odds form (3.2 as
+  amended).
+- **Q3. The features and their sharing.** Answer: (ii-a), the five features with one coefficient
+  each across pot types; the two pot-type scales of (ii-b) only as the fallback if the harness
+  cannot land the rows.
+- **Q4. How the coefficients are set.** Answer: (iii-c), a bounded fit to the bands with the
+  signs of section 4, item 3, fixed and every coefficient inside −0.6 to 0.6, recorded as a fit.
+- **Q5. Pot types.** Answer: (iv-b), every leaf with chips behind.
+- **Q6. Done.** Answer: as 13.3 (v) states it: the seven rows of 8.5 including `UTG` folds to a
+  `BB` 3-bet, no row of 8.2 newly missed, the button's pairs at 100 percent, the realization band,
+  the four patterns P1 to P4 as a tiebreak and as recorded findings, the bands first when they
+  conflict.
+- **Q7. The 4-bet rows.** Answer: (b), a stated expectation (fold 35 to 60, call 20 to 45 percent
+  of the 3-bet range) printed by the harness, a tiebreak only, recorded in 8.5 without a verdict.
+- **Q8. `schema_game`.** Answer: 2; the key schema stays `felto-gto-key/1`.
+
+These answers are written out in 3.2 (the amendment), 4 item 3 (the "as amended" note), 12 (the
+object) and 8.5 (the result); `PLAN.md` BD-T39 records the decision with its reversal.
+
 ## 12. The game object
 
 The object the key embeds and hashes (section 7.5). The values are the answers of sections 2 and
@@ -1042,11 +1197,18 @@ and this section is amended with the date. Amended 2026-10-06 (board item 37, `H
 52): the nine leaf-model dials below are the provisional freeze of section 11, Q5. The starting
 values of 3.2 (`c` 0.7, 0.4, 0.2 with the edge in position; 0.3, 0.2, 0.1 with it out of
 position; `t` 0.1 and 0.25; `k` 2) stay in `RANGES` of `solver/config.py` as the record of where
-the tuning began. Board item 60 (RF-3) amends this object and section 3.2 again.
+the tuning began. Board item 60 (RF-3) amends this object and section 3.2 again. Amended
+2026-11-05 (board item 60, RF-3, section 11 fourth batch, `PLAN.md` BD-T39): `leaf_model` gains
+`class_adjustment`, the five coefficients of 3.2 as amended with their feature legend, the nine
+old dials are re-frozen with them by `solver/tune.py` (8.5, the dated paragraph of 2026-11-05),
+and `schema_game` is 2 because the object's meaning changed (Q8). The freeze is provisional
+again: 8.5 records which rows it lands and which it misses. With every coefficient 0 the object
+values every leaf exactly as the object of 2026-10-06 did. `formula` and `features` are prose
+for a reader of the key; the arithmetic that binds is 3.2.
 
 ```json
 {
-  "schema_game": 1,
+  "schema_game": 2,
   "seats": ["UTG", "HJ", "CO", "BTN", "SB", "BB"],
   "postflop_order": ["SB", "BB", "UTG", "HJ", "CO", "BTN"],
   "stack_bb": 100,
@@ -1063,11 +1225,20 @@ the tuning began. Board item 60 (RF-3) amends this object and section 3.2 again.
   },
   "leaf_model": {
     "kind": "edge_realization",
-    "formula": "bent_share = e - c * e * (1 - e)^k; edge_share = 1 - bent_share; a flat by a seat other than BB multiplies both shares by (1 - t)",
+    "formula": "bent_share = e - c * e * (1 - e)^k; R = exp(z_bent - z_edge); share = bent_share * R / (bent_share * R + 1 - bent_share); edge_share = 1 - share; a flat by a seat other than BB multiplies both shares by (1 - t)",
     "k": 2,
-    "c_edge_in_position": {"srp": 0.5, "3bp": 0.4, "4bp": 0.1, "all_in": 0},
-    "c_edge_out_of_position": {"srp": 0.2, "3bp": 0, "4bp": 0.05, "all_in": 0},
-    "flat_tax": {"ip": 0.1, "sb": 0.25, "bb": 0}
+    "c_edge_in_position": {"srp": 0.5, "3bp": 0.45, "4bp": 0.3, "all_in": 0},
+    "c_edge_out_of_position": {"srp": 0.125, "3bp": 0, "4bp": 0.2, "all_in": 0},
+    "flat_tax": {"ip": 0.5, "sb": 0.5, "bb": 0},
+    "class_adjustment": {
+      "kind": "log_odds_shift",
+      "features": "z = a_pair * pair + a_suited * suited + a_connected * connected + a_ace_high * ace_high + a_high_card * high_card; pair, suited and ace_high are 0 or 1 (suited and ace_high are 0 for a pair); connected is 1, 0.5, 0.25 for a non-pair with a gap of 0, 1, 2 between its ranks, the ace high only, else 0; high_card is (rank of the higher card - 10) / 4 with the ace 14",
+      "a_pair": 0.3,
+      "a_suited": 0,
+      "a_connected": 0.15,
+      "a_ace_high": 0,
+      "a_high_card": 0
+    }
   },
   "card_removal": "two_live_hands",
   "hand_classes": 169
@@ -1075,7 +1246,9 @@ the tuning began. Board item 60 (RF-3) amends this object and section 3.2 again.
 ```
 
 `max_live_players` is the heads-up-only rule of section 2.2. `card_removal` is section 3.3. The
-edge rule and the tax are section 3.2. `hand_classes` is the count the `hands` array must have.
+edge rule, the tax and the class adjustment are section 3.2. `hand_classes` is the count the
+`hands` array must have. The coefficients that are integers (`0`) are written as integers, as 7.5
+asks, so `a_suited`, `a_ace_high` and `a_high_card` are `0` and not `0.0` in the canonical JSON.
 
 ## 13. RF-3: options
 
@@ -1623,7 +1796,7 @@ units:
 z(h) = a_pair × pair + a_suited × suited + a_connected × connected + a_ace_high × ace-high +
 a_high_card × high card. Under this shape `A5s` scores a_suited + a_ace_high + a_high_card, `A5o`
 scores a_ace_high + a_high_card, `76s` scores a_suited + a_connected − 0.75 a_high_card, `KJo`
-scores 0.75 a_high_card, and `22` scores a_pair − 2 a_high_card.
+scores 0.5 a_connected + 0.75 a_high_card, and `22` scores a_pair − 2 a_high_card.
 
 - (ii-a) One coefficient per feature across pot types, five dials (recommended). For: five
   hand-set numbers, the fewest that name every feature of item 3; the pot-size leverage of (i-c)
@@ -1752,6 +1925,30 @@ dials at three to five values each is about 200 screenings, under an hour, and t
 re-solved at 12,000 iterations (105 s). The pick is the setting with the most rows inside, then
 the smallest total miss, then the patterns, then the 4-bet expectation; `k` 1 and 2 are both
 reported, as 3.2 asks.
+
+**Amended 2026-11-05, after the two runs of `solver/tune.py` (board item 60, step 5).** One
+screening took about 5 s, not 10. The harness searches in two phases: 120 settings drawn from a
+numpy stream seeded with the constant 1, inside the ranges, then a coordinate descent from the
+best of those and the start (five values per dial, at most three sweeps, one half-step sweep).
+The two runs differ in the order the descent compares two settings. Run 1 compared by the pick
+rule above (rows inside first, then total miss): from the 2026-10-06 freeze it reached 22 of 26
+rows inside with a total miss of 38.1 points at `k` 2 and stalled, because a step that closes a
+far miss while it nudges a near row out counts as worse under that order. Run 2 compared by total
+miss first and started from run 1's pick: at `k` 2 it traded one row (`BB` against `UTG` defends,
+28 to 60, at 26.3) for seven points of miss, 21 rows inside at 31.1; at `k` 1 it reached 21 rows
+inside at 13.9 points, with `a_pair`, `c_3bp` and `c_4bp` at their ceilings and `t_ip` at 0.
+The committed harness keeps run 2's order, and its docstring says so; the pick rule of this
+section is applied by the reader on the printed reports, and the pick of 2026-11-05 is run 1's
+setting at `k` 2 (8.5, the dated paragraph). The `k` 1 setting of run 2 is a finding there: it
+brings `CO` folds to a `BTN` 3-bet to 51.0 (52 to 72) and `SB` folds to a `BB` 3-bet to 53.5 (55
+to 80), within 1.5 points, but it misses `CO` 4-bets a `BTN` 3-bet at 30.0 (15 to 28) and `BB`
+against `CO` defends at 41.2 (42 to 68), two rows the pick lands, so at 12,000 iterations it has
+19 rows inside against the pick's 21 and is worse under the pick rule. A screening at 500
+iterations is about two points off on a defend rate: `BB` against `UTG` defends screened at 28.2
+for the pick and solved at 26.6, and `BB` against `CO` defends screened at 42.4 for the `k` 1
+setting and solved at 41.2, so a row within two points of a band edge in a screening report is
+not yet landed, and a pick is made on the 12,000-iteration solves. Whether the ceilings move is
+Zach's, under 8.1.
 
 ### 13.5 Hazards
 

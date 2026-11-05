@@ -43,9 +43,9 @@ GAME = {
             "BB multiplies both shares by (1 - t)"
         ),
         "k": 2,
-        "c_edge_in_position": {"srp": 0.5, "3bp": 0.4, "4bp": 0.1, "all_in": 0},
-        "c_edge_out_of_position": {"srp": 0.2, "3bp": 0, "4bp": 0.05, "all_in": 0},
-        "flat_tax": {"ip": 0.1, "sb": 0.25, "bb": 0},
+        "c_edge_in_position": {"srp": 0.5, "3bp": 0.45, "4bp": 0.3, "all_in": 0},
+        "c_edge_out_of_position": {"srp": 0.125, "3bp": 0, "4bp": 0.2, "all_in": 0},
+        "flat_tax": {"ip": 0.5, "sb": 0.5, "bb": 0},
         "class_adjustment": {
             "kind": "log_odds_shift",
             "features": (
@@ -55,9 +55,9 @@ GAME = {
                 "gap of 0, 1, 2 between its ranks, the ace high only, else 0; high_card is (rank "
                 "of the higher card - 10) / 4 with the ace 14"
             ),
-            "a_pair": 0,
+            "a_pair": 0.3,
             "a_suited": 0,
-            "a_connected": 0,
+            "a_connected": 0.15,
             "a_ace_high": 0,
             "a_high_card": 0,
         },

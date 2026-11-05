@@ -4,11 +4,14 @@ The harness of KEY-SPEC.md 13.4 (docs/incomplete/gto-trainer/, board item 60, RF
 coordinate descent over the fourteen leaf-model dials of RANGES in config.py (the nine of section
 3.2 and the five class-adjustment coefficients of 3.2 as amended), each inside its range. A
 setting is screened by solving the five opener subtrees with cfr.solve_tree at SCREEN_ITERATIONS
-and scored by, in order: the button opening every pair (phase 3a's done-when), the number of rows
-of cfr.BANDS inside their bands, the smallest total miss in points, the hand-level patterns P1 to
-P4 of KEY-SPEC.md 13.3 (v) met, and the smallest distance from the 4-bet expectation of 13.3 (v)
-(b), which is an expectation from one source and not a band. The class partition and the
-weighting are those of KEY-SPEC.md 13.1 Part 5.
+and scored by, in order: the button opening every pair (phase 3a's done-when), the smallest total
+miss in points over the rows of cfr.BANDS, the number of rows inside their bands, the hand-level
+patterns P1 to P4 of KEY-SPEC.md 13.3 (v) met, and the smallest distance from the 4-bet
+expectation of 13.3 (v) (b), which is an expectation from one source and not a band. The total
+miss comes before the count of rows inside because a search that counts rows first cannot take a
+step that closes a far miss while it nudges a near row out, and the first run of 2026-11-05
+stalled on that (KEY-SPEC.md 13.4); the report prints both, so a reader applies the pick rule of
+13.4 on what it shows. The class partition and the weighting are those of KEY-SPEC.md 13.1 Part 5.
 
 The search has two parts, because the misses are one mechanism and a single dial moved alone
 cannot reach them (HANDOFF.md steps 50 and 51): first SAMPLES settings drawn inside the ranges
@@ -164,7 +167,7 @@ def score(nodes, game, E, W):
     miss = sum(outside(value, floor, ceiling) for _, value, floor, ceiling in bands)
     patterns = sum(met for _, met in pattern_lines(nodes, game, p))
     expectation = sum(row[4] for row in vs4_rows(nodes, game, p))
-    return (int(pairs_open), inside, -round(miss, 3), patterns, -round(expectation, 3))
+    return (int(pairs_open), -round(miss, 3), int(inside), patterns, -round(expectation, 3))
 
 
 def screen(game, E, W):
@@ -195,6 +198,8 @@ def candidates(dial, current=None):
     pass, or the two half-steps either side of the current value in the fine pass, rounded so a
     frozen value reads plainly."""
     _, floor, ceiling = RANGES[dial]
+    if dial == "k":
+        return [1, 2]
     step = (ceiling - floor) / (STEPS - 1)
     if current is None:
         return [round(floor + step * i, 3) for i in range(STEPS)]
@@ -265,14 +270,14 @@ def main():
     E, W, _ = cfr.load_equity()
     game = copy.deepcopy(GAME)
     print(report("start", game, E, W))
-    dials = [d for d in RANGES if d != "k"]
-    game, best = explore(game, E, W, dials, np.random.default_rng(SEED))
+    dials = list(RANGES)
+    game, best = explore(game, E, W, [d for d in dials if d != "k"], np.random.default_rng(SEED))
     pick, _ = descend(game, E, W, dials, best)
-    print(report("pick, k 2", pick, E, W))
+    print(report(f"pick, k {read_dial(pick, 'k')}", pick, E, W))
     other = copy.deepcopy(pick)
-    set_dial(other, "k", 1)
-    other, _ = descend(other, E, W, dials, screen(other, E, W)[1])
-    print(report("best at k 1", other, E, W))
+    set_dial(other, "k", 3 - read_dial(pick, "k"))
+    other, _ = descend(other, E, W, [d for d in dials if d != "k"], screen(other, E, W)[1])
+    print(report(f"best at k {read_dial(other, 'k')}", other, E, W))
 
 
 if __name__ == "__main__":

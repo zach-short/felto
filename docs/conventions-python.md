@@ -34,7 +34,13 @@ the raw strategy key, on 2026-10-06 (ledger step 53), so the generator rules bin
 bind `equity.py`: its docstring states the game, the method and the run command (M1), it reads no
 clock and no random source (G1), it writes through one path (W1) and prints what it wrote (W2).
 `solver/data/` holds the two files those generators write and nothing else. With those, `solver/`
-holds eight `.py` files, and `tools/` holds five (`ls solver tools`, 2026-10-06).
+holds eight `.py` files, and `tools/` holds five (`ls solver tools`, 2026-10-06). Board item 60
+added `solver/tune.py` on 2026-11-05, the tuning harness of `KEY-SPEC.md` 13.4 (RF-3): it imports
+numpy and the siblings `cfr`, `config` and `validate_key` by their plain names (M4), runs through
+one `main()` (M3), prints a table and writes no file, so the generator rules do not bind it; M3,
+M4, H2, H3, H4, K1 and Y1 to Y3 do. Its sampling draws from a numpy stream seeded with a constant
+in the source, so two runs print the same table. With it, `solver/` holds nine `.py` files
+(`ls solver`, 2026-11-05).
 Later on 2026-10-05 board item 49 added `tools/build_lottie.py`, the Lottie generator of game-feel
 `GF-15`. It writes six Lottie JSON files to `assets/lottie/` and imports `json`, `math`, `os` and
 `CREAM` from `tools/common.py` (`tools/build_lottie.py:28-32`). Every rule that binds the sound
@@ -52,7 +58,7 @@ W1, W2 and H2 say how each applies. With those, `tools/` holds seven `.py` files
 2026-10-15).
 Read this file in full before you write or edit Python here.
 
-Version 1.4.1. Written 2026-10-04 on Opus 5.5 for board item 1 (ledger step 2 in `HANDOFF.md`);
+Version 1.4.2. Written 2026-10-04 on Opus 5.5 for board item 1 (ledger step 2 in `HANDOFF.md`);
 revised 2026-10-05 on Sonnet 5.5 for board item 2 (ledger step 3), which moved the shared code
 into `tools/common.py`, for board item 3 (ledger step 4), which reconciled the line citations,
 for board item 4 (ledger step 8), which named `tools/common.py` in the scope sentence, and
@@ -85,6 +91,8 @@ shifted; a rule changed.
 Version 1.4.1 on 2026-10-15 on Opus 5.5 (ledger step 56), which recorded that `python3` is
 Python 3.15.0 with numpy 2.5.4 since that day, in "What the rules rest on" and in M4, and added
 the rebuild under 3.15.0 to the determinism fact; no rule changed.
+Version 1.4.2 on 2026-11-05 on Fable 5.1 for board item 60 (RF-3), which named `solver/tune.py` in
+the scope paragraph and said which rules bind it; no rule changed.
 Zach answered the open questions on 2026-10-04 and took every recommendation. Those answers are
 cited below as "owner, 2026-10-04".
 

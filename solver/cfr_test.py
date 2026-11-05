@@ -22,7 +22,7 @@ import cfr
 from config import DIAL_PATH, GAME, RANGES
 from validate_key import HANDS, check_sums, spec_hash, validate
 
-SPEC_HASH = "9520e77db0235971b225fbeff34a8bf865f9c43f2688b56dd999319917ddd295"
+SPEC_HASH = "ef9007126f5d63461e6fd0a44cf83f87cba41b5b8bbb5ce21e6797ed6d742681"
 
 # Opener hands are rows, defender hands columns: E[h][g] is the opener's equity.
 E3 = np.array([[0.5, 0.7, 0.4], [0.3, 0.5, 0.45], [0.6, 0.55, 0.5]])
@@ -158,7 +158,7 @@ class GameTest(unittest.TestCase):
 
     def test_position_and_tax_follow_the_rows(self):
         self.assertEqual([cfr.pair_of(GAME, o, d)["opener_ip"] for o, d in FOLD_WINS], [False, True, True, False])
-        self.assertEqual([cfr.pair_of(GAME, "CO", d)["tax"] for d in ("BTN", "SB", "BB")], [0.1, 0.25, 0])
+        self.assertEqual([cfr.pair_of(GAME, "CO", d)["tax"] for d in ("BTN", "SB", "BB")], [0.5, 0.5, 0])
 
     def test_leaf_payoffs_match_the_hand_worked_cases_in_both_modules(self):
         game = starting_game()
