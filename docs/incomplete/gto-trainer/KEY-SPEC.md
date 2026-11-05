@@ -10,7 +10,9 @@ day ("all recs"): RF-2, M1 and C1. A cold review the same day (section 10) found
 a correct solve of that game is wrong as poker, and a second batch of four questions went to Zach;
 he kept the flat call (Q1, no) and took the other three (Q2, Q3, Q4). Sections 2.3, 2.5, 3.2, 4
 and 12 are the final answers written out. Sections 8 and 10 were filled in from the researchers'
-reports and the cold review.
+reports and the cold review. Section 13 (2026-11-05, board item 60) is the scope of RF-3: the
+ground truth, the options and the GATE 1 batch; nothing in it is decided until section 11 records
+Zach's fourth batch.
 
 What this document rests on: `DESIGN.md` section 6 (Zach's answers A2, B1, C2, D1, E1, all
 2026-10-05), `PLAN.md` section 1 (BD-T1 to BD-T10) and the facts cited inline. Numbers in big
@@ -1074,3 +1076,733 @@ the tuning began. Board item 60 (RF-3) amends this object and section 3.2 again.
 
 `max_live_players` is the heads-up-only rule of section 2.2. `card_removal` is section 3.3. The
 edge rule and the tax are section 3.2. `hand_classes` is the count the `hands` array must have.
+
+## 13. RF-3: options
+
+Written 2026-11-05 on Fable 5.1 for board item 60 (`PASSOFF.md`), Stage 2 of
+`docs/AGENT-PRACTICES.md` 2.2. This section proposes and decides nothing. It holds the ground
+truth of Stage 1 (13.1), what RF-3 is and is not (13.2), the option space with the strongest
+argument against each option and a marked recommendation (13.3), the dials it would add (13.4),
+the hazards (13.5) and the GATE 1 batch (13.6). Zach's answers become the fourth batch of section
+11, dated, and steps 3 to 7 of the item follow from them. Until then sections 3.2, 8.5 and 12
+stand as written.
+
+### 13.1 Ground truth, verified 2026-11-05
+
+Stage 1 research for board item 60 (RF-3). An Opus 5.5 researcher subagent did the work in its
+own worktree, read-only (its `git status --short` was empty on return). The key read is
+`solver/data/key.json` (12,000 iterations, `spec_hash` 659cdfd1...e845a7, the dials of section
+12: `k` 2, `c_srp` 0.5, `c_srp_oop` 0.2, `c_3bp` 0.4, `c_3bp_oop` 0, `c_4bp` 0.1, `c_4bp_oop`
+0.05, `t_ip` 0.1, `t_sb` 0.25). The script is a scratch copy of the `measure` arithmetic in
+`solver/cfr.py` lines 422-436, not kept; the builder re-checked two band values and five EV gaps
+against the file the same day. Numbers are in big blinds unless a line says otherwise.
+
+#### 1. What exists, verified 2026-11-05
+
+| Claim | Verified state | Citation |
+|---|---|---|
+| BTN opens | 34.306 (8.5: 34.3). Band 40 to 48 | key, node `UTG:fold/HJ:fold/CO:fold` |
+| BB 3-bets a BTN open | 15.055 (8.5: 15.047 at 4,000 iterations; the key has 12,000 iterations and strategies rounded to 4 places). Band 9 to 15 | key, `.../BTN:open/SB:fold` |
+| BB 3-bets an SB open | 27.499 (8.5: 27.5). Band 12 to 20 | key, `.../SB:open` |
+| CO folds to a BTN 3-bet | 18.275 (8.5: 18.3 at 12,000 iterations). Band 52 to 72 | key, `UTG:fold/HJ:fold/CO:open/BTN:3bet` |
+| SB folds to a BB 3-bet | 35.172 (8.5: 35.2). Band 55 to 80 | key, `.../SB:open/BB:3bet` |
+| BTN folds to a BB 3-bet | 35.696 (8.5: 35.7). Band 45 to 70 | key, `.../BTN:open/SB:fold/BB:3bet` |
+| UTG folds to a BB 3-bet | 41.190 (8.5: 41.2). Band 45 to 70 | key, `UTG:open/.../BB:3bet` |
+| Spot 1 finding | BTN folds 87.5 percent of each suited connector class (gap 0, 1, 2) at a class mean open EV of about -0.53. The 5.7 points it needs cost at most 0.115 bb per hand, and most of them are K-x and Q-x hands. | 13.1.3, spot 1 |
+| Spot 2 finding | Over the band by 0.055 points. KTs and QTs are indifferent (gap 0.0001). This is a rounding miss, not a feature miss. | spot 2 |
+| Spot 3 finding | BB 3-bets 100 percent of all pairs, all aces and suited broadways. The 7.5 points it needs cost up to 0.25 bb per hand. The movers are offsuit broadways, A2o to A5o and suited connectors and one-gappers. | spot 3 |
+| Spot 4 finding | CO calls 100 percent of 22-55 and A2s-A9s, and 82 to 93 percent of broadways. 33.7 points must fold, at gaps up to 0.75 bb. The movers include the classes real play keeps (suited aces, suited broadways). | spot 4 |
+| Spot 5 finding | SB calls 100 percent of offsuit aces A2o-A9o (14.4 percent of its range) and 22-55. 19.8 points must fold, at gaps up to 0.58 bb. | spot 5 |
+| Spot 6 finding | 9.3 points must fold, at gaps up to 0.20 bb (K-x and Q-x suited, QJo, A2s, J9s, Q9s). | spot 6 |
+| Spot 7 finding | 3.8 points must fold. 55 and AJo are indifferent (gap below 0.0001), so the miss costs about 0 bb. | spot 7 |
+| Edge in the 3-bet pots | The BTN and UTG calls of a BB 3-bet use `c_3bp_oop`, which is 0: the caller there realizes its raw equity. The CO and SB calls use `c_3bp` 0.4. | 3.2 table, key `leaf_model` |
+| Published realization by feature, preflop range level | Not found for any of the five features from a named solver with stated rake. All figures found are single hands on single flops, or position-level ranges. | 13.1.2 |
+| Published realization in 3-bet pots by feature | Not found. Three sources were checked and none gives a 3-bet pot figure. | 13.1.2 |
+| Published 3-bettor fold, call and 5-bet rates against a 4-bet at 100 bb | One source, with no solver named: GTO Gecko, BB against a BTN 4-bet, fold about 47, call about 29, jam about 24. A second source with a solver named was not found. | 13.1.4 |
+
+#### 2. Part A: published realization figures by feature
+
+Sixteen web searches and fetches were made on 2026-11-05. No source gives a preflop, range-level
+realization figure for a hand feature from a named solver with stated rake. What exists is shown
+below. The values are aggregates or single named hands. No chart was copied.
+
+**Position-level figures (context for every feature).**
+
+| Figure | Spot | Rake | Solver | Source, URL, read |
+|---|---|---|---|---|
+| IP 1.14 to 1.17, OOP 0.78 to 0.87 (range EQR on the flop) | MTT 20 bb BTN vs BB; 6-max cash 100 bb LJ vs BB (IP 1.14, OOP 0.86 to 0.87); HU 30 bb SB limp | not stated | the site's own, engine not named | Poker Academy, "Equity realization (EQR) in poker", Doro, updated 2026-09-17, https://poker.academy/blog/post/how-to-understand-equity-realisation-eqr, read 2026-11-05 |
+| BB 70 to 75 percent, BTN 105 to 110 percent, for 76s | BTN open, BB defend, stack not stated | not stated | none | ThinkGTO glossary "Equity Realization", undated (copyright 2026), https://thinkgto.com/glossary/equity-realization, read 2026-11-05 |
+
+**(1) Suited against offsuit at the same ranks.**
+
+| Figure | Spot | Rake, solver | Source |
+|---|---|---|---|
+| KJs 102.8 against KJo 87.0 percent (gap about 16 points, one pair of hands) | BB defends against a BTN min-raise, MTT 20 bb, 9-handed, ante 0.13 | rake not stated; Simple Preflop Holdem models realization | PokerNews, Gareth James, 2020-11-02, https://www.pokernews.com/strategy/bb-defense-holdem-resources-vs-simple-preflop-holdem-38183.htm, read 2026-11-05 |
+| Suited broadways realize about twice their offsuit form on one flop (KJs 38 against KJo 19, QTs 37 against QTo 16, QJs 34 against QJo 14 percent) | BTN vs BB, MTT 20 bb, flop 975 rainbow, BB OOP | not stated, engine not named | Poker Academy, above |
+| KQs 117 against KQo about 47 percent on one flop | UTG vs BTN SRP, flop A92 two-tone, UTG OOP | not stated, GTO Wizard | PokerStrategy, Barry Carter, "Which hands over or under realise equity?", updated 2026-02-21, https://www.pokerstrategy.com/news/content/Which-hands-over-or-under-realise-equity_131327/, read 2026-11-05 |
+
+These are flop-specific and do not give a preflop factor.
+
+**(2) Connectedness (gap 0, 1, 2).** One preflop figure was found. Suited connectors average
+about 98 percent (KJs, QJs, 76s) and the one-gapper J9s is about 95 percent, in the PokerNews
+BB-defence spot above. These figures rest on 3 hands and 1 hand. Flop-level figures: 32s 87
+percent, 98s below 25 percent without a backdoor flush draw and near 50 percent with one, BB OOP,
+HJ vs BB, MTT 50 bb, flop JT9 two-tone, GTO Wizard, Andrew Brokos, "Equity Realization",
+2022-11-16, https://blog.gtowizard.com/equity-realization/. A per-hand model in a GitHub project
+(allenlong2007/poker-preflop, CFR+, BTN vs BB at 100 bb, no rake) measured suited connectors at
+1.3 to 1.4 times their equity on the BTN and 1.0 to 1.2 in the BB. Its own playability bonuses
+are "hand-picked" and its postflop rules are simple, so it is not a solver source. No two-gapper
+figure was found.
+
+**(3) Pairs (22-66, 77-TT).** No preflop figure from a solver was found. The GitHub project above
+measured small pairs at about 1.4 times their equity on the BTN, under its own postflop rules.
+PokerStrategy (above) gives 44 at 46 to 56 percent on one A-high flop, OOP. Medium pairs: absent.
+
+**(4) Suited wheel aces against weak offsuit aces.** No preflop factor was found. A8o is 90.9
+percent in the PokerNews spot (one hand). A2s is about 100 percent IP and below 2 percent OOP on
+one flop in GTO Wizard's 2022 article. The GitHub project measured weak offsuit aces and kings at
+0.8 to 0.9 on the BTN. A suited wheel ace preflop figure: absent.
+
+**(5) Offsuit broadways (KJo, KTo, QTo, JTo).** KJo and QTo average about 83.5 percent in the
+PokerNews spot (two hands, 20 bb). Flop-level: 14 to 19 percent on 975 rainbow (Poker Academy).
+The GitHub project measured offsuit broadways at 1.0 to 1.2 in the BB. No 100 bb cash figure was
+found.
+
+**3-bet pots.** No figure for any feature was found. Poker Academy, GTO Wizard 2022,
+PokerStrategy and ThinkGTO give none. The GitHub project uses the same formula in 3-bet pots as
+in single raised pots.
+
+**Absence, stated plainly.** Two sources with a named solver and stated rake exist for none of
+the five features. The direction is agreed (suited over offsuit, connected over unconnected, IP
+over OOP), but the size is not sourced at the preflop range level. An RF-3 per-class term
+therefore cannot be set from published figures. It can only be tuned against the bands of 8.2,
+and the sizes in 13.1.3 bound that tuning.
+
+#### 3. Part B: the key at the seven missed spots
+
+Each table gives: the class share of the actor's range at the node, in percent (for spots 1 to 3
+this is percent of all dealt hands, because those rows are rates of hands by the plain deal); the
+percent of the class that takes each action; and the class mean EV of each action, in bb. The EV
+is weighted by the same range weight over every hand in the class, whatever the hand does.
+"Cheapest movers" are the hands currently on the wrong side, ordered by the EV gap (current
+action EV minus the best EV of the action the band needs). "Points" are percent points of the
+measured base. Hands whose current frequency is below 0.01 are left out.
+
+##### Spot 1: BTN opens 34.3, band 40 to 48 (node `UTG:fold/HJ:fold/CO:fold`)
+
+| Class | Share | fold | open | EV fold | EV open |
+|---|---|---|---|---|---|
+| pairs 22-55 | 1.8 | 0.0 | 100.0 | 0 | +0.464 |
+| pairs 66-99 | 1.8 | 0.0 | 100.0 | 0 | +1.321 |
+| pairs TT-AA | 2.3 | 0.0 | 100.0 | 0 | +3.842 |
+| suited aces A2s-A5s | 1.2 | 0.0 | 100.0 | 0 | +0.395 |
+| suited aces A6s-A9s | 1.2 | 0.0 | 100.0 | 0 | +0.652 |
+| suited aces ATs-AKs | 1.2 | 0.0 | 100.0 | 0 | +1.621 |
+| offsuit aces A2o-A9o | 7.2 | 0.0 | 100.0 | 0 | +0.305 |
+| offsuit aces ATo-AKo | 3.6 | 0.0 | 100.0 | 0 | +1.386 |
+| suited broadways | 1.8 | 0.0 | 100.0 | 0 | +0.496 |
+| offsuit broadways | 5.4 | 0.0 | 100.0 | 0 | +0.251 |
+| suited connectors gap 0 | 2.4 | 87.5 | 12.5 | 0 | -0.544 |
+| suited one-gappers | 2.4 | 87.5 | 12.5 | 0 | -0.526 |
+| suited two-gappers | 2.4 | 87.5 | 12.5 | 0 | -0.524 |
+| other suited K and Q | 4.5 | 53.3 | 46.7 | 0 | -0.044 |
+| other suited | 6.3 | 100.0 | 0.0 | 0 | -0.715 |
+| other offsuit | 54.3 | 93.2 | 6.8 | 0 | -0.824 |
+| all | 100 | 65.7 | 34.3 | | |
+
+Move needed: 5.7 points from fold to open (to the floor, 40). Cheapest movers (gap = open EV
+short of 0, bb):
+
+| Hand | Class | Points | Cumulative | Gap |
+|---|---|---|---|---|
+| K6o | other offsuit | 0.84 | 0.84 | 0.0001 |
+| K3s | other suited K and Q | 0.30 | 1.14 | 0.009 |
+| J8s | suited two-gappers | 0.30 | 1.44 | 0.014 |
+| T8s | suited one-gappers | 0.30 | 1.74 | 0.019 |
+| 98s | suited connectors gap 0 | 0.30 | 2.04 | 0.041 |
+| K5o | other offsuit | 0.90 | 2.95 | 0.052 |
+| Q7s | other suited K and Q | 0.30 | 3.25 | 0.053 |
+| K2s | other suited K and Q | 0.30 | 3.55 | 0.063 |
+| Q6s | other suited K and Q | 0.30 | 3.85 | 0.087 |
+| J9o | other offsuit | 0.90 | 4.76 | 0.096 |
+| Q8o | other offsuit | 0.90 | 5.66 | 0.115 |
+| Q5s | other suited K and Q | 0.30 | 5.97 | 0.130 |
+
+The cheapest path is mostly offsuit and low suited K-x and Q-x, which section 4 item 3 says
+should move the other way. A feature-led path is all three suited connector classes: 6.3 points
+at up to 7.2 points of hands. It needs about +0.5 bb per hand on the open EV of those classes,
+and the class means sit at -0.52 to -0.54.
+
+##### Spot 2: BB 3-bets a BTN open 15.055, band 9 to 15 (node `.../BTN:open/SB:fold`)
+
+| Class | Share | fold | call | 3bet | EV fold | EV call | EV 3bet |
+|---|---|---|---|---|---|---|---|
+| pairs 22-55 | 1.8 | 0.0 | 25.0 | 75.0 | -1 | -0.122 | +0.078 |
+| pairs 66-99 | 1.8 | 0.0 | 0.0 | 100.0 | -1 | +0.396 | +1.214 |
+| pairs TT-AA | 2.3 | 0.0 | 0.0 | 100.0 | -1 | +1.401 | +5.048 |
+| suited aces A2s-A5s | 1.2 | 0.0 | 50.0 | 50.0 | -1 | -0.180 | -0.197 |
+| suited aces A6s-A9s | 1.2 | 0.0 | 25.1 | 74.9 | -1 | +0.086 | +0.177 |
+| suited aces ATs-AKs | 1.2 | 0.0 | 0.0 | 100.0 | -1 | +0.706 | +1.934 |
+| offsuit aces A2o-A9o | 7.2 | 0.0 | 87.5 | 12.5 | -1 | -0.212 | -0.471 |
+| offsuit aces ATo-AKo | 3.6 | 0.0 | 0.0 | 100.0 | -1 | +0.589 | +1.543 |
+| suited broadways | 1.8 | 0.0 | 29.8 | 70.2 | -1 | -0.204 | -0.043 |
+| offsuit broadways | 5.4 | 0.0 | 79.4 | 20.6 | -1 | -0.370 | -0.521 |
+| suited connectors gap 0 | 2.4 | 12.5 | 87.5 | 0.0 | -1 | -0.793 | -1.394 |
+| suited one-gappers | 2.4 | 12.5 | 87.5 | 0.0 | -1 | -0.812 | -1.464 |
+| suited two-gappers | 2.4 | 0.0 | 100.0 | 0.0 | -1 | -0.830 | -1.524 |
+| other suited K and Q | 4.5 | 0.0 | 100.0 | 0.0 | -1 | -0.698 | -1.087 |
+| other suited | 6.3 | 33.4 | 66.6 | 0.0 | -1 | -0.967 | -1.951 |
+| other offsuit | 54.3 | 61.7 | 38.3 | 0.0 | -1 | -1.033 | -2.177 |
+| all | 100 | 36.2 | 48.7 | 15.1 | | | |
+
+Move needed: 0.055 points from 3-bet to call. Cheapest movers: KTs (3-bet 0.102, 0.03 points,
+gap 0.0001) and QTs (3-bet 0.109, 0.03 points, gap 0.0001), both suited broadways. The pattern
+section 10 names is visible here. Small pairs 3-bet 75 percent. Offsuit aces A2o-A9o 3-bet 12.5
+percent, which is 0.9 points of hands. Suited wheel aces 3-bet 50 percent (0.6 points). No suited
+connector class 3-bets.
+
+##### Spot 3: BB 3-bets an SB open 27.5, band 12 to 20 (node `.../BTN:fold/SB:open`)
+
+| Class | Share | fold | call | 3bet | EV fold | EV call | EV 3bet |
+|---|---|---|---|---|---|---|---|
+| pairs 22-55 | 1.8 | 0.0 | 0.0 | 100.0 | -1 | -0.071 | +0.714 |
+| pairs 66-99 | 1.8 | 0.0 | 0.0 | 100.0 | -1 | +0.504 | +1.931 |
+| pairs TT-AA | 2.3 | 0.0 | 0.0 | 100.0 | -1 | +1.478 | +6.624 |
+| suited aces A2s-A5s | 1.2 | 0.0 | 0.0 | 100.0 | -1 | +0.056 | +0.557 |
+| suited aces A6s-A9s | 1.2 | 0.0 | 0.0 | 100.0 | -1 | +0.276 | +1.073 |
+| suited aces ATs-AKs | 1.2 | 0.0 | 0.0 | 100.0 | -1 | +0.764 | +3.009 |
+| offsuit aces A2o-A9o | 7.2 | 0.0 | 0.0 | 100.0 | -1 | +0.006 | +0.330 |
+| offsuit aces ATo-AKo | 3.6 | 0.0 | 0.0 | 100.0 | -1 | +0.648 | +2.606 |
+| suited broadways | 1.8 | 0.0 | 0.0 | 100.0 | -1 | +0.057 | +0.506 |
+| offsuit broadways | 5.4 | 0.0 | 40.8 | 59.2 | -1 | -0.100 | -0.045 |
+| suited connectors gap 0 | 2.4 | 12.5 | 50.0 | 37.5 | -1 | -0.821 | -0.928 |
+| suited one-gappers | 2.4 | 12.5 | 62.5 | 25.0 | -1 | -0.826 | -0.978 |
+| suited two-gappers | 2.4 | 24.6 | 62.9 | 12.5 | -1 | -0.814 | -1.032 |
+| other suited K and Q | 4.5 | 0.0 | 93.4 | 6.6 | -1 | -0.467 | -0.719 |
+| other suited | 6.3 | 52.2 | 47.8 | 0.0 | -1 | -0.996 | -1.387 |
+| other offsuit | 54.3 | 59.0 | 41.0 | 0.0 | -1 | -1.002 | -1.614 |
+| all | 100 | 36.6 | 35.9 | 27.5 | | | |
+
+Move needed: 7.5 points from 3-bet to call (to the ceiling, 20). Cheapest movers (gap = 3-bet EV
+minus call EV, bb):
+
+| Hand | Class | Points | Cumulative | Gap |
+|---|---|---|---|---|
+| JTo | offsuit broadways | 0.42 | 0.42 | 0.0000 |
+| KTo | offsuit broadways | 0.20 | 0.62 | 0.0000 |
+| QJo | offsuit broadways | 0.78 | 1.41 | 0.0000 |
+| K9s | other suited K and Q | 0.30 | 1.71 | 0.003 |
+| J8s | suited two-gappers | 0.30 | 2.01 | 0.007 |
+| 87s | suited connectors gap 0 | 0.30 | 2.31 | 0.034 |
+| A2o | offsuit aces A2o-A9o | 0.90 | 3.22 | 0.088 |
+| T8s | suited one-gappers | 0.30 | 3.52 | 0.102 |
+| 98s | suited connectors gap 0 | 0.30 | 3.82 | 0.102 |
+| J9s | suited one-gappers | 0.30 | 4.12 | 0.112 |
+| A3o | offsuit aces A2o-A9o | 0.90 | 5.03 | 0.121 |
+| KJo | offsuit broadways | 0.90 | 5.93 | 0.122 |
+| A4o | offsuit aces A2o-A9o | 0.90 | 6.83 | 0.164 |
+| T9s | suited connectors gap 0 | 0.30 | 7.14 | 0.232 |
+| QTs | suited broadways | 0.30 | 7.44 | 0.246 |
+| A5o | offsuit aces A2o-A9o | 0.90 | 8.34 | 0.246 |
+
+By class, the feature-led move is offsuit aces A2o-A9o (7.2 points, at 0.09 to about 0.47 bb)
+plus offsuit broadways (3.2 points still 3-bet). The 3-bet EV of A2o-A9o must fall relative to
+the call by about 0.32 bb on the class mean. The pairs 22-55 3-bet at a gap of 0.79 bb, so moving
+them is expensive.
+
+##### Spot 4: CO folds to a BTN 3-bet 18.3, band 52 to 72 (node `UTG:fold/HJ:fold/CO:open/BTN:3bet`; CO's call is bent by `c_3bp` 0.4)
+
+| Class | Share | fold | call | 4bet | EV fold | EV call | EV 4bet |
+|---|---|---|---|---|---|---|---|
+| pairs 22-55 | 5.6 | 0.0 | 100.0 | 0.0 | -2.5 | -1.303 | -3.903 |
+| pairs 66-99 | 7.4 | 0.0 | 77.6 | 22.4 | -2.5 | +0.208 | -0.311 |
+| pairs TT-AA | 9.3 | 0.0 | 0.0 | 100.0 | -2.5 | +3.666 | +8.622 |
+| suited aces A2s-A5s | 5.0 | 0.0 | 100.0 | 0.0 | -2.5 | -2.138 | -5.897 |
+| suited aces A6s-A9s | 5.0 | 0.0 | 100.0 | 0.0 | -2.5 | -1.816 | -3.787 |
+| suited aces ATs-AKs | 5.0 | 0.0 | 60.1 | 39.9 | -2.5 | +0.544 | -0.266 |
+| offsuit aces A2o-A9o | 22.4 | 66.8 | 33.2 | 0.0 | -2.5 | -2.457 | -6.137 |
+| offsuit aces ATo-AKo | 14.9 | 0.0 | 75.0 | 25.0 | -2.5 | +0.122 | -0.802 |
+| suited broadways | 7.4 | 0.0 | 92.8 | 7.2 | -2.5 | -1.755 | -3.257 |
+| offsuit broadways | 14.9 | 18.1 | 81.9 | 0.0 | -2.5 | -2.190 | -3.814 |
+| suited two-gappers | 1.2 | 0.0 | 100.0 | 0.0 | -2.5 | -2.360 | -7.294 |
+| other suited K and Q | 1.2 | 0.0 | 100.0 | 0.0 | -2.5 | -2.335 | -4.071 |
+| other offsuit | 0.6 | 100.0 | 0.0 | 0.0 | -2.5 | -2.918 | -9.054 |
+| all | 100 | 18.3 | 64.5 | 17.2 | | | |
+
+Classes not listed have no weight in CO's opening range. Move needed: 33.7 points from call to
+fold (to the floor, 52). Cheapest movers (gap = call EV minus fold EV, bb):
+
+| Hand | Class | Points | Cumulative | Gap |
+|---|---|---|---|---|
+| KTo | offsuit broadways | 1.03 | 1.03 | -0.0007 |
+| QJo | offsuit broadways | 3.72 | 4.76 | 0.063 |
+| A8o | offsuit aces A2o-A9o | 3.72 | 8.48 | 0.116 |
+| Q9s | suited two-gappers | 1.24 | 9.72 | 0.140 |
+| K9s | other suited K and Q | 1.24 | 10.96 | 0.165 |
+| A2s | suited aces A2s-A5s | 1.24 | 12.21 | 0.207 |
+| A3s | suited aces A2s-A5s | 1.24 | 13.45 | 0.276 |
+| KJo | offsuit broadways | 3.72 | 17.17 | 0.320 |
+| A4s | suited aces A2s-A5s | 1.24 | 18.41 | 0.414 |
+| A6s | suited aces A6s-A9s | 1.24 | 19.65 | 0.444 |
+| QTs | suited broadways | 1.24 | 20.90 | 0.470 |
+| A9o | offsuit aces A2o-A9o | 3.72 | 24.62 | 0.486 |
+| A5s | suited aces A2s-A5s | 1.24 | 25.86 | 0.550 |
+| JTs | suited broadways | 1.24 | 27.10 | 0.559 |
+| A7s | suited aces A6s-A9s | 1.24 | 28.34 | 0.563 |
+| KTs | suited broadways | 1.24 | 29.58 | 0.574 |
+| QJs | suited broadways | 1.24 | 30.83 | 0.625 |
+| A8s | suited aces A6s-A9s | 1.24 | 32.07 | 0.696 |
+| 33 | pairs 22-55 | 1.86 | 33.93 | 0.750 |
+
+The miss is too large for a feature term alone. Offsuit aces and offsuit broadways that still
+call give only about 15 points (A2o-A9o at 33 percent call, 7.4 points; offsuit broadways at 82
+percent call, 12.2 points). Landing 52 also folds suited aces and suited broadways, at 0.2 to
+0.75 bb per hand. That points to a pot-type cut on the out-of-position caller in a 3-bet pot,
+with the feature term on top. Poker Academy's figure for this spot (NL200, GG rake) is fold 63.7,
+call 17.2, 4-bet 19.1 percent of the opening range (Pawel Brzeski, updated 2026-09-17,
+https://poker.academy/blog/post/what-is-a-3-bet-in-poker-a-theoretical-and-strategic-guide). The
+key's call is 64.5 against 17.2 there.
+
+##### Spot 5: SB folds to a BB 3-bet 35.2, band 55 to 80 (node `.../SB:open/BB:3bet`; SB's call is bent by `c_3bp` 0.4)
+
+| Class | Share | fold | call | 4bet | EV fold | EV call | EV 4bet |
+|---|---|---|---|---|---|---|---|
+| pairs 22-55 | 3.6 | 0.0 | 100.0 | 0.0 | -3 | -1.176 | -3.102 |
+| pairs 66-99 | 3.6 | 0.0 | 38.0 | 62.0 | -3 | +0.584 | +0.923 |
+| pairs TT-AA | 4.5 | 0.0 | 0.0 | 100.0 | -3 | +3.687 | +12.109 |
+| suited aces A2s-A5s | 2.4 | 0.0 | 100.0 | 0.0 | -3 | -1.910 | -3.813 |
+| suited aces A6s-A9s | 2.4 | 0.0 | 100.0 | 0.0 | -3 | -0.923 | -2.059 |
+| suited aces ATs-AKs | 2.4 | 0.0 | 2.8 | 97.2 | -3 | +1.311 | +2.851 |
+| offsuit aces A2o-A9o | 14.4 | 0.0 | 100.0 | 0.0 | -3 | -1.978 | -4.296 |
+| offsuit aces ATo-AKo | 7.2 | 0.0 | 25.0 | 75.0 | -3 | +0.918 | +1.911 |
+| suited broadways | 3.6 | 0.0 | 83.3 | 16.7 | -3 | -1.748 | -2.304 |
+| offsuit broadways | 10.8 | 0.0 | 89.2 | 10.8 | -3 | -2.319 | -3.675 |
+| suited connectors gap 0 | 1.2 | 0.0 | 100.0 | 0.0 | -3 | -2.584 | -6.430 |
+| suited one-gappers | 1.2 | 0.0 | 100.0 | 0.0 | -3 | -2.621 | -6.425 |
+| suited two-gappers | 1.4 | 16.2 | 83.8 | 0.0 | -3 | -2.676 | -6.063 |
+| other suited K and Q | 9.0 | 47.7 | 52.3 | 0.0 | -3 | -2.961 | -6.446 |
+| other suited | 1.5 | 100.0 | 0.0 | 0.0 | -3 | -3.256 | -8.044 |
+| other offsuit | 31.0 | 94.2 | 5.8 | 0.0 | -3 | -3.437 | -8.514 |
+| all | 100 | 35.2 | 48.6 | 16.2 | | | |
+
+Move needed: 19.8 points from call to fold. Cheapest movers (gap = call EV minus fold EV, bb):
+
+| Hand | Class | Points | Cumulative | Gap |
+|---|---|---|---|---|
+| Q6s | other suited K and Q | 0.05 | 0.06 | -0.001 |
+| K4s | other suited K and Q | 0.45 | 0.51 | 0.0004 |
+| Q7s | other suited K and Q | 0.60 | 1.11 | 0.036 |
+| K9o | other offsuit | 1.79 | 2.90 | 0.104 |
+| K5s | other suited K and Q | 0.60 | 3.50 | 0.124 |
+| J8s | suited two-gappers | 0.60 | 4.10 | 0.206 |
+| T8s | suited one-gappers | 0.60 | 4.70 | 0.249 |
+| K6s | other suited K and Q | 0.60 | 5.30 | 0.250 |
+| A2o | offsuit aces A2o-A9o | 1.79 | 7.09 | 0.256 |
+| 98s | suited connectors gap 0 | 0.60 | 7.69 | 0.283 |
+| Q8s | other suited K and Q | 0.60 | 8.29 | 0.324 |
+| K7s | other suited K and Q | 0.60 | 8.89 | 0.338 |
+| JTo | offsuit broadways | 1.79 | 10.68 | 0.343 |
+| QTo | offsuit broadways | 1.79 | 12.48 | 0.374 |
+| A3o | offsuit aces A2o-A9o | 1.79 | 14.27 | 0.403 |
+| K8s | other suited K and Q | 0.60 | 14.87 | 0.418 |
+| J9s | suited one-gappers | 0.60 | 15.47 | 0.508 |
+| T9s | suited connectors gap 0 | 0.60 | 16.07 | 0.549 |
+| A4o | offsuit aces A2o-A9o | 1.79 | 17.86 | 0.550 |
+| QJo | offsuit broadways | 1.79 | 19.66 | 0.573 |
+| Q9s | suited two-gappers | 0.60 | 20.25 | 0.579 |
+
+A feature-led move folds offsuit aces A2o-A9o (14.4 points, class mean call EV -1.98, so about
+1.0 bb above fold) and offsuit broadways (9.6 points still calling, mean gap about 0.68 bb). Those
+two classes cover the 19.8 points, at about 0.7 to 1.0 bb per hand.
+
+##### Spot 6: BTN folds to a BB 3-bet 35.7, band 45 to 70 (node `.../BTN:open/SB:fold/BB:3bet`; BTN's call uses `c_3bp_oop` 0, so it is not bent)
+
+| Class | Share | fold | call | 4bet | EV fold | EV call | EV 4bet |
+|---|---|---|---|---|---|---|---|
+| pairs 22-55 | 5.3 | 0.0 | 100.0 | 0.0 | -2.5 | -1.393 | -4.388 |
+| pairs 66-99 | 5.3 | 0.0 | 97.8 | 2.2 | -2.5 | +0.579 | -0.011 |
+| pairs TT-AA | 6.6 | 0.0 | 0.0 | 100.0 | -2.5 | +4.371 | +9.052 |
+| suited aces A2s-A5s | 3.5 | 0.0 | 100.0 | 0.0 | -2.5 | -2.131 | -5.990 |
+| suited aces A6s-A9s | 3.5 | 0.0 | 100.0 | 0.0 | -2.5 | -1.629 | -3.839 |
+| suited aces ATs-AKs | 3.5 | 0.0 | 50.0 | 50.0 | -2.5 | +1.043 | +0.710 |
+| offsuit aces A2o-A9o | 21.1 | 72.1 | 27.9 | 0.0 | -2.5 | -2.591 | -7.451 |
+| offsuit aces ATo-AKo | 10.6 | 0.0 | 74.6 | 25.4 | -2.5 | +0.552 | -0.273 |
+| suited broadways | 5.3 | 0.0 | 100.0 | 0.0 | -2.5 | -1.639 | -3.621 |
+| offsuit broadways | 15.8 | 44.8 | 55.2 | 0.0 | -2.5 | -2.307 | -5.926 |
+| suited connectors gap 0 | 0.9 | 0.0 | 100.0 | 0.0 | -2.5 | -2.172 | -6.401 |
+| suited one-gappers | 0.9 | 0.0 | 100.0 | 0.0 | -2.5 | -2.304 | -7.015 |
+| suited two-gappers | 0.9 | 0.0 | 100.0 | 0.0 | -2.5 | -2.301 | -6.833 |
+| other suited K and Q | 6.2 | 42.9 | 57.1 | 0.0 | -2.5 | -2.522 | -6.366 |
+| other offsuit | 10.7 | 100.0 | 0.0 | 0.0 | -2.5 | -3.085 | -9.258 |
+| all | 100 | 35.7 | 53.2 | 11.1 | | | |
+
+Move needed: 9.3 points from call to fold. Cheapest movers: KTo (offsuit broadways, 0.82 points,
+gap -0.0001), A7o (offsuit aces, 0.62, 0.0000), K7s (0.88, 0.029), Q8s (0.88, 0.030), K8s (0.88,
+0.083), QJo (offsuit broadways, 2.64, 0.096), A2s (suited aces A2s-A5s, 0.88, 0.175), J9s
+(one-gapper, 0.88, 0.196), Q9s (two-gapper, 0.88, 0.199). The cumulative total reaches 9.35.
+Feature-led: offsuit broadways still calling (8.7 points, mean gap about 0.19 bb) plus the calling
+part of A2o-A9o (5.9 points, near 0 bb gap) cover it at about 0.2 bb per hand.
+
+##### Spot 7: UTG folds to a BB 3-bet 41.2, band 45 to 70 (node `UTG:open/.../BB:3bet`; `c_3bp_oop` 0)
+
+| Class | Share | fold | call | 4bet | EV fold | EV call | EV 4bet |
+|---|---|---|---|---|---|---|---|
+| pairs 22-55 | 4.3 | 66.0 | 34.0 | 0.0 | -2.5 | -2.525 | -4.200 |
+| pairs 66-99 | 12.1 | 0.0 | 100.0 | 0.0 | -2.5 | -2.030 | -3.667 |
+| pairs TT-AA | 15.2 | 0.0 | 40.3 | 59.7 | -2.5 | +3.082 | +5.236 |
+| suited aces A2s-A5s | 0.0 | 57.0 | 42.9 | 0.2 | -2.5 | -2.534 | -3.053 |
+| suited aces A6s-A9s | 6.6 | 99.5 | 0.5 | 0.0 | -2.5 | -2.655 | -3.240 |
+| suited aces ATs-AKs | 8.1 | 0.0 | 80.5 | 19.5 | -2.5 | -0.923 | -1.218 |
+| offsuit aces A2o-A9o | 12.1 | 100.0 | 0.0 | 0.0 | -2.5 | -3.354 | -4.325 |
+| offsuit aces ATo-AKo | 24.3 | 25.9 | 67.4 | 6.7 | -2.5 | -1.547 | -2.068 |
+| suited broadways | 8.1 | 50.6 | 49.4 | 0.0 | -2.5 | -2.597 | -3.317 |
+| offsuit broadways | 9.3 | 100.0 | 0.0 | 0.0 | -2.5 | -3.009 | -4.357 |
+| all | 100 | 41.2 | 46.5 | 12.3 | | | |
+
+Move needed: 3.8 points from call to fold. Cheapest movers: A9s (0.03 points, gap -0.001), 55
+(pairs 22-55, call 0.477, 1.45 points, gap 0.0000), AJo (offsuit aces ATo-AKo, call 0.965, 5.85
+points, gap 0.0000). 55 plus 40 percent of AJo lands the floor at about 0 bb. This miss is a near
+tie, not a feature miss. The 66-99 class calls 100 percent at a mean gap of 0.47 bb, which is the
+set-value pattern of section 10.
+
+#### 4. Part C: the defender facing a 4-bet
+
+Rates are percent of the defender's 3-bet range: weight = deal weight x 3-bet frequency at the
+defend node, the same form as the `vs3` rows. Sizes: `ip_defender` 3-bet 7.5, 4-bet 20;
+`sb_defender` and `bb_defender` 3-bet 10, 4-bet 22; `sb_vs_bb` 3-bet 9, 4-bet 23; 5-bet all-in at
+100.
+
+| Row and node | Fold | Call | 5-bet |
+|---|---|---|---|
+| BTN vs CO 4-bet, `UTG:fold/HJ:fold/CO:open/BTN:3bet/CO:4bet` | 22.3 | 61.0 | 16.7 |
+| SB vs BTN 4-bet, `.../BTN:open/SB:3bet/BTN:4bet` | 14.8 | 71.6 | 13.6 |
+| BB vs BTN 4-bet, `.../BTN:open/SB:fold/BB:3bet/BTN:4bet` | 15.1 | 71.1 | 13.8 |
+| BB vs SB 4-bet, `.../SB:open/BB:3bet/SB:4bet` | 19.2 | 65.2 | 15.5 |
+
+Calling hands by class. A frequency is given where it is below 0.95. Hands below 0.05 are left
+out.
+
+- BTN vs CO: pairs 33 (0.89) to 55, 66-99, TT, JJ, QQ (0.71); A5s; A7s (0.85), A8s, A9s (0.46);
+  AQs (0.63), AJs, ATs; AQo, AJo; KQs, KJs, KTs, QJs.
+- SB vs BTN: 33-55, 66-99, TT, JJ, QQ (0.53); A3s, A4s, A5s (0.85); A6s-A9s; AQs, AJs, ATs; AQo,
+  AJo, ATo (0.42); KQs, KJs, KTs, QJs; KQo, KJo.
+- BB vs BTN: 33-55, 66-99, TT, JJ, QQ (0.89); A4s, A5s; A7s, A8s, A9s; AQs (0.53), AJs, ATs; AKo
+  (0.25), AQo, AJo; KQs, KJs, KTs, QJs, QTs, JTs; KQo (0.77).
+- BB vs SB: 22-55 (55 0.87), 66-99 (66 0.50), TT (0.38); A2s-A5s; A6s-A9s; AQs, AJs, ATs; A9o,
+  A5o, A4o; AQo, AJo, ATo; KTs (0.74), QJs, QTs, JTs; KQo, KJo, KTo, JTo; T9s, 98s, 87s; J9s, T8s;
+  J8s; K9s.
+
+Pairs 22-99 call 96 to 100 percent of their weight in all four rows, at mean call EVs 1.0 to 2.3
+bb above folding. Calling is 61 to 72 percent of the 3-bet range in every row.
+
+Published 3-bettor responses to a 4-bet at 100 bb:
+
+| Figure | Spot | Rake | Solver | Source |
+|---|---|---|---|---|
+| Fold 46.6 to 46.9, call 29.3 to 29.6, jam 23.8 to 23.9 percent of BB's 3-bet range (totals under A5s and A9s card removal) | 6-max cash, 100 bb, BTN opens 2.5, BB 3-bets 12, BTN 4-bets 24 | 5 percent, cap 4 bb | not named ("owned preflop library"; the article says it is a fixed exported policy) | GTO Gecko, "A5s Four-Bets: When Calling Is Worth More", 2026-09-21, https://gtogecko.com/blog/wheel-ace-fourbet-study, read 2026-11-05 |
+| 3-bet ranges that never flat a 4-bet jam "around 40 to 46 percent" | general, 100 bb cash | not stated | none (book theory) | Matthew Janda, *Applications of No-Limit Hold'em*, quoted second-hand in an Advanced Poker Training forum post, https://www.advancedpokertraining.com/poker/forum/discussion/comment/308, read 2026-11-05; the book was not opened |
+
+A second source with a named solver is absent. GTO Wizard's "OOP 4-Betting in Deep-Stacked Cash
+Games" (Andrew Brokos, 2025-01-27) covers the 4-bettor only. Poker Academy's 3-bet article covers
+the opener facing a 3-bet only. On the one comparable row (BB vs BTN), the key calls 71.1 against
+about 29 and folds 15.1 against about 47. The sizes differ: 10 and 22 in the key, 12 and 24 in
+the source.
+
+#### 5. Partition and weighting, for the tuning harness
+
+Hand order is the `hands` array of `solver/data/key.json`, which matches `equity.json`. Rank
+index: A=0, K=1, ..., 2=12. For a non-pair hand, `a` is the higher rank, `b` the lower rank, and
+gap = index(b) - index(a) - 1. The classes are tested in this order, and the first match wins:
+
+| Class | Rule | Hands (169-grid classes, combos) |
+|---|---|---|
+| pairs 22-55 | pair, rank 5 or lower | 4, 24 |
+| pairs 66-99 | pair, 6 to 9 | 4, 24 |
+| pairs TT-AA | pair, T or higher | 5, 30 |
+| suited aces A2s-A5s | A, suited, b in 5432 | 4, 16 |
+| suited aces A6s-A9s | A, suited, b in 9876 | 4, 16 |
+| suited aces ATs-AKs | A, suited, b T or higher | 4, 16 |
+| offsuit aces A2o-A9o | A, offsuit, b 9 or lower | 8, 96 |
+| offsuit aces ATo-AKo | A, offsuit, b T or higher | 4, 48 |
+| suited broadways | both in KQJT, suited | KQs KJs KTs QJs QTs JTs: 6, 24 |
+| offsuit broadways | both in KQJT, offsuit | KQo KJo KTo QJo QTo JTo: 6, 72 |
+| suited connectors gap 0 | suited, gap 0, a in T..3 | T9s 98s 87s 76s 65s 54s 43s 32s: 8, 32 |
+| suited one-gappers | suited, gap 1, a in J..4 | J9s T8s 97s 86s 75s 64s 53s 42s: 8, 32 |
+| suited two-gappers | suited, gap 2, a in Q..5 | Q9s J8s T7s 96s 85s 74s 63s 52s: 8, 32 |
+| other suited K and Q | suited, a in KQ | K9s-K2s, Q8s-Q2s: 15, 60 |
+| other suited | suited, the rest | 21, 84 |
+| other offsuit | offsuit, the rest | 60, 720 |
+
+The totals are 169 classes and 1,326 combos. The script asserts both.
+
+Weighting, copied from `measure` (`solver/cfr.py` lines 422-436). Let `p = W.sum(axis=1) /
+W.sum()`, which is combos/1326 per hand (6, 4 or 12 over 1326).
+
+- Open rows: weight `p`. Value = 100 x sum(p x strategy[:, open]).
+- Defend rows: weight `p` at the defender's first node, with no reach and no opener weighting.
+  Value = 100 x sum(p x strategy[:, cols]).
+- vs3 rows: weight `opens = p x strategy_at_opener_open_node[:, 1]`. Value = 100 x sum(opens x
+  strategy_vs3[:, col]) / sum(opens).
+- Part C: weight `p x strategy_at_defend_node[:, 2]`, normalized by its own sum.
+- Class share = class weight / total weight. Class action rate = sum(w x strategy[:, j]) / class
+  weight. Class mean EV of action j = sum(w x ev[:, j]) / class weight, over every hand in the
+  class whatever its action. `ev` is the key's per-action EV in bb at the node.
+- Movers: for each hand with mass in a wrong-side action, gap = ev[current] - max(ev[target
+  actions]). Points = 100 x w x strategy[current] / base, with base = 1 for open and defend rows
+  and sum(opens) for vs3 rows. Hands are sorted by gap, ascending, and accumulated until the
+  needed points are reached.
+
+### 13.2 What RF-3 is, and what it is not
+
+It is: a change to how a leaf with chips behind is valued (3.2), so that two hands of equal
+equity against a range take different shares of the pot by their features; the re-tune of the
+nine dials of 3.2 together with the new coefficients; a new hash; a re-solve and a re-export.
+
+It is not: a postflop model (RF-4, `PLAN.md` section 4); a second size or a limp (M2, M3); a
+change to any band of 8.2 (8.1: a miss is a finding, never a number tuned away); a change to the
+equity table (`solver/equity.py`); a change to the key schema (`felto-gto-key/1` stays, 7.1); a
+change to the hand engine, the grader or the screens (lane I) beyond the hash constant in
+`app/src/gto/key.ts`, the exported key in `app/src/gto/data/` and the pinned list `PINNED_UNDER`
+in `app/src/gto/key.test.ts`; a copy of any published range (BD-T1).
+
+### 13.3 Options
+
+Each option carries the argument for it, the strongest argument against it and a marked
+recommendation. The roman numerals match step 2 of the item's prompt.
+
+**(i) The shape of the adjustment.** Write z(h) for a hand class's playability score, a sum of
+feature terms (option ii), and s for the bent player's share of 3.2.
+
+- (i-a) Additive on the bent player's share: s' = s + z(h_bent), clipped to 0 to 1; the edge
+  holder takes 1 − s'. For: the simplest reading, one term per leaf. Against: the edge holder's
+  own hand plays no part, so a 3-bettor with `A7o` keeps the whole bonus the formula takes from a
+  caller's `A9o`. The record shows this is the failure itself (step 51: aggression pays at every
+  seat), and spot 3 of 13.1 needs the 3-bettor's weak offsuit aces to lose, not gain. The clip
+  also breaks the monotone shape at the ends.
+- (i-b) Multiplicative on the bent player's share: s' = s × (1 + z(h_bent)), clipped. For: a hand
+  with no equity keeps none. Against: the same one-sided fault as (i-a), and a hand near full
+  equity can be pushed past 1.
+- (i-c) A factor on each player's share, renormalized (recommended): with R = exp(z(h_bent) −
+  z(h_edge)), s' = s × R / (s × R + (1 − s)), and the edge holder takes 1 − s'. Read in log-odds:
+  the odds of the bent player's share are multiplied by R, so logit(s') = logit(s) + z(h_bent) −
+  z(h_edge). For: both hands' features count; the pot is conserved at every matchup, so the
+  two-player games stay zero-sum and CFR+ stays in the regime where the best response of phases
+  3a and 3b is the proof; a share of 0 or 1 stays where it is; two hands of the same class are
+  unchanged against each other; and every coefficient at 0 gives R = 1 and the model of 3.2
+  exactly, so the leaf cases of `solver/cfr_test.py` hold at a zero adjustment. The effect grows
+  with the pot: a shift that moves 1 bb in a single raised pot moves about 3 bb in a 3-bet pot,
+  which is where the misses are. Against: it is the "bonus to the other player" the item names,
+  in a bounded form: whatever a hand loses against a better-playing class, that class gains, even
+  when both hands are weak in absolute terms. And real realization is nearer to equity in a
+  3-bet pot (less stack left to play) than in a single raised pot, so a shift of fixed size in
+  log-odds is, if anything, too large in the big pots; option (ii-b) carries the hedge. Worked
+  example, from the hand-worked case of `solver/cfr_test.py`: `SB` calls a `BB` 3-bet to 9 at 40
+  percent equity, `c_3bp` 0.4, `k` 2, so s = 0.3424 and `SB` keeps 6.163 of 18. With z(h_bent) −
+  z(h_edge) = −0.3, R = 0.7408, s' = 0.2784 and `SB` keeps 5.010: a cut of 1.153 bb, the size
+  spot 5 of 13.1 needs on an offsuit ace (0.7 to 1.0 bb), from a shift under a third of a
+  log-odds unit.
+- (i-d) Independent factors with no renormalization: each player's share is its own bent share
+  times its own factor, and the pot is not conserved. For: it is the literal reading of
+  "realization" per hand. Against: the two-player games become general-sum; CFR+ has no
+  convergence guarantee there and can cycle, so a stable key would rest on luck; and the leaked
+  or created chips have no meaning in the game of section 2. The item names this cost, and the
+  recommendation avoids it.
+
+**(ii) The features, and how the coefficients are shared.** The features are the ones section 4,
+item 3, names, each a fixed function of the 169 classes with one coefficient `a` in log-odds
+units:
+
+| Feature | x(h) | Fixed shape (a build-level call, each with its reversal) |
+|---|---|---|
+| pair | 1 for a pair, else 0 | |
+| suited | 1 for a suited non-pair, else 0 | |
+| connected | 1, 0.5, 0.25 for a non-pair with a gap of 0, 1, 2 between the ranks; 0 otherwise and for pairs | the ace counts high only, so `A2s` is not connected (reversal: wheel aces count from the low side); the weights halve by gap (reversal: three coefficients) |
+| ace-high | 1 for a non-pair whose higher card is an ace, else 0 | |
+| high card | (r − 10) / 4, where r is the higher card's rank, 2 to 14; a pair uses its rank | centered at the ten, so `AKo` is +1 and `22` is −2 (reversal: the lower card's rank, or the mean of the two) |
+
+z(h) = a_pair × pair + a_suited × suited + a_connected × connected + a_ace_high × ace-high +
+a_high_card × high card. Under this shape `A5s` scores a_suited + a_ace_high + a_high_card, `A5o`
+scores a_ace_high + a_high_card, `76s` scores a_suited + a_connected − 0.75 a_high_card, `KJo`
+scores 0.75 a_high_card, and `22` scores a_pair − 2 a_high_card.
+
+- (ii-a) One coefficient per feature across pot types, five dials (recommended). For: five
+  hand-set numbers, the fewest that name every feature of item 3; the pot-size leverage of (i-c)
+  already makes the same shift three times larger in bb in a 3-bet pot than in a single raised
+  pot, which is the direction the misses need (a small pair's set value is worth a little in a
+  5.5 pot and costs a lot as a call of a 3-bet, spots 4 to 6 and Part C of 13.1); a descent over
+  five new dials and nine old ones is inside the budget of 13.4. Against: one sign per feature
+  for every pot. If the fit needs the pair term positive in a single raised pot (the button opens
+  every pair) and negative in a 3-bet pot, five dials cannot give it, and the leverage argument
+  is a first-order reading, not a sourced one.
+- (ii-b) (ii-a) plus a scale per pot type: z is multiplied by m_srp (fixed at 1), m_3bp and m_4bp
+  (two dials, range 0.5 to 1.5, start 1). For: it meets the counter-argument of (i-c) with two
+  numbers. Against: two more hand-set numbers that a fit can use to hide a wrong feature shape.
+  Named as the fallback: if the harness cannot land the bands under (ii-a), the two scales are
+  added by a dated amendment inside this item, before the freeze.
+- (ii-c) One coefficient per feature per pot type, fifteen dials. For: the most freedom. Against:
+  fifteen hand-set numbers against seven missed rows is a fit that can land anything and means
+  nothing; the grid of step 50 (408 settings over nine dials) was already at the limit of what a
+  session can screen; it is the hand-built chart problem of `DESIGN.md` section 1 in full.
+
+**(iii) How the coefficients are set.**
+
+- (iii-a) From the published figures of 13.1. Against: 13.1 found no range-level figure by
+  feature from a named solver with a stated rake, for any of the five features, and none at all
+  in 3-bet pots. There is nothing to set them from. Not available.
+- (iii-b) Fit to the bands of 8.2, free signs. For: the bands are the one sourced acceptance this
+  spec has. Against: a free fit over fourteen dials can land a band with a feature pointing the
+  wrong way (a negative suited term that lands the button's open rate through `K6o`, the cheapest
+  mover of spot 1), and then the hand-level patterns of item 3 come out wrong while the table
+  reads green.
+- (iii-c) A bounded fit (recommended): the signs section 4, item 3, states are constraints
+  (a_suited ≥ 0, a_connected ≥ 0, a_ace_high ≤ 0, because a weak ace-high hand is dominated when
+  it hits and worthless when it does not; a_pair and a_high_card free), every coefficient inside
+  −0.6 to 0.6 (odds of at most 1.8 to one: a share of 0.50 moves to at most 0.64 or 0.36), and the
+  record says the values are a fit to the bands, not a measurement. For: it keeps the fit honest
+  in the one way the record can check, the hand-level patterns of (v); the sizes 13.1 measured
+  (0.1 to 1.0 bb per hand at the 3-bet pots, 0.5 bb at the button's suited connectors) are
+  reached inside those bounds, as the worked example of (i-c) shows. Against: the bounds and the
+  signs are themselves hand-set, and a sign that is wrong as poker forces the fit onto the other
+  features. Section 4, item 3, is the source of each sign, and 13.1 Part A agrees on the direction
+  for suited and connected.
+
+**(iv) Which pot types.**
+
+- (iv-a) 3-bet pots only, where six of the seven misses are. For: the smallest change; the
+  single raised pot bands all hold today and stay untouched. Against: spot 1 (the button opens
+  34.3) is a single raised pot failure, because the suited connectors' open EV is set at the flat
+  leaf; spot 3 moves only if the big blind's offsuit aces also lose as callers of the small
+  blind's open, or the call becomes the new home of every hand the 3-bet loses. The adjustment
+  would also say that a suited connector plays well after a 3-bet and no better after a call,
+  which is false as poker.
+- (iv-b) Every leaf with chips behind, `srp`, `3bp` and `4bp` (recommended); the all-in leaf
+  stays exact (3.1). For: one rule everywhere a board is played; the mechanism of spot 1; the
+  4-bet pot carries the pair pattern of Part C. Against: the twelve single raised pot rows that
+  hold today can move. The done-when of (v) says none may be newly missed, and the re-tune of the
+  nine old dials is there to hold them.
+
+**(v) What done means.**
+
+- The seven rows of 8.5 inside their bands: the six of the provisional freeze and the seventh,
+  `UTG` folds to a `BB` 3-bet (item 38's finding, which "belongs with them to board item 60
+  unless Zach says otherwise"). Recommended: all seven; the seventh is the same mechanism (13.1,
+  spot 7, a near tie that costs about 0 bb).
+- No row of 8.2 newly missed; the button opening every pair at 100 percent (phase 3a's
+  done-when); the big blind's realization against the button inside 65 to 90.
+- Hand-level patterns, from section 4, item 3, and section 10 (second review), as ordinal checks
+  between class rates at named nodes, so that no published number is copied (BD-T1); the classes
+  are those of 13.1 Part 5:
+  P1, bluff selection: at the big blind's defend node against the button and against the small
+  blind, the class 3-bet rate of `A2s`-`A5s` is above that of `A2o`-`A9o`.
+  P2, calls out of position: at `CO` facing a `BTN` 3-bet and at `SB` facing a `BB` 3-bet, the
+  class call rate of suited broadways is above that of offsuit broadways, and that of `A2s`-`A9s`
+  above that of `A2o`-`A9o`.
+  P3, suited connectors as opens: at the button's open node, the class open rate of suited
+  connectors gap 0 is at or above that of `A2o`-`A9o`.
+  P4, set value: at `CO` facing a `BTN` 3-bet and at each of the four nodes where a defender
+  faces a 4-bet (Part C), the class call rate of `22`-`55` is below that of `66`-`99`.
+  Today P1 holds at one node of two, P2 at one node of two, P3 fails, and P4 fails at every node
+  (13.1).
+- Precedence when they conflict (R9), recommended: the bands first; the patterns as the tiebreak
+  among settings that land the same rows; a pattern still failing at the pick is recorded in 8.5
+  as a finding, not tuned by a band change. A row the fit still misses is recorded as 8.1 says: a
+  finding, frozen provisional again with the reason, never a widened band.
+- The 4-bet rows (section 10, second review, item 3): no band of 8.2 covers the defender facing a
+  4-bet, and `c_4bp` and `c_4bp_oop` were tuned on nothing. 13.1 Part C found one published
+  figure with no solver named (GTO Gecko, 2026-09-21: the big blind folds about 47, calls about 29
+  and jams about 24 percent of its 3-bet range to a button 4-bet, at sizes 12 and 24 where this
+  game has 10 and 22) and one book figure quoted second-hand (Janda: 3-bet ranges fold 40 to 46
+  percent to a 4-bet). Under 8.1 one source with no solver named cannot make a band. Options:
+  (a) a band anyway, call 20 to 45 percent of the 3-bet range at each of the four rows; (b) a
+  stated expectation (recommended): the harness prints the defender's fold, call and 5-bet rates
+  at the four rows of Part C beside "fold 35 to 60, call 20 to 45", marked as an expectation from
+  one source, uses them as a tiebreak after the bands and the patterns, and 8.5 records them
+  without a verdict; (c) nothing. For (b): `c_4bp` and `c_4bp_oop` get an anchor without a band
+  the sources cannot carry. Against (b): a number that is printed and never fails is read as a
+  band by the next reader; the label must say otherwise every time.
+
+**(vi) `schema_game`.** 2 (recommended): the object's meaning changes (a new `class_adjustment`
+field under `leaf_model`, and the `formula` string changes). The key schema stays
+`felto-gto-key/1`, because the app reads only `spec_hash` and the fields of 7.1, none of which
+change. Against: a reader that compared `schema_game` would refuse the new key, and none does;
+the number is a record for people.
+
+### 13.4 Dials
+
+Every number below goes to `solver/config.py` (`GAME["leaf_model"]["class_adjustment"]`,
+`RANGES`, `DIAL_PATH`), never to a constant in `cfr.py` or `best_response.py`, which each carry
+their own copy of the arithmetic (step 4 of the item).
+
+| Dial | Start | Range | Note |
+|---|---|---|---|
+| `a_pair` | 0 | −0.6 to 0.6 | free sign |
+| `a_suited` | 0 | 0 to 0.6 | sign from section 4, item 3 |
+| `a_connected` | 0 | 0 to 0.6 | sign from section 4, item 3 |
+| `a_ace_high` | 0 | −0.6 to 0 | sign from section 4, item 3 |
+| `a_high_card` | 0 | −0.6 to 0.6 | free sign |
+| `m_3bp`, `m_4bp` | 1 | 0.5 to 1.5 | only under (ii-b), the fallback |
+| the nine dials of 3.2 | the provisional values of 12 | the ranges of 3.2 | re-tuned together with the new ones |
+
+At every start value the model is the one of 3.2, so until the freeze the hash changes only
+through `schema_game` and the new fields. The tuning harness (`solver/tune.py`, step 5 of the
+item) screens a setting at 500 iterations over the five subtrees; from the per-iteration costs of
+step 50 (1.2, 2.5 and 4.0 ms on the `SB`, `BTN` and `CO` subtrees) and the larger `HJ` and `UTG`
+subtrees, one screening is about 10 s, so a coordinate descent of three sweeps over fourteen
+dials at three to five values each is about 200 screenings, under an hour, and the pick is
+re-solved at 12,000 iterations (105 s). The pick is the setting with the most rows inside, then
+the smallest total miss, then the patterns, then the 4-bet expectation; `k` 1 and 2 are both
+reported, as 3.2 asks.
+
+### 13.5 Hazards
+
+1. The fit lands a 3-bet pot row by breaking a single raised pot row. The no-new-miss rule of (v)
+   is the guard, and the nine old dials move with the new ones so the harness has room.
+2. A negative pair term folds `22` from the button. The pairs-at-100-percent check of phase 3a
+   stays in the pick.
+3. Five more hand-set numbers. They are recorded as a fit (iii-c), their signs come from section
+   4, item 3, and the app's statement of section 6 already says "a simplified model of play
+   after the flop"; the words do not change here, and item 45 writes the copy.
+4. The fixed feature shapes (gap weights 1, 0.5, 0.25; the ace high only; the high card centered
+   at the ten) are build-level calls. Each has its reversal in (ii); none is a decision of Zach's
+   unless he takes one in 13.6.
+5. A new hash and a new key: `SPEC_HASH` in `solver/cfr_test.py` and `app/src/gto/key.ts` are
+   re-pinned, `PINNED_UNDER` in `app/src/gto/key.test.ts` is re-read hand by hand, the bots of
+   item 40 play the new file, and a stored worst hand of item 44 that no longer replays shows its
+   counts without the hand (BD-T38).
+6. The cold review of step 7 judges the amended 3.2 and the hands at the seven spots. It can find
+   the composition still wrong while the bands hold, which is the condition under which RF-3 was
+   named (11 (a)); the answer then is a finding in section 10, not a second round of tuning
+   inside this item.
+7. The best-response gain is the proof of convergence, not the band table (phase 3a, watch for).
+   Under (i-c) the pairs stay zero-sum; under (i-d) they would not, and the proof would be lost.
+
+### 13.6 Open questions: the GATE 1 batch
+
+Asked in one batch in chat on 2026-11-05 (R6). Every answer may be no. The answers are recorded
+as the fourth batch of section 11 with their date, and steps 3 to 7 of board item 60 follow from
+them.
+
+- Q1. Build RF-3, or keep the provisional freeze as final? Recommended: build it, in the shape of
+  Q2 to Q8. The alternative, "keep the provisional freeze as final", is the first reversal of
+  BD-T20: it strikes "provisional" from 3.2, 7.5, 8.5, 12 and `solver/config.py`, leaves the
+  seven misses as recorded findings, and closes item 60 as `SETTLED AS NO`. For building: the
+  seven misses are one mechanism, the three patterns the second review calls absurd within a few
+  hands are that mechanism at hand level, 13.1 measured the sizes (0.1 to 1.0 bb per hand), and
+  the worked example of (i-c) reaches them inside the bounds. For keeping: the fit is five
+  hand-set numbers, it may still miss spot 4 (33.7 points of the cutoff's opening range at gaps
+  to 0.75 bb), and the app's bots and grader run today on the provisional key.
+- Q2. The shape: (i-c), the renormalized two-sided factor in log-odds form (recommended); or
+  (i-a), (i-b) or (i-d).
+- Q3. The features and their sharing: the five features of (ii) with one coefficient each across
+  pot types (ii-a, recommended), with the two pot-type scales of (ii-b) as the named fallback,
+  added only if the harness cannot land the rows; or (ii-c).
+- Q4. Setting: a bounded fit to the bands, recorded as a fit (iii-c, recommended); or a free fit
+  (iii-b). (iii-a) is not available.
+- Q5. Pot types: every leaf with chips behind (iv-b, recommended); or 3-bet pots only (iv-a).
+- Q6. Done: the seven rows including `UTG` folds to a `BB` 3-bet, no new miss, the button's
+  pairs, the realization band, and the four patterns P1 to P4 as a tiebreak and as recorded
+  findings, with the bands first when they conflict (recommended); or the six rows alone; or the
+  patterns as a gate.
+- Q7. The 4-bet rows: a stated expectation printed by the harness and recorded without a verdict
+  ((v) (b), recommended); or a band from the one source ((a)); or nothing ((c)).
+- Q8. `schema_game` 2 (recommended), or 1 kept.
