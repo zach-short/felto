@@ -800,6 +800,17 @@ first, so `k` 2 stands; the `k` 1 setting is the one to start from if Zach widen
 The raw key is `solver/data/key.json` (609,882 bytes, 65 nodes, `python3 solver/validate_key.py
 solver/data/key.json` prints `valid`), copied byte for byte to `app/src/gto/data/key.json`.
 
+**Zach, 2026-11-05, on the misses and the bot test (board item 60, round 1).** The freeze stays
+provisional as built; each of the five misses above is a finding under 8.1; no band is widened
+and no range moved. The key of this freeze leaves one row at the uniform start that a
+key-following bot reaches with the hand: `HJ` holding `A4s` against `BTN`'s 5-bet
+(`UTG:fold/HJ:open/CO:fold/BTN:3bet/HJ:4bet/BTN:5bet`, strategy 0.5006 and 0.4994, EVs −20.0
+and −41.37), because `HJ` opens `A4s` at 0.0002 and 4-bets it at 0.0004, so its own reach there
+is about 8e-8, under the grader's line `gtoNeverHeldReach` (1e-6, BD-T24) but above zero, where
+`app/src/gto/bots.test.ts` drew its line. Zach chose to change the test to the grader's line and
+not the solver, and not to re-solve; the solver still writes the uniform start for a row it
+never reaches, and the grader hides it (7.1, BD-T24).
+
 ## 9. Feasibility
 
 The question of `PLAN.md` phase 1, step 4: can a numpy solver solve the full tree in under an

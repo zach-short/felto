@@ -131,7 +131,8 @@ describe("a decision at a row the actor never holds (KEY-SPEC.md 10, item 1; ans
 });
 
 // Real rows of the bundled key, with the numbers each test expects written out from
-// app/src/gto/data/key.json (read with python3, 2026-10-16) and HANDOFF.md step 57.
+// app/src/gto/data/key.json (read with python3, 2026-10-16, and again 2026-11-05 for the key of
+// board item 60, KEY-SPEC.md 8.5, which moved every row below) and HANDOFF.md step 57.
 describe("rows of the key", () => {
   function realGrade(id: string, held: Parameters<typeof handRow>[1], chosen: GtoAction): Grade {
     const node = gtoKey().nodes.get(id);
@@ -139,43 +140,43 @@ describe("rows of the key", () => {
     return gradeRow(handRow(node, held), chosen);
   }
 
-  it("grades HJ's call of CO's 5-bet with QQ a mistake of 0.4552 bb, and its fold good", () => {
+  it("grades HJ's call of CO's 5-bet with JJ a mistake of 0.3799 bb, and its fold good", () => {
     const id = "UTG:fold/HJ:open/CO:3bet/HJ:4bet/CO:5bet";
-    const call = graded(realGrade(id, "QQ", "call"));
-    expect(call).toMatchObject({ basis: "mix", frequency: 0.0004, label: "mistake" });
-    expect(call.costBb).toBeCloseTo(0.4552, 6);
-    expect(graded(realGrade(id, "QQ", "fold"))).toMatchObject({ frequency: 0.9996, costBb: 0, label: "good" });
+    const call = graded(realGrade(id, "JJ", "call"));
+    expect(call).toMatchObject({ basis: "mix", frequency: 0.0016, label: "mistake" });
+    expect(call.costBb).toBeCloseTo(0.3799, 6);
+    expect(graded(realGrade(id, "JJ", "fold"))).toMatchObject({ frequency: 0.9984, costBb: 0, label: "good" });
   });
 
   it("grades CO's 72o facing BTN's 3-bet by cost alone, its uniform row hidden", () => {
     const id = "UTG:fold/HJ:fold/CO:open/BTN:3bet";
     const call = graded(realGrade(id, "72o", "call"));
     expect(call).toMatchObject({ basis: "cost", frequency: null, label: "mistake" });
-    expect(call.costBb).toBeCloseTo(1.5546, 6);
-    expect(graded(realGrade(id, "72o", "4bet")).costBb).toBeCloseTo(7.4382, 6);
+    expect(call.costBb).toBeCloseTo(1.9948, 6);
+    expect(graded(realGrade(id, "72o", "4bet")).costBb).toBeCloseTo(7.5807, 6);
     expect(graded(realGrade(id, "72o", "fold"))).toMatchObject({ costBb: 0, label: "good" });
   });
 
   it("shows no EV loss at UTG facing the big blind's 5-bet, the one node under reachFloor", () => {
     const id = "UTG:open/HJ:fold/CO:fold/BTN:fold/SB:fold/BB:3bet/UTG:4bet/BB:5bet";
-    expect(gtoKey().nodes.get(id)?.reach).toBe(0.000087);
+    expect(gtoKey().nodes.get(id)?.reach).toBe(0.000093);
     const fold = realGrade(id, "KK", "fold");
     expect(fold.kind).toBe("unreached");
-    expect(fold.kind === "unreached" && fold.mix.map((line) => line.frequency)).toEqual([0.6636, 0.3364]);
+    expect(fold.kind === "unreached" && fold.mix.map((line) => line.frequency)).toEqual([0.3353, 0.6647]);
   });
 
-  it("calls UTG's mixed open of 44 good either way: 0.4023 at an EV equal to the fold", () => {
-    expect(graded(realGrade("root", "44", "open"))).toMatchObject({ frequency: 0.4023, costBb: 0, label: "good" });
-    expect(graded(realGrade("root", "44", "fold"))).toMatchObject({ frequency: 0.5977, costBb: 0, label: "good" });
+  it("calls UTG's mixed open of JTs good either way: 0.16 at an EV equal to the fold", () => {
+    expect(graded(realGrade("root", "JTs", "open"))).toMatchObject({ frequency: 0.16, costBb: 0, label: "good" });
+    expect(graded(realGrade("root", "JTs", "fold"))).toMatchObject({ frequency: 0.84, costBb: 0, label: "good" });
   });
 
   it("calls good the actions under 0.10 within the noise band (answer (a))", () => {
-    const call = graded(realGrade("UTG:open/HJ:3bet/UTG:4bet/HJ:5bet", "QQ", "call"));
-    expect(call).toMatchObject({ frequency: 0.0957, label: "good" });
-    expect(call.costBb).toBeCloseTo(0.0009, 6);
-    const fourBet = graded(realGrade("UTG:open/HJ:3bet", "KJs", "4bet"));
-    expect(fourBet).toMatchObject({ frequency: 0.077, label: "good" });
-    expect(fourBet.costBb).toBeCloseTo(0.0007, 6);
+    const call = graded(realGrade("UTG:open/HJ:3bet", "QQ", "call"));
+    expect(call).toMatchObject({ frequency: 0.068, label: "good" });
+    expect(call.costBb).toBeCloseTo(0.0001, 6);
+    const callFour = graded(realGrade("UTG:open/HJ:fold/CO:3bet/UTG:4bet", "55", "call"));
+    expect(callFour).toMatchObject({ frequency: 0.0938, label: "good" });
+    expect(callFour.costBb).toBeCloseTo(0.0006, 6);
   });
 
   it("finds no reached, held row where an action at 0.10 or more costs above 0.15 bb", () => {

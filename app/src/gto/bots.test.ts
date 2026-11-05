@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { parseCards } from "@/cards/card";
 import { allHandClasses } from "@/cards/hand-class";
+import { DIALS } from "@/config/dials";
 import { OPENING_CHART } from "@/content/catalog";
 import type { Seat } from "@/content/schema";
 
@@ -101,11 +102,15 @@ describe("chartAnswer (BD-T21)", () => {
 describe("the rows a bot can hold", () => {
   // KEY-SPEC.md 10, second review, item 1: rows at hands the actor never holds carry the uniform
   // strategy, and their frequencies mean nothing. A bot that plays the key reaches a node only with
-  // hands its own earlier choices kept, so none of those rows may be uniform.
+  // hands its own earlier choices kept, so none of those rows may be uniform. The line is the
+  // grader's, gtoNeverHeldReach (BD-T24), not zero: the key of board item 60 (2026-11-05) left HJ's
+  // A4s row against BTN's 5-bet at the uniform start, because HJ reaches it with A4s under 1e-6
+  // (it opens A4s at 0.0002 and 4-bets it at 0.0004), and Zach chose to change the test, not
+  // the solver (KEY-SPEC.md 8.5, the dated line of 2026-11-05).
   it("are never the uniform default at a node a key-following bot reaches with the hand", () => {
     const uniform = NODES.flatMap((node) => node.strategy.flatMap((row, i) => {
       const flat = row.every((frequency) => Math.abs(frequency - 1 / row.length) < 0.001);
-      return flat && ownReach(node, i) > 0 ? [`${node.id} ${KEY.hands[i]}`] : [];
+      return flat && ownReach(node, i) >= DIALS.gtoNeverHeldReach ? [`${node.id} ${KEY.hands[i]}`] : [];
     }));
     expect(uniform).toEqual([]);
   });
