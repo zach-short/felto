@@ -241,7 +241,9 @@ options in section 13).** The bent share `s` above is no longer the share paid. 
     z(h) = a_pair × pair(h) + a_suited × suited(h) + a_connected × connected(h) + a_ace_high × ace_high(h) + a_high_card × high_card(h)
 
 where `pair` is 1 for a pair, `suited` 1 for a suited non-pair, `connected` 1, 0.5 or 0.25 for a
-non-pair whose ranks are 0, 1 or 2 apart (the ace counts high only, so `A5s` is not connected),
+non-pair with no rank, one rank or two ranks between its two cards (`98`, `97`, `96`; the "gap"
+of `solver/cfr.py` and of the `features` string in section 12 counts those ranks between, so
+gap 0 is adjacent ranks; the ace counts high only, so `A5s` is not connected),
 `ace_high` 1 for a non-pair whose higher card is an ace, and `high_card` is (the higher card's
 rank − 10) / 4 with the ace 14, so `AKo` scores +1 and `22` scores −2 on that feature; every
 other feature is 0. The five coefficients are in log-odds units and frozen in section 12. At a
@@ -251,8 +253,10 @@ leaf with chips behind, with `R = exp(z(h_bent) − z(h_edge))`, the bent player
 
 and the edge holder's share is `1 − s'`: the odds of the bent player's share are multiplied by
 `R`, so two hands of the same class are unchanged against each other, a share of 0 or 1 stays
-where it is, the pot is conserved at every matchup, and every coefficient at 0 gives the model
-above exactly. The flat tax then applies to both shares as before, and the all-in leaf (3.1) is
+where it is, the pot is conserved at every matchup, and every coefficient at 0 gives `R` = 1 and
+the model above to one floating-point ulp, not bitwise: `s × 1 / (s × 1 + 1 − s)` can differ
+from `s` in the last bit, so a key solved with zero coefficients is not promised byte-identical
+to the key of 2026-10-06. The flat tax then applies to both shares as before, and the all-in leaf (3.1) is
 not adjusted. The adjustment applies at every leaf with chips behind: `srp`, `3bp` and `4bp`
 (section 13.3 (iv-b)). Worked example, from the hand-worked case of `solver/cfr_test.py`: `SB`
 calls a `BB` 3-bet to 9 at 40 percent equity, `c_3bp` 0.4, `k` 2, so `s` = 0.3424 and `SB`
@@ -725,8 +729,9 @@ are reached per dealt hand at 1 (`UTG`), 0.8507 (`HJ`), 0.6912 (`CO`), 0.5232 (`
 **The RF-3 re-freeze, 2026-11-05 (board item 60, `PLAN.md` BD-T39).** The leaf model gained the
 class adjustment of 3.2 as amended, and `solver/tune.py` re-tuned the nine dials of 3.2 together
 with the five coefficients inside the ranges of 3.2 and 13.4 (two runs, 13.4 as amended). The
-pick, by the rule of 13.4 (rows inside, then total miss, then the button's pairs, then the
-patterns), is `k` 2, `c_srp` 0.5, `c_srp_oop` 0.125, `c_3bp` 0.45, `c_3bp_oop` 0, `c_4bp` 0.3,
+pick, by the rule of 13.4 (the most rows inside, then the smallest total miss, then the
+patterns, then the 4-bet expectation; the button's pairs at 100 percent is phase 3a's done-when
+and holds), is `k` 2, `c_srp` 0.5, `c_srp_oop` 0.125, `c_3bp` 0.45, `c_3bp_oop` 0, `c_4bp` 0.3,
 `c_4bp_oop` 0.2, `t_ip` 0.5, `t_sb` 0.5, `a_pair` 0.3, `a_suited` 0, `a_connected` 0.15,
 `a_ace_high` 0, `a_high_card` 0 (section 12; hash in 7.5). It is frozen as provisional again, not
 final: it lands 21 of the 26 rows of 8.2 against 19 before, and the five it misses are findings
@@ -777,15 +782,21 @@ and `a_high_card` stayed at 0, so of the features section 4, item 3, names, suit
 weak ace moved nothing in this fit. Five of the fourteen dials sit at a ceiling, a finding for
 the ranges, which are Zach's.
 
-The hand-level patterns of 13.3 (v), at the pick's 500-iteration screening (`solver/tune.py`
-prints them; `cfr.py` does not): P1 met in both spots (`A2s`-`A5s` 3-bet more than `A2o`-`A9o`
-against `BTN` and against `SB`); P2 met for `CO` against a `BTN` 3-bet, not met for `SB` against
-a `BB` 3-bet; P3 not met (the button opens the gap-0 suited connectors less often than
-`A2o`-`A9o`); P4 met in three of five spots, not met for `CO` against a `BTN` 3-bet and `BTN`
-against a `CO` 4-bet. The 4-bet expectation of 13.3 (v) (b), fold 35 to 60 and call 20 to 45,
-no verdict: `BTN` against a `CO` 4-bet folds 28.3, calls 53.1; `SB` against a `BTN` 4-bet folds
-26.5, calls 55.6; `BB` against a `BTN` 4-bet folds 27.3, calls 55.4; `BB` against an `SB` 4-bet
-folds 31.9, calls 48.7. Every 4-bet is called more and folded to less than the one source
+The hand-level patterns of 13.3 (v), read from the committed key at 12,000 iterations with
+`tune.pattern_lines` and `tune.vs4_rows` over its strategies (`cfr.py` does not print them; the
+500-iteration screening showed P1 met against `BTN` and P4 met in three spots, which the solve
+does not confirm): P1 NOT MET against `BTN` (`A2s`-`A5s` 3-bet less than `A2o`-`A9o`) and met
+against `SB`; P2 met for `CO` against a `BTN` 3-bet, not met for `SB` against a `BB` 3-bet; P3
+not met (the button opens the gap-0 suited connectors less often than `A2o`-`A9o`); P4 met in
+one of five spots (`BB` against a `BTN` 4-bet), not met for `CO` against a `BTN` 3-bet, `BTN`
+against a `CO` 4-bet, `SB` against a `BTN` 4-bet and `BB` against an `SB` 4-bet. So the key the
+app carries still has its bluff selection inverted against the button: the big blind 3-bets the
+offsuit weak aces more than the suited ones, the inversion section 4, item 3, describes (the
+Deep audit of 2026-11-05 lists it as its hazard 6), a finding for section 10. The
+4-bet expectation of 13.3 (v) (b), fold 35 to 60 and call 20 to 45, no verdict, at 12,000
+iterations: `BTN` against a `CO` 4-bet folds 28.6, calls 52.7; `SB` against a `BTN` 4-bet folds
+25.5, calls 56.7; `BB` against a `BTN` 4-bet folds 27.8, calls 54.3; `BB` against an `SB` 4-bet
+folds 32.0, calls 48.6. Every 4-bet is called more and folded to less than the one source
 expects, as 13.1 Part C found of the 2026-10-06 key.
 
 `k` 1 and 2, as 3.2 asks. The best `k` 1 setting of the two runs (`c_srp` 0.25, `c_3bp` 0.6,
@@ -1214,7 +1225,8 @@ the tuning began. Board item 60 (RF-3) amends this object and section 3.2 again.
 old dials are re-frozen with them by `solver/tune.py` (8.5, the dated paragraph of 2026-11-05),
 and `schema_game` is 2 because the object's meaning changed (Q8). The freeze is provisional
 again: 8.5 records which rows it lands and which it misses. With every coefficient 0 the object
-values every leaf exactly as the object of 2026-10-06 did. `formula` and `features` are prose
+values every leaf as the object of 2026-10-06 did to one floating-point ulp, not bitwise (3.2
+as amended). `formula` and `features` are prose
 for a reader of the key; the arithmetic that binds is 3.2.
 
 ```json
@@ -1772,8 +1784,9 @@ feature terms (option ii), and s for the bent player's share of 3.2.
   z(h_edge). For: both hands' features count; the pot is conserved at every matchup, so the
   two-player games stay zero-sum and CFR+ stays in the regime where the best response of phases
   3a and 3b is the proof; a share of 0 or 1 stays where it is; two hands of the same class are
-  unchanged against each other; and every coefficient at 0 gives R = 1 and the model of 3.2
-  exactly, so the leaf cases of `solver/cfr_test.py` hold at a zero adjustment. The effect grows
+  unchanged against each other; and every coefficient at 0 gives R = 1 and the model of 3.2 to
+  one floating-point ulp, so the leaf cases of `solver/cfr_test.py` hold at a zero adjustment
+  within their tolerance. The effect grows
   with the pot: a shift that moves 1 bb in a single raised pot moves about 3 bb in a 3-bet pot,
   which is where the misses are. Against: it is the "bonus to the other player" the item names,
   in a bounded form: whatever a hand loses against a better-playing class, that class gains, even
