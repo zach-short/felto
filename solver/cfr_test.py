@@ -22,7 +22,7 @@ import cfr
 from config import DIAL_PATH, GAME, RANGES
 from validate_key import HANDS, check_sums, spec_hash, validate
 
-SPEC_HASH = "659cdfd1072b0ea27a0b74737ce6f3a67c63a329ed18595c6f1f8233ffe845a7"
+SPEC_HASH = "9520e77db0235971b225fbeff34a8bf865f9c43f2688b56dd999319917ddd295"
 
 # Opener hands are rows, defender hands columns: E[h][g] is the opener's equity.
 E3 = np.array([[0.5, 0.7, 0.4], [0.3, 0.5, 0.45], [0.6, 0.55, 0.5]])
@@ -68,7 +68,30 @@ TOY = {
         "c_edge_in_position": {"srp": 0, "3bp": 0, "4bp": 0, "all_in": 0},
         "c_edge_out_of_position": {"srp": 0, "3bp": 0, "4bp": 0, "all_in": 0},
         "flat_tax": {"ip": 0, "sb": 0, "bb": 0},
+        "class_adjustment": {"a_pair": 0, "a_suited": 0, "a_connected": 0, "a_ace_high": 0, "a_high_card": 0},
     },
+}
+# The class adjustment of RF-3 (KEY-SPEC.md 3.2 as amended, 13.3 (i-c)) with a_suited 0.3 alone,
+# so a suited non-pair scores 0.3 and every other hand 0, and R is exp(0.3) or exp(-0.3).
+# Legend: (opener, defender, leaf index, opener hand, defender hand, opener's equity) -> (to
+# opener, to defender), worked by hand from the LEAF_CASES shares:
+# srp: BB flats a BTN open with T9s against K9o at 30 percent equity, c_srp 0.7: the share 0.1971
+#   has its odds times exp(0.3), 0.248894 of 5.5.
+# 3bp: SB calls a BB 3-bet to 9 with Q8o against T9s at 40 percent, c_3bp 0.4: 0.3424 has its odds
+#   times exp(-0.3), 0.278359 of 18.
+# 4bp: SB calls a BTN 4-bet to 22 with K9o against J8s at 45 percent, c_4bp 0.2: 0.422775 has its
+#   odds times exp(-0.3), 0.351742 of 45.
+# The equity table of a case holds the opener's equity at (opener, defender) and one less it at
+# (defender, opener), as the real table does, because both modules read E.T as the defender's.
+ADJUSTED_CASES = {
+    ("BTN", "BB", 0, "K9o", "T9s", 0.7): (1.631082254660873, -1.1310822546608728),
+    ("SB", "BB", 1, "Q8o", "T9s", 0.4): (-3.9895418386950423, 3.989541838695043),
+    ("BTN", "SB", 2, "J8s", "K9o", 0.55): (7.171622343005559, -6.1716223430055575),
+}
+# Legend: hand -> (pair, suited, connected, ace-high, high card), the worked scores of 13.3 (ii).
+FEATURE_CASES = {
+    "A5s": (0, 1, 0, 1, 1), "A5o": (0, 0, 0, 1, 1), "76s": (0, 1, 1, 0, -0.75), "KJo": (0, 0, 0.5, 0, 0.75),
+    "22": (1, 0, 0, 0, -2), "AKo": (0, 0, 1, 1, 1), "T7s": (0, 1, 0.25, 0, 0), "AA": (1, 0, 0, 0, 1),
 }
 TOY_E = np.array([[0.5, 1.0], [0.0, 0.5]])
 TOY_W = np.ones((2, 2))
@@ -93,6 +116,23 @@ def starting_game():
             target = target[key]
         target[last] = start
     return game
+
+
+def adjusted_game():
+    """The starting game with a_suited 0.3 and the other coefficients 0 (ADJUSTED_CASES)."""
+    game = starting_game()
+    game["leaf_model"]["class_adjustment"]["a_suited"] = 0.3
+    return game
+
+
+def equity_with(cases):
+    """A 169 by 169 equity table at one half, with the opener's equity of each case set and the
+    defender's, one less it, in the transposed cell."""
+    E = np.full((len(HANDS), len(HANDS)), 0.5)
+    for (_, _, _, h, g, e) in cases:
+        E[HANDS.index(h), HANDS.index(g)] = e
+        E[HANDS.index(g), HANDS.index(h)] = 1 - e
+    return E
 
 
 class GameTest(unittest.TestCase):
@@ -132,15 +172,43 @@ class GameTest(unittest.TestCase):
                 self.assertAlmostEqual(other[leaf][1][h, g], to_d, places=9)
 
     def test_the_pot_is_conserved_at_every_leaf(self):
-        game = starting_game()
-        for opener, defender in FOLD_WINS:
-            pair = cfr.pair_of(game, opener, defender)
-            tables = cfr.leaf_tables(pair, E3, game["leaf_model"])
-            pots = [2 * a + pair["dead"] for a in cfr.amounts(pair["sizes"])]
-            total = [tables["uo"][i] + tables["ud"][i] for i in range(4)]
-            self.assertTrue(np.allclose(total[0], pair["dead"] - pair["tax"] * pots[0]))
-            for i in (1, 2, 3):
-                self.assertTrue(np.allclose(total[i], pair["dead"]))
+        for game, E in ((starting_game(), E3), (adjusted_game(), equity_with(ADJUSTED_CASES))):
+            for opener, defender in FOLD_WINS:
+                pair = cfr.pair_of(game, opener, defender)
+                tables = cfr.leaf_tables(pair, E, game["leaf_model"])
+                pots = [2 * a + pair["dead"] for a in cfr.amounts(pair["sizes"])]
+                total = [tables["uo"][i] + tables["ud"][i] for i in range(4)]
+                self.assertTrue(np.allclose(total[0], pair["dead"] - pair["tax"] * pots[0]))
+                for i in (1, 2, 3):
+                    self.assertTrue(np.allclose(total[i], pair["dead"]))
+
+    def test_the_features_are_the_worked_scores_in_both_modules(self):
+        for hand, expected in FEATURE_CASES.items():
+            with self.subTest(hand=hand):
+                self.assertEqual(cfr.features(hand), expected)
+                self.assertEqual(tuple(best_response.playability(hand).values()), expected)
+        self.assertEqual(len(cfr.scores(GAME["leaf_model"]["class_adjustment"])), 169)
+
+    def test_adjusted_leaf_payoffs_match_the_hand_worked_cases_in_both_modules(self):
+        game, E = adjusted_game(), equity_with(ADJUSTED_CASES)
+        for (opener, defender, leaf, h, g, _), (to_o, to_d) in ADJUSTED_CASES.items():
+            i, j = HANDS.index(h), HANDS.index(g)
+            with self.subTest(opener=opener, defender=defender, leaf=leaf):
+                tables = cfr.leaf_tables(cfr.pair_of(game, opener, defender), E, game["leaf_model"])
+                self.assertAlmostEqual(tables["uo"][leaf][i, j], to_o, places=9)
+                self.assertAlmostEqual(tables["ud"][leaf][i, j], to_d, places=9)
+                other = best_response.payoffs(game, opener, defender, E)
+                self.assertAlmostEqual(other[leaf][0][i, j], to_o, places=9)
+                self.assertAlmostEqual(other[leaf][1][i, j], to_d, places=9)
+
+    def test_two_hands_of_one_class_are_unchanged_by_the_adjustment(self):
+        plain, adjusted = starting_game(), adjusted_game()
+        E, pair = equity_with(ADJUSTED_CASES), cfr.pair_of(GAME, "BTN", "BB")
+        i, j = HANDS.index("K9o"), HANDS.index("Q8o")
+        before = cfr.leaf_tables(pair, E, plain["leaf_model"])["ud"]
+        after = cfr.leaf_tables(pair, E, adjusted["leaf_model"])["ud"]
+        self.assertEqual([t[i, j] for t in before], [t[i, j] for t in after])
+        self.assertNotEqual(before[0][i, HANDS.index("T9s")], after[0][i, HANDS.index("T9s")])
 
     def test_node_ids_match_the_spec_examples(self):
         self.assertEqual(cfr.node_id(GAME, "UTG"), "root")

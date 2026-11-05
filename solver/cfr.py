@@ -33,13 +33,14 @@ import numpy as np
 
 import best_response
 from config import GAME, GTO_EXPLOITABILITY_BB, REACH_FLOOR
-from validate_key import HANDS, SCHEMA, spec_hash
+from validate_key import HANDS, RANKS, SCHEMA, spec_hash
 
 OUT = os.path.join(os.path.dirname(__file__), "data")
 DATA = os.path.join(OUT, "equity.json")
-DATE = "2026-10-06"
+DATE = "2026-11-05"
 ITERATIONS = 12000
 SIZE_NAMES = ("open", "3bet", "4bet", "5bet")
+COEFFICIENTS = ("a_pair", "a_suited", "a_connected", "a_ace_high", "a_high_card")
 # Legend: node kind -> (its actions, the size each action totals to; None for a fold).
 KINDS = {
     "open": (["fold", "open"], [None, "open"]),
@@ -158,14 +159,50 @@ def bent(e, c, k):
     return e - c * e * (1 - e) ** k
 
 
+def features(hand):
+    """x(h) of KEY-SPEC.md 3.2 as amended by RF-3: pair, suited, connected, ace-high, high card.
+    The ace counts high only, so A5s is not connected; the high card is centered at the ten."""
+    high, low = (RANKS.index(c) for c in hand[:2])
+    pair, gap = high == low, low - high - 1
+    connected = 0.0 if pair or gap > 2 else 0.25 * 2 ** (2 - gap)
+    return (float(pair), float(not pair and hand[2] == "s"), connected, float(not pair and high == 0), (4 - high) / 4)
+
+
+def scores(adjustment, hands=HANDS):
+    """z(h) for every hand class: the coefficients dotted with the features."""
+    a = [adjustment[name] for name in COEFFICIENTS]
+    return np.array([sum(c * x for c, x in zip(a, features(h))) for h in hands])
+
+
+def shift(leaf, n):
+    """R by opener row and defender column: exp(z_defender - z_opener), the factor on the
+    defender's odds of the pot share; the opener's is its reciprocal. 1 with no adjustment, so
+    a game with other hands (the toy) needs no classes."""
+    if not any(leaf["class_adjustment"][name] for name in COEFFICIENTS):
+        return 1.0
+    if n != len(HANDS):
+        raise SystemExit("the class adjustment needs the 169 hand classes")
+    z = scores(leaf["class_adjustment"])
+    return np.exp(z[None, :] - z[:, None])
+
+
+def adjusted(s, R):
+    """The bent share with its odds multiplied by R (KEY-SPEC.md 3.2 as amended by RF-3); the
+    pot stays conserved because the other player takes 1 - the result."""
+    return s * R / (s * R + 1 - s)
+
+
 def shares(pair, E, leaf):
-    """The caller's bent share at the three leaves with chips behind: the defender's in the
-    single raised and 4-bet pots, the opener's in the 3-bet pot. The edge holder is the player
-    whose raise was called, and its c depends on whether it is in position."""
+    """The caller's share at the three leaves with chips behind: the defender's in the single
+    raised and 4-bet pots, the opener's in the 3-bet pot. The edge holder is the player whose
+    raise was called, its c depends on whether it is in position, and the class adjustment
+    moves the odds by the two hands' scores."""
     c_ip, c_oop = leaf["c_edge_in_position"], leaf["c_edge_out_of_position"]
     c_opener, c_defender = (c_ip, c_oop) if pair["opener_ip"] else (c_oop, c_ip)
-    k = leaf["k"]
-    return bent(E.T, c_opener["srp"], k), bent(E, c_defender["3bp"], k), bent(E.T, c_opener["4bp"], k)
+    k, R = leaf["k"], shift(leaf, len(E))
+    srp = adjusted(bent(E.T, c_opener["srp"], k), R)
+    threebet = adjusted(bent(E, c_defender["3bp"], k), 1 / R)
+    return srp, threebet, adjusted(bent(E.T, c_opener["4bp"], k), R)
 
 
 def leaf_tables(pair, E, leaf):

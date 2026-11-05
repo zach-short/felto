@@ -12,12 +12,15 @@ frozen ones once phase 3a has tuned them; the starting values stay here as the r
 tuning began. Frozen 2026-10-06 as provisional (board item 37, HANDOFF.md step 52, Zach's choice
 of KEY-SPEC.md 11, third batch): the best setting inside the ranges, which lands 13 of the 19
 bands of KEY-SPEC.md 8.2 and opens every pair from the button; the six misses are KEY-SPEC.md 8.5,
-and board item 60 (RF-3, a per-class adjustment) re-freezes them. The other solver dials of
-KEY-SPEC.md section 9 follow.
+and board item 60 (RF-3, a per-class adjustment) re-freezes them. Amended 2026-11-05 (board item
+60, RF-3): leaf_model gains class_adjustment, five coefficients in log-odds units on fixed hand
+features (KEY-SPEC.md 3.2 as amended, 13.3 (ii)), tuned by tune.py together with the nine old
+dials and frozen here; schema_game is 2 because the object's meaning changed. The other solver
+dials of KEY-SPEC.md section 9 follow.
 """
 
 GAME = {
-    "schema_game": 1,
+    "schema_game": 2,
     "seats": ["UTG", "HJ", "CO", "BTN", "SB", "BB"],
     "postflop_order": ["SB", "BB", "UTG", "HJ", "CO", "BTN"],
     "stack_bb": 100,
@@ -35,19 +38,36 @@ GAME = {
     "leaf_model": {
         "kind": "edge_realization",
         "formula": (
-            "bent_share = e - c * e * (1 - e)^k; edge_share = 1 - bent_share; a flat by a seat "
-            "other than BB multiplies both shares by (1 - t)"
+            "bent_share = e - c * e * (1 - e)^k; R = exp(z_bent - z_edge); share = bent_share * R / "
+            "(bent_share * R + 1 - bent_share); edge_share = 1 - share; a flat by a seat other than "
+            "BB multiplies both shares by (1 - t)"
         ),
         "k": 2,
         "c_edge_in_position": {"srp": 0.5, "3bp": 0.4, "4bp": 0.1, "all_in": 0},
         "c_edge_out_of_position": {"srp": 0.2, "3bp": 0, "4bp": 0.05, "all_in": 0},
         "flat_tax": {"ip": 0.1, "sb": 0.25, "bb": 0},
+        "class_adjustment": {
+            "kind": "log_odds_shift",
+            "features": (
+                "z = a_pair * pair + a_suited * suited + a_connected * connected + a_ace_high * "
+                "ace_high + a_high_card * high_card; pair, suited and ace_high are 0 or 1 (suited "
+                "and ace_high are 0 for a pair); connected is 1, 0.5, 0.25 for a non-pair with a "
+                "gap of 0, 1, 2 between its ranks, the ace high only, else 0; high_card is (rank "
+                "of the higher card - 10) / 4 with the ace 14"
+            ),
+            "a_pair": 0,
+            "a_suited": 0,
+            "a_connected": 0,
+            "a_ace_high": 0,
+            "a_high_card": 0,
+        },
     },
     "card_removal": "two_live_hands",
     "hand_classes": 169,
 }
 
-# Legend: dial -> (starting value, floor, ceiling), from KEY-SPEC.md 3.2 and its section 9 table.
+# Legend: dial -> (starting value, floor, ceiling), from KEY-SPEC.md 3.2 and its section 9 table;
+# the five class-adjustment coefficients from KEY-SPEC.md 13.4 (signs from section 4, item 3).
 RANGES = {
     "c_srp": (0.7, 0.0, 1.0),
     "c_3bp": (0.4, 0.0, 0.6),
@@ -58,6 +78,11 @@ RANGES = {
     "k": (2, 1, 2),
     "t_ip": (0.1, 0.0, 0.5),
     "t_sb": (0.25, 0.0, 0.5),
+    "a_pair": (0, -0.6, 0.6),
+    "a_suited": (0, 0.0, 0.6),
+    "a_connected": (0, 0.0, 0.6),
+    "a_ace_high": (0, -0.6, 0.0),
+    "a_high_card": (0, -0.6, 0.6),
 }
 
 # Where each dial sits inside GAME["leaf_model"], so a tuning run can set it by name.
@@ -71,6 +96,11 @@ DIAL_PATH = {
     "k": ("k",),
     "t_ip": ("flat_tax", "ip"),
     "t_sb": ("flat_tax", "sb"),
+    "a_pair": ("class_adjustment", "a_pair"),
+    "a_suited": ("class_adjustment", "a_suited"),
+    "a_connected": ("class_adjustment", "a_connected"),
+    "a_ace_high": ("class_adjustment", "a_ace_high"),
+    "a_high_card": ("class_adjustment", "a_high_card"),
 }
 
 # The stop rule of phases 3a and 3b: the best-response gain of every seat, in big blinds per hand.

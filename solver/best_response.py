@@ -17,8 +17,13 @@ here. The two files share only config.py, validate_key.py and the equity file.
 import numpy as np
 
 from config import GAME
+from validate_key import HANDS, RANKS
 
 SIZES = ("open", "3bet", "4bet", "5bet")
+# Legend: feature -> its coefficient's name in leaf_model.class_adjustment (KEY-SPEC.md 13.3 (ii)).
+FEATURES = (("pair", "a_pair"), ("suited", "a_suited"), ("connected", "a_connected"), ("ace_high", "a_ace_high"), ("high_card", "a_high_card"))
+# Legend: gap between the ranks of a non-pair -> its connected weight (the ace high only).
+GAPS = {0: 1.0, 1: 0.5, 2: 0.25}
 
 
 # ------------------------------------------------------------- THE GAME
@@ -46,10 +51,38 @@ def realized(e, c, k):
     return e - c * e * (1 - e) ** k
 
 
-def split(pot, e_caller, c, k, keep=1):
+def playability(hand):
+    """The features of KEY-SPEC.md 3.2 as amended by RF-3, by name, from the ranks as numbers
+    (the ace 14, the deuce 2)."""
+    high, low = (14 - RANKS.index(c) for c in hand[:2])
+    pair = high == low
+    return {
+        "pair": 1.0 if pair else 0.0,
+        "suited": 1.0 if not pair and hand.endswith("s") else 0.0,
+        "connected": 0.0 if pair else GAPS.get(high - low - 1, 0.0),
+        "ace_high": 1.0 if not pair and high == 14 else 0.0,
+        "high_card": (high - 10) / 4,
+    }
+
+
+def odds_shift(leaf, n):
+    """exp(z_opener - z_defender) by opener row and defender column: the factor on the opener's
+    odds of the pot share against each defender hand. 1 when no coefficient is set."""
+    adjustment = leaf["class_adjustment"]
+    z = np.array([sum(adjustment[a] * playability(h)[f] for f, a in FEATURES) for h in HANDS])
+    if not z.any():
+        return 1.0
+    if n != len(HANDS):
+        raise SystemExit("the class adjustment needs the 169 hand classes")
+    return np.exp(z[:, None] - z[None, :])
+
+
+def split(pot, e_caller, c, k, keep=1, odds=1.0):
     """The caller's and the raiser's shares of a pot with chips behind: the caller keeps its bent
-    share and the raiser the rest, both after the flat tax where it applies."""
-    caller = realized(e_caller, c, k) * keep * pot
+    share, its odds moved by the class adjustment, and the raiser the rest, both after the flat
+    tax where it applies."""
+    bent = realized(e_caller, c, k)
+    caller = bent * odds / (bent * odds + 1 - bent) * keep * pot
     return caller, keep * pot - caller
 
 
@@ -73,11 +106,12 @@ def payoffs(game, opener, defender, E):
     hand (columns). The edge holder is the player whose raise was called."""
     leaf, k = game["leaf_model"], game["leaf_model"]["k"]
     a1, a2, a3, stack, dead, opener_ip, keep = stakes(game, opener, defender)
-    to_d, to_o = split(2 * a1 + dead, E.T, c_of(leaf, opener_ip, "srp"), k, keep)
+    q = odds_shift(leaf, len(E))
+    to_d, to_o = split(2 * a1 + dead, E.T, c_of(leaf, opener_ip, "srp"), k, keep, 1 / q)
     srp = (to_o - a1, to_d - a1)
-    to_o, to_d = split(2 * a2 + dead, E, c_of(leaf, not opener_ip, "3bp"), k)
+    to_o, to_d = split(2 * a2 + dead, E, c_of(leaf, not opener_ip, "3bp"), k, 1, q)
     threebet = (to_o - a2, to_d - a2)
-    to_d, to_o = split(2 * a3 + dead, E.T, c_of(leaf, opener_ip, "4bp"), k)
+    to_d, to_o = split(2 * a3 + dead, E.T, c_of(leaf, opener_ip, "4bp"), k, 1, 1 / q)
     all_in = 2 * stack + dead
     return [srp, threebet, (to_o - a3, to_d - a3), (E * all_in - stack, E.T * all_in - stack)]
 
