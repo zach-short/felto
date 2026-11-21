@@ -36,17 +36,17 @@ its own folder as well, because it runs through scope, design, plan and several 
 | 11 | Card ranks are live text | All 52 card faces hold `<text>`, with the font stack Arial Rounded MT Bold, Helvetica Neue, Arial | `grep -l '<text' assets/icons/cards/*.svg \| wc -l`; `tools/build_icons.py:20` |
 | 12 | No poker content exists | No lesson, quiz, chart or curriculum text in any tracked or untracked file outside the SVGs and Higgsfield art | `grep -liE 'curricul\|preflop\|hand rank\|quiz\|lesson content'` over `git ls-files -co --exclude-standard`, no hits |
 | 13 | No product decision is settled | The ledger's Settled sections are about process only: tracked process files, the board marker, the private repo | `HANDOFF.md:42`, `:49`, `:56` |
-| 14 | No earlier scope of the app exists | The archive home does not exist, and "felto" appears outside this repo only in unrelated data files (CSV, SQL, JSON in `fantomworks` and `wm-courses`) | `ls ~/Projects/archive/felto`; `grep -rIl -i felto ~/Projects` |
-| 15 | ~~Zach's mobile apps use one stack~~ Zach's Expo apps use one stack | `lore/app` and `ezhomesteading/native`: Expo ~57, React Native 0.86.2, `expo-router` 57, Reanimated 4.5.1, `@supabase/supabase-js`, TanStack Query, NativeWind. `ezhomesteading/native` adds `react-native-svg` 15.15.4 and `expo-dev-client`. Corrected 2026-10-05: the first wording was wrong, because the survey read only `package.json` files; rows 23 and 24 are native mobile apps | `~/Projects/lore/app/package.json`; `~/Projects/ezhomesteading/native/package.json` |
-| 16 | Zach's web apps use another | Next.js 16 with Supabase, for example `buy-in/web` | `~/Projects/buy-in/web/package.json` |
-| 17 | Buy-In is a different poker product | A ledger for a home poker night; it records who owes whom and holds no money | `~/Projects/buy-in/README.md` |
+| 14 | No earlier scope of the app exists | The archive home does not exist, and "felto" appears outside this repo only in unrelated data files (CSV, SQL, JSON in `fantomworks` and `wm-courses`) | `ls ~/Developer/zach-short/archive/felto`; `grep -rIl -i felto ~/Projects` |
+| 15 | ~~Zach's mobile apps use one stack~~ Zach's Expo apps use one stack | `lore/app` and `ezhomesteading/native`: Expo ~57, React Native 0.86.2, `expo-router` 57, Reanimated 4.5.1, `@supabase/supabase-js`, TanStack Query, NativeWind. `ezhomesteading/native` adds `react-native-svg` 15.15.4 and `expo-dev-client`. Corrected 2026-10-05: the first wording was wrong, because the survey read only `package.json` files; rows 23 and 24 are native mobile apps | `~/Developer/zach-short/lore/app/package.json`; `~/Developer/dan-short/ezhomesteading/native/package.json` |
+| 16 | Zach's web apps use another | Next.js 16 with Supabase, for example `buy-in/web` | `~/Developer/zach-short/buy-in/web/package.json` |
+| 17 | Buy-In is a different poker product | A ledger for a home poker night; it records who owes whom and holds no money | `~/Developer/zach-short/buy-in/README.md` |
 | 18 | Rive runs in Expo only in a development build | The current runtime, `@rive-app/react-native`, needs React Native 0.78+, Expo SDK 53+, iOS 15.1+ and Android SDK 24+. It has custom native code, so Expo Go cannot load it | Rive docs, `runtimes/react-native/migration-guide.mdx` and `adding-rive-to-expo.mdx`, read through Context7 2026-10-05 |
 | 19 | Apple rates simulated gambling and loot boxes | "Simulated Gambling" is betting or wagering without real money; infrequent rates 13+, frequent rates 18+. Loot boxes (randomized items for purchase) rate 9+ | [App Store Connect Help, age ratings](https://developer.apple.com/help/app-store-connect/reference/age-ratings), fetched 2026-10-05 |
 | 20 | Only a Python standard exists | `docs/` holds `AGENT-PRACTICES.md` and `conventions-python.md`. `CLAUDE.md` requires the matching standard before any code | `ls docs`; `CLAUDE.md:3-5` |
 | 21 | The router and ledger say there is no app | Four lines state it | `CLAUDE.md:34`, `:86`; `HANDOFF.md:9`, `:32` |
-| 22 | A TypeScript standard for an Expo app exists in another repo | `ezhomesteading/docs/conventions-typescript.md`, next to its Expo app | `ls ~/Projects/ezhomesteading/docs` |
-| 23 | Zach has a large native iOS app | `furlough`: SwiftUI for iOS 18 and macOS 15, built with XcodeGen, 254 Swift files | `~/Projects/furlough/project.yml:4-6`; `find furlough -name '*.swift' \| wc -l` |
-| 24 | Zach has a small native Android app | `drunktion`: Kotlin with Jetpack Compose, 15 Kotlin files | `~/Projects/drunktion/app/build.gradle.kts`; `find drunktion -name '*.kt' -not -path '*/build/*' \| wc -l` |
+| 22 | A TypeScript standard for an Expo app exists in another repo | `ezhomesteading/docs/conventions-typescript.md`, next to its Expo app | `ls ~/Developer/dan-short/ezhomesteading/docs` |
+| 23 | Zach has a large native iOS app | `furlough`: SwiftUI for iOS 18 and macOS 15, built with XcodeGen, 254 Swift files | `~/Developer/zach-short/furlough/project.yml:4-6`; `find furlough -name '*.swift' \| wc -l` |
+| 24 | Zach has a small native Android app | `drunktion`: Kotlin with Jetpack Compose, 15 Kotlin files | `~/Developer/sandbox/drunktion/app/build.gradle.kts`; `find drunktion -name '*.kt' -not -path '*/build/*' \| wc -l` |
 | 25 | Android does not draw SVG files directly | They are converted to VectorDrawable, which has no group opacity, no mask, no pattern and no blur, and no text element. All 52 card faces use `<text>` (row 11); 13 files use `clipPath`, which VectorDrawable supports inside one group; no file uses group opacity | [Android VectorDrawable and vector graphics docs](https://developer.android.com/jetpack/compose/tooling/relay/vector-graphics), searched 2026-10-05; `grep -c clipPath`; `grep -lE '<g[^>]*opacity'` |
 | 26 | The Rive React Native runtime wraps the native runtimes | Its Expo config sets `RiveRuntimeIOSVersion` and `Rive_RiveRuntimeAndroidVersion`, the versions of the iOS and Android runtimes under it | `rive-react-native` README, read through Context7 2026-10-05 |
 
@@ -248,7 +248,7 @@ section 2 and the dials in section 4 stand as written.
 | # | Decision | Answer, 2026-10-05 |
 |---|---|---|
 | 1 | What the app is | 1A, a lesson path with drills |
-| 2 | Platform | 2A, Expo for iOS and Android, with one addition: use native UI components where they exist. Read as `@expo/ui` (SwiftUI on iOS, Jetpack Compose on Android), which both of Zach's Expo apps already depend on (`~/Projects/lore/app/package.json`, `@expo/ui` ~57.0.13; `~/Projects/ezhomesteading/native/package.json`, `@expo/ui` ~57.0.8). Surfaces with no native component (the lesson path, the cards, the mascots) are drawn from the generated art. Which `@expo/ui` components exist on SDK 57 is checked against its docs at design time |
+| 2 | Platform | 2A, Expo for iOS and Android, with one addition: use native UI components where they exist. Read as `@expo/ui` (SwiftUI on iOS, Jetpack Compose on Android), which both of Zach's Expo apps already depend on (`~/Developer/zach-short/lore/app/package.json`, `@expo/ui` ~57.0.13; `~/Developer/dan-short/ezhomesteading/native/package.json`, `@expo/ui` ~57.0.8). Surfaces with no native component (the lesson path, the cards, the mascots) are drawn from the generated art. Which `@expo/ui` components exist on SDK 57 is checked against its docs at design time |
 | 3 | Data in the first version | 3A, on the device only, through one data module |
 | 4 | Mascots in the first version | 4A, static SVG poses behind one mascot component; Rive later |
 | 5 | Where the app lives | 5A, `app/` in this repo |
@@ -300,7 +300,7 @@ control, the app uses it; section 10.3 names the component on each screen. The s
 have no native control (the path, the cards, the mascots, the stat icons) draw the generated art.
 
 Facts behind it, verified 2026-10-05 in the installed packages of Zach's SDK 57 app
-(`~/Projects/lore/app/node_modules`):
+(`~/Developer/zach-short/lore/app/node_modules`):
 
 - `@expo/ui` 57.0.13 has a universal layer: Host, Column, Row, Text, Button, ScrollView, Switch,
   Slider, Checkbox, BottomSheet, Collapsible, FieldGroup, Icon, List, ListItem, Picker, Spacer and
@@ -314,7 +314,7 @@ Facts behind it, verified 2026-10-05 in the installed packages of Zach's SDK 57 
   (`expo-modules-core/expo-module-gradle-plugin/src/main/kotlin/expo/modules/plugin/ProjectConfiguration.kt:75`).
   That answers the "Minimum iOS" dial in section 4: 16.4, which is above Rive's 15.1 (row 18).
 - Native tabs come from `expo-router/unstable-native-tabs` (`expo-router/package.json:40-41`),
-  and Zach's `lore` app already uses them (`~/Projects/lore/app/src/components/app-tabs.tsx:1`).
+  and Zach's `lore` app already uses them (`~/Developer/zach-short/lore/app/src/components/app-tabs.tsx:1`).
   The word `unstable` in the path is the only stability label found.
 
 Defense: the stack of both of Zach's Expo apps (row 15), and one codebase, so every lesson rule
@@ -519,8 +519,8 @@ both `com.zachshort.felto`, and the URL scheme is `felto`.
 
 Defense: the name matches the repo and the gallery title (`assets/gallery.html:8`). Zach's
 `ezhomesteading` app uses its own domain in reverse (`com.ezhomesteading.app`,
-`~/Projects/ezhomesteading/native/app.json:14`); felto has no domain, so the owner's name stands
-in. `lore` sets no identifier at all (`~/Projects/lore/app/app.json`, `grep bundleIdentifier`
+`~/Developer/dan-short/ezhomesteading/native/app.json:14`); felto has no domain, so the owner's name stands
+in. `lore` sets no identifier at all (`~/Developer/zach-short/lore/app/app.json`, `grep bundleIdentifier`
 finds nothing), so there is no other precedent. Against: an identifier cannot change after a
 store release. No store release is in this plan (`D13`), so it can still change until then.
 
@@ -554,7 +554,7 @@ The facts, verified 2026-10-05. All 52 card faces hold their rank as `<text>` wi
 (`tools/build_icons.py:20`, `:174-178`); no other SVG holds text (`grep -lE '<text'` over both
 asset folders finds only `assets/icons/cards/`). `react-native-svg` 15.15.4 uses only the first
 name in the list (`react-native-svg/src/lib/extract/extractText.tsx:25`, in
-`~/Projects/ezhomesteading/node_modules`). iOS ships Arial Rounded MT Bold, which no one has yet
+`~/Developer/dan-short/ezhomesteading/node_modules`). iOS ships Arial Rounded MT Bold, which no one has yet
 seen in a build here. Android does not: it looks for a bundled font of that name, then asks the
 system, which gives its default typeface (`react-native-svg/android/.../TSpanView.java:1146-1177`,
 `react-native/.../ReactFontManager.kt:187`). So the first build would draw rounded ranks on an
@@ -596,7 +596,7 @@ boss and the opened chest. A new generator, `tools/build_sounds.py`, on the stan
 only (`math`, `struct`, `wave`), writes them as short WAV files to `assets/sounds/`, the same way
 the SVGs are made: deterministic, rebuilt by the gate, never edited by hand. The app plays them
 with `expo-audio` (SDK 57 pins `~57.0.4`, `expo/bundledNativeModules.json:24` in
-`~/Projects/lore/app/node_modules`), follows the iPhone's silent switch, and has a Sound switch
+`~/Developer/zach-short/lore/app/node_modules`), follows the iPhone's silent switch, and has a Sound switch
 in Profile, on by default. No music.
 
 Defense: no audio asset exists (`D13`), and a generator keeps sound in the same pipeline, rules

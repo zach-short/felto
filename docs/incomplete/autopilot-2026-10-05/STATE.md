@@ -15,7 +15,7 @@ Not yet written into DESIGN.md ("Answer: pending" still stands there). Owed to Z
 No Deep rows lifted; no load-bearing rows; none left out.
 
 ## Rows
-- 21: Sonnet 5, DONE: HANDOFF 9 (signed off uncommitted 2026-10-05 01:40 EDT), builder agent a1cb91d6981ab219e launched 2026-10-05 01:28 EDT, worktree /Users/zachshort/Projects/felto/.claude/worktrees/agent-a1cb91d6981ab219e, branch worktree-agent-a1cb91d6981ab219e, relay 0, review rounds 0, builder reported done 2026-10-05; auditor a5fa42196ab8eed27 (Opus) launched, verdict pending.
+- 21: Sonnet 5, DONE: HANDOFF 9 (signed off uncommitted 2026-10-05 01:40 EDT), builder agent a1cb91d6981ab219e launched 2026-10-05 01:28 EDT, worktree /Users/zachshort/Developer/zach-short/felto/.claude/worktrees/agent-a1cb91d6981ab219e, branch worktree-agent-a1cb91d6981ab219e, relay 0, review rounds 0, builder reported done 2026-10-05; auditor a5fa42196ab8eed27 (Opus) launched, verdict pending.
 
 ## Queue
 Only 21 is runnable. Items 5-20 HELD: prompts 6-20 unwritten (written at close of the item each waits on), and

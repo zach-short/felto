@@ -137,7 +137,7 @@ for it.*
 ### 1. Write the Python code standard for the asset generators
 
 *`DONE: HANDOFF 2`, 2026-10-04. Do not paste this prompt. It is not folded yet:
-`personal-config fold board` refused on 2026-10-04 because `~/Projects/archive/felto` has no
+`personal-config fold board` refused on 2026-10-04 because `~/Developer/zach-short/archive/felto` has no
 `INDEX.md`, and seeding that index is `personal-config setup`'s job.*
 
 *Opened 2026-10-04, out of the Part 0 adaptation: `CLAUDE.md` requires a code standard before
@@ -566,7 +566,7 @@ mvp is met". Items 6 to 20 share one prompt shape, below; each item's own lines 
 fact a prompt cites must be re-checked by grep before use: the line numbers move.*
 
 **The shared prompt (read it with the item's own lines).** Work in the main checkout
-`/Users/zachshort/Projects/felto`, not a worktree: the art is staged and uncommitted, and a
+`/Users/zachshort/Developer/zach-short/felto`, not a worktree: the art is staged and uncommitted, and a
 worktree starts at `HEAD`, so it would lack the art and every earlier phase. Read `HANDOFF.md`
 first (the gate, the invariants and the code map are there; do not re-derive them), then
 `CLAUDE.md`, then the code standard for the files you touch (`docs/conventions-python.md` for
@@ -603,7 +603,7 @@ Under `/autopilot` these overrides hold, and they beat anything in the phase tex
 
 | Item | Phase in `PLAN.md` | Own lines |
 |---|---|---|
-| 6 | Phase 2 | Writes `docs/conventions-typescript.md` and re-adds two rules to `docs/AGENT-PRACTICES.md`. The sweep subagent reads `~/Projects/ezhomesteading/docs/conventions.md`. The `.gitignore` line for `.claude/worktrees/` is part of it. Nothing under `app/` yet. |
+| 6 | Phase 2 | Writes `docs/conventions-typescript.md` and re-adds two rules to `docs/AGENT-PRACTICES.md`. The sweep subagent reads `~/Developer/dan-short/ezhomesteading/docs/conventions.md`. The `.gitignore` line for `.claude/worktrees/` is part of it. Nothing under `app/` yet. |
 | 7 | Phase 3 | Scaffolds `app/`. Builds and screenshots on the iOS simulator and the `Pixel_9` emulator (`ANDROID_HOME` set, Java 17 if needed; `PLAN.md` section 0 rows 20 and 21). Includes the `D15` to `D17` additions: `expo-audio`, `expo-system-ui`, light and dark tokens, the colour swap, the screen wrapper, the iPad landscape and dark checks. If the native build fails for an environment reason, fix the environment, do not stub the app. The art commit is Zach's; the art files exist on disk, and that is enough. |
 | 8 | Phase 4 | Game state and the data module under `app/src/game/` and `app/src/storage/`, with the `D19` streak freeze rules and the dials. Tests are vitest. |
 | 9 | Phase 5 | Cards, the evaluator and the content schema. The evaluator is where a silent error lives: test it by enumeration. The plan names one Deep review of it. |
@@ -869,7 +869,7 @@ and a short lowercase message, both run from the lane E worktree.
 ### 25. Close out the unit-stories effort: one record, the index and the runtime entries
 
 **Model: Sonnet 5. Lane E. Waits on items 22 to 24 committed and merged into `main`.** Work in the
-main checkout, `/Users/zachshort/Projects/felto`, once Zach has merged the lane D and lane E
+main checkout, `/Users/zachshort/Developer/zach-short/felto`, once Zach has merged the lane D and lane E
 branches; no worktree. Written 2026-10-05 by the session that closed item 24 (`HANDOFF.md` step 33).
 
 You are picking up felto, a poker-learning app in `app/` (Expo SDK 57, TypeScript strict, bun). This
@@ -2208,7 +2208,7 @@ and belong to item 60; a seventh is a finding.
   random source (rule G1), so two runs must give the same bytes.
 - Zach's answer (a), 2026-10-05 (`KEY-SPEC.md` 11, third batch): the solver tests join the
   whole-repo gate at this item. The gate line lives in `CLAUDE.md` (Commands) and in
-  `gateCommand` of `/Users/zachshort/Projects/felto/.personal-config.json`, which is gitignored
+  `gateCommand` of `/Users/zachshort/Developer/zach-short/felto/.personal-config.json`, which is gitignored
   and exists in the main checkout only (`ls .personal-config.json` in the worktree finds
   nothing, step 52); `docs/AGENT-PRACTICES.md` Part 6 holds the fresh-checkout recipe and the
   HEAD-isolation line, and Appendix A repeats both; `docs/conventions-python.md` M4 says the
@@ -2863,7 +2863,7 @@ Do these, in order:
    shared simulator first.
 5. **Close out.** `PLAN.md` phase 10 `BUILT`; `docs/README.md` lists every file of the effort with
    its date; the next free `HANDOFF.md` step; row 45 `DONE: HANDOFF n`. If Zach agrees, move the
-   folder to `~/Projects/archive/felto/gto-trainer/` by Part 7 "Archiving", referrers first.
+   folder to `~/Developer/zach-short/archive/felto/gto-trainer/` by Part 7 "Archiving", referrers first.
 
 Ask before building: (a) the words of every string, as variations; (b) where the statement of
 the game opens (a popover from the verdict, or a sheet); (c) whether the folder is archived now or
@@ -2895,7 +2895,7 @@ Read `HANDOFF.md` first (environment, code map, the Metro and simulator quirks u
 then `docs/AGENT-PRACTICES.md`, then `docs/conventions-typescript.md` in full, then `docs/incomplete/game-feel/DESIGN.md`
 sections 8 and 9 (`GF-1` to `GF-19`) and `PLAN.md` sections 1 to 3. If your checkout was made
 before section 9 and this prompt were committed, read both in the main checkout at
-`/Users/zachshort/Projects/felto` (the design file and `PASSOFF.md`). Session rules, restated: never
+`/Users/zachshort/Developer/zach-short/felto` (the design file and `PASSOFF.md`). Session rules, restated: never
 run `git commit`, `git push`, `git add -A` or `git add .`; absolute dates only; no em dashes, no
 contractions and no banned AI words in any document; no drive-by fixes, note them and raise them;
 write `bun run --cwd app <script>`, never `bun --cwd app run <script>`; never hand-edit an SVG under
@@ -2982,7 +2982,7 @@ Read `HANDOFF.md` first (environment, code map, the Metro and simulator quirks u
 then `docs/AGENT-PRACTICES.md`, then `docs/conventions-python.md` in full, then `docs/incomplete/game-feel/DESIGN.md`
 sections 8 and 9 (`GF-1` to `GF-19`) and `PLAN.md` sections 1 to 3. If your checkout was made
 before section 9 and this prompt were committed, read both in the main checkout at
-`/Users/zachshort/Projects/felto` (the design file and `PASSOFF.md`). Session rules, restated: never
+`/Users/zachshort/Developer/zach-short/felto` (the design file and `PASSOFF.md`). Session rules, restated: never
 run `git commit`, `git push`, `git add -A` or `git add .`; absolute dates only; no em dashes, no
 contractions and no banned AI words in any document; no drive-by fixes, note them and raise them;
 write `bun run --cwd app <script>`, never `bun --cwd app run <script>`; never hand-edit an SVG under
@@ -3048,7 +3048,7 @@ Read `HANDOFF.md` first (environment, code map, the Metro and simulator quirks u
 then `docs/AGENT-PRACTICES.md`, then `docs/conventions-python.md` and `docs/conventions-typescript.md` in full, then `docs/incomplete/game-feel/DESIGN.md`
 sections 8 and 9 (`GF-1` to `GF-19`) and `PLAN.md` sections 1 to 3. If your checkout was made
 before section 9 and this prompt were committed, read both in the main checkout at
-`/Users/zachshort/Projects/felto` (the design file and `PASSOFF.md`). Session rules, restated: never
+`/Users/zachshort/Developer/zach-short/felto` (the design file and `PASSOFF.md`). Session rules, restated: never
 run `git commit`, `git push`, `git add -A` or `git add .`; absolute dates only; no em dashes, no
 contractions and no banned AI words in any document; no drive-by fixes, note them and raise them;
 write `bun run --cwd app <script>`, never `bun --cwd app run <script>`; never hand-edit an SVG under
@@ -3061,7 +3061,7 @@ generated with Higgsfield on 2026-10-05.
 
 **What is fixed.** Read these before changing anything; do not relitigate them.
 - The references, kept as received in the main checkout:
-  `/Users/zachshort/Projects/felto/assets/higgsfield-chest/chest-5-tiers-closed.png` and
+  `/Users/zachshort/Developer/zach-short/felto/assets/higgsfield-chest/chest-5-tiers-closed.png` and
   `chest-6-tiers-open.png` (the four tiers), with `chest-1-closed.png` and `chest-2-open.png`
   for detail. Convert a copy with `sips` into a scratch folder to look at it; never write into that
   folder.
@@ -3123,7 +3123,7 @@ Read `HANDOFF.md` first (environment, code map, the Metro and simulator quirks u
 then `docs/AGENT-PRACTICES.md`, then `docs/conventions-python.md` and `docs/conventions-typescript.md` in full, then `docs/incomplete/game-feel/DESIGN.md`
 sections 8 and 9 (`GF-1` to `GF-19`) and `PLAN.md` sections 1 to 3. If your checkout was made
 before section 9 and this prompt were committed, read both in the main checkout at
-`/Users/zachshort/Projects/felto` (the design file and `PASSOFF.md`). Session rules, restated: never
+`/Users/zachshort/Developer/zach-short/felto` (the design file and `PASSOFF.md`). Session rules, restated: never
 run `git commit`, `git push`, `git add -A` or `git add .`; absolute dates only; no em dashes, no
 contractions and no banned AI words in any document; no drive-by fixes, note them and raise them;
 write `bun run --cwd app <script>`, never `bun --cwd app run <script>`; never hand-edit an SVG under
@@ -3193,7 +3193,7 @@ Read `HANDOFF.md` first (environment, code map, the Metro and simulator quirks u
 then `docs/AGENT-PRACTICES.md`, then `docs/conventions-typescript.md` in full, then `docs/incomplete/game-feel/DESIGN.md`
 sections 8 and 9 (`GF-1` to `GF-19`) and `PLAN.md` sections 1 to 3. If your checkout was made
 before section 9 and this prompt were committed, read both in the main checkout at
-`/Users/zachshort/Projects/felto` (the design file and `PASSOFF.md`). Session rules, restated: never
+`/Users/zachshort/Developer/zach-short/felto` (the design file and `PASSOFF.md`). Session rules, restated: never
 run `git commit`, `git push`, `git add -A` or `git add .`; absolute dates only; no em dashes, no
 contractions and no banned AI words in any document; no drive-by fixes, note them and raise them;
 write `bun run --cwd app <script>`, never `bun --cwd app run <script>`; never hand-edit an SVG under
@@ -3267,7 +3267,7 @@ Read `HANDOFF.md` first (environment, code map, the Metro and simulator quirks u
 then `docs/AGENT-PRACTICES.md`, then `docs/conventions-typescript.md` in full, then `docs/incomplete/game-feel/DESIGN.md`
 sections 8 and 9 (`GF-1` to `GF-19`) and `PLAN.md` sections 1 to 3. If your checkout was made
 before section 9 and this prompt were committed, read both in the main checkout at
-`/Users/zachshort/Projects/felto` (the design file and `PASSOFF.md`). Session rules, restated: never
+`/Users/zachshort/Developer/zach-short/felto` (the design file and `PASSOFF.md`). Session rules, restated: never
 run `git commit`, `git push`, `git add -A` or `git add .`; absolute dates only; no em dashes, no
 contractions and no banned AI words in any document; no drive-by fixes, note them and raise them;
 write `bun run --cwd app <script>`, never `bun --cwd app run <script>`; never hand-edit an SVG under
@@ -3323,7 +3323,7 @@ Read `HANDOFF.md` first (environment, code map, the Metro and simulator quirks u
 then `docs/AGENT-PRACTICES.md`, then `docs/conventions-typescript.md` (and `docs/conventions-python.md` for part B) in full, then `docs/incomplete/game-feel/DESIGN.md`
 sections 8 and 9 (`GF-1` to `GF-19`) and `PLAN.md` sections 1 to 3. If your checkout was made
 before section 9 and this prompt were committed, read both in the main checkout at
-`/Users/zachshort/Projects/felto` (the design file and `PASSOFF.md`). Session rules, restated: never
+`/Users/zachshort/Developer/zach-short/felto` (the design file and `PASSOFF.md`). Session rules, restated: never
 run `git commit`, `git push`, `git add -A` or `git add .`; absolute dates only; no em dashes, no
 contractions and no banned AI words in any document; no drive-by fixes, note them and raise them;
 write `bun run --cwd app <script>`, never `bun --cwd app run <script>`; never hand-edit an SVG under

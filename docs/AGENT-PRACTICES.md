@@ -212,7 +212,7 @@ A board plus one standalone prompt per item (Part 3). The board is the paralleli
 ## 2.2 Profile P: project folders
 
 One folder per effort at `docs/incomplete/<slug>/`, from the first keystroke, moved
-to `~/Projects/archive/felto/<slug>/` when it closes.
+to `~/Developer/zach-short/archive/felto/<slug>/` when it closes.
 
 | Stage | Artifact | Who decides | Exit condition |
 |---|---|---|---|
@@ -800,7 +800,7 @@ When every phase is checked off:
    paths *read at runtime* (scripts, globs) and *bare citations in prose*.
    Only the first kind blocks the move.
 2. Commit the folder in its final state, so the repo records how it ended.
-3. Move it to `~/Projects/archive/felto/<slug>/`. **Verify each file actually arrived before trusting
+3. Move it to `~/Developer/zach-short/archive/felto/<slug>/`. **Verify each file actually arrived before trusting
    the deletion**: one commit in repo A deleted five docs and archived three, while the index
    went on citing all five as live.
 4. Add the one-line archive index entry: topic, what it was, last commit, date verified.
@@ -816,7 +816,7 @@ session. That makes their size a Part 5 problem rather than a tidiness one: left
 few months they become the largest thing a session reads, ahead of any code.
 
 Two things in them are already dead by this standard's own rules, and folding means moving
-those two to `~/Projects/archive/felto` and nothing else.
+those two to `~/Developer/zach-short/archive/felto` and nothing else.
 
 1. **A `DONE` item's prompt.** §2.1 already says it rots the moment it is executed and that
    the ledger step is the record. The row stays, with its pointer; so do the sections under
@@ -1028,7 +1028,7 @@ the same turn, batched. A decision built on a guess is built twice.
 | `2026-10-04` | Adaptation date | `date +%F` |
 | `solo` | `solo` or `team` | Set by `personal-config` 2026-10-04 |
 | `docs` | Where project folders go (Profile P paths only) | The directory that already holds design docs; `docs/` only if there is none |
-| `~/Projects/archive/felto` | Where closed work goes | A sibling directory or repo outside this one, or an in-tree folder such as `docs/archive/`. Always a path: it is interpolated into one |
+| `~/Developer/zach-short/archive/felto` | Where closed work goes | A sibling directory or repo outside this one, or an in-tree folder such as `docs/archive/`. Always a path: it is interpolated into one |
 | `none` | Where items and decisions are visible to the team | `none` in solo mode |
 | `Fable 5.1` | The deep-reasoning tier | Set by `personal-config` 2026-10-04; it changes with releases |
 | `Opus 5.5` | The default tier | Set by `personal-config` 2026-10-04 |

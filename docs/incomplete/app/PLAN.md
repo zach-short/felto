@@ -19,16 +19,16 @@ Section 0 wins over the design wherever the two differ, because it was checked l
 | 2 | Local `main` is one commit ahead of GitHub | `main` is `2ba3288`, `origin/main` is `5da0bca` | `git branch -vv` |
 | 3 | An agent worktree starts at `origin/main`, not at local HEAD | The sweep worktrees of 2026-10-05 were created at `5da0bca` | `git worktree list` |
 | 4 | Agent worktrees leave an untracked folder | `?? .claude/` | `git status --short` |
-| 5 | Zach's Expo apps pin one SDK line | Expo ~57.0.16 and ~57.0.9, React 19.2.3, React Native 0.86.2, expo-router ~57, `@expo/ui` ~57.0.13, TypeScript ~6.0.3, eslint ^9 | `~/Projects/lore/app/package.json:7,14,23,31,33,49`; `~/Projects/ezhomesteading/native/package.json:22,35,52,63,66,86` |
-| 6 | Both use bun, vitest and the Expo eslint config, and neither uses jest | `lore/app/bun.lock`; vitest ^4.1 with a node environment on `src/**/*.test.ts`; `eslint-config-expo/flat` | `~/Projects/lore/app/vitest.config.mts:10-13`; `~/Projects/lore/app/eslint.config.js:1-10` |
-| 7 | The house tsconfig | Extends `expo/tsconfig.base`, `strict: true`, paths `@/*` to `./src/*`; routes live in `src/app/`; `typedRoutes: true`; `lore` sets `reactCompiler: true` | `~/Projects/lore/app/tsconfig.json:1-24`; `~/Projects/lore/app/app.json:41-44` |
-| 8 | Only `ezhomesteading` has a development build and on-device SQL | `expo-dev-client` ~57.0.10, `expo-sqlite` ~57.0.1, `expo-notifications` ~57.0.13, `expo-haptics` ~57.0.1, `react-native-svg` 15.15.4, and `eas.json` | `~/Projects/ezhomesteading/native/package.json:40,44,51,55,73`; `native/eas.json:6-49` |
+| 5 | Zach's Expo apps pin one SDK line | Expo ~57.0.16 and ~57.0.9, React 19.2.3, React Native 0.86.2, expo-router ~57, `@expo/ui` ~57.0.13, TypeScript ~6.0.3, eslint ^9 | `~/Developer/zach-short/lore/app/package.json:7,14,23,31,33,49`; `~/Developer/dan-short/ezhomesteading/native/package.json:22,35,52,63,66,86` |
+| 6 | Both use bun, vitest and the Expo eslint config, and neither uses jest | `lore/app/bun.lock`; vitest ^4.1 with a node environment on `src/**/*.test.ts`; `eslint-config-expo/flat` | `~/Developer/zach-short/lore/app/vitest.config.mts:10-13`; `~/Developer/zach-short/lore/app/eslint.config.js:1-10` |
+| 7 | The house tsconfig | Extends `expo/tsconfig.base`, `strict: true`, paths `@/*` to `./src/*`; routes live in `src/app/`; `typedRoutes: true`; `lore` sets `reactCompiler: true` | `~/Developer/zach-short/lore/app/tsconfig.json:1-24`; `~/Developer/zach-short/lore/app/app.json:41-44` |
+| 8 | Only `ezhomesteading` has a development build and on-device SQL | `expo-dev-client` ~57.0.10, `expo-sqlite` ~57.0.1, `expo-notifications` ~57.0.13, `expo-haptics` ~57.0.1, `react-native-svg` 15.15.4, and `eas.json` | `~/Developer/dan-short/ezhomesteading/native/package.json:40,44,51,55,73`; `native/eas.json:6-49` |
 | 9 | Expo SDK 57 floors | iOS 16.4, Android API 24 (Android 7) | `expo/Expo.podspec:39`; Context7 `/websites/expo_dev`, versions table row "57.0.0" |
-| 10 | `react-native-svg` reads only the first font name | The list is cut to its first family in JavaScript | `react-native-svg/src/lib/extract/extractText.tsx:25` (in `~/Projects/ezhomesteading/node_modules`) |
+| 10 | `react-native-svg` reads only the first font name | The list is cut to its first family in JavaScript | `react-native-svg/src/lib/extract/extractText.tsx:25` (in `~/Developer/dan-short/ezhomesteading/node_modules`) |
 | 11 | Android draws an unknown font in its default face | Looks for `fonts/<family>.otf` or `.ttf` in the app's assets, then asks `ReactFontManager` | `react-native-svg/android/.../TSpanView.java:1146-1177` |
 | 12 | A font loaded with `expo-font` is found by SVG text | Android registers it with `ReactFontManager` for the NORMAL style only; iOS maps the alias | `expo-font/android/.../FontLoaderModule.kt:59`; `expo-font/ios/UIFont+FontFamilyAlias.swift:15` |
 | 13 | `expo-image` reads SVG, with limits | iOS through SDWebImageSVGCoder on CoreSVG, which warns about non-system fonts; Android through AndroidSVG 1.4, with basic text only | `expo-image/ios/ExpoImage.podspec:33`; `expo-image/android/build.gradle:46`; Context7 `/sdwebimage/sdwebimagesvgcoder` |
-| 14 | `react-native-svg-transformer` is in neither app | Not installed and not declared | `ls ~/Projects/ezhomesteading/node_modules/react-native-svg-transformer`; both `package.json` files |
+| 14 | `react-native-svg-transformer` is in neither app | Not installed and not declared | `ls ~/Developer/dan-short/ezhomesteading/node_modules/react-native-svg-transformer`; both `package.json` files |
 | 15 | Metro reads SVG files as assets by default, and reaches outside the project | `svg` is in Metro's default `assetExts`; SDK 56 and later read files outside `watchFolders` on demand, on by default | `metro-config/src/defaults/defaults.js:35`; `@expo/cli/build/src/start/server/metro/instantiateMetro.js:251` |
 | 16 | felto is not a workspace | No `package.json` at the root, so Expo adds no `watchFolders` of its own | `ls package.json`; `@expo/metro-config/build/getWatchFolders.js:73-77` |
 | 17 | `expo-sqlite/kv-store` has a sync and an async API | `getItemSync`, `setItemSync`, `getItemAsync`, `setItemAsync` and AsyncStorage-style aliases | `expo-sqlite/build/Storage.d.ts:18,23,51,56,84,88` |
@@ -39,11 +39,11 @@ Section 0 wins over the design wherever the two differ, because it was checked l
 | 22 | JavaScript tooling | node 26.7.0, bun 1.2.9, npm 11.19.0, `eas` at `/opt/homebrew/bin/eas` | `node --version`; `bun --version`; `which eas` |
 | 23 | The current node's ring is fixed at 60% | `node(*NODE_STATES["available"], ring=0.6)` | `tools/build_icons.py:368` |
 | 24 | Only the card faces hold text | 52 files, all in `assets/icons/cards/` | `grep -lE '<text' assets/icons/*/*.svg assets/mascots/*/*.svg` |
-| 25 | `ezhomesteading` has two TypeScript standards that disagree | `docs/conventions-typescript.md` (146 lines, 11 rules, seeded by `personal-config` with placeholder examples, every rule tagged review) and `docs/conventions.md` (499 lines, the one its `CLAUDE.md:4` names). Rule ids such as F1, T1, L1 and X1 mean different things in each | `wc -l`; `~/Projects/ezhomesteading/CLAUDE.md:4` |
+| 25 | `ezhomesteading` has two TypeScript standards that disagree | `docs/conventions-typescript.md` (146 lines, 11 rules, seeded by `personal-config` with placeholder examples, every rule tagged review) and `docs/conventions.md` (499 lines, the one its `CLAUDE.md:4` names). Rule ids such as F1, T1, L1 and X1 mean different things in each | `wc -l`; `~/Developer/dan-short/ezhomesteading/CLAUDE.md:4` |
 | 26 | The ledger's limits section has no line on an app | It covers generator runs, single SVG files in the browser pane and Rive import. Row 20 shows an agent can also build the app and see it on both simulators, but not on Zach's phone | `HANDOFF.md:34-38` |
 | 27 | Board item 4 is open and owns the Python standard | `docs/conventions-python.md`, which phase 1 also edits | `PASSOFF.md:24` |
 | 28 | The expo-ui skill names one path wrong | It says `community/datetimepicker`; the package exports `community/datetime-picker`, and 57.0.13 has no universal `Menu` | `~/.claude/plugins/cache/claude-plugins-official/expo/1.13.6/skills/expo-ui/SKILL.md:33`; `@expo/ui/package.json:31` |
-| 29 | SDK 57 pins the audio, orientation and system UI packages | `expo-audio` ~57.0.4, `expo-screen-orientation` ~57.0.1, `expo-system-ui` ~57.0.2 | `expo/bundledNativeModules.json:24,79,91` in `~/Projects/lore/app/node_modules` |
+| 29 | SDK 57 pins the audio, orientation and system UI packages | `expo-audio` ~57.0.4, `expo-screen-orientation` ~57.0.1, `expo-system-ui` ~57.0.2 | `expo/bundledNativeModules.json:24,79,91` in `~/Developer/zach-short/lore/app/node_modules` |
 | 30 | iPad simulators exist | iPad Pro 13-inch (M5), iPad Pro 11-inch (M5), iPad mini (A17 Pro), iPad Air 13-inch (M4) | `xcrun simctl list devices available` |
 | 31 | No Android tablet emulator, and no tool here to make one | AVDs `Medium_Phone` and `Pixel_9` only; `~/Library/Android/sdk/cmdline-tools` does not exist, so `avdmanager` is absent | `ls ~/.android/avd`; `ls ~/Library/Android/sdk/cmdline-tools` |
 | 32 | Two colours in the art assume a light page | The hard shadow `#C9CDE2` and the ring track `#DDE1EC` | `tools/common.py:8`; `tools/build_icons.py:271` |
@@ -255,8 +255,8 @@ checkout, not in its own worktree (the `/autopilot` override).
 Scope:
 
 1. Read `docs/AGENT-PRACTICES.md` Part 8.1, the seed
-   `~/Projects/ezhomesteading/docs/conventions-typescript.md` in full, and the sweep's inventory
-   of `~/Projects/ezhomesteading/docs/conventions.md` (subagent below).
+   `~/Developer/dan-short/ezhomesteading/docs/conventions-typescript.md` in full, and the sweep's inventory
+   of `~/Developer/dan-short/ezhomesteading/docs/conventions.md` (subagent below).
 2. Write `docs/conventions-typescript.md` for every `.ts` and `.tsx` file under `app/` (BD-17):
    self-contained; ids that never get renumbered; a tag and a provenance label on every rule;
    the owner policy from `.personal-config.json` (comments say why; functions of 6 to 15 lines;
@@ -275,7 +275,7 @@ Scope:
 5. Add `.claude/worktrees/` to `.gitignore` (BD-21).
 
 Subagents: one Mechanical (Sonnet 5), own worktree, read only. Work-list: every rule id in
-`~/Projects/ezhomesteading/docs/conventions.md` with its title, its tag, and whether it names
+`~/Developer/dan-short/ezhomesteading/docs/conventions.md` with its title, its tag, and whether it names
 Expo, native, Next.js or web. It returns the list and nothing else.
 
 Done when: the whole-repo gate exits 0; `git diff --stat -- assets tools` is empty; every rule
